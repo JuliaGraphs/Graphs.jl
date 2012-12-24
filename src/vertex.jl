@@ -41,5 +41,5 @@ end
 ##############################################################################
 
 function hash(v::Vertex)
-	hash(strcat(string(v.id), v.label))
+	hash(strcat(hash(string(v.id)), hash(v.label), hash(v.attributes)))
 end

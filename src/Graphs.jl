@@ -1,6 +1,7 @@
 module Graphs
-    import Base.order, Base.size, Base.string, Base.repl_show, Base.show, Base.print
-    import Base.isequal, Base.hash
+    import Base.order, Base.size
+    import Base.string, Base.repl_show, Base.show, Base.print
+    import Base.isequal, Base.hash, Base.add, Base.del
 
     export Vertex
     export id, label, attributes
@@ -11,14 +12,15 @@ module Graphs
     export UndirectedGraph, DirectedGraph, Digraph, MixedGraph, AbstractGraph, Graph
     export vertices, edges, order, size
 
+    export empty_graph
+
     export degree, indegree, outdegree, degrees, indegrees, outdegrees
     export connected, adjacent, coincident
     export isconnected, iscomplete, isdirected, isregular
     export issimple, issymmetric, isweighted
 
     export adjacency_matrix, degree_matrix, outdegree_matrix, indegree_matrix
-    export distance_matrix
-    export incidence_matrix, laplacian_matrix, laplacian
+    export distance_matrix, incidence_matrix, laplacian_matrix, laplacian
 
     export read_edgelist, read_tgf, read_graphml
 

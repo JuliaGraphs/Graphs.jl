@@ -27,6 +27,8 @@ type UndirectedGraph <: AbstractGraph
         new(v, e)
     end
 end
+UndirectedGraph() = UndirectedGraph(Set{Vertex}(), Set{UndirectedEdge}())
+empty_graph(::Type{UndirectedGraph}) = UndirectedGraph()
 
 type DirectedGraph <: AbstractGraph
     vertices::Set{Vertex}
@@ -47,6 +49,8 @@ type DirectedGraph <: AbstractGraph
         new(v, e)
     end
 end
+DirectedGraph() = DirectedGraph(Set{Vertex}(), Set{DirectedEdge}())
+empty_graph(::Type{DirectedGraph}) = DirectedGraph()
 
 type MixedGraph <: AbstractGraph
     vertices::Set{Vertex}
@@ -67,6 +71,8 @@ type MixedGraph <: AbstractGraph
         new(v, e)
     end
 end
+MixedGraph() = MixedGraph(Set{Vertex}(), Set{Edge}())
+empty_graph(::Type{MixedGraph}) = MixedGraph()
 
 typealias Digraph DirectedGraph
 
@@ -338,4 +344,26 @@ size(g::AbstractGraph) = length(edges(g))
 
 function isequal(g1::AbstractGraph, g2::AbstractGraph)
     return isequal(g1.vertices, g2.vertices) && isequal(g1.edges, g2.edges)
+end
+
+##############################################################################
+#
+# Add and remove vertices and edges from an existing
+#
+##############################################################################
+
+function add(g::AbstractGraph, v::Vertex)
+    add(vertices(g), v)
+end
+
+function del(g::AbstractGraph, v::Vertex)
+    del(vertices(g), v)
+end
+
+function add(g::AbstractGraph, v::Edge)
+    add(edges(g), v)
+end
+
+function del(g::AbstractGraph, v::Edge)
+    del(edges(g), v)
 end
