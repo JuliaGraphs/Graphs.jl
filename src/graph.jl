@@ -2,26 +2,75 @@
 #
 # Basic graph type definitions and constructors
 #
+# TODO: Add a Multigraph type
+#
 ##############################################################################
 
-# TODO: Add a Multigraph type
-# TODO: Enforce integrity constraints during construction
-#       * Min vertex ID = 1
-#       * Max vertex ID = length(vertices)
+abstract AbstractGraph
 
-type UndirectedGraph
+type UndirectedGraph <: AbstractGraph
     vertices::Set{Vertex}
     edges::Set{UndirectedEdge}
+
+    # Enforces integrity constraints during construction if violated:
+    #  * Min vertex ID = 1
+    #  * Max vertex ID = length(vertices)
+    function UndirectedGraph(v::Set{Vertex}, e::Set{UndirectedEdge})
+        ids = Int[vertex.id for vertex in v]
+        if sort(ids) != 1:length(v)
+            i = 1
+            for vertex in v
+                vertex.id = i
+                i += 1
+            end
+        end
+        new(v, e)
+    end
 end
 
-type DirectedGraph
+type DirectedGraph <: AbstractGraph
     vertices::Set{Vertex}
     edges::Set{DirectedEdge}
-end
-typealias Digraph DirectedGraph
-typealias Graph Union(UndirectedGraph, DirectedGraph)
 
-# TODO: Use @eval to make these DRYer
+    # Enforces integrity constraints during construction if violated:
+    #  * Min vertex ID = 1
+    #  * Max vertex ID = length(vertices)
+    function DirectedGraph(v::Set{Vertex}, e::Set{DirectedEdge})
+        ids = Int[vertex.id for vertex in v]
+        if sort(ids) != 1:length(v)
+            i = 1
+            for vertex in v
+                vertex.id = i
+                i += 1
+            end
+        end
+        new(v, e)
+    end
+end
+
+type MixedGraph <: AbstractGraph
+    vertices::Set{Vertex}
+    edges::Set{Edge}
+
+    # Enforces integrity constraints during construction if violated:
+    #  * Min vertex ID = 1
+    #  * Max vertex ID = length(vertices)
+    function MixedGraph(v::Set{Vertex}, e::Set{Edge})
+        ids = Int[vertex.id for vertex in v]
+        if sort(ids) != 1:length(v)
+            i = 1
+            for vertex in v
+                vertex.id = i
+                i += 1
+            end
+        end
+        new(v, e)
+    end
+end
+
+typealias Digraph DirectedGraph
+
+# TODO: Use @eval to make all of these constructors DRYer
 function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
     n_vertices = length(vertex_list)
     n_edges = length(edge_list)
@@ -37,9 +86,10 @@ function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
     edge_set = Set{UndirectedEdge}()
     for i in 1:n_edges
         e = UndirectedEdge(vertices[edge_list[i][1]],
-                         vertices[edge_list[i][2]],
-                         utf8(""),
-                         1.0)
+                           vertices[edge_list[i][2]],
+                           utf8(""),
+                           1.0,
+                           Dict{UTF8String, Any}())
         add(edge_set, e)
     end
 
@@ -63,7 +113,8 @@ function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
         e = DirectedEdge(vertices[edge_list[i][1]],
                          vertices[edge_list[i][2]],
                          utf8(""),
-                         1.0)
+                         1.0,
+                         Dict{UTF8String, Any}())
         add(edge_set, e)
     end
 
@@ -87,7 +138,8 @@ function UndirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matri
         e = UndirectedEdge(vertices[numeric_edges[i, 1]],
                          vertices[numeric_edges[i, 2]],
                          utf8(""),
-                         1.0)
+                         1.0,
+                         Dict{UTF8String, Any}())
         add(edge_set, e)
     end
 
@@ -111,7 +163,8 @@ function DirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{
         e = DirectedEdge(vertices[numeric_edges[i, 1]],
                          vertices[numeric_edges[i, 2]],
                          utf8(""),
-                         1.0)
+                         1.0,
+                         Dict{UTF8String, Any}())
         add(edge_set, e)
     end
 
@@ -192,16 +245,90 @@ function DirectedGraph{T <: String}(edges::Matrix{T})
     return DirectedGraph(vertex_labels[1:(next_vertex_id - 1)], numeric_edges)
 end
 
+function Graph(vertex_list::Vector{Any}, edge_list::Vector{Any})
+    if isa(edge_list[1], Tuple)
+        DirectedGraph(vertex_list, edge_list)
+    else
+        UndirectedGraph(vertex_list, edge_list)
+    end
+end
+
+function UndirectedGraph(a::Matrix{Int})
+    if !isequal(a, a')
+        error("Adjacency matrix of an undirected graph must be symmetric")
+    end
+    n_vertices = size(a, 1)
+
+    vertex_set = Set{Vertex}()
+    vertices = Array(Vertex, n_vertices)
+
+    edge_set = Set{UndirectedEdge}()
+
+    for i in 1:n_vertices
+        v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
+        add(vertex_set, v)
+        vertices[i] = v
+    end
+
+    for i in 1:n_vertices
+        for j in i:n_vertices
+            if a[i, j] == 1
+                e = UndirectedEdge(vertices[i],
+                                   vertices[j],
+                                   utf8(""),
+                                   1.0,
+                                   Dict{UTF8String, Any}())
+                add(edge_set, e)
+            end
+        end
+    end
+
+    return UndirectedGraph(vertex_set, edge_set)
+end
+
+function DirectedGraph(a::Matrix{Int})
+    if size(a, 1) != size(a, 2)
+        error("Adjacency matrix must be square")
+    end
+    n_vertices = size(a, 1)
+
+    vertex_set = Set{Vertex}()
+    vertices = Array(Vertex, n_vertices)
+
+    edge_set = Set{DirectedEdge}()
+
+    for i in 1:n_vertices
+        v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
+        add(vertex_set, v)
+        vertices[i] = v
+    end
+
+    for i in 1:n_vertices
+        for j in 1:n_vertices
+            if a[i, j] == 1
+                e = DirectedEdge(vertices[i],
+                                 vertices[j],
+                                 utf8(""),
+                                 1.0,
+                                 Dict{UTF8String, Any}())
+                add(edge_set, e)
+            end
+        end
+    end
+
+    return DirectedGraph(vertex_set, edge_set)
+end
+
 ##############################################################################
 #
 # Basic properties of a graph
 #
 ##############################################################################
 
-vertices(g::Graph) = g.vertices
-edges(g::Graph) = g.edges
-order(g::Graph) = length(vertices(g))
-size(g::Graph) = length(edges(g))
+vertices(g::AbstractGraph) = g.vertices
+edges(g::AbstractGraph) = g.edges
+order(g::AbstractGraph) = length(vertices(g))
+size(g::AbstractGraph) = length(edges(g))
 
 ##############################################################################
 #
@@ -209,6 +336,6 @@ size(g::Graph) = length(edges(g))
 #
 ##############################################################################
 
-function isequal(g1::Graph, g2::Graph)
+function isequal(g1::AbstractGraph, g2::AbstractGraph)
     return isequal(g1.vertices, g2.vertices) && isequal(g1.edges, g2.edges)
 end

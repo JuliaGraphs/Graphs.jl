@@ -1,7 +1,7 @@
 function degree(v::Vertex, g::UndirectedGraph)
     d = 0
     for edge in edges(g)
-        if id(edge.out) == id(v) || id(edge.in) == id(v)
+        if id(edge.a) == id(v) || id(edge.b) == id(v)
             d += 1
         end
     end
@@ -32,23 +32,41 @@ function degrees(g::UndirectedGraph)
     n = order(g)
     ds = zeros(Int, n)
     for edge in edges(g)
-        ds[id(edge.out)] += 1
-        ds[id(edge.in)] += 1
+        ds[id(edge.a)] += 1
+        ds[id(edge.b)] += 1
     end
     return ds
 end
 
-connected(v1::Vertex, v2::Vertex, g::Graph) = error("Not yet implemented")
-adjacent(e1::Edge, e2::Edge, g::Graph) = error("Not yet implemented")
+function outdegrees(g::DirectedGraph)
+    n = order(g)
+    ds = zeros(Int, n)
+    for edge in edges(g)
+        ds[id(out(edge))] += 1
+    end
+    return ds
+end
+
+function indegrees(g::DirectedGraph)
+    n = order(g)
+    ds = zeros(Int, n)
+    for edge in edges(g)
+        ds[id(in(edge))] += 1
+    end
+    return ds
+end
+
+connected(v1::Vertex, v2::Vertex, g::AbstractGraph) = error("Not yet implemented")
+adjacent(e1::Edge, e2::Edge, g::AbstractGraph) = error("Not yet implemented")
 const coincident = adjacent
 
-isconnected(g::Graph) = error("Not yet implemented")
+isconnected(g::AbstractGraph) = error("Not yet implemented")
 
-function iscomplete(g::Graph)
+function iscomplete(g::AbstractGraph)
     all(adjacency_matrix(g) .== 1)
 end
 
-function isdirected(g::Graph)
+function isdirected(g::AbstractGraph)
     if isa(g, DirectedGraph)
         return true
     elseif isa(g, UndirectedGraph)
@@ -66,13 +84,13 @@ function issimple(g::UndirectedGraph)
     error("Not yet implemented")
 end
 
-# TODO: Implement faster algorithm
+# TODO: Implement a better algorithm
 function issymmetric(g::DirectedGraph)
     a = adjacency_matrix(g)
     return isequal(a, a')
 end
 
-function isweighted(g::Graph)
+function isweighted(g::AbstractGraph)
     for edge in edges(g)
         if weight(edge) != 1.0
             return true
@@ -110,8 +128,8 @@ function adjacency_matrix(g::UndirectedGraph)
     n = order(g)
     A = zeros(Int, n, n)
     for edge in edges(g)
-        A[edge.out.id, edge.in.id] = 1
-        A[edge.in.id, edge.out.id] = 1
+        A[edge.a.id, edge.b.id] = 1
+        A[edge.b.id, edge.a.id] = 1
     end
     return A
 end
@@ -125,11 +143,26 @@ function adjacency_matrix(g::DirectedGraph)
     return A
 end
 
-degree_matrix(g::Graph) = diagm(degrees(g))
+degree_matrix(g::UndirectedGraph) = diagm(degrees(g))
+outdegree_matrix(g::DirectedGraph) = diagm(outdegrees(g))
+indegree_matrix(g::DirectedGraph) = diagm(indegrees(g))
 
-distance_matrix(g::Graph) = error("Not yet implemented")
+distance_matrix(g::AbstractGraph) = error("Not yet implemented")
 
-function incidence_matrix(g::Graph)
+function incidence_matrix(g::UndirectedGraph)
+    n = order(g)
+    p = size(g)
+    M = zeros(Int, n, p)
+    i = 0
+    for edge in edges(g)
+        i += 1
+        M[edge.a.id, i] = 1
+        M[edge.b.id, i] = 1
+    end
+    return M
+end
+
+function incidence_matrix(g::DirectedGraph)
     n = order(g)
     p = size(g)
     M = zeros(Int, n, p)
@@ -143,4 +176,14 @@ function incidence_matrix(g::Graph)
 end
 
 laplacian_matrix(g::UndirectedGraph) = degree_matrix(g) - adjacency_matrix(g)
+function laplacian_matrix(g::DirectedGraph, direction::Symbol)
+    if direction == :out
+        outdegree_matrix(g) - adjacency_matrix(g)
+    elseif direction == :in
+        indegree_matrix(g) - adjacency_matrix(g)
+    else
+        error("direction must be :out or :in")
+    end
+end
+laplacian_matrix(g::DirectedGraph) = laplacian_matrix(g, :out)
 const laplacian = laplacian_matrix

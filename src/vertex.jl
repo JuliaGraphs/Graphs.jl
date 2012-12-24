@@ -7,10 +7,10 @@
 type Vertex
     id::Int
     label::UTF8String
-    # Other metadata...
+    attributes::Dict{UTF8String, Any}
 end
-Vertex(id::Real, label::String) = Vertex(int(id), utf8(label))
-Vertex(id::Real) = Vertex(int(id), utf8(""))
+Vertex(id::Real, label::String) = Vertex(int(id), utf8(label), Dict{UTF8String, Any}())
+Vertex(id::Real) = Vertex(int(id), utf8(""), Dict{UTF8String, Any}())
 
 ##############################################################################
 #
@@ -20,6 +20,7 @@ Vertex(id::Real) = Vertex(int(id), utf8(""))
 
 id(v::Vertex) = v.id
 label(v::Vertex) = v.label
+attributes(v::Vertex) = v.attributes
 
 ##############################################################################
 #
@@ -28,5 +29,17 @@ label(v::Vertex) = v.label
 ##############################################################################
 
 function isequal(v1::Vertex, v2::Vertex)
-  return isequal(v1.id, v2.id) && isequal(v1.label, v2.label)
+  return isequal(v1.id, v2.id) &&
+          isequal(v1.label, v2.label) &&
+          isequal(v1.attributes, v2.attributes)
+end
+
+##############################################################################
+#
+# Hashing
+#
+##############################################################################
+
+function hash(v::Vertex)
+	hash(strcat(string(v.id), v.label))
 end

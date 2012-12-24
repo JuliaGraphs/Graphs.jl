@@ -1,22 +1,23 @@
 module Graphs
     import Base.order, Base.size, Base.string, Base.repl_show, Base.show, Base.print
-    import Base.isequal
+    import Base.isequal, Base.hash
 
     export Vertex
-    export id, label
+    export id, label, attributes
 
     export UndirectedEdge, DirectedEdge, Edge
-    export out, in, label, weight, ends
+    export out, in, label, weight, ends, attributes
 
-    export UndirectedGraph, DirectedGraph, Digraph, Graph
+    export UndirectedGraph, DirectedGraph, Digraph, MixedGraph, AbstractGraph, Graph
     export vertices, edges, order, size
 
-    export degree, indegree, outdegree, degrees
+    export degree, indegree, outdegree, degrees, indegrees, outdegrees
     export connected, adjacent, coincident
     export isconnected, iscomplete, isdirected, isregular
     export issimple, issymmetric, isweighted
 
-    export adjacency_matrix, degree_matrix, distance_matrix
+    export adjacency_matrix, degree_matrix, outdegree_matrix, indegree_matrix
+    export distance_matrix
     export incidence_matrix, laplacian_matrix, laplacian
 
     export read_edgelist, read_tgf, read_graphml
