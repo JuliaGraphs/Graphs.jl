@@ -73,7 +73,7 @@ function issymmetric(g::DirectedGraph)
 end
 
 function isweighted(g::Graph)
-    for edge in edges
+    for edge in edges(g)
         if weight(edge) != 1.0
             return true
         end
@@ -124,7 +124,18 @@ degree_matrix(g::Graph) = diagm(degrees(g))
 
 distance_matrix(g::Graph) = error("Not yet implemented")
 
-incidence_matrix(g::Graph) = error("Not yet implemented")
+function incidence_matrix(g::Graph)
+    n = order(g)
+    p = size(g)
+    M = zeros(Int, n, p)
+    i = 0
+    for edge in edges(g)
+        i += 1
+        M[edge.out.id, i] = 1
+        M[edge.in.id, i] = 1
+    end
+    return M
+end
 
 laplacian_matrix(g::UndirectedGraph) = degree_matrix(g) - adjacency_matrix(g)
 const laplacian = laplacian_matrix
