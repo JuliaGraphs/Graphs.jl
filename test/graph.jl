@@ -8,9 +8,9 @@ g = DirectedGraph(Set(v1, v2), Set(e1))
 numeric_edges = [1 2;
                  1 3;
                  2 3;]
-vertex_names = UTF8String["A", "B", "C"]
+vertex_labels = UTF8String["A", "B", "C"]
 
-g1 = DirectedGraph(vertex_names, numeric_edges)
+g1 = DirectedGraph(vertex_labels, numeric_edges)
 
 m = ["a" "b";
      "a" "c";

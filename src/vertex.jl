@@ -6,10 +6,10 @@
 
 type Vertex
     id::Int
-    name::UTF8String
+    label::UTF8String
     # Other metadata...
 end
-Vertex(id::Real, name::String) = Vertex(int(id), utf8(name))
+Vertex(id::Real, label::String) = Vertex(int(id), utf8(label))
 Vertex(id::Real) = Vertex(int(id), utf8(""))
 
 ##############################################################################
@@ -19,7 +19,7 @@ Vertex(id::Real) = Vertex(int(id), utf8(""))
 ##############################################################################
 
 id(v::Vertex) = v.id
-name(v::Vertex) = v.name
+label(v::Vertex) = v.label
 
 ##############################################################################
 #
@@ -28,5 +28,5 @@ name(v::Vertex) = v.name
 ##############################################################################
 
 function isequal(v1::Vertex, v2::Vertex)
-  return isequal(v1.id, v2.id) && isequal(v1.name, v2.name)
+  return isequal(v1.id, v2.id) && isequal(v1.label, v2.label)
 end

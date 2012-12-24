@@ -7,7 +7,7 @@
 type UndirectedEdge
     out::Vertex
     in::Vertex
-    name::UTF8String
+    label::UTF8String
     weight::Float64
     # Other metadata...
 
@@ -15,12 +15,12 @@ type UndirectedEdge
     # the higher ID Vertex.
     function UndirectedEdge(out_vertex::Vertex,
                             in_vertex::Vertex,
-                            name::UTF8String,
+                            label::UTF8String,
                             weight::Float64)
       if id(out_vertex) > id(in_vertex)
-        new(in_vertex, out_vertex, name, weight)
+        new(in_vertex, out_vertex, label, weight)
       else
-        new(out_vertex, in_vertex, name, weight)
+        new(out_vertex, in_vertex, label, weight)
       end
     end
 end
@@ -40,7 +40,7 @@ end
 type DirectedEdge
     out::Vertex
     in::Vertex
-    name::UTF8String
+    label::UTF8String
     weight::Float64
     # Other metadata...
 end
@@ -68,7 +68,7 @@ out(e::DirectedEdge) = e.out
 in(e::DirectedEdge) = e.in
 ends(e::DirectedEdge) = [e.out, e.in]
 ends(e::UndirectedEdge) = Set(e.out, e.in)
-name(e::Edge) = e.name
+label(e::Edge) = e.label
 weight(e::Edge) = e.weight
 
 ##############################################################################
@@ -79,5 +79,5 @@ weight(e::Edge) = e.weight
 
 function isequal(e1::Edge, e2::Edge)
     return isequal(e1.out, e2.out) && isequal(e1.in, e2.in) &&
-            isequal(e1.name, e2.name) && isequal(e1.weight, e2.weight)
+            isequal(e1.label, e2.label) && isequal(e1.weight, e2.weight)
 end

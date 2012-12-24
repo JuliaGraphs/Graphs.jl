@@ -70,14 +70,14 @@ function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
     return DirectedGraph(vertex_set, edge_set)
 end
 
-function UndirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{Int})
-    n_vertices = length(vertex_names)
+function UndirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{Int})
+    n_vertices = length(vertex_labels)
     n_edges = size(numeric_edges, 1)
 
     vertex_set = Set{Vertex}()
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
-        v = Vertex(i, vertex_names[i])
+        v = Vertex(i, vertex_labels[i])
         add(vertex_set, v)
         vertices[i] = v
     end
@@ -94,14 +94,14 @@ function UndirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix
     return UndirectedGraph(vertex_set, edge_set)
 end
 
-function DirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{Int})
-    n_vertices = length(vertex_names)
+function DirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{Int})
+    n_vertices = length(vertex_labels)
     n_edges = size(numeric_edges, 1)
 
     vertex_set = Set{Vertex}()
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
-        v = Vertex(i, vertex_names[i])
+        v = Vertex(i, vertex_labels[i])
         add(vertex_set, v)
         vertices[i] = v
     end
@@ -120,76 +120,76 @@ end
 
 function UndirectedGraph{T <: String}(edges::Matrix{T})
     default_max_vertices = 1_000
-    vertex_names = Array(UTF8String, default_max_vertices)
+    vertex_labels = Array(UTF8String, default_max_vertices)
     vertex_ids = Dict{UTF8String, Int}()
 
     next_vertex_id = 1
     numeric_edges = Array(Int, size(edges))
 
     for i in 1:size(edges, 1)
-        if length(vertex_names) - 1 <= next_vertex_id
-            grow(vertex_names, 2 * length(vertex_names))
+        if length(vertex_labels) - 1 <= next_vertex_id
+            grow(vertex_labels, 2 * length(vertex_labels))
         end
 
-        out_vertex_name, in_vertex_name = edges[i, 1], edges[i, 2]
+        out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
 
-        out_vertex_id = get(vertex_ids, out_vertex_name, 0)
+        out_vertex_id = get(vertex_ids, out_vertex_label, 0)
         if out_vertex_id == 0
             out_vertex_id = next_vertex_id
-            vertex_ids[out_vertex_name] = out_vertex_id
-            vertex_names[out_vertex_id] = out_vertex_name
+            vertex_ids[out_vertex_label] = out_vertex_id
+            vertex_labels[out_vertex_id] = out_vertex_label
             next_vertex_id += 1
         end
 
-        in_vertex_id = get(vertex_ids, in_vertex_name, 0)
+        in_vertex_id = get(vertex_ids, in_vertex_label, 0)
         if in_vertex_id == 0
             in_vertex_id = next_vertex_id
-            vertex_ids[in_vertex_name] = in_vertex_id
-            vertex_names[in_vertex_id] = in_vertex_name
+            vertex_ids[in_vertex_label] = in_vertex_id
+            vertex_labels[in_vertex_id] = in_vertex_label
             next_vertex_id += 1
         end
 
         numeric_edges[i, 1], numeric_edges[i, 2] = out_vertex_id, in_vertex_id
     end
 
-    return UndirectedGraph(vertex_names[1:(next_vertex_id - 1)], numeric_edges)
+    return UndirectedGraph(vertex_labels[1:(next_vertex_id - 1)], numeric_edges)
 end
 
 function DirectedGraph{T <: String}(edges::Matrix{T})
     default_max_vertices = 1_000
-    vertex_names = Array(UTF8String, default_max_vertices)
+    vertex_labels = Array(UTF8String, default_max_vertices)
     vertex_ids = Dict{UTF8String, Int}()
 
     next_vertex_id = 1
     numeric_edges = Array(Int, size(edges))
 
     for i in 1:size(edges, 1)
-        if length(vertex_names) - 1 <= next_vertex_id
-            grow(vertex_names, 2 * length(vertex_names))
+        if length(vertex_labels) - 1 <= next_vertex_id
+            grow(vertex_labels, 2 * length(vertex_labels))
         end
 
-        out_vertex_name, in_vertex_name = edges[i, 1], edges[i, 2]
+        out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
 
-        out_vertex_id = get(vertex_ids, out_vertex_name, 0)
+        out_vertex_id = get(vertex_ids, out_vertex_label, 0)
         if out_vertex_id == 0
             out_vertex_id = next_vertex_id
-            vertex_ids[out_vertex_name] = out_vertex_id
-            vertex_names[out_vertex_id] = out_vertex_name
+            vertex_ids[out_vertex_label] = out_vertex_id
+            vertex_labels[out_vertex_id] = out_vertex_label
             next_vertex_id += 1
         end
 
-        in_vertex_id = get(vertex_ids, in_vertex_name, 0)
+        in_vertex_id = get(vertex_ids, in_vertex_label, 0)
         if in_vertex_id == 0
             in_vertex_id = next_vertex_id
-            vertex_ids[in_vertex_name] = in_vertex_id
-            vertex_names[in_vertex_id] = in_vertex_name
+            vertex_ids[in_vertex_label] = in_vertex_id
+            vertex_labels[in_vertex_id] = in_vertex_label
             next_vertex_id += 1
         end
 
         numeric_edges[i, 1], numeric_edges[i, 2] = out_vertex_id, in_vertex_id
     end
 
-    return DirectedGraph(vertex_names[1:(next_vertex_id - 1)], numeric_edges)
+    return DirectedGraph(vertex_labels[1:(next_vertex_id - 1)], numeric_edges)
 end
 
 ##############################################################################

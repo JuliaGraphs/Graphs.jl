@@ -3,10 +3,10 @@ module Graphs
     import Base.isequal
 
     export Vertex
-    export id, name
+    export id, label
 
     export UndirectedEdge, DirectedEdge, Edge
-    export out, in, name, weight, ends
+    export out, in, label, weight, ends
 
     export UndirectedGraph, DirectedGraph, Digraph, Graph
     export vertices, edges, order, size
