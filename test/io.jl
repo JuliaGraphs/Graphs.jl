@@ -1,9 +1,3 @@
-require("Graphs")
-using Graphs
-
-#
-# Read edgelist format
-#
-
 pathname = file_path("test", "data", "graph1.edgelist")
-g = Graphs.read_edgelist(pathname)
+g = read_edgelist(pathname)
+@assert isequal(adjacency_matrix(g), [0 1 1; 0 0 1; 0 0 0;])

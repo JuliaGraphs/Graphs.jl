@@ -1,11 +1,29 @@
 module Graphs
-	export Node, Edge, Graph
-	export s_edges, s_nodes
-	export adjacency_matrix
-	export read_edgelist
+    import Base.order, Base.size, Base.repl_show
 
-	require("Graphs/src/node.jl")
-	require("Graphs/src/edge.jl")
-	require("Graphs/src/graph.jl")
-	require("Graphs/src/io.jl")
+    export Vertex
+    export id, name
+
+    export UndirectedEdge, DirectedEdge, Edge
+    export out, in, name, weight, ends
+
+    export UndirectedGraph, DirectedGraph, Digraph, Graph
+    export vertices, edges, order, size
+
+    export degree, indegree, outdegree, degrees
+    export connected, adjacent, coincident
+    export isconnected, iscomplete, isdirected, isregular
+    export issimple, issymmetric, isweighted
+
+    export adjacency_matrix, degree_matrix, distance_matrix
+    export incidence_matrix, laplacian_matrix, laplacian
+
+    export read_edgelist, read_tgf, read_graphml
+
+    require("Graphs/src/vertex.jl")
+    require("Graphs/src/edge.jl")
+    require("Graphs/src/graph.jl")
+    require("Graphs/src/advanced.jl")
+    require("Graphs/src/io.jl")
+    require("Graphs/src/show.jl")
 end

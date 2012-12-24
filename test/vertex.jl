@@ -1,0 +1,7 @@
+v1 = Vertex(1, "A")
+v2 = Vertex(2, "B")
+
+[v1, v2]
+
+@assert isequal(id(v1), 1)
+@assert isequal(name(v1), "A")
