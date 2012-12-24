@@ -28,14 +28,10 @@ function outdegree(v::Vertex, g::DirectedGraph)
     return d
 end
 
-# Assume no doubled edges
-# Assume no flipped edges
 function degrees(g::UndirectedGraph)
     n = order(g)
     ds = zeros(Int, n)
-    es = edges(g)
-    for i in 1:size(g)
-        edge = es[i]
+    for edge in edges(g)
         ds[id(edge.out)] += 1
         ds[id(edge.in)] += 1
     end
@@ -108,8 +104,7 @@ end
 function adjacency_matrix(g::UndirectedGraph)
     n = order(g)
     A = zeros(Int, n, n)
-    for i in 1:size(g)
-        edge = edges(g)[i]
+    for edge in edges(g)
         A[edge.out.id, edge.in.id] = 1
         A[edge.in.id, edge.out.id] = 1
     end
@@ -119,8 +114,7 @@ end
 function adjacency_matrix(g::DirectedGraph)
     n = order(g)
     A = zeros(Int, n, n)
-    for i in 1:size(g)
-        edge = edges(g)[i]
+    for edge in edges(g)
         A[id(out(edge)), id(in(edge))] = 1
     end
     return A

@@ -11,13 +11,13 @@
 #       * Max vertex ID = length(vertices)
 
 type UndirectedGraph
-    vertices::Vector{Vertex}
-    edges::Vector{UndirectedEdge}
+    vertices::Set{Vertex}
+    edges::Set{UndirectedEdge}
 end
 
 type DirectedGraph
-    vertices::Vector{Vertex}
-    edges::Vector{DirectedEdge}
+    vertices::Set{Vertex}
+    edges::Set{DirectedEdge}
 end
 typealias Digraph DirectedGraph
 typealias Graph Union(UndirectedGraph, DirectedGraph)
@@ -26,20 +26,24 @@ function DirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{I
     n_vertices = length(vertex_names)
     n_edges = size(numeric_edges, 1)
 
+    vertex_set = Set{Vertex}()
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
-        vertices[i] = Vertex(i, vertex_names[i])
+        v = Vertex(i, vertex_names[i])
+        add(vertex_set, v)
+        vertices[i] = v
     end
 
-    edges = Array(DirectedEdge, n_edges)
+    edge_set = Set{DirectedEdge}()
     for i in 1:n_edges
-        edges[i] = DirectedEdge(vertices[numeric_edges[i, 1]],
-                                vertices[numeric_edges[i, 2]],
-                                utf8(""),
-                                1.0)
+        e = DirectedEdge(vertices[numeric_edges[i, 1]],
+                         vertices[numeric_edges[i, 2]],
+                         utf8(""),
+                         1.0)
+        add(edge_set, e)
     end
 
-    return DirectedGraph(vertices, edges)
+    return DirectedGraph(vertex_set, edge_set)
 end
 
 function DirectedGraph{T <: String}(edges::Matrix{T})
@@ -89,3 +93,13 @@ vertices(g::Graph) = g.vertices
 edges(g::Graph) = g.edges
 order(g::Graph) = length(vertices(g))
 size(g::Graph) = length(edges(g))
+
+##############################################################################
+#
+# Comparisons
+#
+##############################################################################
+
+function isequal(g1::Graph, e2::Graph)
+    return isequal(g1.vertices, g2.vertices) && isequal(g1.edges, g2.edges)
+end

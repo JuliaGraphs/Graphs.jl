@@ -1,5 +1,6 @@
 module Graphs
-    import Base.order, Base.size, Base.repl_show
+    import Base.order, Base.size, Base.repl_show, Base.show, Base.print
+    import Base.isequal
 
     export Vertex
     export id, name

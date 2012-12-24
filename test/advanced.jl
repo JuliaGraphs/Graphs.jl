@@ -9,7 +9,7 @@ v2 = Vertex(2, "B")
 
 e1 = DirectedEdge(v1, v2)
 
-g = DirectedGraph([v1, v2], [e1])
+g = DirectedGraph(Set(v1, v2), Set(e1))
 
 @assert outdegree(v1, g) == 1
 @assert indegree(v1, g) == 0
@@ -48,7 +48,7 @@ e1 = UndirectedEdge(v1, v2)
 e2 = UndirectedEdge(v1, v3)
 e3 = UndirectedEdge(v2, v3)
 
-g = UndirectedGraph([v1, v2, v3], [e1, e2, e3])
+g = UndirectedGraph(Set(v1, v2, v3), Set(e1, e2, e3))
 
 @assert degree(v1, g) == 2
 @assert degree(v2, g) == 2
@@ -58,3 +58,4 @@ g = UndirectedGraph([v1, v2, v3], [e1, e2, e3])
 @assert isequal(degree_matrix(g), [2 0 0; 0 2 0; 0 0 2])
 @assert isequal(adjacency_matrix(g), [0 1 1; 1 0 1; 1 1 0])
 @assert isequal(laplacian(g), degree_matrix(g) - adjacency_matrix(g))
+@assert isequal(laplacian(g), [2 -1 -1; -1 2 -1; -1 -1 2])

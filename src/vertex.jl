@@ -20,3 +20,13 @@ Vertex(id::Real) = Vertex(int(id), utf8(""))
 
 id(v::Vertex) = v.id
 name(v::Vertex) = v.name
+
+##############################################################################
+#
+# Comparisons
+#
+##############################################################################
+
+function isequal(v1::Vertex, v2::Vertex)
+  return isequal(v1.id, v2.id) && isequal(v1.name, v2.name)
+end
