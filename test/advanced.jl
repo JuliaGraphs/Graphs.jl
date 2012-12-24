@@ -32,7 +32,19 @@ m = ["a" "b";
 g2 = DirectedGraph(m)
 
 # TODO: Make this work
-# @assert g1 == g2
+# @assert isequal(g1, g2)
+
+# Example from Wikipedia
+V = {1, 2, 3, 4, 5, 6}
+E = {{1, 2}, {1, 5}, {2, 3}, {2, 5}, {3, 4}, {4, 5}, {4, 6}}
+g = UndirectedGraph(V, E)
+L = [2 -1 0 0 -1 0;
+     -1 3 -1 0 -1 0;
+     0 -1 2 -1 0 0;
+     0 0 -1 3 -1 -1;
+     -1 -1 0 -1 3 0;
+     0 0 0 -1 0 1;]
+@assert isequal(laplacian(g), L)
 
 ##############################################################################
 #
@@ -59,3 +71,5 @@ g = UndirectedGraph(Set(v1, v2, v3), Set(e1, e2, e3))
 @assert isequal(adjacency_matrix(g), [0 1 1; 1 0 1; 1 1 0])
 @assert isequal(laplacian(g), degree_matrix(g) - adjacency_matrix(g))
 @assert isequal(laplacian(g), [2 -1 -1; -1 2 -1; -1 -1 2])
+
+@assert isweighted(g) == false

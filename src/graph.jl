@@ -4,7 +4,6 @@
 #
 ##############################################################################
 
-# TODO: Debate data structures. Use sets?
 # TODO: Add a Multigraph type
 # TODO: Enforce integrity constraints during construction
 #       * Min vertex ID = 1
@@ -21,6 +20,79 @@ type DirectedGraph
 end
 typealias Digraph DirectedGraph
 typealias Graph Union(UndirectedGraph, DirectedGraph)
+
+# TODO: Use @eval to make these DRYer
+function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
+    n_vertices = length(vertex_list)
+    n_edges = length(edge_list)
+
+    vertex_set = Set{Vertex}()
+    vertices = Array(Vertex, n_vertices)
+    for i in 1:n_vertices
+        v = Vertex(i, utf8(string(vertex_list[i])))
+        add(vertex_set, v)
+        vertices[i] = v
+    end
+
+    edge_set = Set{UndirectedEdge}()
+    for i in 1:n_edges
+        e = UndirectedEdge(vertices[edge_list[i][1]],
+                         vertices[edge_list[i][2]],
+                         utf8(""),
+                         1.0)
+        add(edge_set, e)
+    end
+
+    return UndirectedGraph(vertex_set, edge_set)
+end
+
+function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
+    n_vertices = length(vertex_list)
+    n_edges = length(edge_list)
+
+    vertex_set = Set{Vertex}()
+    vertices = Array(Vertex, n_vertices)
+    for i in 1:n_vertices
+        v = Vertex(i, utf8(string(vertex_list[i])))
+        add(vertex_set, v)
+        vertices[i] = v
+    end
+
+    edge_set = Set{DirectedEdge}()
+    for i in 1:n_edges
+        e = DirectedEdge(vertices[edge_list[i][1]],
+                         vertices[edge_list[i][2]],
+                         utf8(""),
+                         1.0)
+        add(edge_set, e)
+    end
+
+    return DirectedGraph(vertex_set, edge_set)
+end
+
+function UndirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{Int})
+    n_vertices = length(vertex_names)
+    n_edges = size(numeric_edges, 1)
+
+    vertex_set = Set{Vertex}()
+    vertices = Array(Vertex, n_vertices)
+    for i in 1:n_vertices
+        v = Vertex(i, vertex_names[i])
+        add(vertex_set, v)
+        vertices[i] = v
+    end
+
+    edge_set = Set{UndirectedEdge}()
+    for i in 1:n_edges
+        e = UndirectedEdge(vertices[numeric_edges[i, 1]],
+                         vertices[numeric_edges[i, 2]],
+                         utf8(""),
+                         1.0)
+        add(edge_set, e)
+    end
+
+    return UndirectedGraph(vertex_set, edge_set)
+end
 
 function DirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{Int})
     n_vertices = length(vertex_names)
@@ -44,6 +116,43 @@ function DirectedGraph(vertex_names::Vector{UTF8String}, numeric_edges::Matrix{I
     end
 
     return DirectedGraph(vertex_set, edge_set)
+end
+
+function UndirectedGraph{T <: String}(edges::Matrix{T})
+    default_max_vertices = 1_000
+    vertex_names = Array(UTF8String, default_max_vertices)
+    vertex_ids = Dict{UTF8String, Int}()
+
+    next_vertex_id = 1
+    numeric_edges = Array(Int, size(edges))
+
+    for i in 1:size(edges, 1)
+        if length(vertex_names) - 1 <= next_vertex_id
+            grow(vertex_names, 2 * length(vertex_names))
+        end
+
+        out_vertex_name, in_vertex_name = edges[i, 1], edges[i, 2]
+
+        out_vertex_id = get(vertex_ids, out_vertex_name, 0)
+        if out_vertex_id == 0
+            out_vertex_id = next_vertex_id
+            vertex_ids[out_vertex_name] = out_vertex_id
+            vertex_names[out_vertex_id] = out_vertex_name
+            next_vertex_id += 1
+        end
+
+        in_vertex_id = get(vertex_ids, in_vertex_name, 0)
+        if in_vertex_id == 0
+            in_vertex_id = next_vertex_id
+            vertex_ids[in_vertex_name] = in_vertex_id
+            vertex_names[in_vertex_id] = in_vertex_name
+            next_vertex_id += 1
+        end
+
+        numeric_edges[i, 1], numeric_edges[i, 2] = out_vertex_id, in_vertex_id
+    end
+
+    return UndirectedGraph(vertex_names[1:(next_vertex_id - 1)], numeric_edges)
 end
 
 function DirectedGraph{T <: String}(edges::Matrix{T})
@@ -100,6 +209,6 @@ size(g::Graph) = length(edges(g))
 #
 ##############################################################################
 
-function isequal(g1::Graph, e2::Graph)
+function isequal(g1::Graph, g2::Graph)
     return isequal(g1.vertices, g2.vertices) && isequal(g1.edges, g2.edges)
 end

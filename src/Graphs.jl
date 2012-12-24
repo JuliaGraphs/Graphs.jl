@@ -1,5 +1,5 @@
 module Graphs
-    import Base.order, Base.size, Base.repl_show, Base.show, Base.print
+    import Base.order, Base.size, Base.string, Base.repl_show, Base.show, Base.print
     import Base.isequal
 
     export Vertex

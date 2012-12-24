@@ -100,6 +100,11 @@ end
 # eigenvector_centrality()
 # hamiltonian_path()
 # minimum_spanning_tree()
+# istree()
+# isforest()
+# isbipartite()
+# chromatic_number()
+# pagerank()
 
 function adjacency_matrix(g::UndirectedGraph)
     n = order(g)
