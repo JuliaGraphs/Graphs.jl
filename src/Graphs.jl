@@ -24,10 +24,10 @@ module Graphs
 
     export read_edgelist, read_tgf, read_graphml
 
-    require("Graphs/src/vertex.jl")
-    require("Graphs/src/edge.jl")
-    require("Graphs/src/graph.jl")
-    require("Graphs/src/advanced.jl")
-    require("Graphs/src/io.jl")
-    require("Graphs/src/show.jl")
+    include(joinpath("Graphs", "src", "vertex.jl"))
+    include(joinpath("Graphs", "src", "edge.jl"))
+    include(joinpath("Graphs", "src", "graph.jl"))
+    include(joinpath("Graphs", "src", "advanced.jl"))
+    include(joinpath("Graphs", "src", "io.jl"))
+    include(joinpath("Graphs", "src", "show.jl"))
 end
