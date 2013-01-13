@@ -187,7 +187,7 @@ function UndirectedGraph{T <: String}(edges::Matrix{T})
 
     for i in 1:size(edges, 1)
         if length(vertex_labels) - 1 <= next_vertex_id
-            grow(vertex_labels, 2 * length(vertex_labels))
+            grow!(vertex_labels, 2 * length(vertex_labels))
         end
 
         out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
@@ -224,7 +224,7 @@ function DirectedGraph{T <: String}(edges::Matrix{T})
 
     for i in 1:size(edges, 1)
         if length(vertex_labels) - 1 <= next_vertex_id
-            grow(vertex_labels, 2 * length(vertex_labels))
+            grow!(vertex_labels, 2 * length(vertex_labels))
         end
 
         out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
