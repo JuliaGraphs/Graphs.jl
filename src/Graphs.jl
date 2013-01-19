@@ -24,10 +24,10 @@ module Graphs
 
     export read_edgelist, read_tgf, read_graphml
 
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "vertex.jl"))
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "edge.jl"))
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "graph.jl"))
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "advanced.jl"))
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "io.jl"))
-    include(joinpath(julia_pkgdir(), "Graphs", "src", "show.jl"))
+    include("vertex.jl")
+    include("edge.jl")
+    include("graph.jl")
+    include("advanced.jl")
+    include("io.jl")
+    include("show.jl")
 end
