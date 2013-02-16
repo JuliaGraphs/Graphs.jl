@@ -1,7 +1,7 @@
 module Graphs
     import Base.order, Base.size
     import Base.string, Base.repl_show, Base.show, Base.print
-    import Base.isequal, Base.hash, Base.add, Base.del
+    import Base.isequal, Base.hash, Base.add!, Base.del
 
     export Vertex
     export id, label, attributes

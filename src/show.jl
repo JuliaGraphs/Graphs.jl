@@ -31,7 +31,7 @@ function string(g::AbstractGraph)
         if i == total_i
             o *= string(edge)
         else
-            o *= strcat(string(edge), "\n")
+            o *= string(string(edge), "\n")
         end
     end
     return o
