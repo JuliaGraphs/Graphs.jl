@@ -104,5 +104,5 @@ function hash(e::Edge)
   for v in ends(e)
     s *= string(hash(v))
   end
-  hash(strcat(s, hash(label), hash(string(weight)), hash(attributes)))
+  hash(string(s, hash(label), hash(string(weight)), hash(attributes)))
 end

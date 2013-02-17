@@ -85,7 +85,7 @@ function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
         v = Vertex(i, utf8(string(vertex_list[i])))
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -96,7 +96,7 @@ function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
                            utf8(""),
                            1.0,
                            Dict{UTF8String, Any}())
-        add(edge_set, e)
+        add!(edge_set, e)
     end
 
     return UndirectedGraph(vertex_set, edge_set)
@@ -110,7 +110,7 @@ function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
         v = Vertex(i, utf8(string(vertex_list[i])))
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -121,7 +121,7 @@ function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
                          utf8(""),
                          1.0,
                          Dict{UTF8String, Any}())
-        add(edge_set, e)
+        add!(edge_set, e)
     end
 
     return DirectedGraph(vertex_set, edge_set)
@@ -135,7 +135,7 @@ function UndirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matri
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
         v = Vertex(i, vertex_labels[i])
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -146,7 +146,7 @@ function UndirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matri
                          utf8(""),
                          1.0,
                          Dict{UTF8String, Any}())
-        add(edge_set, e)
+        add!(edge_set, e)
     end
 
     return UndirectedGraph(vertex_set, edge_set)
@@ -160,7 +160,7 @@ function DirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{
     vertices = Array(Vertex, n_vertices)
     for i in 1:n_vertices
         v = Vertex(i, vertex_labels[i])
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -171,7 +171,7 @@ function DirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{
                          utf8(""),
                          1.0,
                          Dict{UTF8String, Any}())
-        add(edge_set, e)
+        add!(edge_set, e)
     end
 
     return DirectedGraph(vertex_set, edge_set)
@@ -272,7 +272,7 @@ function UndirectedGraph(a::Matrix{Int})
 
     for i in 1:n_vertices
         v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -284,7 +284,7 @@ function UndirectedGraph(a::Matrix{Int})
                                    utf8(""),
                                    1.0,
                                    Dict{UTF8String, Any}())
-                add(edge_set, e)
+                add!(edge_set, e)
             end
         end
     end
@@ -305,7 +305,7 @@ function DirectedGraph(a::Matrix{Int})
 
     for i in 1:n_vertices
         v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
-        add(vertex_set, v)
+        add!(vertex_set, v)
         vertices[i] = v
     end
 
@@ -317,7 +317,7 @@ function DirectedGraph(a::Matrix{Int})
                                  utf8(""),
                                  1.0,
                                  Dict{UTF8String, Any}())
-                add(edge_set, e)
+                add!(edge_set, e)
             end
         end
     end
@@ -352,16 +352,16 @@ end
 #
 ##############################################################################
 
-function add(g::AbstractGraph, v::Vertex)
-    add(vertices(g), v)
+function add!(g::AbstractGraph, v::Vertex)
+    add!(vertices(g), v)
 end
 
 function del(g::AbstractGraph, v::Vertex)
     del(vertices(g), v)
 end
 
-function add(g::AbstractGraph, v::Edge)
-    add(edges(g), v)
+function add!(g::AbstractGraph, v::Edge)
+    add!(edges(g), v)
 end
 
 function del(g::AbstractGraph, v::Edge)
