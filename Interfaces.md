@@ -1,4 +1,4 @@
-# Interfaces of Graph Package
+# Specification of Interfaces
 
 
 The *Graphs* package supports generic programming via a generic interface system, which consists of a hierarchy of abstract types for graph representation. Each graph type should implement a set of methods to provide basic interfaces for external codes to interact with them. This document outlines the type system and the interface requirements. 
