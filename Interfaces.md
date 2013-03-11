@@ -42,11 +42,11 @@ abstract AbstractAdjacencyMatrix <: AbstractVertexListGraph
     
 2. As Julia does not support multiple inheritance. we adjust the structure of the concept hierarchy. In particular, we make ``AbstractVertexListGraph`` the parent of most other concepts. Below are reasons for this adjustment:
 
-    * It is very rare in practice that a graph class is not able to provide interfaces to enumerate all vertices. Therefore, imposing this requirement for most graph types is reasonable.
+    - It is very rare in practice that a graph class is not able to provide interfaces to enumerate all vertices. Therefore, imposing this requirement for most graph types is reasonable.
     
-    * This change circumvents the need of multiple inheritance.
+    - This change circumvents the need of multiple inheritance.
     
-    * Under special circumstances where it is not feasible to provide a vertex enumeration interface, one can still create new concepts by inheriting from the root type ``AbstractGraph``. 
+    - Under special circumstances where it is not feasible to provide a vertex enumeration interface, one can still create new concepts by inheriting from the root type ``AbstractGraph``. 
     
     
 3. Unlike BGL, we do not use ``property_map``. Arrays and Associative types in Julia provide a more elegant solution in most cases.
