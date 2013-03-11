@@ -37,7 +37,9 @@ abstract AbstractAdjacencyMatrix <: AbstractVertexListGraph
 1. Here is a quote from the document of Boost Graph Library, which justifies the design of this seemingly complex concept hierarchy:
 
     ```
-    The reason for factoring the graph interface into so many concepts is to encourage algorithm interfaces to require and use only the minimum interface of a graph, thereby increasing the reusability of the algorithm.
+    The reason for factoring the graph interface into so many concepts is to encourage algorithm 
+    interfaces to require and use only the minimum interface of a graph, thereby increasing the 
+    reusability of the algorithm.
     ```
     
 2. As Julia does not support multiple inheritance. we adjust the structure of the concept hierarchy. In particular, we make ``AbstractVertexListGraph`` the parent of most other concepts. Below are reasons for this adjustment:
