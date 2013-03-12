@@ -21,5 +21,3 @@ abstract AbstractAdjacencyGraph <: AbstractVertexListGraph
 # all graphs where one can test the existence of an edge (u, v) efficient
 abstract AbstractAdjacencyMatrix <: AbstractVertexListGraph
 
-
-
