@@ -11,43 +11,53 @@
 #
 #################################################
 
-type SimpleAdjacencyList <: AbstractAdjacencyGraph
-    nv::Int
+type SimpleAdjacencyList <: AbstractGraph{Int, (Int, Int)}
     is_directed::Bool
+    nv::Int
     adjlist::Vector{Vector{Int}}
     
-    function SimpleAdjacencyList(adjlist::Vector{Vector{Int}}, is_directed::Bool)
-        new(length(adjlist), is_directed, adjlist)
+    function SimpleAdjacencyList(is_directed::Bool, adjlist::Vector{Vector{Int}})
+        new(is_directed, length(adjlist), adjlist)
     end
     
-    function SimpleAdjacencyList(nv::Integer, is_directed::Bool)
+    function SimpleAdjacencyList(is_directed::Bool, nv::Integer)
         adjlist = Array(Vector{Int}, nv)
         for i = 1 : nv
             adjlist[i] = Int[]
         end
-        new(int(nv), is_directed, adjlist)
+        new(is_directed, int(nv), adjlist)
     end
     
-    SimpleAdjacencyList(adjlist::Vector{Vector{Int}}) = SimpleAdjacencyList(adjlist, true)
-    SimpleAdjacencyList(nv::Integer) = SimpleAdjacencyList(nv, true)
+    function SimpleAdjacencyList(is_directed::Bool, adjs::Vector{Int}...)
+        nv = length(adjs)
+        adjlist = Array(Vector{Int}, nv)
+        for i = 1 : nv
+            adjlist[i] = adjs[i]
+        end
+        new(is_directed, nv, adjlist)
+    end
+    
+    SimpleAdjacencyList(adjlist::Vector{Vector{Int}}) = SimpleAdjacencyList(true, adjlist)
+    SimpleAdjacencyList(nv::Integer) = SimpleAdjacencyList(true, nv)
+    SimpleAdjacencyList(adjs::Vector{Int}...) = SimpleAdjacencyList(true, adjs...)
 end
 
-# required interfaces
+@graph_implements SimpleAdjacencyList vertex_list adjacency_list
 
-vertex_type(g::SimpleAdjacencyList) = Int
-edge_type(g::SimpleAdjacencyList) = (Int, Int)
+    
+# required interfaces
 
 is_directed(g::SimpleAdjacencyList) = g.is_directed
 
 num_vertices(g::SimpleAdjacencyList) = g.nv
 vertices(g::SimpleAdjacencyList) = 1 : g.nv
 
+source(e::(Int, Int), g::SimpleAdjacencyList) = e[1]
+target(e::(Int, Int), g::SimpleAdjacencyList) = e[2]
+
 out_degree(v::Int, g::SimpleAdjacencyList) = length(g.adjlist[v])
 out_neighbors(v::Int, g::SimpleAdjacencyList) = g.adjlist[v]
 
-# additional construction routine
-
-simple_adjlist(adjs::Vector{Int}...) = SimpleSimpleAdjacencyList([adjs...])
 
 # mutation
 

@@ -1,6 +1,15 @@
 module Graphs
     
     export
+        # concept checking
+        implements_vertex_list,
+        implements_edge_list,
+        implements_adjacency_list,
+        implements_incidence_list,
+        implements_bidirectional_adjacency_list,
+        implements_bidirectional_incidence_list,
+        implements_adjacency_matrix,
+        @graph_implements, @graph_requires,
     
         # common interfaces
         vertex_type, edge_type, source, target, edge, 
