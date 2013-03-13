@@ -3,8 +3,8 @@
 using Graphs
 using Test
 
-gd = AdjacencyList(3)
-gu = AdjacencyList(false, 3)
+gd = directed_adjacency_list(3)
+gu = undirected_adjacency_list(3)
 
 # concept test
 
@@ -19,7 +19,7 @@ gu = AdjacencyList(false, 3)
 # graph without edges
 
 @test vertex_type(gd) == Int
-@test edge_type(gd) == (Int, Int)
+@test edge_type(gd) == Edge{Int}
 
 @test num_vertices(gd) == 3
 @test vertices(gd) == 1:3
@@ -59,7 +59,7 @@ end
 
 # another constructor
 
-g = AdjacencyList([2, 3], [3], [2], Int[])
+g = directed_adjacency_list([2, 3], [3], [2], Int[])
 
 @test num_vertices(g) == 4
 @test is_directed(g) == true

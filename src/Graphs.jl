@@ -29,10 +29,11 @@ module Graphs
         add_edge!, add_vertex!, add_edges!, add_vertices!,
     
         # adjacency_list
-        AdjacencyList,
+        AdjacencyList, adjacency_list, 
+        directed_adjacency_list, undirected_adjacency_list,
         
         # incidence_list
-        DirectedIncidenceList, directed_incidence_list
+        IncidenceList, incidence_list, directed_incidence_list
         
     include("concepts.jl")
     include("common.jl")

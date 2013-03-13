@@ -7,7 +7,7 @@ using Graphs
 nv = 5000
 deg = 100
 
-g_adj = AdjacencyList(nv)
+g_adj = directed_adjacency_list(nv)
 for i = 1 : nv
     js = rand(1:nv, deg)
     for j in js
@@ -43,13 +43,13 @@ end
 
 # generic benchmark macro
 
-macro graph_bench(fun, g, repeats)
+macro graph_bench(fun, name, g, repeats)
     quote
         $(fun)($g)  # warming
         et = @elapsed for i = 1 : $repeats
             $(fun)($g)
         end
-        @printf("    On %-25s: elapsed = %.4fs\n", string(typeof($g)), et)
+        @printf("    On %-25s: elapsed = %.4fs\n", $(string(name)), et)
     end
 end
 
@@ -57,11 +57,11 @@ end
 # benchmarks
 
 println("Benchmark of neighbor scan")
-@graph_bench neighbor_scan g_adj 10
-@graph_bench neighbor_scan g_inc 10
+@graph_bench neighbor_scan AdjacencyList g_adj 10
+@graph_bench neighbor_scan IncidenceList g_inc 10
 
 println("Benchmark of out-edge scan")
-@graph_bench outedge_scan g_inc 10
+@graph_bench outedge_scan IncidenceList g_inc 10
 
 
 

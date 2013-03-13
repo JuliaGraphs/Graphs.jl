@@ -24,7 +24,7 @@ g = directed_incidence_list(Edge{Int}, 5)
 # graph without edges
 
 @test vertex_type(g) == Int
-@test edge_type(g) == (Int, Int)
+@test edge_type(g) == Edge{Int}
 
 @test num_vertices(g) == 5
 @test vertices(g) == 1:5

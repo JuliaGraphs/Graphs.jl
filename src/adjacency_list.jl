@@ -2,55 +2,61 @@
 
 #################################################
 #
-#  Adjacency List
+#  AdjacencyList{V, VList, AList}
 #
-#  vertices are implicitly considered as 1:nv
+#   V:          vertex type
+#   VList:      the type of vertex list
+#   AList:      the type of adjacency list
 #
-#  adjacent vertices are stored as a vector of
-#  vectors. 
+#   Let a be an instance of AList, and v be an
+#   instance of v,
+#
+#   Then a[v] should be an iterable container
+#   of V.
 #
 #################################################
 
-type AdjacencyList <: AbstractGraph{Int, (Int, Int)}
+type AdjacencyList{V, VList, AList} <: AbstractGraph{V, Edge{V}}
     is_directed::Bool
-    nv::Int
-    adjlist::Vector{Vector{Int}}
-    
-    function AdjacencyList(is_directed::Bool, adjlist::Vector{Vector{Int}})
-        new(is_directed, length(adjlist), adjlist)
-    end
-    
-    function AdjacencyList(is_directed::Bool, nv::Integer)
-        adjlist = Array(Vector{Int}, nv)
-        for i = 1 : nv
-            adjlist[i] = Int[]
-        end
-        new(is_directed, int(nv), adjlist)
-    end
-    
-    function AdjacencyList(is_directed::Bool, adjs::Vector{Int}...)
-        nv = length(adjs)
-        adjlist = Array(Vector{Int}, nv)
-        for i = 1 : nv
-            adjlist[i] = adjs[i]
-        end
-        new(is_directed, nv, adjlist)
-    end
-    
-    AdjacencyList(adjlist::Vector{Vector{Int}}) = AdjacencyList(true, adjlist)
-    AdjacencyList(nv::Integer) = AdjacencyList(true, nv)
-    AdjacencyList(adjs::Vector{Int}...) = AdjacencyList(true, adjs...)
+    vlist::VList
+    adjlist::AList
 end
+
+typealias SimpleAdjacencyList AdjacencyList{Int, Range1{Int}, Vector{Vector{Int}}}
 
 @graph_implements AdjacencyList vertex_list adjacency_list
 
-    
+# constructing functions
+
+function adjacency_list(is_directed::Bool, nv::Int)
+    adjlist = Array(Vector{Int}, nv)
+    for i = 1 : nv
+        adjlist[i] = Int[]
+    end
+    SimpleAdjacencyList(is_directed, 1:nv, adjlist)
+end
+
+directed_adjacency_list(nv::Int) = adjacency_list(true, nv)
+undirected_adjacency_list(nv::Int) = adjacency_list(false, nv)
+
+function adjacency_list(is_directed::Bool, nbs::Vector{Int}...)
+    nv = length(nbs)
+    adjlist = Array(Vector{Int}, nv)
+    for i = 1 : nv
+        adjlist[i] = nbs[i]
+    end
+    SimpleAdjacencyList(is_directed, 1:nv, adjlist)
+end
+
+directed_adjacency_list(nbs::Vector{Int}...) = adjacency_list(true, nbs...)
+undirected_adjacency_list(nbs::Vector{Int}...) = adjacency_list(false, nbs...)
+
 # required interfaces
 
 is_directed(g::AdjacencyList) = g.is_directed
 
-num_vertices(g::AdjacencyList) = g.nv
-vertices(g::AdjacencyList) = 1 : g.nv
+num_vertices(g::AdjacencyList) = length(g.vlist)
+vertices(g::AdjacencyList) = g.vlist
 
 out_degree(v::Int, g::AdjacencyList) = length(g.adjlist[v])
 out_neighbors(v::Int, g::AdjacencyList) = g.adjlist[v]
@@ -58,7 +64,7 @@ out_neighbors(v::Int, g::AdjacencyList) = g.adjlist[v]
 # mutation
 
 function add_edge!(g::AdjacencyList, u::Int, v::Int)
-    nv::Int = g.nv
+    nv::Int = num_vertices(g)
     if !(u >= 1 && u <= nv && v >= 1 && v <= nv)
         throw(ArgumentError("u or v is not a valid vertex."))
     end

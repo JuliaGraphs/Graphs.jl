@@ -1,55 +1,55 @@
 
 ###########################################################
 #
-#  Directed Incidence List
+#   IncidenceList{V, E, VList, IncList}
 #
-#  vertices are implicitly considered as 1:nv
-#
-#  Each vertex also maintains a list of the indices of
-#  incident edges 
+#   V :         vertex type
+#   E :         edge type
+#   VList :     the type of vertex list
+#   IncList :   the type of incidence list
 #
 ###########################################################
 
-type DirectedIncidenceList{E} <: AbstractGraph{Int, E}
-    nv::Int
-    inclist::Vector{Vector{E}}
-    
-    function DirectedIncidenceList(inclist::Vector{Vector{E}})
-        new(length(inclist), inclist)
-    end
+type IncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
+    is_directed::Bool
+    vlist::VList
+    inclist::IncList
 end
 
-function directed_incidence_list{E}(ty::Type{E}, nv::Int)
+typealias SimpleIncidenceList{E} IncidenceList{Int, E, Range1{Int}, Vector{Vector{E}}}
+
+function incidence_list{E}(ty::Type{E}, is_directed::Bool, nv::Int)
     inclist = Array(Vector{E}, nv)
     for i = 1 : nv
         inclist[i] = Array(E, 0)
     end
-    DirectedIncidenceList{E}(inclist)
+    SimpleIncidenceList{E}(is_directed, 1:nv, inclist)
 end
 
-@graph_implements DirectedIncidenceList vertex_list adjacency_list incidence_list
+directed_incidence_list{E}(ty::Type{E}, nv::Int) = incidence_list(ty, true, nv)
+
+@graph_implements IncidenceList vertex_list adjacency_list incidence_list
 
 # required interfaces
 
-is_directed(g::DirectedIncidenceList) = true
+is_directed(g::IncidenceList) = g.is_directed
 
-num_vertices(g::DirectedIncidenceList) = g.nv
-vertices(g::DirectedIncidenceList) = 1:g.nv
+num_vertices(g::IncidenceList) = length(g.vlist)
+vertices(g::IncidenceList) = g.vlist
 
-out_degree(v::Int, g::DirectedIncidenceList) = length(g.inclist[v])
-out_edges(v::Int, g::DirectedIncidenceList) = g.inclist[v]
+out_degree(v::Int, g::IncidenceList) = length(g.inclist[v])
+out_edges(v::Int, g::IncidenceList) = g.inclist[v]
 
-out_neighbors(v::Int, g::DirectedIncidenceList) = out_neighbors_proxy(g.inclist[v])
+out_neighbors(v::Int, g::IncidenceList) = out_neighbors_proxy(g.inclist[v])
 
 # mutation
 
-function add_edge!{E}(g::DirectedIncidenceList{E}, e::E)
+function add_edge!(g::IncidenceList, e)
     u::Int = source(e)
     v::Int = target(e)
-    nv::Int = g.nv
+    nv::Int = num_vertices(g)
     if !(u >= 1 && u <= nv && v >= 1 && v <= nv)
         throw(ArgumentError("u or v is not a valid vertex."))
     end
     push!(g.inclist[u], e)
 end
-
