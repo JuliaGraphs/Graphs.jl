@@ -3,8 +3,8 @@
 using Graphs
 using Test
 
-gd = SimpleAdjacencyList(3)
-gu = SimpleAdjacencyList(false, 3)
+gd = AdjacencyList(3)
+gu = AdjacencyList(false, 3)
 
 # concept test
 
@@ -59,7 +59,7 @@ end
 
 # another constructor
 
-g = SimpleAdjacencyList([2, 3], [3], [2], Int[])
+g = AdjacencyList([2, 3], [3], [2], Int[])
 
 @test num_vertices(g) == 4
 @test is_directed(g) == true

@@ -1,6 +1,11 @@
 module Graphs
     
+    import Base.start, Base.done, Base.next
+    import Base.length, Base.isempty, Base.getindex
+    
     export
+        AbstractGraph,
+    
         # concept checking
         implements_vertex_list,
         implements_edge_list,
@@ -21,8 +26,14 @@ module Graphs
         add_edge!, add_vertex!, add_edges!, add_vertices!,
     
         # adjacency_list
-        SimpleAdjacencyList
+        AdjacencyList,
+        
+        # incidence_list
+        DirectedIncidenceList
         
     include("concepts.jl")
+    include("iterators.jl")
+    
     include("adjacency_list.jl")
+    include("incidence_list.jl")
 end
