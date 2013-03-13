@@ -23,16 +23,19 @@ module Graphs
         out_degree, out_neighbors, out_edges,
         in_degree, in_neighbors, in_edges,
         
+        # common
+        Edge, IndexedEdge, XEdge, IndexedXEdge,
+        
         add_edge!, add_vertex!, add_edges!, add_vertices!,
     
         # adjacency_list
         AdjacencyList,
         
         # incidence_list
-        DirectedIncidenceList
+        DirectedIncidenceList, directed_incidence_list
         
     include("concepts.jl")
-    include("iterators.jl")
+    include("common.jl")
     
     include("adjacency_list.jl")
     include("incidence_list.jl")

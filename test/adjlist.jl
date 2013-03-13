@@ -38,9 +38,9 @@ end
 
 # graph with edges
 
-add_edge!(gd, (1, 2))
-add_edge!(gd, (1, 3))
-add_edge!(gd, (2, 3))
+add_edge!(gd, Edge(1, 2))
+add_edge!(gd, Edge(1, 3))
+add_edge!(gd, Edge(2, 3))
 
 nbs = {[2, 3], [3], Int[]}
 for i = 1 : 3
@@ -48,8 +48,8 @@ for i = 1 : 3
     @test out_neighbors(i, gd) == nbs[i]
 end
 
-add_edge!(gu, (1, 2))
-add_edge!(gu, (2, 3))
+add_edge!(gu, Edge(1, 2))
+add_edge!(gu, Edge(2, 3))
 
 nbs = {[2], [1, 3], [2]}
 for i = 1 : 3

@@ -52,12 +52,8 @@ is_directed(g::AdjacencyList) = g.is_directed
 num_vertices(g::AdjacencyList) = g.nv
 vertices(g::AdjacencyList) = 1 : g.nv
 
-source(e::(Int, Int), g::AdjacencyList) = e[1]
-target(e::(Int, Int), g::AdjacencyList) = e[2]
-
 out_degree(v::Int, g::AdjacencyList) = length(g.adjlist[v])
 out_neighbors(v::Int, g::AdjacencyList) = g.adjlist[v]
-
 
 # mutation
 
@@ -73,9 +69,5 @@ function add_edge!(g::AdjacencyList, u::Int, v::Int)
     end
 end
 
-add_edge!(g::AdjacencyList, e::(Int, Int)) = add_edge!(g, e[1], e[2])
-
-
-
-
+add_edge!(g::AdjacencyList, e::Edge{Int}) = add_edge!(g, e.source, e.target)
 

@@ -15,11 +15,11 @@ for i = 1 : nv
     end
 end
 
-g_inc = DirectedIncidenceList(nv)
+g_inc = directed_incidence_list(Edge{Int}, nv)
 for i = 1 : nv
     js = rand(1:nv, deg)
     for j in js
-        add_edge!(g_inc, i, j)
+        add_edge!(g_inc, Edge(i, j))
     end
 end
 
