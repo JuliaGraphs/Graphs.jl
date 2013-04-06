@@ -21,6 +21,7 @@ module Graphs
 
     export adjacency_matrix, degree_matrix, outdegree_matrix, indegree_matrix
     export distance_matrix, incidence_matrix, laplacian_matrix, laplacian
+    export signless_laplacian_matrix, signless_laplacian
 
     export read_edgelist, read_tgf, read_graphml
 
