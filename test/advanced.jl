@@ -44,7 +44,15 @@ L = [2 -1 0 0 -1 0;
      0 0 -1 3 -1 -1;
      -1 -1 0 -1 3 0;
      0 0 0 -1 0 1;]
+Q = [2 1 0 0 1 0;
+     1 3 1 0 1 0;
+     0 1 2 1 0 0;
+     0 0 1 3 1 1;
+     1 1 0 1 3 0;
+     0 0 0 1 0 1;]
 @assert isequal(laplacian(g), L)
+@assert isequal(signless_laplacian(g), Q)
+
 
 ##############################################################################
 #
@@ -71,5 +79,7 @@ g = UndirectedGraph(Set(v1, v2, v3), Set(e1, e2, e3))
 @assert isequal(adjacency_matrix(g), [0 1 1; 1 0 1; 1 1 0])
 @assert isequal(laplacian(g), degree_matrix(g) - adjacency_matrix(g))
 @assert isequal(laplacian(g), [2 -1 -1; -1 2 -1; -1 -1 2])
+@assert isequal(signless_laplacian(g), degree_matrix(g) + adjacency_matrix(g))
+@assert isequal(signless_laplacian(g), [2 1 1; 1 2 1; 1 1 2])
 
 @assert isweighted(g) == false
