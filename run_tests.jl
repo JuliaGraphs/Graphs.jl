@@ -1,10 +1,11 @@
-require("Graphs")
+require(joinpath("src","Graphs"))
 using Graphs
 
 my_tests = ["test/vertex.jl",
             "test/edge.jl",
             "test/graph.jl",
             "test/advanced.jl",
+            "test/dot.jl",
             "test/io.jl"]
 
 println("Running tests:")

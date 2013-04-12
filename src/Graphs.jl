@@ -25,10 +25,13 @@ module Graphs
 
     export read_edgelist, read_tgf, read_graphml
 
+    export to_dot
+
     include("vertex.jl")
     include("edge.jl")
     include("graph.jl")
     include("advanced.jl")
     include("io.jl")
     include("show.jl")
+    include("dot.jl")
 end
