@@ -15,15 +15,13 @@ let e1 = UndirectedEdge(1,2)
 end
 
 # Attributes get layed out correctly
-# I'm assuming here that all the graph bits have the same sort of attributes
-# No attributes are layed out for now.
 let v1 = Vertex(1)
-    attr_type = typeof(attributes(v1))
-    attrs = attr_type()
+    attrs = attributes(v1)
     @assert to_dot(attrs) == ""
 
     attrs["foo"] = "bar"
     @assert to_dot(attrs) == "[\"foo\"=\"bar\"]"
+    @assert to_dot(v1) == "1 [\"foo\"=\"bar\"]\n"
 
     attrs["baz"] = "qux"
     @assert contains(["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",

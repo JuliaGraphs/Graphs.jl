@@ -66,6 +66,17 @@ function to_dot(attrs::Dict{UTF8String,Any})
     end
 end
 
-function to_dot(Vertex)
-    ""
+function to_dot(v::Vertex)
+    attrs = attributes(v)
+    if isempty(attrs)
+        ""
+    else
+        "$(id(v)) $(to_dot(attrs))\n"
+    end
+end
+
+function plot(g::AbstractGraph)
+    stdin, proc = writesto(`neato -Tx11`)
+    to_dot(g, stdin)
+    close(stdin)
 end
