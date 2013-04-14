@@ -35,7 +35,7 @@ function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
     g = UndirectedGraph()
 
     # We start by placing the nodes around the edge of a circle.
-    space = linspace(0,2*pi,n)
+    space = linspace(0,2*pi,n+1)
     for i in 1:n
         v = Vertex(i)
         attrs = attributes(v)
@@ -48,8 +48,8 @@ function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
 
     # Then we link each node to the k/2 nodes next to it in each direction.
     for i in 1:n
-        for j in 1:(k/2)
-            add!(g, UndirectedEdge(i, (i+j) % n ))
+        for j in 1:k/2
+            add!(g, UndirectedEdge(i, ((i+j - 1) % n) + 1 ))
         end
     end
 
