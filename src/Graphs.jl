@@ -26,6 +26,7 @@ module Graphs
     export read_edgelist, read_tgf, read_graphml
 
     export to_dot
+    export plot
 
     include("vertex.jl")
     include("edge.jl")
