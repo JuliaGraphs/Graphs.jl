@@ -8,11 +8,11 @@ g = erdos_renyi_graph(n,p)
 @assert length(vertices(g)) == n
 p = 1
 g = erdos_renyi_graph(n,p)
-@assert length(edges(g)) == factorial(n)
+@assert length(edges(g)) == sum(1:n-1)
 
-n = 40
-k = 4
+n = 400
+k = 10
 p = 0.1
 g = watts_strogatz_graph(n,k,p)
-@assert length(edges(g)) = n*k/2
+@assert length(edges(g)) == n*k/2
 @assert length(vertices(g)) == n

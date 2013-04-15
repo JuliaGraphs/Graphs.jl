@@ -70,7 +70,7 @@ function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
                     add!(g,e)
                 end
                 # remove the edge between i and i + j % n
-                del(g,UndirectedEdge(i,(i+j)%n))               
+                del(g,UndirectedEdge(i,((i+j - 1) % n) + 1 ))               
             end
         end
     end
