@@ -15,6 +15,9 @@ edge_type{V,E}(g::AbstractGraph{V,E}) = E
 implements_vertex_list(g::AbstractGraph) = false
 implements_edge_list(g::AbstractGraph) = false
 
+implements_vertex_map(g::AbstractGraph) = false
+implements_edge_map(g::AbstractGraph) = false
+
 implements_bidirectional_adjacency_list(g::AbstractGraph) = false
 implements_bidirectional_incidence_list(g::AbstractGraph) = false
 
@@ -30,7 +33,8 @@ implements_adjacency_matrix(g::AbstractGraph) = false
 # macro to simplify concept declaration
 
 const _supported_graph_concept_symbols = Set(
-    :vertex_list, :edge_list, :adjacency_list, :incidence_list, 
+    :vertex_list, :edge_list, :vertex_map, :edge_map, 
+    :adjacency_list, :incidence_list, 
     :bidirectional_adjacency_list, :bidirectional_incidence_list, 
     :adjacency_matrix )
 
