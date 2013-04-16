@@ -42,7 +42,7 @@ module Graphs
         # graph_visit
         AbstractGraphVisitor,
         discover_vertex!, open_vertex!, examine_neighbor!, examine_edge!, close_vertex!,
-        visited_vertices,
+        visited_vertices, traverse_graph_withlog,
         
         # breadth_first_visit
         BreadthFirst, gdistances, gdistances!

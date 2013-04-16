@@ -57,3 +57,35 @@ function visited_vertices{V,E}(
     traverse_graph(graph, alg, sources, visitor)
     visitor.vertices::Vector{V}
 end
+
+
+# Print visit log 
+
+type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
+    io::S
+end
+
+function discover_vertex!(vis::LogGraphVisitor, v)
+    println(vis.io, "discover vertex: $v")
+    true
+end
+
+open_vertex!(vis::LogGraphVisitor, v) = println(vis.io, "open vertex: $v")
+close_vertex!(vis::LogGraphVisitor, v) = println(vis.io, "close vertex: $v")
+
+function examine_neighbor!(vis::LogGraphVisitor, u, v, color::Int) 
+    println(vis.io, "examine neighbor: $u -> $v (color = $color)")
+end
+
+function examine_edge!(vis::LogGraphVisitor, e, color::Int)
+    println(vis.io, "examine edge: $e")
+end
+
+function traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm, sources, io::IO)
+    visitor = LogGraphVisitor(io)
+    traverse_graph(g, alg, sources, visitor)
+end
+
+traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm, 
+    sources) = traverse_graph_withlog(g, alg, sources, STDOUT)
+
