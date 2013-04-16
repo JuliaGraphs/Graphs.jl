@@ -16,12 +16,12 @@ add_edge!(g, 3, 6)
 @assert num_vertices(g) == 6
 @assert num_edges(g) == 7
 
-vs1 = breadth_first_vertex_list(g, 1)
-ds1 = breadth_first_distances(g, 1)
+vs1 = visited_vertices(g, BreadthFirst(), 1)
+ds1 = gdistances(g, 1)
 @test vs1 == [1, 2, 3, 6, 4, 5]
 @test ds1 == [0, 1, 1, 2, 2, 1]
 
-vs2 = breadth_first_vertex_list(g, [1, 3])
-ds2 = breadth_first_distances(g, [1, 3])
+vs2 = visited_vertices(g, BreadthFirst(), [1, 3])
+ds2 = gdistances(g, [1, 3])
 @test vs2 == [1, 3, 2, 6, 5, 4]
 @test ds2 == [0, 1, 0, 2, 1, 1]

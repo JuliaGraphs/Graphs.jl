@@ -39,11 +39,13 @@ module Graphs
         IncidenceList, incidence_list, 
         directed_incidence_list, undirected_incidence_list,
         
-        # breadth_first_visit
-        AbstractBFSVisitor, 
-        discover_vertex!, open_vertex!, examine_edge!, close_vertex!,
-        breadth_first_visit, breadth_first_vertex_list, breadth_first_distances
+        # graph_visit
+        AbstractGraphVisitor,
+        discover_vertex!, open_vertex!, examine_neighbor!, examine_edge!, close_vertex!,
+        visited_vertices,
         
+        # breadth_first_visit
+        BreadthFirst, gdistances, gdistances!
         
         
     include("concepts.jl")
@@ -52,5 +54,6 @@ module Graphs
     include("adjacency_list.jl")
     include("incidence_list.jl")
     
+    include("graph_visit.jl")
     include("breadth_first_visit.jl")
 end
