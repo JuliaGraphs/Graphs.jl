@@ -84,31 +84,3 @@ start(proxy::OutNeighborsProxy) = 1
 next(proxy::OutNeighborsProxy, s::Int) = (proxy[s], s+1)
 done(proxy::OutNeighborsProxy, s::Int) =  s > proxy.len
 
-
-#################################################
-#
-#  creation of property maps
-#
-################################################
-
-immutable RangeMap{I<:Integer, T}
-    idx0::I     # the index corresponding to the 0-th element
-    values::Vector{T}
-    
-    RangeMap(rgn::Range1{I}, values::Vector{T}) = new(rgn[1] - 1, values)
-end
-
-getindex{I<:Integer,T}(map::RangeMap{I,T}, i::I) = map.values[i-map.idx0]
-
-function create_map_from_list{I<:Integer,T}(vs::Range1{I}, v0::T)
-    RangeMap(vs, fill(v0, length(vs)))                
-end
-
-function create_map_from_list{T}(vs, v0::T)
-    K = eltype(vs)
-    Dict{K,T}()
-end
-
-
-
-

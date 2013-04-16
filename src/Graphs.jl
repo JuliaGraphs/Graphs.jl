@@ -1,6 +1,5 @@
-using DataStructures
-
 module Graphs
+    using DataStructures
     
     import Base.start, Base.done, Base.next
     import Base.length, Base.isempty, Base.getindex
@@ -38,7 +37,13 @@ module Graphs
         
         # incidence_list
         IncidenceList, incidence_list, 
-        directed_incidence_list, undirected_incidence_list
+        directed_incidence_list, undirected_incidence_list,
+        
+        # breadth_first_visit
+        AbstractBFSVisitor, 
+        discover_vertex!, open_vertex!, examine_edge!, close_vertex!,
+        breadth_first_visit, breadth_first_vertex_list, breadth_first_distances
+        
         
         
     include("concepts.jl")
@@ -46,4 +51,6 @@ module Graphs
     
     include("adjacency_list.jl")
     include("incidence_list.jl")
+    
+    include("breadth_first_visit.jl")
 end
