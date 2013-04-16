@@ -12,9 +12,10 @@ add_edge!(g, 2, 4)
 add_edge!(g, 2, 5)
 add_edge!(g, 3, 5)
 add_edge!(g, 3, 6)
+add_edge!(g, 5, 1)
 
 @assert num_vertices(g) == 6
-@assert num_edges(g) == 7
+@assert num_edges(g) == 8
 
 vs1 = visited_vertices(g, BreadthFirst(), 1)
 ds1 = gdistances(g, 1)

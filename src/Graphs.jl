@@ -41,11 +41,15 @@ module Graphs
         
         # graph_visit
         AbstractGraphVisitor,
-        discover_vertex!, open_vertex!, examine_neighbor!, examine_edge!, close_vertex!,
+        discover_vertex!, open_vertex!, close_vertex!,
+        examine_neighbor!, examine_edge!, 
         visited_vertices, traverse_graph_withlog,
         
         # breadth_first_visit
-        BreadthFirst, gdistances, gdistances!
+        BreadthFirst, gdistances, gdistances!, 
+        
+        # depth_first_visit
+        DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs
         
         
     include("concepts.jl")
@@ -56,4 +60,5 @@ module Graphs
     
     include("graph_visit.jl")
     include("breadth_first_visit.jl")
+    include("depth_first_visit.jl")
 end
