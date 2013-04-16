@@ -37,9 +37,7 @@ function breadth_first_visit_impl!(
     queue,                  # an (initialized) queue that stores the active vertices    
     colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
     visitor::AbstractBFSVisitor)    # the visitor
-    
-    @graph_requires graph adjacency_list
-    
+            
     while !isempty(queue)
         u = dequeue!(queue)
         open_vertex!(visitor, u)
@@ -68,6 +66,8 @@ function breadth_first_visit{V,E}(
     graph::AbstractGraph{V,E}, s::V, visitor::AbstractBFSVisitor; 
     colormap=nothing)
     
+    @graph_requires graph adjacency_list vertex_map
+    
     if colormap == nothing
         colormap = zeros(Int, num_vertices(graph))       
     end
@@ -85,6 +85,8 @@ end
 function breadth_first_visit{V,E}(
     graph::AbstractGraph{V,E}, sources::AbstractVector{V}, visitor::AbstractBFSVisitor; 
     colormap=nothing)
+    
+    @graph_requires graph adjacency_list vertex_map
     
     if colormap == nothing
         colormap = zeros(Int, num_vertices(graph)) 
