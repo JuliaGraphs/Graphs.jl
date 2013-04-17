@@ -32,6 +32,9 @@ edge_index(e::Edge) = e.index
 source(e::Edge) = e.source
 target(e::Edge) = e.target
 
+source{V}(e::Edge{V}, g::AbstractGraph{V}) = e.source
+target{V}(e::Edge{V}, g::AbstractGraph{V}) = e.target
+
 immutable XEdge{V,X}
     index::Int
     source::V
@@ -42,6 +45,9 @@ end
 edge_index(e::XEdge) = e.index
 source(e::XEdge) = e.source
 target(e::XEdge) = e.target
+
+source{V}(e::XEdge{V}, g::AbstractGraph{V}) = e.source
+target{V}(e::XEdge{V}, g::AbstractGraph{V}) = e.target
 
 
 #################################################

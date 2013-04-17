@@ -49,8 +49,13 @@ module Graphs
         BreadthFirst, gdistances, gdistances!, 
         
         # depth_first_visit
-        DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs
+        DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
         
+        # dijkstra_spath
+        DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
+        dijkstra_shortest_paths!, dijkstra_shortest_paths, 
+        dijkstra_shortest_paths_withlog
+                
         
     include("concepts.jl")
     include("common.jl")
@@ -61,4 +66,6 @@ module Graphs
     include("graph_visit.jl")
     include("breadth_first_visit.jl")
     include("depth_first_visit.jl")
+    
+    include("dijkstra_spath.jl")
 end
