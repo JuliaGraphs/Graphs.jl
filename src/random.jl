@@ -1,5 +1,5 @@
 
-# Generate a random graph with n verticies where each edge is included with probability p.
+# Generate a random graph with n vertices where each edge is included with probability p.
 function erdos_renyi_graph(n::Integer, p::Real; directed=false, loops=false)
     if(directed)
         edge_type = DirectedEdge
@@ -9,9 +9,9 @@ function erdos_renyi_graph(n::Integer, p::Real; directed=false, loops=false)
         graph_type = UndirectedGraph
     end
 
-    verticies = Set{Vertex}();
+    vertices = Vertex[];
     for i=1:n
-        add!(verticies,Vertex(i))
+        push!(vertices,Vertex(i))
     end
 
     edges = Set{edge_type}();
@@ -19,22 +19,25 @@ function erdos_renyi_graph(n::Integer, p::Real; directed=false, loops=false)
     for i=1:n
         for j=1:n
             if(rand() <= p && (i != j || loops))
-                add!(edges, edge_type(i,j))
+                add!(edges, edge_type(vertices[i],vertices[j]))
             end
         end
     end
-    return graph_type(verticies, edges)
+    vertex_set = Set{Vertex}();
+    add_each!(vertex_set, vertices)
+    return graph_type(vertex_set, edges)
 end
 
 # Generate a 'small world' random graph based on the Watts-Strogatz model.
 # Written with much reference to the implementation from GraphStream <http://graphstream-project.org>.
-# The resulting graph has n verticies, 
+# The resulting graph has n vertices, 
 #   Each vertex has a base degree of k  (n > k, k >= 2, k must be even.)
 #   There is a beta chance of each edge being 'rewired'
 function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
     g = UndirectedGraph()
 
     # We start by placing the nodes around the edge of a circle.
+    vertices = Vertex[];
     space = linspace(0,2*pi,n+1)
     for i in 1:n
         v = Vertex(i)
@@ -43,13 +46,14 @@ function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
         y = round((sin(space[i]) + 1)*100,2)
         attrs["pos"] = "$(x),$(y)"
         add!(g,v)
+        push(vertices,v)
     end
 
 
     # Then we link each node to the k/2 nodes next to it in each direction.
     for i in 1:n
         for j in 1:k/2
-            add!(g, UndirectedEdge(i, ((i+j - 1) % n) + 1 ))
+            add!(g, UndirectedEdge(vertices[i], vertices[((i+j - 1) % n) + 1 ]))
         end
     end
 
@@ -70,7 +74,7 @@ function watts_strogatz_graph(n::Integer, k::Integer, beta::Real)
                     add!(g,e)
                 end
                 # remove the edge between i and i + j % n
-                del(g,UndirectedEdge(i,((i+j - 1) % n) + 1 ))               
+                del(g,UndirectedEdge(vertices[i],vertices[((i+j - 1) % n) + 1] ))               
             end
         end
     end
