@@ -147,7 +147,9 @@ function dijkstra_shortest_paths!{V, D, Heap, H}(
     edge_dists::Vector{D},                  # distances associated with edges
     visitor::AbstractDijkstraVisitor,       # visitor object
     sources::AbstractVector{V},             # the sources
-    state::DijkstraStates{V,D,Heap,H})      # the states                   
+    state::DijkstraStates{V,D,Heap,H})      # the states   
+    
+    @graph_requires graph incidence_list                
 
     # get state fields
     

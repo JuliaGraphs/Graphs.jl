@@ -51,6 +51,9 @@ module Graphs
         # depth_first_visit
         DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
         
+        # connected_components
+        connected_components,
+        
         # dijkstra_spath
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
         dijkstra_shortest_paths!, dijkstra_shortest_paths, 
@@ -67,5 +70,6 @@ module Graphs
     include("breadth_first_visit.jl")
     include("depth_first_visit.jl")
     
+    include("connected_components.jl")
     include("dijkstra_spath.jl")
 end
