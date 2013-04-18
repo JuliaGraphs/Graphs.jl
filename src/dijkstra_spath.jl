@@ -1,4 +1,4 @@
-# Dijkstra's algorithm
+# Dijkstra's algorithm for single-source shortest path
 
 ###################################################################
 #
@@ -133,9 +133,9 @@ function process_neighbors!{V,D,Heap,H}(
                 dists[iv] = dv
                 parents[iv] = u 
                 
-                # update the value on the heap
-                update!(heap, hmap[iv], DijkstraHEntry(v, dv))
+                # update the value on the heap                
                 update_vertex!(visitor, u, v, dv)
+                update!(heap, hmap[iv], DijkstraHEntry(v, dv))
             end
         end
     end  
@@ -144,9 +144,9 @@ end
 
 function dijkstra_shortest_paths!{V, D, Heap, H}(
     graph::AbstractGraph{V},                # the graph
-    edge_dists::Vector{D},                  # distances associated with edges
-    visitor::AbstractDijkstraVisitor,       # visitor object
+    edge_dists::Vector{D},                  # distances associated with edges    
     sources::AbstractVector{V},             # the sources
+    visitor::AbstractDijkstraVisitor,       # visitor object
     state::DijkstraStates{V,D,Heap,H})      # the states   
     
     @graph_requires graph incidence_list                
@@ -208,9 +208,8 @@ function dijkstra_shortest_paths{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V, default_parent::V; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
 
-    sources = [s]
     state = create_dijkstra_states(graph, D, default_parent)    
-    dijkstra_shortest_paths!(graph, edge_dists, visitor, sources, state)
+    dijkstra_shortest_paths!(graph, edge_dists, [s], visitor, state)
 end
 
 function dijkstra_shortest_paths{V,D}(
@@ -218,7 +217,7 @@ function dijkstra_shortest_paths{V,D}(
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     
     state = create_dijkstra_states(graph, D, default_parent)    
-    dijkstra_shortest_paths!(graph, edge_dists, visitor, sources, state)
+    dijkstra_shortest_paths!(graph, edge_dists, sources, visitor, state)
 end
 
 function dijkstra_shortest_paths_withlog{V,D}(
