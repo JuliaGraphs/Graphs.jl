@@ -2,7 +2,7 @@ module Graphs
     using DataStructures
     
     import Base.start, Base.done, Base.next
-    import Base.length, Base.isempty, Base.getindex
+    import Base.length, Base.isempty, Base.getindex, Base.isless
     
     export
         AbstractGraph,
@@ -61,7 +61,10 @@ module Graphs
         
         # prim_mst
         PrimStates, create_prim_states, AbstractPrimVisitor,
-        prim_minimum_spantree!, prim_minimum_spantree, prim_minimum_spantree_withlog
+        prim_minimum_spantree!, prim_minimum_spantree, prim_minimum_spantree_withlog,
+        
+        # kruskal_mst
+        kruskal_select, kruskal_minimum_spantree
                 
         
     include("concepts.jl")
@@ -77,5 +80,6 @@ module Graphs
     include("connected_components.jl")
     include("dijkstra_spath.jl")
     include("prim_mst.jl")
+    include("kruskal_mst.jl")
 end
 

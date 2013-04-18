@@ -44,3 +44,12 @@ end
 @test verify_redge(r[4], (2, 5), 7.)
 @test verify_redge(r[5], (5, 3), 3.)
 @test verify_redge(r[6], (5, 7), 9.)
+
+r = kruskal_minimum_spantree(g, eweights)
+
+@test verify_redge(r[1], (3, 5), 3.)
+@test verify_redge(r[2], (1, 4), 5.)
+@test verify_redge(r[3], (4, 6), 6.)
+@test verify_redge(r[4], (1, 2), 7.)
+@test verify_redge(r[5], (2, 5), 7.)
+@test verify_redge(r[6], (5, 7), 9.)

@@ -109,8 +109,7 @@ immutable WeightedEdge{E,W}
     weight::W
 end
 
-< {E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight < b.weight
-> {E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight > b.weight
+isless{E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight < b.weight
 
 function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
     
