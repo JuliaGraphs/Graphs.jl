@@ -40,10 +40,10 @@ module Graphs
         directed_incidence_list, undirected_incidence_list,
         
         # graph_visit
-        AbstractGraphVisitor,
+        AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
         discover_vertex!, open_vertex!, close_vertex!,
         examine_neighbor!, examine_edge!, 
-        visited_vertices, traverse_graph_withlog,
+        visited_vertices, traverse_graph, traverse_graph_withlog,
         
         # breadth_first_visit
         BreadthFirst, gdistances, gdistances!, 

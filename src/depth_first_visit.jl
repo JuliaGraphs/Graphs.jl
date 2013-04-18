@@ -27,6 +27,7 @@ function depth_first_visit_impl!(
             
             if v_color == 0
                 found_new_vertex = true
+                colormap[vertex_index(v, graph)] = 1
                 if !discover_vertex!(visitor, v)
                     return
                 end                

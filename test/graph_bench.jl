@@ -10,16 +10,27 @@ deg = 100
 g_adj = directed_adjacency_list(nv)
 g_inc = directed_incidence_list(nv)
 
-for i = 1 : nv
-    js = rand(1:nv, deg)
-    for j in js
-        add_edge!(g_adj, i, j)
-        add_edge!(g_inc, i, j)
+
+shuff = [1:nv]
+
+for u = 1 : nv                
+    for j in 1 :  deg
+        
+        v = u
+        
+        while v == u
+            k = rand(j+1:nv)
+            shuff[j], shuff[k] = shuff[k], shuff[j]
+            v = shuff[j]
+        end        
+        add_edge!(g_adj, u, v)
+        add_edge!(g_inc, u, v)
     end
 end
 
+eweights = rand(num_edges(g_inc))
 
-# test the performance of scanning all neighbors
+# test tasks
 
 function neighbor_scan(g::AbstractGraph)
     for v in vertices(g)
@@ -36,6 +47,19 @@ function outedge_scan(g::AbstractGraph)
         end
     end
 end
+
+function bf_traverse(g::AbstractGraph)
+    traverse_graph(g, BreadthFirst(), 1, TrivialGraphVisitor())
+end
+
+function df_traverse(g::AbstractGraph)
+    traverse_graph(g, DepthFirst(), 1, TrivialGraphVisitor())
+end
+
+function run_dijkstra(g::AbstractGraph)
+    dijkstra_shortest_paths(g, eweights, 1)
+end
+
 
 # generic benchmark macro
 
@@ -61,5 +85,14 @@ println("Benchmark of neighbor scan")
 println("Benchmark of out-edge scan")
 @graph_bench outedge_scan IncidenceList g_inc 50
 
+println("Benchmark of breadth-first traversal")
+@graph_bench bf_traverse AdjacencyList g_adj 10
+@graph_bench bf_traverse IncidenceList g_inc 10
 
+println("Benchmark of depth-first traversal")
+@graph_bench df_traverse AdjacencyList g_adj 5
+@graph_bench df_traverse IncidenceList g_inc 2
+
+println("Benchmark of Dijkstra shortest paths")
+@graph_bench run_dijkstra IncidenceList g_inc 1
 

@@ -21,6 +21,10 @@ examine_edge!(vis::AbstractGraphVisitor, e, color::Int) = nothing
 close_vertex!(vis::AbstractGraphVisitor, v) = nothing
 
 
+type TrivialGraphVisitor <: AbstractGraphVisitor
+end
+
+
 # This is the common base for BreadthFirst and DepthFirst
 abstract AbstractGraphVisitAlgorithm
 
