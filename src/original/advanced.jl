@@ -187,3 +187,16 @@ function laplacian_matrix(g::DirectedGraph, direction::Symbol)
 end
 laplacian_matrix(g::DirectedGraph) = laplacian_matrix(g, :out)
 const laplacian = laplacian_matrix
+
+signless_laplacian_matrix(g::UndirectedGraph) = degree_matrix(g) + adjacency_matrix(g)
+function signless_laplacian_matrix(g::DirectedGraph, direction::Symbol)
+    if direction == :out
+        outdegree_matrix(g) + adjacency_matrix(g)
+    elseif direction == :in
+        indegree_matrix(g) + adjacency_matrix(g)
+    else
+        error("direction must be :out or :in")
+    end
+end
+signless_laplacian_matrix(g::DirectedGraph) = signless_laplacian_matrix(g, :out)
+const signless_laplacian = signless_laplacian_matrix
