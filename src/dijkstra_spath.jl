@@ -23,9 +23,12 @@ end
 
 # create Dijkstra states
 
-function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, D::Type{D}, default_parent::V)
+function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, D::Type{D})
     n = num_vertices(g)
-    parents = fill(default_parent, n)
+    parents = Array(V, n)
+    for v in vertices(g)
+        parents[vertex_index(v, g)] = v
+    end    
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry{V,D})
@@ -205,29 +208,29 @@ end
 # Convenient functions
 
 function dijkstra_shortest_paths{V,D}(
-    graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V, default_parent::V; 
+    graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
 
-    state = create_dijkstra_states(graph, D, default_parent)    
+    state = create_dijkstra_states(graph, D)    
     dijkstra_shortest_paths!(graph, edge_dists, [s], visitor, state)
 end
 
 function dijkstra_shortest_paths{V,D}(
-    graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V}, default_parent::V; 
+    graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V}; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     
-    state = create_dijkstra_states(graph, D, default_parent)    
+    state = create_dijkstra_states(graph, D)    
     dijkstra_shortest_paths!(graph, edge_dists, sources, visitor, state)
 end
 
 function dijkstra_shortest_paths_withlog{V,D}(
-    graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V, default_parent::V)
-    dijkstra_shortest_paths(graph, edge_dists, s, default_parent, visitor=LogDijkstraVisitor(STDOUT))
+    graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V)
+    dijkstra_shortest_paths(graph, edge_dists, s, visitor=LogDijkstraVisitor(STDOUT))
 end
 
 
 function dijkstra_shortest_paths_withlog{V,D}(
-    graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V}, default_parent::V)    
-    dijkstra_shortest_paths(graph, edge_dists, sources, default_parent, visitor=LogDijkstraVisitor(STDOUT))
+    graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V})    
+    dijkstra_shortest_paths(graph, edge_dists, sources, visitor=LogDijkstraVisitor(STDOUT))
 end
 
