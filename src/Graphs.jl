@@ -64,7 +64,10 @@ module Graphs
         prim_minimum_spantree!, prim_minimum_spantree, prim_minimum_spantree_withlog,
         
         # kruskal_mst
-        kruskal_select, kruskal_minimum_spantree
+        kruskal_select, kruskal_minimum_spantree,
+        
+        # floyd_warshall
+        floyd_warshall!, floyd_warshall
                 
         
     include("concepts.jl")
@@ -81,5 +84,6 @@ module Graphs
     include("dijkstra_spath.jl")
     include("prim_mst.jl")
     include("kruskal_mst.jl")
+    include("floyd_warshall.jl")
 end
 
