@@ -25,10 +25,7 @@ end
 
 function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, D::Type{D})
     n = num_vertices(g)
-    parents = Array(V, n)
-    for v in vertices(g)
-        parents[vertex_index(v, g)] = v
-    end    
+    parents = Array(V, n)   
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry{V,D})
