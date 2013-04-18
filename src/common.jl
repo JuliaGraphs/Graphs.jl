@@ -9,12 +9,13 @@
 
 vertex_index(v::Integer) = v
 
-immutable XVertex{X}
+immutable KeyVertex{K}
     index::Int
-    info::X
+    key::K
 end
 
-vertex_index(v::XVertex) = v.index
+vertex_index(v::KeyVertex) = v.index
+
 
 #################################################
 #
@@ -27,6 +28,8 @@ immutable Edge{V}
     source::V
     target::V
 end
+
+typealias IEdge Edge{Int}
 
 edge_index(e::Edge) = e.index
 source(e::Edge) = e.source

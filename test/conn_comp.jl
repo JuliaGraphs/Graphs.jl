@@ -3,7 +3,7 @@
 using Graphs
 using Base.Test
 
-g = undirected_adjacency_list(8)
+g = simple_adjlist(8, is_directed=false)
 
 edges = [(1, 2), (1, 3), (2, 4), (3, 4), (5, 6), (6, 7), (7, 5)]
 

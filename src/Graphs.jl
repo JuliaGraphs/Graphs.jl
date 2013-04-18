@@ -27,13 +27,14 @@ module Graphs
         in_degree, in_neighbors, in_edges,        
         
         # common
-        Edge, WeightedEdge, collect_edges, collect_weighted_edges,
+        KeyVertex, Edge, WeightedEdge, 
+        collect_edges, collect_weighted_edges,
         
         add_edge!, add_vertex!, add_edges!, add_vertices!,
     
         # adjacency_list
-        AdjacencyList, adjacency_list, 
-        directed_adjacency_list, undirected_adjacency_list,
+        GenericAdjacencyList, SimpleAdjacencyList, AdjacencyList, 
+        simple_adjlist, adjlist,
         
         # incidence_list
         IncidenceList, incidence_list, 

@@ -3,8 +3,8 @@
 using Graphs
 using Base.Test
 
-gd = directed_adjacency_list(3)
-gu = undirected_adjacency_list(3)
+gd = simple_adjlist(3)
+gu = simple_adjlist(3; is_directed=false)
 
 # concept test
 
@@ -68,7 +68,7 @@ end
 
 # another constructor
 
-g = directed_adjacency_list([2, 3], [3], [2], Int[])
+g = simple_adjlist({[2, 3], [3], [2], Int[]})
 
 @test num_vertices(g) == 4
 @test num_edges(g) == 4
@@ -80,4 +80,34 @@ for i = 1 : 3
     @test out_neighbors(i, g) == nbs[i]
 end
 
+# adjacency list with key vertices
+
+g = adjlist(KeyVertex{ASCIIString})
+
+vs = [  add_vertex!(g, "a"), 
+        add_vertex!(g, "b"), 
+        add_vertex!(g, "c") ]
+
+@test num_vertices(g) == 3
+
+for i = 1 : 3
+    v = vs[i]
+    @test vertices(g)[i] == v
+    @test v.index == i
+    @test out_degree(v, g) == 0
+end
+
+add_edge!(g, vs[1], vs[2])
+add_edge!(g, vs[1], vs[3])
+add_edge!(g, vs[2], vs[3])
+
+@test num_edges(g) == 3
+
+@test out_degree(vs[1], g) == 2
+@test out_degree(vs[2], g) == 1
+@test out_degree(vs[3], g) == 0
+
+@test out_neighbors(vs[1], g) == [vs[2], vs[3]]
+@test out_neighbors(vs[2], g) == [vs[3]]
+@test isempty(out_neighbors(vs[3], g))
 

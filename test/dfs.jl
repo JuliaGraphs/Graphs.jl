@@ -3,7 +3,7 @@
 using Graphs
 using Base.Test
 
-g = directed_adjacency_list(6)
+g = simple_adjlist(6)
 
 add_edge!(g, 1, 2)
 add_edge!(g, 1, 3)
@@ -13,7 +13,7 @@ add_edge!(g, 2, 5)
 add_edge!(g, 3, 5)
 add_edge!(g, 3, 6)
 
-g2 = directed_adjacency_list(6)
+g2 = simple_adjlist(6)
 
 add_edge!(g2, 1, 2)
 add_edge!(g2, 1, 3)
