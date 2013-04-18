@@ -57,7 +57,11 @@ module Graphs
         # dijkstra_spath
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
         dijkstra_shortest_paths!, dijkstra_shortest_paths, 
-        dijkstra_shortest_paths_withlog
+        dijkstra_shortest_paths_withlog, 
+        
+        # prim_mst
+        PrimStates, create_prim_states, AbstractPrimVisitor,
+        prim_minimum_spantree!, prim_minimum_spantree, prim_minimum_spantree_withlog
                 
         
     include("concepts.jl")
@@ -72,4 +76,6 @@ module Graphs
     
     include("connected_components.jl")
     include("dijkstra_spath.jl")
+    include("prim_mst.jl")
 end
+
