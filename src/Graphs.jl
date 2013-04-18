@@ -27,7 +27,7 @@ module Graphs
         in_degree, in_neighbors, in_edges,        
         
         # common
-        Edge, IndexedEdge, XEdge, IndexedXEdge,
+        Edge, WeightedEdge, collect_edges, collect_weighted_edges,
         
         add_edge!, add_vertex!, add_edges!, add_vertices!,
     

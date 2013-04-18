@@ -69,6 +69,8 @@ add_edge!(gd, 4, 5)
 @test collect(out_neighbors(4, gd)) == [5]
 @test collect(out_neighbors(5, gd)) == Int[]
 
+@test collect_edges(gd) == [Edge(1,1,2), Edge(3,1,3), Edge(2,2,4), Edge(5,2,3), Edge(4,3,4), Edge(6,4,5)]
+
 
 #################################################
 #

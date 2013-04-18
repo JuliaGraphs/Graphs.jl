@@ -33,9 +33,14 @@ end
 r = prim_minimum_spantree(g, eweights, 1)
 @test length(r) == 6
 
-@test r[1] == (Edge(3, 1, 4), 5.)
-@test r[2] == (Edge(8, 4, 6), 6.)
-@test r[3] == (Edge(1, 1, 2), 7.)
-@test r[4] == (Edge(5, 2, 5), 7.)
-@test r[5] == (Edge(6, 5, 3), 3.)
-@test r[6] == (Edge(10, 5, 7), 9.)
+function verify_redge(r, p, w)
+    e = r.edge
+    return e.source == p[1] && e.target == p[2] && r.weight == w
+end
+
+@test verify_redge(r[1], (1, 4), 5.)
+@test verify_redge(r[2], (4, 6), 6.)
+@test verify_redge(r[3], (1, 2), 7.)
+@test verify_redge(r[4], (2, 5), 7.)
+@test verify_redge(r[5], (5, 3), 3.)
+@test verify_redge(r[6], (5, 7), 9.)

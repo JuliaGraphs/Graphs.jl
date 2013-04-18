@@ -69,11 +69,11 @@ end
 # default visitor
 
 type PrimVisitor{E,W} <: AbstractPrimVisitor    
-    wedges::Vector{(E, W)}
+    wedges::Vector{WeightedEdge{E,W}}
 end
 
 function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, W::Type{W})    
-    wedges = Array((E,W), 0)
+    wedges = Array(WeightedEdge{E,W}, 0)
     n = num_vertices(g)
     if n > 1
         sizehint(wedges, n-1)
@@ -82,7 +82,7 @@ function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, W::Type{W})
 end
 
 function include_vertex!{V,E,W}(vis::PrimVisitor{E,W}, v::V, e::E, w::W)
-    push!(vis.wedges, (e, w))
+    push!(vis.wedges, WeightedEdge(e, w))
     true
 end
 
