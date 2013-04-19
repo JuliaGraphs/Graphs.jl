@@ -20,14 +20,14 @@ module Graphs
         @graph_implements, @graph_requires,
     
         # common interfaces
-        vertex_type, edge_type, source, target, edge, 
+        vertex_type, edge_type, source, target, edge, revedge,
         is_directed, is_mutable, vertex_index, edge_index,
         num_vertices, vertices, num_edges, edges, 
         out_degree, out_neighbors, out_edges,
         in_degree, in_neighbors, in_edges,        
         
         # common
-        KeyVertex, Edge, WeightedEdge, 
+        KeyVertex, Edge, WeightedEdge, ExVertex, ExEdge, 
         collect_edges, collect_weighted_edges,
         
         add_edge!, add_vertex!, add_edges!, add_vertices!,
@@ -39,6 +39,9 @@ module Graphs
         # incidence_list
         GenericIncidenceList, SimpleIncidenceList, IncidenceList, 
         simple_inclist, inclist,
+        
+        # graph
+        GenericGraph, SimpleGraph, Graph, simple_graph, graph,
         
         # graph_visit
         AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
@@ -76,6 +79,7 @@ module Graphs
     
     include("adjacency_list.jl")
     include("incidence_list.jl")
+    include("graph.jl")
     
     include("graph_visit.jl")
     include("breadth_first_visit.jl")

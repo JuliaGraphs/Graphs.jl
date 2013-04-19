@@ -16,6 +16,15 @@ end
 
 vertex_index(v::KeyVertex) = v.index
 
+type ExVertex
+    index::Int
+    label::UTF8String
+    attributes::Dict{UTF8String,Any}
+    
+    ExVertex(i::Int, label::String) = new(i, label, Dict{UTF8String,Any}())    
+end
+
+vertex_index(v::ExVertex) = v.index
 
 #################################################
 #
@@ -35,8 +44,39 @@ edge_index(e::Edge) = e.index
 source(e::Edge) = e.source
 target(e::Edge) = e.target
 
+revedge{V}(e::Edge{V}) = Edge(e.index, e.target, e.source)
+
 source{V}(e::Edge{V}, g::AbstractGraph{V}) = e.source
 target{V}(e::Edge{V}, g::AbstractGraph{V}) = e.target
+
+type ExEdge{V}
+    index::Int
+    source::V
+    target::V
+    weight::Float64
+    attributes::Dict{UTF8String,Any}
+    
+    function ExEdge(idx::Int, s::V, t::V)
+        attrs = Dict{UTF8String,Any}()
+        new(idx, s, t, 0., attrs)
+    end
+    
+    function ExEdge(idx::Int, s::V, t::V, w::Float64)
+        attrs = Dict{UTF8String,Any}()
+        new(idx, s, t, w, attrs)
+    end
+    
+    function ExEdge(idx::Int, s::V, t::V, w::Float64, attrs::Dict{UTF8String,Any})
+        attrs = Dict{UTF8String,Any}()
+        new(idx, s, t, w, attrs)
+    end
+end
+
+source(e::ExEdge) = e.source
+target(e::ExEdge) = e.target
+
+edge_index(e::ExEdge) = e.index
+revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.weight, e.attributes)
 
 
 #################################################
@@ -60,7 +100,6 @@ getindex(proxy::VecProxy, i::Integer) = proxy.vec[proxy.inds[i]]
 start(proxy::VecProxy) = 1
 next(proxy::VecProxy, s::Int) = (proxy.vec[proxy.inds[s]], s+1)
 done(proxy::VecProxy, s::Int) =  s > proxy.len
-
 
 # out_neighbors proxy
 
