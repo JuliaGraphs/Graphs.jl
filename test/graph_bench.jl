@@ -7,8 +7,8 @@ using Graphs
 nv = 10000
 deg = 100
 
-g_adj = directed_adjacency_list(nv)
-g_inc = directed_incidence_list(nv)
+g_adj = simple_adjlist(nv)
+g_inc = simple_inclist(nv)
 
 
 shuff = [1:nv]
@@ -79,20 +79,20 @@ end
 println("Benchmark on a graph with $(nv) vertices and $(nv * deg) edges")
 
 println("Benchmark of neighbor scan")
-@graph_bench neighbor_scan AdjacencyList g_adj 50
-@graph_bench neighbor_scan IncidenceList g_inc 50
+@graph_bench neighbor_scan SimpleAdjacencyList g_adj 50
+@graph_bench neighbor_scan SimpleIncidenceList g_inc 50
 
 println("Benchmark of out-edge scan")
-@graph_bench outedge_scan IncidenceList g_inc 50
+@graph_bench outedge_scan SimpleIncidenceList g_inc 50
 
 println("Benchmark of breadth-first traversal")
-@graph_bench bf_traverse AdjacencyList g_adj 10
-@graph_bench bf_traverse IncidenceList g_inc 10
+@graph_bench bf_traverse SimpleAdjacencyList g_adj 10
+@graph_bench bf_traverse SimpleIncidenceList g_inc 10
 
 println("Benchmark of depth-first traversal")
-@graph_bench df_traverse AdjacencyList g_adj 5
-@graph_bench df_traverse IncidenceList g_inc 2
+@graph_bench df_traverse SimpleAdjacencyList g_adj 5
+@graph_bench df_traverse SimpleIncidenceList g_inc 2
 
 println("Benchmark of Dijkstra shortest paths")
-@graph_bench run_dijkstra IncidenceList g_inc 1
+@graph_bench run_dijkstra SimpleIncidenceList g_inc 1
 

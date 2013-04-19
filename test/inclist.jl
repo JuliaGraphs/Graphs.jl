@@ -5,11 +5,11 @@ using Base.Test
 
 #################################################
 #
-#   Directed incidence list
+#   Directed simple incidence list
 #
 #################################################
 
-gd = directed_incidence_list(5)
+gd = simple_inclist(5)
 
 # concept test
 
@@ -74,11 +74,11 @@ add_edge!(gd, 4, 5)
 
 #################################################
 #
-#   Undirected incidence list
+#   Undirected simple incidence list
 #
 #################################################
 
-gu = undirected_incidence_list(5)
+gu = simple_inclist(5, is_directed=false)
 
 # graph without edges
 
@@ -118,4 +118,34 @@ add_edge!(gu, 4, 5)
 @test collect(out_edges(3, gu)) == [Edge(2, 3, 2), Edge(3, 3, 1), Edge(5, 3, 4)]
 @test collect(out_edges(4, gu)) == [Edge(4, 4, 2), Edge(5, 4, 3), Edge(6, 4, 5)]
 @test collect(out_edges(5, gu)) == [Edge(6, 5, 4)]
+
+
+#################################################
+#
+#   normal list
+#
+#################################################
+
+g = inclist(KeyVertex{ASCIIString})
+
+vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
+
+@test num_vertices(g) == 3
+
+for i = 1 : 3
+    @test vertices(g)[i] == vs[i]
+    @test out_degree(vs[i], g) == 0
+end
+
+add_edge!(g, vs[1], vs[2])
+add_edge!(g, vs[1], vs[3])
+add_edge!(g, vs[2], vs[3])
+
+@test out_degree(vs[1], g) == 2
+@test out_degree(vs[2], g) == 1
+@test out_degree(vs[3], g) == 0
+
+@test out_edges(vs[1], g) == [Edge(1, vs[1], vs[2]), Edge(2, vs[1], vs[3])]
+@test out_edges(vs[2], g) == [Edge(3, vs[2], vs[3])]
+@test isempty(out_edges(vs[3], g))
 

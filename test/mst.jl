@@ -3,7 +3,7 @@
 using Graphs
 using Base.Test
 
-g = undirected_incidence_list(7)
+g = simple_inclist(7, is_directed=false)
 
 wedges = [
     (1, 2, 7.),

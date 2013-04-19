@@ -2,25 +2,23 @@
 
 #################################################
 #
-#  AdjacencyList{V, VList, AList}
+#   GenericAdjacencyList{V, VList, AList}
 #
 #   V:          vertex type
 #   VList:      the type of vertex list
-#
-#   Let a be an instance of AList, and v be an
-#   instance of v,
+#   AdjList:    adjacency list
 #
 #################################################
 
-type GenericAdjacencyList{V, VList} <: AbstractGraph{V, Edge{V}}
+type GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
     is_directed::Bool
     vertices::VList
     nedges::Int
-    adjlist::Vector{Vector{V}}
+    adjlist::AdjList
 end
 
-typealias SimpleAdjacencyList GenericAdjacencyList{Int, Range1{Int}}
-typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}}
+typealias SimpleAdjacencyList GenericAdjacencyList{Int, Range1{Int}, Vector{Vector{Int}}}
+typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 
 @graph_implements GenericAdjacencyList vertex_list vertex_map adjacency_list
 

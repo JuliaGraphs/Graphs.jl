@@ -4,7 +4,7 @@ using Graphs
 using Base.Test
 
 # g1: the example in CLRS (2nd Ed.)
-g1 = directed_incidence_list(5)
+g1 = simple_inclist(5)
 
 g1_wedges = [
     (1, 2, 10.),
@@ -42,7 +42,7 @@ s1 = dijkstra_shortest_paths(g1, eweights1, [1])
 @test s1.colormap == [2, 2, 2, 2, 2]
 
 # g2: the example in Wikipedia
-g2 = undirected_incidence_list(6)
+g2 = simple_inclist(6, is_directed=false)
 
 g2_wedges = [
     (5, 6, 9.),
