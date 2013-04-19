@@ -41,7 +41,7 @@ module Graphs
         simple_inclist, inclist,
         
         # graph
-        GenericGraph, SimpleGraph, Graph, simple_graph, graph,
+        GenericGraph, SimpleGraph, simple_graph, graph,
         
         # graph_visit
         AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,

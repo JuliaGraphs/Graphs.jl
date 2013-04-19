@@ -3,32 +3,25 @@
 # It implements edge_list, adjacency_list and incidence_list
 #
 
-type GenericGraph{V,E,VList,EList} <: AbstractGraph{V,E}
+type GenericGraph{V,E,VList,EList,AdjList,IncList} <: AbstractGraph{V,E}
     is_directed::Bool
-    vertices::VList         # an indexable container of vertices
-    edges::EList            # an indexable container of edges
-    adjlist::Vector{Vector{V}}    # adjlist[i] is a list of neighbor vertices
-    inclist::Vector{Vector{E}}    # inclist[i] is a list of out-going edges
+    vertices::VList     # an indexable container of vertices
+    edges::EList        # an indexable container of edges
+    adjlist::AdjList    # adjlist[i] is a list of neighbor vertices
+    inclist::IncList    # inclist[i] is a list of out-going edges
 end
 
 @graph_implements GenericGraph vertex_list edge_list vertex_map edge_map adjacency_list incidence_list
 
 # SimpleGraph:
-#   V:      Int
-#   E:      IEdge
-#   VList:  Range1{Int}
-#   EList:  Vector{IEdge}
+#   V:          Int
+#   E:          IEdge
+#   VList:      Range1{Int}
+#   EList:      Vector{IEdge}
+#   AdjList:    Vector{Vector{Int}}
+#   IncList:    Vector{Vector{IEdge}}
 #
-typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge}}
-
-
-# Graph:
-#   V:      V
-#   E:      E
-#   VList:  Vector{V}
-#   EList:  Vector{E}
-#
-typealias Graph{V,E} GenericGraph{V, E, Vector{V}, Vector{E}}
+typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{Int}},Vector{Vector{IEdge}}}
 
 # required interfaces
 
@@ -113,11 +106,7 @@ function graph{V,E}(vty::Type{V}, ety::Type{E}; is_directed::Bool=true)
     edges = Array(E, 0)
     adjlist = Array(Vector{V}, 0)
     inclist = Array(Vector{E}, 0)
-    Graph{V,E}(is_directed, vertices, edges, adjlist, inclist)    
+    GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{V}},Vector{Vector{E}}}(
+        is_directed, vertices, edges, adjlist, inclist)    
 end
-
-
-
-
-
 

@@ -2,6 +2,7 @@
 
 include("adjlist.jl")
 include("inclist.jl")
+include("graph.jl")
 
 # algorithms
 
