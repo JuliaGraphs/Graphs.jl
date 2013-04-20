@@ -43,6 +43,9 @@ module Graphs
         # graph
         GenericGraph, SimpleGraph, simple_graph, graph,
         
+        # gmatrix
+        adjacency_matrix, weight_matrix, laplacian_matrix,
+        
         # graph_visit
         AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
         discover_vertex!, open_vertex!, close_vertex!,
@@ -80,6 +83,7 @@ module Graphs
     include("adjacency_list.jl")
     include("incidence_list.jl")
     include("graph.jl")
+    include("gmatrix.jl")
     
     include("graph_visit.jl")
     include("breadth_first_visit.jl")

@@ -53,22 +53,16 @@ type ExEdge{V}
     index::Int
     source::V
     target::V
-    weight::Float64
     attributes::Dict{UTF8String,Any}
     
     function ExEdge(idx::Int, s::V, t::V)
         attrs = Dict{UTF8String,Any}()
-        new(idx, s, t, 0., attrs)
+        new(idx, s, t, attrs)
     end
     
-    function ExEdge(idx::Int, s::V, t::V, w::Float64)
+    function ExEdge(idx::Int, s::V, t::V, attrs::Dict{UTF8String,Any})
         attrs = Dict{UTF8String,Any}()
-        new(idx, s, t, w, attrs)
-    end
-    
-    function ExEdge(idx::Int, s::V, t::V, w::Float64, attrs::Dict{UTF8String,Any})
-        attrs = Dict{UTF8String,Any}()
-        new(idx, s, t, w, attrs)
+        new(idx, s, t, attrs)
     end
 end
 
@@ -76,7 +70,7 @@ source(e::ExEdge) = e.source
 target(e::ExEdge) = e.target
 
 edge_index(e::ExEdge) = e.index
-revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.weight, e.attributes)
+revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.attributes)
 
 
 #################################################
