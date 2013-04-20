@@ -174,9 +174,3 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
     return wedges  
 end
 
-
-
-
-
-
-

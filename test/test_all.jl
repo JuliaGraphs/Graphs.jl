@@ -6,6 +6,7 @@ include("graph.jl")
 
 # algorithms
 
+include("gmatrix.jl")
 include("bfs.jl")
 include("dfs.jl")
 include("conn_comp.jl")

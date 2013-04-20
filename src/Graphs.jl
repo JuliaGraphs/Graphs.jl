@@ -1,7 +1,7 @@
 module Graphs
     using DataStructures
     
-    import Base.start, Base.done, Base.next
+    import Base.start, Base.done, Base.next, Base.show
     import Base.length, Base.isempty, Base.getindex, Base.isless
     
     export
@@ -83,6 +83,7 @@ module Graphs
     include("adjacency_list.jl")
     include("incidence_list.jl")
     include("graph.jl")
+    include("show.jl")
     include("gmatrix.jl")
     
     include("graph_visit.jl")
