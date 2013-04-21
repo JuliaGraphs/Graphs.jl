@@ -13,5 +13,6 @@ Graphs.jl is a Julia package that provides graph types and algorithms. The desig
     - topological sorting
     - shortest paths: Dijkstra, Floyd-Warshall
     - minimum spanning trees: Prim, Kruskal
+    - more algorithms are being implemented
 * Matrix-based characterization: adjacency matrix, weight matrix, Laplacian matrix
 
