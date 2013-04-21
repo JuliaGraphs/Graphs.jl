@@ -1,9 +1,6 @@
-## Graphs.jl
 
-Graphs.jl is a Julia package that provides graph types and algorithms. The design of this package is inspired by the [Boost Graph Library](http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html) (*e.g.* using standardized generic interfaces), while taking advantage of Julia's language features (*e.g.* multiple dispatch).
-
-
-### Main Features
+Main Features
+==============
 
 An important aspect of *Graphs.jl* is the generic abstraction of graph concepts expressed via standardized interfaces, which allows access to a graph's structure while hiding the implementation details. This encourages reuse of data structures and algorithms. In particular, one can write generic graph algorithms that can be applied to different graph types as long as they implement the required interface. 
 
@@ -30,8 +27,4 @@ In addition to the generic abstraction, there are other important features:
 
 * We paid special attention to the runtime performance. Many of the algorithms are very efficient. For example, a benchmark shows that it takes about *15 milliseconds* to run the Dijkstra's algorithm over a graph with *10 thousand* vertices and *1 million*  edges on a macbook pro.
 
-
-### Documentation
-
-Please refer to [*Graph.jl Documentation*](http://people.csail.mit.edu/dhlin/graph_jl/) for detailed documentation.
 

@@ -1,43 +1,56 @@
-string(v::Vertex) = "#$(v.id)"
-function repl_show(io::IOStream, v::Vertex)
-    print(io, string(v))
-end
-show(io::IOStream, v::Vertex) = repl_show(io, v)
-print(io::IOStream, v::Vertex) = repl_show(io, v)
+# the show function for general graphs
 
-string(e::UndirectedEdge) = "$(e.a) -- $(e.b)"
-string(e::DirectedEdge) = "$(e.out) -> $(e.in)"
-function repl_show(io::IOStream, e::Edge)
-    print(io, string(e))
+function show(io::IO, v::ExVertex)
+    if isempty(v.label)
+        print(io, "vertex [$(v.index)]")
+    else
+        print(io, "vertex [$(v.index)] \"$(v.label)\"")
+    end
 end
-show(io::IOStream, e::Edge) = repl_show(io, e)
-print(io::IOStream, e::Edge) = repl_show(io, e)
 
-function string(g::AbstractGraph)
-    o = ""
-    o *= "$(typeof(g))\n"
-    o *= " * Order: $(order(g))\n"
-    o *= " * Size: $(size(g))\n\n"
-    o *= "Edges:\n"
-    i = 0
-    max_i = min(10, size(g))
-    total_i = size(g)
-    for edge in edges(g)
-        i += 1
-        if i > max_i
-            o *= "..."
-            break
+function show(io::IO, e::Union(Edge, ExEdge))
+    print(io, "edge [$(e.index)]: $(e.source) -- $(e.target)")
+end
+
+function show(io::IO, graph::AbstractGraph)    
+    title = is_directed(graph) ? "Directed Graph" : "Undirected Graph"    
+    println(io, "$title with $(num_vertices(graph)) vertices and $(num_edges(graph)) edges:")
+    
+    if !implements_vertex_list(graph)
+        return
+    end
+    
+    if implements_incidence_list(graph)        
+        println(io, "Incidence List:") 
+        for v in vertices(graph)
+            println(io, "$(v): ")
+            for e in out_edges(v, graph)
+                print(io, "    ")
+                println(io, e)                
+            end            
         end
-        if i == total_i
-            o *= string(edge)
-        else
-            o *= string(string(edge), "\n")
+        
+    elseif implements_adjacency_list(graph)
+        println(io, "Adjacency List:")
+        for v in vertices(graph)
+            println(io, "$(v): ")
+            for u in out_neighbors(v, graph)
+                print(io, "    ")
+                println(io, "$v -- $u")                
+            end            
+        end
+        
+    else
+        println(io, "Vertices:")
+        for v in vertices(graph)
+            println(io, "$(v)")
+        end
+        
+        if implements_edge_list(graph)
+            println(io, "Edges:")
+            for e in edges(graph)
+                println(io, "$(e)")            
+            end        
         end
     end
-    return o
 end
-function repl_show(io::IOStream, g::AbstractGraph)
-    print(io, string(g))
-end
-show(io::IOStream, g::AbstractGraph) = repl_show(io, g)
-print(io::IOStream, g::AbstractGraph) = repl_show(io, g)

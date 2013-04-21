@@ -1,0 +1,131 @@
+# Breadth-first search / traversal
+
+#################################################
+#
+#  Breadth-first visit
+#
+#################################################
+
+type BreadthFirst <: AbstractGraphVisitAlgorithm
+end
+
+function breadth_first_visit_impl!(
+    graph::AbstractGraph,   # the graph
+    queue,                  # an (initialized) queue that stores the active vertices    
+    colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
+    visitor::AbstractGraphVisitor)  # the visitor
+            
+    while !isempty(queue)
+        u = dequeue!(queue)
+        open_vertex!(visitor, u)
+        
+        for v in out_neighbors(u, graph)
+            v_color::Int = colormap[v]
+            examine_neighbor!(visitor, u, v, v_color)
+                        
+            if v_color == 0
+                colormap[vertex_index(v, graph)] = 1
+                if !discover_vertex!(visitor, v)
+                    return
+                end
+                enqueue!(queue, v)
+            end                
+        end
+        
+        colormap[vertex_index(u, graph)] = 2
+        close_vertex!(visitor, u)            
+    end    
+    nothing
+end
+
+
+function traverse_graph{V,E}(
+    graph::AbstractGraph{V,E}, 
+    alg::BreadthFirst,
+    s::V, 
+    visitor::AbstractGraphVisitor; 
+    colormap = nothing)
+    
+    @graph_requires graph adjacency_list vertex_map
+    
+    if colormap == nothing
+        colormap = zeros(Int, num_vertices(graph))
+    end
+    que = queue(V)
+    
+    colormap[vertex_index(s, graph)] = 1
+    if !discover_vertex!(visitor, s)
+        return
+    end
+    enqueue!(que, s)
+    
+    breadth_first_visit_impl!(graph, que, colormap, visitor)
+end
+
+
+function traverse_graph{V,E}(
+    graph::AbstractGraph{V,E}, 
+    alg::BreadthFirst,
+    sources::AbstractVector{V}, 
+    visitor::AbstractGraphVisitor; 
+    colormap = nothing)
+    
+    @graph_requires graph adjacency_list vertex_map
+    
+    if colormap == nothing
+        colormap = zeros(Int, num_vertices(graph))
+    end
+    que = queue(V)
+    
+    for s in sources
+        colormap[vertex_index(s, graph)] = 1
+        if !discover_vertex!(visitor, s)
+            return
+        end
+        enqueue!(que, s)
+    end
+    
+    breadth_first_visit_impl!(graph, que, colormap, visitor)
+end
+
+
+#################################################
+#
+#  Useful applications
+#
+#################################################
+
+# Get the map of the (geodesic) distances from vertices to source by BFS
+
+type GDistanceVisitor <: AbstractGraphVisitor
+    dists::Vector{Int}
+end
+
+function examine_neighbor!(visitor::GDistanceVisitor, u, v, color::Int)
+    if color == 0
+        dists = visitor.dists
+        dists[vertex_index(v)] = dists[vertex_index(u)] + 1
+    end
+end
+
+function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, s::V, dists::DMap)
+    visitor = GDistanceVisitor(dists)
+    dists[vertex_index(s, graph)] = 0  
+    traverse_graph(graph, BreadthFirst(), s, visitor)
+    dists                
+end
+
+function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, sources::AbstractVector{V}, dists::DMap)
+    visitor = GDistanceVisitor(dists)
+    for s in sources        
+        dists[vertex_index(s, graph)] = 0  
+    end
+    traverse_graph(graph, BreadthFirst(), sources, visitor)
+    dists                
+end
+
+function gdistances(graph::AbstractGraph, sources; defaultdist::Int=-1)
+    dists = fill(defaultdist, num_vertices(graph))    
+    gdistances!(graph, sources, dists)
+end
+

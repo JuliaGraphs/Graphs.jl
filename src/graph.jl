@@ -1,369 +1,112 @@
-##############################################################################
+# A versatile graph type
 #
-# Basic graph type definitions and constructors
+# It implements edge_list, adjacency_list and incidence_list
 #
-# TODO: Add a Multigraph type
+
+type GenericGraph{V,E,VList,EList,AdjList,IncList} <: AbstractGraph{V,E}
+    is_directed::Bool
+    vertices::VList     # an indexable container of vertices
+    edges::EList        # an indexable container of edges
+    adjlist::AdjList    # adjlist[i] is a list of neighbor vertices
+    inclist::IncList    # inclist[i] is a list of out-going edges
+end
+
+@graph_implements GenericGraph vertex_list edge_list vertex_map edge_map adjacency_list incidence_list
+
+# SimpleGraph:
+#   V:          Int
+#   E:          IEdge
+#   VList:      Range1{Int}
+#   EList:      Vector{IEdge}
+#   AdjList:    Vector{Vector{Int}}
+#   IncList:    Vector{Vector{IEdge}}
 #
-##############################################################################
+typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{Int}},Vector{Vector{IEdge}}}
 
-abstract AbstractGraph
+# required interfaces
 
-type UndirectedGraph <: AbstractGraph
-    vertices::Set{Vertex}
-    edges::Set{UndirectedEdge}
+is_directed(g::GenericGraph) = g.is_directed
 
-    # Enforces integrity constraints during construction if violated:
-    #  * Min vertex ID = 1
-    #  * Max vertex ID = length(vertices)
-    function UndirectedGraph(v::Set{Vertex}, e::Set{UndirectedEdge})
-        ids = Int[vertex.id for vertex in v]
-        if sort(ids) != 1:length(v)
-            i = 1
-            for vertex in v
-                vertex.id = i
-                i += 1
-            end
-        end
-        new(v, e)
+num_vertices(g::GenericGraph) = length(g.vertices)
+vertices(g::GenericGraph) = g.vertices
+
+num_edges(g::GenericGraph) = length(g.edges)
+edges(g::GenericGraph) = g.edges
+
+vertex_index(v, g::GenericGraph) = vertex_index(v)
+edge_index(e, g::GenericGraph) = edge_index(e)
+
+out_degree(v, g::GenericGraph) = length(g.adjlist[vertex_index(v)])
+out_neighbors(v, g::GenericGraph) = g.adjlist[vertex_index(v)]
+out_edges(v, g::GenericGraph) = g.inclist[vertex_index(v)]
+
+# mutation
+
+function add_vertex!{V,E}(g::GenericGraph{V,E}, v::V)
+    vi = vertex_index(v)
+    if vi != length(g.vertices) + 1
+        throw(ArgumentError("Invalid vertex index."))
     end
-end
-UndirectedGraph() = UndirectedGraph(Set{Vertex}(), Set{UndirectedEdge}())
-empty_graph(::Type{UndirectedGraph}) = UndirectedGraph()
-
-type DirectedGraph <: AbstractGraph
-    vertices::Set{Vertex}
-    edges::Set{DirectedEdge}
-
-    # Enforces integrity constraints during construction if violated:
-    #  * Min vertex ID = 1
-    #  * Max vertex ID = length(vertices)
-    function DirectedGraph(v::Set{Vertex}, e::Set{DirectedEdge})
-        ids = Int[vertex.id for vertex in v]
-        if sort(ids) != 1:length(v)
-            i = 1
-            for vertex in v
-                vertex.id = i
-                i += 1
-            end
-        end
-        new(v, e)
-    end
-end
-DirectedGraph() = DirectedGraph(Set{Vertex}(), Set{DirectedEdge}())
-empty_graph(::Type{DirectedGraph}) = DirectedGraph()
-
-type MixedGraph <: AbstractGraph
-    vertices::Set{Vertex}
-    edges::Set{Edge}
-
-    # Enforces integrity constraints during construction if violated:
-    #  * Min vertex ID = 1
-    #  * Max vertex ID = length(vertices)
-    function MixedGraph(v::Set{Vertex}, e::Set{Edge})
-        ids = Int[vertex.id for vertex in v]
-        if sort(ids) != 1:length(v)
-            i = 1
-            for vertex in v
-                vertex.id = i
-                i += 1
-            end
-        end
-        new(v, e)
-    end
-end
-MixedGraph() = MixedGraph(Set{Vertex}(), Set{Edge}())
-empty_graph(::Type{MixedGraph}) = MixedGraph()
-
-typealias Digraph DirectedGraph
-
-# TODO: Use @eval to make all of these constructors DRYer
-function UndirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
-    n_vertices = length(vertex_list)
-    n_edges = length(edge_list)
-
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-    for i in 1:n_vertices
-        v = Vertex(i, utf8(string(vertex_list[i])))
-        add!(vertex_set, v)
-        vertices[i] = v
-    end
-
-    edge_set = Set{UndirectedEdge}()
-    for i in 1:n_edges
-        e = UndirectedEdge(vertices[edge_list[i][1]],
-                           vertices[edge_list[i][2]],
-                           utf8(""),
-                           1.0,
-                           Dict{UTF8String, Any}())
-        add!(edge_set, e)
-    end
-
-    return UndirectedGraph(vertex_set, edge_set)
+    push!(g.vertices, v)
+    push!(g.adjlist, Array(V, 0))
+    push!(g.inclist, Array(E, 0))
+    v
 end
 
-function DirectedGraph(vertex_list::Vector{Any}, edge_list::Vector{Any})
-    n_vertices = length(vertex_list)
-    n_edges = length(edge_list)
+add_vertex!{K}(g::GenericGraph{KeyVertex{K}}, key::K) = add_vertex!(g, KeyVertex(length(g.vertices)+1, key))
+add_vertex!(g::GenericGraph{ExVertex}, label::String) = add_vertex!(g, ExVertex(length(g.vertices)+1, label))
 
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-    for i in 1:n_vertices
-        v = Vertex(i, utf8(string(vertex_list[i])))
-        add!(vertex_set, v)
-        vertices[i] = v
+function add_edge!{V,E}(g::GenericGraph{V,E}, e::E)
+    nv::Int = num_vertices(g)   
+    
+    u::V = source(e)
+    v::V = target(e)
+    ui::Int = vertex_index(u, g)
+    vi::Int = vertex_index(v, g)
+    
+    if !(ui >= 1 && ui <= nv && vi >= 1 && vi <= nv)
+        throw(ArgumentError("u or v is not a valid vertex."))
     end
-
-    edge_set = Set{DirectedEdge}()
-    for i in 1:n_edges
-        e = DirectedEdge(vertices[edge_list[i][1]],
-                         vertices[edge_list[i][2]],
-                         utf8(""),
-                         1.0,
-                         Dict{UTF8String, Any}())
-        add!(edge_set, e)
+    ei::Int = length(g.edges) + 1
+    
+    if edge_index(e) != ei
+        throw(ArgumentError("Invalid edge index."))
     end
-
-    return DirectedGraph(vertex_set, edge_set)
+    
+    push!(g.edges, e)
+    push!(g.adjlist[ui], v)
+    push!(g.inclist[ui], e)
+    
+    if !g.is_directed
+        push!(g.adjlist[vi], u)       
+        push!(g.inclist[vi], revedge(e))
+    end
+    e
 end
 
-function UndirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{Int})
-    n_vertices = length(vertex_labels)
-    n_edges = size(numeric_edges, 1)
+add_edge!{V}(g::GenericGraph{V,Edge{V}}, u::V, v::V) = add_edge!(g, IEdge(length(g.edges)+1, u, v))
+add_edge!{V}(g::GenericGraph{V,ExEdge{V}}, u::V, v::V) = add_edge!(g, ExEdge{V}(length(g.edges)+1, u, v))
 
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-    for i in 1:n_vertices
-        v = Vertex(i, vertex_labels[i])
-        add!(vertex_set, v)
-        vertices[i] = v
+# construction
+
+function simple_graph(n::Int; is_directed::Bool=true)
+    vertices = 1:n
+    edges = Array(IEdge, 0)
+    adjlist = Array(Vector{Int}, n)
+    inclist = Array(Vector{IEdge}, n)
+    for i = 1 : n
+        adjlist[i] = Array(Int, 0)
+        inclist[i] = Array(IEdge, 0)
     end
-
-    edge_set = Set{UndirectedEdge}()
-    for i in 1:n_edges
-        e = UndirectedEdge(vertices[numeric_edges[i, 1]],
-                         vertices[numeric_edges[i, 2]],
-                         utf8(""),
-                         1.0,
-                         Dict{UTF8String, Any}())
-        add!(edge_set, e)
-    end
-
-    return UndirectedGraph(vertex_set, edge_set)
+    SimpleGraph(is_directed, vertices, edges, adjlist, inclist)
 end
 
-function DirectedGraph(vertex_labels::Vector{UTF8String}, numeric_edges::Matrix{Int})
-    n_vertices = length(vertex_labels)
-    n_edges = size(numeric_edges, 1)
-
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-    for i in 1:n_vertices
-        v = Vertex(i, vertex_labels[i])
-        add!(vertex_set, v)
-        vertices[i] = v
-    end
-
-    edge_set = Set{DirectedEdge}()
-    for i in 1:n_edges
-        e = DirectedEdge(vertices[numeric_edges[i, 1]],
-                         vertices[numeric_edges[i, 2]],
-                         utf8(""),
-                         1.0,
-                         Dict{UTF8String, Any}())
-        add!(edge_set, e)
-    end
-
-    return DirectedGraph(vertex_set, edge_set)
+function graph{V,E}(vty::Type{V}, ety::Type{E}; is_directed::Bool=true)
+    vertices = Array(V, 0)
+    edges = Array(E, 0)
+    adjlist = Array(Vector{V}, 0)
+    inclist = Array(Vector{E}, 0)
+    GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{V}},Vector{Vector{E}}}(
+        is_directed, vertices, edges, adjlist, inclist)    
 end
 
-function UndirectedGraph{T <: String}(edges::Matrix{T})
-    default_max_vertices = 1_000
-    vertex_labels = Array(UTF8String, default_max_vertices)
-    vertex_ids = Dict{UTF8String, Int}()
-
-    next_vertex_id = 1
-    numeric_edges = Array(Int, size(edges))
-
-    for i in 1:size(edges, 1)
-        if length(vertex_labels) - 1 <= next_vertex_id
-            grow!(vertex_labels, 2 * length(vertex_labels))
-        end
-
-        out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
-
-        out_vertex_id = get(vertex_ids, out_vertex_label, 0)
-        if out_vertex_id == 0
-            out_vertex_id = next_vertex_id
-            vertex_ids[out_vertex_label] = out_vertex_id
-            vertex_labels[out_vertex_id] = out_vertex_label
-            next_vertex_id += 1
-        end
-
-        in_vertex_id = get(vertex_ids, in_vertex_label, 0)
-        if in_vertex_id == 0
-            in_vertex_id = next_vertex_id
-            vertex_ids[in_vertex_label] = in_vertex_id
-            vertex_labels[in_vertex_id] = in_vertex_label
-            next_vertex_id += 1
-        end
-
-        numeric_edges[i, 1], numeric_edges[i, 2] = out_vertex_id, in_vertex_id
-    end
-
-    return UndirectedGraph(vertex_labels[1:(next_vertex_id - 1)], numeric_edges)
-end
-
-function DirectedGraph{T <: String}(edges::Matrix{T})
-    default_max_vertices = 1_000
-    vertex_labels = Array(UTF8String, default_max_vertices)
-    vertex_ids = Dict{UTF8String, Int}()
-
-    next_vertex_id = 1
-    numeric_edges = Array(Int, size(edges))
-
-    for i in 1:size(edges, 1)
-        if length(vertex_labels) - 1 <= next_vertex_id
-            grow!(vertex_labels, 2 * length(vertex_labels))
-        end
-
-        out_vertex_label, in_vertex_label = edges[i, 1], edges[i, 2]
-
-        out_vertex_id = get(vertex_ids, out_vertex_label, 0)
-        if out_vertex_id == 0
-            out_vertex_id = next_vertex_id
-            vertex_ids[out_vertex_label] = out_vertex_id
-            vertex_labels[out_vertex_id] = out_vertex_label
-            next_vertex_id += 1
-        end
-
-        in_vertex_id = get(vertex_ids, in_vertex_label, 0)
-        if in_vertex_id == 0
-            in_vertex_id = next_vertex_id
-            vertex_ids[in_vertex_label] = in_vertex_id
-            vertex_labels[in_vertex_id] = in_vertex_label
-            next_vertex_id += 1
-        end
-
-        numeric_edges[i, 1], numeric_edges[i, 2] = out_vertex_id, in_vertex_id
-    end
-
-    return DirectedGraph(vertex_labels[1:(next_vertex_id - 1)], numeric_edges)
-end
-
-function Graph(vertex_list::Vector{Any}, edge_list::Vector{Any})
-    if isa(edge_list[1], Tuple)
-        DirectedGraph(vertex_list, edge_list)
-    else
-        UndirectedGraph(vertex_list, edge_list)
-    end
-end
-
-function UndirectedGraph(a::Matrix{Int})
-    if !isequal(a, a')
-        error("Adjacency matrix of an undirected graph must be symmetric")
-    end
-    n_vertices = size(a, 1)
-
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-
-    edge_set = Set{UndirectedEdge}()
-
-    for i in 1:n_vertices
-        v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
-        add!(vertex_set, v)
-        vertices[i] = v
-    end
-
-    for i in 1:n_vertices
-        for j in i:n_vertices
-            if a[i, j] == 1
-                e = UndirectedEdge(vertices[i],
-                                   vertices[j],
-                                   utf8(""),
-                                   1.0,
-                                   Dict{UTF8String, Any}())
-                add!(edge_set, e)
-            end
-        end
-    end
-
-    return UndirectedGraph(vertex_set, edge_set)
-end
-
-function DirectedGraph(a::Matrix{Int})
-    if size(a, 1) != size(a, 2)
-        error("Adjacency matrix must be square")
-    end
-    n_vertices = size(a, 1)
-
-    vertex_set = Set{Vertex}()
-    vertices = Array(Vertex, n_vertices)
-
-    edge_set = Set{DirectedEdge}()
-
-    for i in 1:n_vertices
-        v = Vertex(i, utf8(""), Dict{UTF8String, Any}())
-        add!(vertex_set, v)
-        vertices[i] = v
-    end
-
-    for i in 1:n_vertices
-        for j in 1:n_vertices
-            if a[i, j] == 1
-                e = DirectedEdge(vertices[i],
-                                 vertices[j],
-                                 utf8(""),
-                                 1.0,
-                                 Dict{UTF8String, Any}())
-                add!(edge_set, e)
-            end
-        end
-    end
-
-    return DirectedGraph(vertex_set, edge_set)
-end
-
-##############################################################################
-#
-# Basic properties of a graph
-#
-##############################################################################
-
-vertices(g::AbstractGraph) = g.vertices
-edges(g::AbstractGraph) = g.edges
-order(g::AbstractGraph) = length(vertices(g))
-size(g::AbstractGraph) = length(edges(g))
-
-##############################################################################
-#
-# Comparisons
-#
-##############################################################################
-
-function isequal(g1::AbstractGraph, g2::AbstractGraph)
-    return isequal(g1.vertices, g2.vertices) && isequal(g1.edges, g2.edges)
-end
-
-##############################################################################
-#
-# Add and remove vertices and edges from an existing
-#
-##############################################################################
-
-function add!(g::AbstractGraph, v::Vertex)
-    add!(vertices(g), v)
-end
-
-function del(g::AbstractGraph, v::Vertex)
-    del(vertices(g), v)
-end
-
-function add!(g::AbstractGraph, v::Edge)
-    add!(edges(g), v)
-end
-
-function del(g::AbstractGraph, v::Edge)
-    del(edges(g), v)
-end
