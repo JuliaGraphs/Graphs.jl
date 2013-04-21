@@ -69,20 +69,24 @@ end
 # default visitor
 
 type PrimVisitor{E,W} <: AbstractPrimVisitor    
-    wedges::Vector{WeightedEdge{E,W}}
+    edges::Vector{E}
+    weights::Vector{W}
 end
 
 function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, W::Type{W})    
-    wedges = Array(WeightedEdge{E,W}, 0)
+    edges = Array(E, 0)
+    weights = Array(W, 0)
     n = num_vertices(g)
     if n > 1
-        sizehint(wedges, n-1)
+        sizehint(edges, n-1)
+        sizehint(weights, n-1)
     end
-    PrimVisitor{E,W}(wedges)
+    PrimVisitor{E,W}(edges, weights)
 end
 
 function include_vertex!{V,E,W}(vis::PrimVisitor{E,W}, v::V, e::E, w::W)
-    push!(vis.wedges, WeightedEdge(e, w))
+    push!(vis.edges, e)
+    push!(vis.weights, w)
     true
 end
 
@@ -209,7 +213,7 @@ function prim_minimum_spantree{V,E,W}(
     state = create_prim_states(graph, W)
     visitor = default_prim_visitor(graph, W)
     prim_minimum_spantree!(graph, edge_weights, root, visitor, state)
-    return visitor.wedges
+    return (visitor.edges, visitor.weights)
 end
 
 function prim_minimum_spantree_withlog{V,E,W}(

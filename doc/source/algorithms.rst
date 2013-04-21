@@ -202,7 +202,7 @@ Prim's algorithm finds a minimum spanning tree by growing from a root vertex, ad
     :param eweights:    the edge weights
     :param root:        the root vertex
     
-    :returns:   a vector of weighted edges that constitute the resultant tree. Each element is an instance of ``WeightedEdge``, which consists of two fields: ``edge`` and ``weight``.
+    :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights. 
 
 
 Kruskal's algorithm
@@ -216,7 +216,7 @@ Kruskal's algorithm finds a minimum spanning tree (or forest) by gradually uniti
     :param eweights:    the edge weights
     :param K:           the number of trees in the resultant forest. If ``K = 1``, it ends up with a tree. This argument is optional. By default, it is set to ``1``.
     
-    :returns:   a vector of weighted edges that constitute the resultant tree. Each element is an instance of ``WeightedEdge``, which consists of two fields: ``edge`` and ``weight``.
+    :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights. 
     
 
 

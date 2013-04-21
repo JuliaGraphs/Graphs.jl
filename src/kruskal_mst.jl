@@ -10,11 +10,13 @@ function kruskal_select{V,E,W}(
     @graph_requires vertex_map    
     
     n = num_vertices(graph)
-    r = Array(WeightedEdge{E,W}, 0)
+    re = Array(E, 0)
+    rw = Array(W, 0)
     
     if n > 1
         dsets = IntDisjointSets(n)
-        sizehint(r, n-1)
+        sizehint(re, n-1)
+        sizehint(rw, n-1)
     
         ui::Int = 0
         vi::Int = 0
@@ -26,7 +28,8 @@ function kruskal_select{V,E,W}(
         
             if !in_same_set(dsets, ui, vi)
                 union!(dsets, ui, vi)
-                push!(r, we)
+                push!(re, e)
+                push!(rw, we.weight)
             end
                 
             if num_groups(dsets) <= K
@@ -35,7 +38,7 @@ function kruskal_select{V,E,W}(
         end
     end
     
-    return r
+    return (re, rw)
 end
 
 function kruskal_minimum_spantree(graph::AbstractGraph, eweights::AbstractVector; K::Integer=1)
