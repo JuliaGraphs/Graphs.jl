@@ -74,8 +74,10 @@ module Graphs
         kruskal_select, kruskal_minimum_spantree,
         
         # floyd_warshall
-        floyd_warshall!, floyd_warshall
+        floyd_warshall!, floyd_warshall,
                 
+        # Graphviz 
+        to_dot, plot
         
     include("concepts.jl")
     include("common.jl")
@@ -95,5 +97,7 @@ module Graphs
     include("prim_mst.jl")
     include("kruskal_mst.jl")
     include("floyd_warshall.jl")
+
+    include("dot.jl")
 end
 
