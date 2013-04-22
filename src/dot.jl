@@ -31,6 +31,8 @@ function to_dot(graph::AbstractGraph, stream::IO)
                 write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
             end
         end
+    else
+        throw(ArgumentError("More graph Concepts needed: dot serialization requires iteration over edges or iteration over vertices and neighbors."))
     end
     write(stream, "}\n")
     stream
