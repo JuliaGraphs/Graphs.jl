@@ -5,10 +5,9 @@
 
 # Write the dot representation of a graph to a file by name.
 function to_dot(graph::AbstractGraph, filename::String)
-    f = open(filename,"w")
+    open(filename,"w") do f
         to_dot(graph, f)
-    close(f)
-
+    end
 end
 
 # Get the dot representation of a graph as a string.
