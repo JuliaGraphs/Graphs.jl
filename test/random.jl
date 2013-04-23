@@ -7,35 +7,19 @@ using Base.Test
 
 n = 10
 p = 0.2
-g = erdos_renyi_graph(n,p)
+g = erdos_renyi_graph(n,p, is_directed=false)
 # A graph should have n vertices
-@test length(vertices(g)) == n
+@test num_vertices(g) == n
+@test !is_directed(g)
 p = 1
-g = erdos_renyi_graph(n,p)
+g = erdos_renyi_graph(n,p, is_directed=false)
 # When p = 1, the graph should be complete.
-@test length(edges(g)) == sum(1:n-1)
+@test num_edges(g) == sum(1:n-1)
 
-#Setting an attribute should not break things
-n = 10
-p = 0.2
-g = erdos_renyi_graph(n,p)
-edge = collect(edges(g))[1]
-vertex = collect(ends(edge))[1]
-attrs = attributes(vertex)
-@test contains(vertices(g), vertex)
-attrs["color"] = "red"
-@test contains(vertices(g), vertex)
-
-n = 400
-k = 10
-p = 0.1
-g = watts_strogatz_graph(n,k,p)
-@test length(edges(g)) == n*k/2
-@test length(vertices(g)) == n
-
-edge = collect(edges(g))[1]
-vertex = collect(ends(edge))[1]
-attrs = attributes(vertex)
-@test contains(vertices(g), vertex)
-attrs["color"] = "red"
-@test contains(vertices(g), vertex)
+p = 1
+g = erdos_renyi_graph(n,p, is_directed=true)
+# A graph should have n vertices
+@test num_vertices(g) == n
+@test is_directed(g)
+# When p = 1, the graph should be complete.
+@test num_edges(g) == 2*sum(1:n-1)
