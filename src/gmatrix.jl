@@ -268,3 +268,24 @@ function laplacian_matrix{W}(g::AbstractGraph, eweights::AbstractVector{W})
         throw(ArgumentError("g must implement edge_list or incidence_list."))
     end  
 end
+
+function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
+    colptr = A.colptr
+    rowval = A.rowval
+    n = size(A, 1)
+    adjlist = Array(Array{Ti,1}, n)
+    s = 0
+    for j in 1:n
+        adjj = Ti[]
+        sizehint(adjj, colptr[j+1] - colptr[j] - 1)
+        for k in colptr[j]:(colptr[j+1] - 1)
+            rvk = A.rowval[k]
+            if rvk != j push!(adjj, rvk) end
+        end
+        s += length(adjj)
+        adjlist[j] = adjj
+    end
+    GenericAdjacencyList{Ti, Range1{Ti}, Vector{Vector{Ti}}}(!ishermitian(A),
+                                                             one(Ti):convert(Ti,n),
+                                                             s, adjlist)
+end
