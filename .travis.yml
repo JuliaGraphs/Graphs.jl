@@ -1,0 +1,29 @@
+language: cpp
+compiler: 
+    - gcc
+notifications:
+    email: false
+before_install:
+    - sudo add-apt-repository ppa:staticfloat/julia-deps -y
+    - sudo add-apt-repository ppa:staticfloat/julianightlies -y
+    - sudo apt-get update -qq -y
+    - sudo apt-get upgrade -y
+    - sudo apt-get install julia -y
+    - git config --global user.name "Travis User"
+    - git config --global user.email "travis@example.net"
+script:
+    - julia -e 'versioninfo(); Pkg.init();'
+    - mkdir -p ~/.julia/Graphs
+    - cp -R ./* ~/.julia/Graphs/
+    - julia ~/.julia/Graphs/test/adjlist.jl
+    - julia ~/.julia/Graphs/test/inclist.jl
+    - julia ~/.julia/Graphs/test/graph.jl
+    - julia ~/.julia/Graphs/test/gmatrix.jl
+    - julia ~/.julia/Graphs/test/bfs.jl
+    - julia ~/.julia/Graphs/test/dfs.jl
+    - julia ~/.julia/Graphs/test/conn_comp.jl
+    - julia ~/.julia/Graphs/test/dijkstra.jl
+    - julia ~/.julia/Graphs/test/mst.jl
+    - julia ~/.julia/Graphs/test/floyd.jl
+    - julia ~/.julia/Graphs/test/dot.jl
+    
