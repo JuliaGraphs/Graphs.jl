@@ -14,6 +14,11 @@ end
 
 function show(io::IO, graph::AbstractGraph)    
     title = is_directed(graph) ? "Directed Graph" : "Undirected Graph"    
+    print(io, "$title ($(num_vertices(graph)) vertices, $(num_edges(graph)) edges)")
+end
+
+function show_details(io::IO, graph::AbstractGraph)    
+    title = is_directed(graph) ? "Directed Graph" : "Undirected Graph"    
     println(io, "$title with $(num_vertices(graph)) vertices and $(num_edges(graph)) edges:")
     
     if !implements_vertex_list(graph)
