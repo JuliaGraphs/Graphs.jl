@@ -60,7 +60,7 @@ module Graphs
         DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
         
         # connected_components
-        connected_components,
+        connected_components, strongly_connected_components,
         
         # dijkstra_spath
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
