@@ -1,5 +1,7 @@
 ## Graphs.jl
 
+[![Build Status](https://travis-ci.org/johnmyleswhite/Graphs.jl.png)](https://travis-ci.org/johnmyleswhite/Graphs.jl)
+
 Graphs.jl is a Julia package that provides graph types and algorithms. The design of this package is inspired by the [Boost Graph Library](http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html) (*e.g.* using standardized generic interfaces), while taking advantage of Julia's language features (*e.g.* multiple dispatch).
 
 
