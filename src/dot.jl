@@ -27,7 +27,9 @@ function to_dot(graph::AbstractGraph, stream::IO)
     elseif implements_vertex_list(graph) && (implements_incidence_list(graph) || implements_adjacency_list(graph))
         for vertex in vertices(graph)
             for n in out_neighbors(vertex, graph)
-                write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
+                if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
+                    write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
+                end
             end
         end
     else
