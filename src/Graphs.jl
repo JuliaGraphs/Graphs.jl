@@ -78,7 +78,10 @@ module Graphs
         floyd_warshall!, floyd_warshall,
                 
         # Graphviz 
-        to_dot, plot
+        to_dot, plot,
+        
+        # Random Graph Generation
+        erdos_renyi_graph, watts_strogatz_graph
         
     include("concepts.jl")
     include("common.jl")
@@ -100,5 +103,7 @@ module Graphs
     include("floyd_warshall.jl")
 
     include("dot.jl")
+
+    include("random.jl")
 end
 

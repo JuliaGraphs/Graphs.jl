@@ -26,4 +26,5 @@ script:
     - julia ~/.julia/Graphs/test/mst.jl
     - julia ~/.julia/Graphs/test/floyd.jl
     - julia ~/.julia/Graphs/test/dot.jl
+    - julia ~/.julia/Graphs/test/random.jl
     

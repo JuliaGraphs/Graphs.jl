@@ -6,6 +6,7 @@ my_tests = ["test/vertex.jl",
             "test/graph.jl",
             "test/advanced.jl",
             "test/dot.jl",
+            "test/random.jl",
             "test/io.jl"]
 
 println("Running tests:")

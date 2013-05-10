@@ -150,7 +150,7 @@ Specially, it implements the following methods:
 
 .. py:function:: edge_index(e, g)
 
-    returns the index of a vertex ``e`` in graph ``g``.
+    returns the index of an edge ``e`` in graph ``g``.
     
 .. py:function:: source(e, g)
 
