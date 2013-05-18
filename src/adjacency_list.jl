@@ -98,18 +98,24 @@ function simple_adjlist(nbs::AbstractVector; is_directed::Bool=true)
     SimpleAdjacencyList(is_directed, 1:nv, ne, alist)
 end
 
-function simple_adjlist(A::Union(BitArray{2}, Matrix{Bool}))
+function simple_adjlist(A::Union(BitArray{2}, Matrix{Bool}); is_directed::Bool=true)
     nv = size(A, 1)
     if size(A, 2) != nv
         error("A must be square")
     end
     nbrs = Array(Vector{Int}, nv)
+    row = Array(Int, 0)
+    sizehint(row, nv)
     for i = 1:nv
-        tmp = A[i,:]
-        tmp[i] = false
-        nbrs[i] = find(tmp)
+        for j = 1:nv
+            if A[i,j]
+                push!(row, j)
+            end
+        end
+        nbrs[i] = copy(row)
+        empty!(row)
     end
-    simple_adjlist(nbrs; is_directed = A != A')
+    simple_adjlist(nbrs, is_directed = is_directed)
 end
 
 function adjlist{V}(vty::Type{V}; is_directed::Bool=true)
