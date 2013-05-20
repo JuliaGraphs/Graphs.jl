@@ -111,3 +111,7 @@ add_edge!(g, vs[2], vs[3])
 @test out_neighbors(vs[2], g) == [vs[3]]
 @test isempty(out_neighbors(vs[3], g))
 
+# construct via adjacency matrix
+A = [true true true; false false true; false false true]
+g = simple_adjlist(A)
+@test adjacency_matrix(g) == A
