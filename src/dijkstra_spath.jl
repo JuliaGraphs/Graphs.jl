@@ -23,7 +23,7 @@ end
 
 # create Dijkstra states
 
-function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, D::Type{D})
+function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
     parents = Array(V, n)   
     dists = fill(typemax(D), n)
