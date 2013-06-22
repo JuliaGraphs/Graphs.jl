@@ -35,5 +35,5 @@ In addition to the generic abstraction, there are other important features:
 
 ### Documentation
 
-Please refer to [*Graph.jl Documentation*](http://people.csail.mit.edu/dhlin/graph_jl/) for detailed documentation.
+Please refer to [*Graph.jl Documentation*](http://johnmyleswhite.github.io/Graphs.jl/index.html) for detailed documentation.
 
