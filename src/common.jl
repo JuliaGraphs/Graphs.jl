@@ -1,5 +1,6 @@
 # Common facilities
 
+typealias AttributeDict Dict{UTF8String, Any}
 
 #################################################
 #
@@ -19,12 +20,13 @@ vertex_index(v::KeyVertex) = v.index
 type ExVertex
     index::Int
     label::UTF8String
-    attributes::Dict{UTF8String,Any}
+    attributes::AttributeDict
     
-    ExVertex(i::Int, label::String) = new(i, label, Dict{UTF8String,Any}())    
+    ExVertex(i::Int, label::String) = new(i, label, AttributeDict())    
 end
 
 vertex_index(v::ExVertex) = v.index
+attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
 #################################################
 #
@@ -53,21 +55,23 @@ type ExEdge{V}
     index::Int
     source::V
     target::V
-    attributes::Dict{UTF8String,Any}
+    attributes::AttributeDict
     
     function ExEdge(idx::Int, s::V, t::V)
-        attrs = Dict{UTF8String,Any}()
+        attrs = AttributeDict()
         new(idx, s, t, attrs)
     end
     
-    function ExEdge(idx::Int, s::V, t::V, attrs::Dict{UTF8String,Any})
-        attrs = Dict{UTF8String,Any}()
+    function ExEdge(idx::Int, s::V, t::V, attrs::AttributeDict)
         new(idx, s, t, attrs)
     end
 end
 
 source(e::ExEdge) = e.source
 target(e::ExEdge) = e.target
+source{V}(e::ExEdge{V}, g::AbstractGraph{V}) = e.source
+target{V}(e::ExEdge{V}, g::AbstractGraph{V}) = e.target
+attributes(e::ExEdge, g::AbstractGraph) = e.attributes
 
 edge_index(e::ExEdge) = e.index
 revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.attributes)
