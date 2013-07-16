@@ -18,7 +18,10 @@ function to_dot(graph::AbstractGraph)
 end
 
 # Write the dot representation of a graph to a stream.
-function to_dot(graph::AbstractGraph, stream::IO)
+function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
+    has_vertex_attrs = method_exists(attributes, (vertex_type(graph), G))
+    has_edge_attrs = method_exists(attributes, (edge_type(graph), G))
+
     write(stream, "$(graph_type_string(graph)) graphname {\n")
     if implements_edge_list(graph)
         for edge in edges(graph)
@@ -26,9 +29,21 @@ function to_dot(graph::AbstractGraph, stream::IO)
         end
     elseif implements_vertex_list(graph) && (implements_incidence_list(graph) || implements_adjacency_list(graph))
         for vertex in vertices(graph)
-            for n in out_neighbors(vertex, graph)
-                if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
-                    write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
+            if has_vertex_attrs && !isempty(attributes(vertex, graph))
+                write(stream, "$(vertex_index(vertex)) $(to_dot(attributes(vertex, graph)))\n")
+            end
+            if implements_incidence_list(graph)
+                for e in out_edges(vertex, graph)
+                    n = target(e, graph)
+                    if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
+                        write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))$(has_edge_attrs ? string(" ", to_dot(attributes(e, graph))) : "")\n")
+                    end
+                end
+            else # implements_adjacency_list
+                for n in out_neighbors(vertex, graph)
+                    if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
+                        write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
+                    end
                 end
             end
         end
@@ -38,6 +53,16 @@ function to_dot(graph::AbstractGraph, stream::IO)
     write(stream, "}\n")
     stream
 end
+
+function to_dot(attrs::AttributeDict)
+    if isempty(attrs)
+        ""
+    else
+        string("[",join(map(to_dot,collect(attrs)),","),"]")
+    end
+end
+
+to_dot(attr_tuple::(UTF8String, Any)) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
 
 function graph_type_string(graph::AbstractGraph)
     is_directed(graph) ? "digraph" : "graph"
