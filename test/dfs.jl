@@ -42,4 +42,4 @@ vs2 = visited_vertices(g2, DepthFirst(), 1)
 ts = topological_sort_by_dfs(g)
 @assert ts == [1, 3, 6, 2, 5, 4]
 
-@test_fails topological_sort_by_dfs(g2)  # g2 contains a loop
+@test_throws topological_sort_by_dfs(g2)  # g2 contains a loop

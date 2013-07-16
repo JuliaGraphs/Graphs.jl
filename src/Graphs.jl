@@ -38,7 +38,7 @@ module Graphs
         simple_adjlist, adjlist,
         
         # incidence_list
-        GenericIncidenceList, SimpleIncidenceList, IncidenceList, 
+        GenericIncidenceList, SimpleIncidenceList, VectorIncidenceList, IncidenceList, 
         simple_inclist, inclist,
         
         # graph

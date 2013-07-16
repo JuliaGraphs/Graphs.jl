@@ -125,27 +125,61 @@ add_edge!(gu, 4, 5)
 #   normal list
 #
 #################################################
+let
+	g = inclist(KeyVertex{ASCIIString})
 
-g = inclist(KeyVertex{ASCIIString})
+	vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
 
-vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
+	@test num_vertices(g) == 3
 
-@test num_vertices(g) == 3
+	for i = 1 : 3
+	    @test vertices(g)[i] == vs[i]
+	    @test out_degree(vs[i], g) == 0
+	end
 
-for i = 1 : 3
-    @test vertices(g)[i] == vs[i]
-    @test out_degree(vs[i], g) == 0
+	add_edge!(g, vs[1], vs[2])
+	add_edge!(g, vs[1], vs[3])
+	add_edge!(g, vs[2], vs[3])
+
+	@test out_degree(vs[1], g) == 2
+	@test out_degree(vs[2], g) == 1
+	@test out_degree(vs[3], g) == 0
+
+	@test out_edges(vs[1], g) == [Edge(1, vs[1], vs[2]), Edge(2, vs[1], vs[3])]
+	@test out_edges(vs[2], g) == [Edge(3, vs[2], vs[3])]
+	@test isempty(out_edges(vs[3], g))
 end
 
-add_edge!(g, vs[1], vs[2])
-add_edge!(g, vs[1], vs[3])
-add_edge!(g, vs[2], vs[3])
+let
+	g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
 
-@test out_degree(vs[1], g) == 2
-@test out_degree(vs[2], g) == 1
-@test out_degree(vs[3], g) == 0
+	vs = [ add_vertex!(g, ExVertex(1,"a")),
+	       add_vertex!(g, ExVertex(2,"b")),
+	       add_vertex!(g, ExVertex(3,"c")) ]
 
-@test out_edges(vs[1], g) == [Edge(1, vs[1], vs[2]), Edge(2, vs[1], vs[3])]
-@test out_edges(vs[2], g) == [Edge(3, vs[2], vs[3])]
-@test isempty(out_edges(vs[3], g))
+	@test num_vertices(g) == 3
+
+	for i = 1 : 3
+	    @test vertices(g)[i] == vs[i]
+	    @test out_degree(vs[i], g) == 0
+	end
+
+	add_edge!(g, vs[1], vs[2])
+	add_edge!(g, vs[1], vs[3])
+	add_edge!(g, vs[2], vs[3])
+
+	@test out_degree(vs[1], g) == 2
+	@test out_degree(vs[2], g) == 2
+	@test out_degree(vs[3], g) == 2
+
+	e1 = out_edges(vs[1], g)[1]
+	@test source(e1, g) == vs[1]
+	@test target(e1, g) == vs[2]
+
+	e2 = out_edges(vs[2], g)[1]
+	@test source(e2, g) == vs[2]
+	@test target(e2, g) == vs[1]
+
+	@test edge_index(e1, g) == edge_index(e2, g)
+end
 

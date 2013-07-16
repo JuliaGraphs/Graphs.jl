@@ -52,7 +52,7 @@ This makes it convenient to use integers as vertices in graphs.
 Edge Types
 -----------
 
-This package provides two edge types: ``Edge`` and ``ExEdge``. The former is a basic edge type that simply encapsulates the source and target vertices of an edge, while the latter allows one to specify attributes. 
+This package provides two edge types: ``Edge`` and ``ExEdge``. The former is a basic edge type that simply encapsulates the source and target vertices of an edge, while the latter allows one to specify attributes.  
 
 The definition of ``Edge`` is given by
 
@@ -94,4 +94,9 @@ Both edge types implement the following methods:
 .. py:function:: target(e)
 
     returns the target vertex of the edge ``e``.
+
+.. py::function:: revedge(e)
+
+    returns a new edge, exactly the same except source and target are switched.
     
+A custom edge type ``E{V}`` which is constructible by ``E(index::Int, s::V, t::V)`` and implements the above methods is usable in the ``VectorIncidenceList`` parametric type.  Construct such a list with ``inclist(V,E{V})``, where E and V are your vertex and edge types.  See test/inclist.jl for an example.

@@ -18,7 +18,8 @@ type GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
 end
 
 typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, Range1{Int}, Vector{Vector{IEdge}}}
-typealias IncidenceList{V} GenericIncidenceList{V, Edge{V}, Vector{V}, Vector{Vector{Edge{V}}}}
+typealias VectorIncidenceList{V, E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
+typealias IncidenceList{V} VectorIncidenceList{V, Edge{V}}
 
 @graph_implements GenericIncidenceList vertex_list vertex_map edge_map adjacency_list incidence_list
 
@@ -41,7 +42,7 @@ out_neighbors(v, g::GenericIncidenceList) = out_neighbors_proxy(g.inclist[vertex
 
 # mutation
 
-function add_vertex!{V}(g::IncidenceList{V}, v::V)
+function add_vertex!{V,E}(g::VectorIncidenceList{V,E}, v::V)
     nv::Int = num_vertices(g)
     iv::Int = vertex_index(v)
     if iv != nv + 1
@@ -49,7 +50,7 @@ function add_vertex!{V}(g::IncidenceList{V}, v::V)
     end        
     
     push!(g.vertices, v)
-    push!(g.inclist, Array(Edge{V},0))
+    push!(g.inclist, Array(E,0))
     v
 end
 
@@ -62,7 +63,7 @@ function add_vertex!{K}(g::IncidenceList{KeyVertex{K}}, key::K)
 end
 
 
-function add_edge!{V}(g::GenericIncidenceList{V, Edge{V}}, u::V, v::V)
+function add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V)
     nv::Int = num_vertices(g)
     ui::Int = vertex_index(u)
     vi::Int = vertex_index(v)
@@ -71,10 +72,12 @@ function add_edge!{V}(g::GenericIncidenceList{V, Edge{V}}, u::V, v::V)
         throw(ArgumentError("u or v is not a valid vertex."))
     end
     ei::Int = (g.nedges += 1)
-    push!(g.inclist[ui], Edge(ei, u, v))
+
+    e = E(ei, u, v)
+    push!(g.inclist[ui], e)
     
     if !g.is_directed
-        push!(g.inclist[vi], Edge(ei, v, u))
+        push!(g.inclist[vi], revedge(e))
     end
 end
 
@@ -88,11 +91,10 @@ function simple_inclist(nv::Int; is_directed::Bool = true)
     SimpleIncidenceList(is_directed, 1:nv, 0, inclist)
 end
 
-function inclist{V}(vty::Type{V}; is_directed::Bool = true)
-    inclist = Array(Vector{Edge{V}}, 0)
-    IncidenceList{V}(is_directed, Array(V, 0), 0, inclist)
+inclist{V}(vty::Type{V}; is_directed::Bool = true) =
+                                inclist(V, Edge{V}, is_directed=is_directed)
+
+function inclist{V, E}(vty::Type{V}, ety::Type{E}; is_directed::Bool = true)
+    inclist = Array(Vector{E},0)
+    VectorIncidenceList{V, E}(is_directed, Array(V, 0), 0, inclist)
 end
-
-
-
-

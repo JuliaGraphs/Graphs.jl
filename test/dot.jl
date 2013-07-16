@@ -31,38 +31,9 @@ let g=inclist(ExVertex, is_directed=false)
           contains(sp, "1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]")
 end
 
-typealias ExEIncidenceList{V} GenericIncidenceList{V, ExEdge{V}, Vector{V}, Vector{Vector{ExEdge{V}}}}
-typealias G ExEIncidenceList{ExVertex}
-function Graphs.add_vertex!(g::G, v::ExVertex)
-    nv::Int = num_vertices(g)
-    iv::Int = vertex_index(v)
-    if iv != nv + 1
-        throw(ArgumentError("Invalid vertex index."))
-    end        
-    
-    push!(g.vertices, v)
-    push!(g.inclist, Array(ExEdge,0))
-    v
-end
-function Graphs.add_edge!{V}(g::G, u::V, v::V)
-    nv::Int = num_vertices(g)
-    ui::Int = vertex_index(u)
-    vi::Int = vertex_index(v)
-    
-    if !(ui >= 1 && ui <= nv && vi >= 1 && vi <= nv)
-        throw(ArgumentError("u or v is not a valid vertex."))
-    end
-    ei::Int = (g.nedges += 1)
-    e = ExEdge{V}(ei, u, v)
-    push!(g.inclist[ui], e)
-    
-    if !g.is_directed
-        push!(g.inclist[vi], ExEdge{V}(ei, v, u, e.attributes))
-    end
-end
 # Edge attributes get layed out correctly
 let 
-    g = G(false, Array(ExVertex, 0), 0, Array(Vector{ExEdge{ExVertex}},0))
+    g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
     add_vertex!(g, ExVertex(1, "label1"))
     add_vertex!(g, ExVertex(2, "label2"))
     
@@ -112,13 +83,3 @@ let g=simple_adjlist(3, is_directed=false)
     @test xor(has_match(r"2 -- 3", str), has_match(r"3 -- 2", str))
     @test !has_match(r"->", str)
 end
-
-# I don't know a clean way to make this work, as the dot output edge order changes with every run.
-#let g=read_edgelist(joinpath("test", "data", "graph1.edgelist"))
-#    f = open(joinpath("test","data","graph1.dot"))
-#    str = readall(f)
-#    close(f)
-#    println(str)
-#    println(to_dot(g))
-#    @test to_dot(g) == str
-#end
