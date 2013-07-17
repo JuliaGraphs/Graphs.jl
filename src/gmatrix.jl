@@ -613,6 +613,7 @@ function laplacian_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W
                
     else
         throw(ArgumentError("g must implement edge_list or incidence_list."))
+    end
 end
 
 function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
