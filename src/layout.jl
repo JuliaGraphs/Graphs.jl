@@ -20,36 +20,29 @@ function layout_random(g::GenericGraph, dim=2)
     return Dict(g.vertices, pos)
 end
 
-
 function layout_circular(g::GenericGraph, dim=2)
     error("Circular layout not implemented yet!")
 end
-
 
 function layout_shell(g::GenericGraph, dim=2)
     error("Shell layout not implemented yet!")
 end
 
-
 function layout_fruchterman_reingold(g::GenericGraph, dim=2)
     error("Fruchterman-Reingold layout not implemented yet!")
 end
-
 
 function layout_kamada_kawai(g::GenericGraph, dim=2)
     error("Kamada-Kawai layout not implemented yet!")
 end
 
-
 function _spectral_dense{T<:Number}(L::Matrix{T}, dim=2)
     # Helper function for spectral embedding
 end
 
-
 function _spectral_sparse{T<:Real}(L::CSCMatrix{T}, dim=2)
     # Helper function for spectral embedding
 end
-
 
 function layout_spectral(g::GenericGraph, dim=2, scale=1)
     # Use eigenvectors of graph Laplacian as coordinates of 
@@ -68,8 +61,6 @@ function layout_spectral(g::GenericGraph, dim=2, scale=1)
     error("Spectral not done yet")
 
 end
-
-
 
 function layout_spectral{W}(g::GenericGraph, eweights::AbstractVector{W},
                          dim=2, scale=1)
