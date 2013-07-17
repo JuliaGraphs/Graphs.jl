@@ -12,7 +12,7 @@ function layout_random(g::GenericGraph, dim=2)
     #
     # Returns: Dict keyed by vertices with positions as values.
     #
-    # Ported from networkx version.
+    # Ported from networkx.
     
     n = num_vertices(g)
     pos = rand(n, dim)
@@ -32,12 +32,26 @@ end
 
 
 function layout_fruchterman_reingold(g::GenericGraph, dim=2)
-    # See reference from Brown.
     error("Fruchterman-Reingold layout not implemented yet!")
 end
 
 
-function layout_spectral{W}(g::GenericGraph, dim=2, scale=1)
+function layout_kamada_kawai(g::GenericGraph, dim=2)
+    error("Kamada-Kawai layout not implemented yet!")
+end
+
+
+function _spectral_dense{T<:Number}(L::Matrix{T}, dim=2)
+    # Helper function for spectral embedding
+end
+
+
+function _spectral_sparse{T<:Real}(L::CSCMatrix{T}, dim=2)
+    # Helper function for spectral embedding
+end
+
+
+function layout_spectral(g::GenericGraph, dim=2, scale=1)
     # Use eigenvectors of graph Laplacian as coordinates of 
     # nodes.
     # 
