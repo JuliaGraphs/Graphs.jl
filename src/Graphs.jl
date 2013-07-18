@@ -45,6 +45,7 @@ module Graphs
         
         # gmatrix
         adjacency_matrix, weight_matrix, laplacian_matrix,
+        adjacency_matrix_sparse, weight_matrix_sparse, laplacian_matrix_sparse,
         sparse2adjacencylist,
         
         # graph_visit
