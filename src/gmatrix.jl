@@ -196,7 +196,7 @@ function weight_matrix{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVe
     wmap   
 end    
 
-function weight_matrix{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVector{W})
+function weight_matrix_sparse{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVector{W})
     warn("Test: weight_matrix(is_directed, n, edges, eweights)")
     ne = length(edges)
     if !is_directed
