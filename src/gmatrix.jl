@@ -76,6 +76,9 @@ function adjacency_matrix_by_adjlist_sparse(g::AbstractGraph)
     warn("Test: adjacency_matrix_by_adjlist_sparse(g::AbstractGraph)")
     n = num_vertices(g)
     ne = num_edges(g)
+    if !is_directed(g)
+        ne *= 2
+    end
 
     ui = Array(Int, ne)
     vi = Array(Int, ne)
@@ -109,6 +112,9 @@ function adjacency_matrix_by_inclist_sparse(g::AbstractGraph)
     warn("Test: adjacency_matrix_by_inclist_sparse(g::AbstractGraph)")
     n = num_vertices(g)
     ne = num_edges(g)
+    if !is_directed(g)
+        ne *= 2
+    end
 
     ui = Array(Int, ne)
     vi = Array(Int, ne)
