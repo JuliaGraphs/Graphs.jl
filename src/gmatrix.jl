@@ -28,7 +28,6 @@ function adjacency_matrix(is_directed::Bool, n::Int, edges)
 end
 
 function adjacency_matrix_sparse(is_directed::Bool, n::Int, edges)
-    warn("Test: adjaceny_matrix_sparse(is_directed, n, edges)")
     ne = length(edges)
 
     if !is_directed
@@ -73,7 +72,6 @@ function adjacency_matrix_by_adjlist(g::AbstractGraph)
 end
 
 function adjacency_matrix_by_adjlist_sparse(g::AbstractGraph)
-    warn("Test: adjacency_matrix_by_adjlist_sparse(g::AbstractGraph)")
     n = num_vertices(g)
     ne = num_edges(g)
     if !is_directed(g)
@@ -109,7 +107,6 @@ function adjacency_matrix_by_inclist(g::AbstractGraph)
 end
 
 function adjacency_matrix_by_inclist_sparse(g::AbstractGraph)
-    warn("Test: adjacency_matrix_by_inclist_sparse(g::AbstractGraph)")
     n = num_vertices(g)
     ne = num_edges(g)
     if !is_directed(g)
@@ -155,7 +152,6 @@ function adjacency_matrix(g::AbstractGraph)
 end
 
 function adjacency_matrix_sparse(g::AbstractGraph)
-    warn("Test: adjacency_matrix_sparse(g::AbstractGraph)")
 
     @graph_requires g vertex_list vertex_map
 
@@ -203,7 +199,6 @@ function weight_matrix{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVe
 end    
 
 function weight_matrix_sparse{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVector{W})
-    warn("Test: weight_matrix(is_directed, n, edges, eweights)")
     ne = length(edges)
     if !is_directed
         ne *= 2
@@ -266,12 +261,14 @@ function weight_matrix{W}(g::AbstractGraph, eweights::AbstractVector{W})
 end
 
 function weight_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W})
-    warn("Test: weight_matrix_spars(g, eweights)")
 
     @graph_requires g vertex_list vertex_map edge_map
 
     n = num_vertices(g)
     ne = num_edges(g)
+    if !is_directed(g)
+        ne *= 2
+    end
     ui = Array(Int, ne)
     vi = Array(Int, ne)
     w = Array(W, ne)
@@ -323,7 +320,6 @@ function laplacian_matrix(n::Int, edges)
 end
 
 function laplacian_matrix_sparse(n::Int, edges)
-    warn("Test: laplacian_matrix_sparse(n, edges)")
 
     ne = 4*length(edges)  # For every edge we have 4 entries
     ui = Array(Int, ne)
@@ -373,7 +369,6 @@ function laplacian_matrix_by_adjlist(g)
 end
 
 function laplacian_matrix_by_adjlist_sparse(g)
-    warn("Test: laplacian_matrix_by_adjlist_sparse(g)")
     # Note: num_edges(g) only counts edges once, but they show up twice in the
     # loops below, and for each edge we will generate two entries =>
     # 4*num_edges.
@@ -423,7 +418,6 @@ function laplacian_matrix_by_inclist(g)
 end
 
 function laplacian_matrix_by_inclist_sparse(g)
-    warn("Test: laplacian_matrix_by_inclist_sparse(g)")
 
     n = num_vertices(g)
     ne = 4*num_edges(g)
@@ -472,7 +466,6 @@ function laplacian_matrix(g::AbstractGraph)
 end
 
 function laplacian_matrix_sparse(g::AbstractGraph)
-    warn("Test: laplacian_matrix_sparse(g)")
     
     @graph_requires g vertex_list vertex_map
 
@@ -510,9 +503,8 @@ function laplacian_matrix{W}(n::Int, edges, eweights::AbstractVector{W})
 end
 
 function laplacian_matrix_sparse{W}(n::Int, edges, eweights::AbstractVector{W})
-    warn("Test: laplacian_matrix_sparse{W}(n, edges, eweights)")
 
-    ne = 4*length(e)
+    ne = 4*length(edges)
     
     ui = Array(Int, ne)
     vi = Array(Int, ne)
@@ -535,12 +527,12 @@ function laplacian_matrix_sparse{W}(n::Int, edges, eweights::AbstractVector{W})
 
         ui[idx] = uu
         vi[idx] = vv
-        w[idx] = ww
+        w[idx] = -ww
         idx += 1
 
         ui[idx] = vv
         vi[idx] = uu
-        w[idx] = ww
+        w[idx] = -ww
         idx += 1
     end
     sparse(ui, vi, w, n, n)
@@ -580,7 +572,6 @@ function laplacian_matrix{W}(g::AbstractGraph, eweights::AbstractVector{W})
 end
 
 function laplacian_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W})
-    warn("Test: laplacian_matrix_sparse{W}(g, eweights)")
 
     @graph_requires g vertex_list vertex_map edge_map
 
