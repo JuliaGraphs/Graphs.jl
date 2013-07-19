@@ -58,6 +58,15 @@ wm0u = [0. 1. 2. 0.; 1. 0. 0. 3.; 2. 0. 0. 4.; 0. 3. 4. 0.]
 @test weight_matrix(gd, eweights) == wm0
 @test weight_matrix(gu, eweights) == wm0u
 
+wm0_s = sparse(wm0)
+wm0u_s = sparse(wm0u)
+
+@test weight_matrix_sparse(true, 4, edges, eweights) == wm0_s
+@test weight_matrix_sparse(false, 4, edges, eweights) == wm0u_s
+
+@test weight_matrix_sparse(gd, eweights) == wm0_s
+@test weight_matrix_sparse(gu, eweights) == wm0u_s
+
 # Laplacian matrix
 
 L0 = [2. -1. -1. 0.; -1. 2. 0. -1.; -1. 0. 2. -1.; 0. -1. -1. 2.]
@@ -67,6 +76,17 @@ L0 = [2. -1. -1. 0.; -1. 2. 0. -1.; -1. 0. 2. -1.; 0. -1. -1. 2.]
 @test Graphs.laplacian_matrix_by_inclist(gu) == L0
 @test laplacian_matrix(gu) == L0
 
+L0_s = sparse(L0)
+
+@test laplacian_matrix_sparse(4, edges) == L0_s
+@test Graphs.laplacian_matrix_by_adjlist_sparse(gu) == L0_s
+@test Graphs.laplacian_matrix_by_inclist_sparse(gu) == L0_s
+@test laplacian_matrix_sparse(gu) == L0_s
+
 Lw = [3. -1. -2. 0.; -1. 4. 0. -3.; -2. 0. 6. -4.; 0. -3. -4. 7.]
 @test laplacian_matrix(4, edges, eweights) == Lw
 @test laplacian_matrix(gu, eweights) == Lw
+
+Lw_s = sparse(Lw)
+@test laplacian_matrix_sparse(4, edges, eweights) == Lw_s
+@test laplacian_matrix_sparse(gu, eweights) == Lw_s
