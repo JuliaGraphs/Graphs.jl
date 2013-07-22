@@ -95,6 +95,10 @@ discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
 function test_cyclic_by_dfs(graph::AbstractGraph)
     @graph_requires graph vertex_list adjacency_list vertex_map
+    
+    if !is_directed(graph)
+        throw(ArgumentError("test_cyclic_by_dfs: The input graph must be directed."))
+    end
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = DFSCyclicTestVisitor()
@@ -136,6 +140,10 @@ end
 
 function topological_sort_by_dfs{V}(graph::AbstractGraph{V})
     @graph_requires graph vertex_list adjacency_list vertex_map
+    
+    if !is_directed(graph)
+        throw(ArgumentError("topological_sort_by_dfs: The input graph must be directed."))
+    end
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = TopologicalSortVisitor{V}(num_vertices(graph))
