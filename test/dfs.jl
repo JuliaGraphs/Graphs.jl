@@ -3,47 +3,75 @@
 using Graphs
 using Base.Test
 
-acyclic = [(1,2) (1,3) (1,6) (2,4) (2,5) (3,5) (3,6)]
-cyclic  = [(1,2) (1,3) (1,6) (2,4) (2,5) (3,5) (3,6) (5,1)]
+type GraphTest
+  graph_edges::Array{(Int64,Int64),1}
+  dfs_path::Array{Int,1}
+  is_cyclic::Bool
+  topo_sort::Array{Int,1}
 
-g = simple_adjlist(6)
-map((edg) -> add_edge!(g, edg[1], edg[2]), acyclic)
+  GraphTest(gedges, dfspath, iscyclic, toposort) =
+    new(gedges, dfspath, iscyclic, toposort)
+end
 
-g2 = simple_adjlist(6)
-map((edg) -> add_edge!(g2, edg[1], edg[2]), cyclic)
+dir_acyclic = GraphTest(
+  [(1,2), (1,3), (1,6), (2,4), (2,5), (3,5), (3,6)],
+  [1, 2, 4, 5, 3, 6],
+  false,
+  [])
+undir_acyclic = GraphTest(
+  [(1,2), (1,3), (1,6), (2,4), (2,5)],
+  [],
+  false,
+  [])
+cyclic  = GraphTest(
+  [(1,2), (1,3), (1,6), (2,4), (2,5), (3,5), (3,6), (5,1)],
+  [1, 2, 4, 5, 3, 6],
+  true,
+  [])
+
+testsets = [
+  (true, [dir_acyclic, cyclic]),
+  (false, [undir_acyclic, cyclic])]
+
+for tset in testsets
+  is_dir, graphtests = tset
+
+  for gtest in graphtests
+
+    g = simple_inclist(6, is_directed = is_dir)
+    map((edg) -> add_edge!(g, edg[1], edg[2]), gtest.graph_edges)
+
+    gEx = graph(ExVertex, ExEdge{ExVertex}, is_directed = is_dir)
+    map((x) -> add_vertex!(gEx, "edge:" * string(x)), 1:6)
+    V = vertices(gEx)
+    map((edg) -> add_edge!(gEx, V[edg[1]], V[edg[2]]), gtest.graph_edges)
 
 
-gEx = graph(ExVertex, ExEdge{ExVertex}, is_directed = true)
-map((x) -> add_vertex!(gEx, "edge:" * string(x)), 1:6)
-V = vertices(gEx)
-map((edg) -> add_edge!(gEx, V[edg[1]], V[edg[2]]), acyclic)
+    # DFS traversal
+    if !isempty(gtest.dfs_path)
+      vs1 = visited_vertices(g, DepthFirst(), 1)
+      @assert vs1 == gtest.dfs_path
 
-gEx2 = graph(ExVertex, ExEdge{ExVertex}, is_directed = true)
-map((x) -> add_vertex!(gEx2, "edge:" * string(x)), 1:6)
-V2 = vertices(gEx2)
-map((edg) -> add_edge!(gEx2, V2[edg[1]], V2[edg[2]]), cyclic)
+      vs2 = visited_vertices(gEx, DepthFirst(), V[1])
+      @assert vs2 == collect(map((x) -> gEx.vertices[x], gtest.dfs_path))
+    end
 
-# DFS traversal
+    # Cyclic test
+    @assert test_cyclic_by_dfs(g) == gtest.is_cyclic
+    @assert test_cyclic_by_dfs(gEx) == gtest.is_cyclic
 
-vs1 = visited_vertices(g, DepthFirst(), 1)
-@assert vs1 == [1, 2, 4, 5, 3, 6]
+    # Topological sort
+    if gtest.is_cyclic
+      @test_throws topological_sort_by_dfs(g)  # g2 contains a loop
+      @test_throws topological_sort_by_dfs(gEx)  # g2 contains a loop
 
-vs2 = visited_vertices(g2, DepthFirst(), 1)
-@assert vs2 == [1, 2, 4, 5, 3, 6]
+    elseif !isempty(gtest.topo_sort)
+      ts = topological_sort_by_dfs(g)
+      @assert ts == gtest.topo_sort
 
-# Cyclic test
+      ts = topological_sort_by_dfs(gEx)
+      @assert ts == gtest.topo_sort
+    end
+  end
+end
 
-@assert test_cyclic_by_dfs(g) == false
-@assert test_cyclic_by_dfs(g2) == true
-
-# Cyclic test with Extended Graph types
-
-@assert test_cyclic_by_dfs(gEx) == false
-@assert test_cyclic_by_dfs(gEx2) == true
-
-# Topological sort
-
-ts = topological_sort_by_dfs(g)
-@assert ts == [1, 3, 6, 2, 5, 4]
-
-@test_throws topological_sort_by_dfs(g2)  # g2 contains a loop
