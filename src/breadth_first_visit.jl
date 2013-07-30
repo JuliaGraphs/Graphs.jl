@@ -45,13 +45,10 @@ function traverse_graph{V,E}(
     alg::BreadthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
-    colormap = nothing)
+    colormap = zeros(Int, num_vertices(graph)))
 
     @graph_requires graph adjacency_list vertex_map
 
-    if colormap == nothing
-        colormap = zeros(Int, num_vertices(graph))
-    end
     que = queue(V)
 
     colormap[vertex_index(s, graph)] = 1
@@ -69,13 +66,10 @@ function traverse_graph{V,E}(
     alg::BreadthFirst,
     sources::AbstractVector{V},
     visitor::AbstractGraphVisitor;
-    colormap = nothing)
+    colormap = zeros(Int, num_vertices(graph)))
 
     @graph_requires graph adjacency_list vertex_map
 
-    if colormap == nothing
-        colormap = zeros(Int, num_vertices(graph))
-    end
     que = queue(V)
 
     for s in sources

@@ -58,18 +58,10 @@ function traverse_graph{V,G <: AbstractGraph}(
     alg::DepthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
-    vertexcolormap = nothing,
-    edgecolormap = nothing)
+    vertexcolormap = zeros(Int, num_vertices(graph)),
+    edgecolormap = zeros(Int, num_edges(graph)))
 
     @graph_requires graph incidence_list vertex_map
-
-    if vertexcolormap == nothing
-        vertexcolormap = zeros(Int, num_vertices(graph))
-    end
-
-    if edgecolormap == nothing
-        edgecolormap = zeros(Int, num_edges(graph))
-    end
 
     vertexcolormap[vertex_index(s, graph)] = 1
     if !discover_vertex!(visitor, s)
