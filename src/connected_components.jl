@@ -8,14 +8,14 @@
 
 function connected_components{V}(graph::AbstractGraph{V})
     @graph_requires graph vertex_list vertex_map adjacency_list
-    
+
     if is_directed(graph)
         throw(ArgumentError("graph must be undirected."))
     end
-    
+
     cmap = zeros(Int, num_vertices(graph))
     components = Array(Vector{V}, 0)
-    
+
     for v in vertices(graph)
         if cmap[vertex_index(v, graph)] == 0
             visitor = VertexListVisitor{V}(0)
@@ -23,7 +23,7 @@ function connected_components{V}(graph::AbstractGraph{V})
             push!(components, visitor.vertices)
         end
     end
-    
+
     components
 end
 
@@ -36,7 +36,7 @@ end
 function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
     """
     Recursively compute the strongly connected components of a directed graph.
-    
+
     Adapted from
     http://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
     on April 29, 2013.
@@ -83,7 +83,7 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
                 end
             end
             push!(components, component)
-        end 
+        end
     end
 
     for v in vertices(graph)
@@ -101,7 +101,7 @@ type TarjanVisitor{V} <: AbstractGraphVisitor
     index        :: Array{Int}
     components   :: Array{Vector{V}}
 
-    function TarjanVisitor(graph::AbstractGraph) 
+    function TarjanVisitor(graph::AbstractGraph)
         v_idx  = v -> vertex_index(v, graph)
         stack  = Array(V, 0)
         index  = zeros(Int, num_vertices(graph))
@@ -111,13 +111,13 @@ type TarjanVisitor{V} <: AbstractGraphVisitor
         new(v_idx, stack, lowlink, index, components)
     end
 end
-function discover_vertex!(vis::TarjanVisitor, v) 
+function discover_vertex!(vis::TarjanVisitor, v)
     vis.index[vis.vertex_index(v)] = length(vis.stack) + 1
     push!(vis.lowlink, length(vis.stack) + 1)
     push!(vis.stack, v)
     true
 end
-function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int)
+function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int, e_color::Int)
     if w_color == 1 # 1 means added seen, but not explored
         while vis.index[vis.vertex_index(w)] < vis.lowlink[end]
             pop!(vis.lowlink)
@@ -126,12 +126,12 @@ function examine_neighbor!(vis::TarjanVisitor, v, w, w_color::Int)
 end
 function close_vertex!(vis::TarjanVisitor, v)
     v_idx = vis.vertex_index(v)
-    if vis.index[v_idx] == vis.lowlink[end] 
+    if vis.index[v_idx] == vis.lowlink[end]
         component = vis.stack[vis.index[v_idx]:]
         splice!(vis.stack, vis.index[v_idx]:length(vis.stack))
         pop!(vis.lowlink)
         push!(vis.components, component)
-    end 
+    end
 end
 
 function strongly_connected_components{V}(graph::AbstractGraph{V})
@@ -142,7 +142,7 @@ function strongly_connected_components{V}(graph::AbstractGraph{V})
     julia> add_edge!(g, 2, 3)
     julia> add_edge!(g, 3, 1)
     julia> add_edge!(g, 4, 1)
-    
+
     julia> strongly_connected_components(g)
     2-element Array{Int64,1} Array:
      [1, 2, 3]
@@ -151,18 +151,18 @@ function strongly_connected_components{V}(graph::AbstractGraph{V})
     Adapated from
     http://code.activestate.com/recipes/578507-strongly-connected-components-of-a-directed-graph/
     on April 30, 2013.
-    
+
     """
-    
+
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     cmap = zeros(Int, num_vertices(graph))
     components = Array(Vector{V}, 0)
-    
+
     for v in vertices(graph)
         if cmap[vertex_index(v, graph)] == 0 # 0 means not visited yet
             visitor = TarjanVisitor{V}(graph)
-            traverse_graph(graph, DepthFirst(), v, visitor, colormap=cmap)
+            traverse_graph(graph, DepthFirst(), v, visitor, vertexcolormap=cmap)
             for component in visitor.components
                 push!(components, component)
             end

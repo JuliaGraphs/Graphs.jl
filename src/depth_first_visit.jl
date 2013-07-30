@@ -10,65 +10,69 @@
 type DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
-function depth_first_visit_impl!(
-    graph::AbstractGraph,           # the graph
+function depth_first_visit_impl!{V,E}(
+    graph::AbstractGraph{V,E},      # the graph
     stack,                          # an (initialized) stack of vertex
-    colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
+    vertexcolormap::Vector{Int},    # an (initialized) color-map to indicate status of vertices
+    edgecolormap::Vector{Int},      # an (initialized) color-map to indicate status of edges
     visitor::AbstractGraphVisitor)  # the visitor
 
     while !isempty(stack)
-        u, unbs, tstate = pop!(stack)
+        u, uegs, tstate = pop!(stack)
         found_new_vertex = false
 
-        while !done(unbs, tstate) && !found_new_vertex
-            v, tstate = next(unbs, tstate)
-            v_color = colormap[vertex_index(v, graph)]
-            examine_neighbor!(visitor, u, v, v_color)
+        while !done(uegs, tstate) && !found_new_vertex
+            v_edge, tstate = next(uegs, tstate)
+            v = v_edge.target
+            v_color = vertexcolormap[vertex_index(v, graph)]
+            e_color = edgecolormap[edge_index(v_edge, graph)]
+            examine_neighbor!(visitor, u, v, v_color, e_color)
+
+            if e_color == 0
+                edgecolormap[edge_index(v_edge, graph)] = 1
+            end
 
             if v_color == 0
                 found_new_vertex = true
-                colormap[vertex_index(v, graph)] = 1
+                vertexcolormap[vertex_index(v, graph)] = 1
                 if !discover_vertex!(visitor, v)
                     return
                 end
-                push!(stack, (u, unbs, tstate))
+                push!(stack, (u, uegs, tstate))
 
                 open_vertex!(visitor, v)
-                vnbs = out_neighbors(v, graph)
-                push!(stack, (v, vnbs, start(vnbs)))
+                vegs = out_edges(v, graph)
+                push!(stack, (v, vegs, start(vegs)))
             end
         end
 
         if !found_new_vertex
             close_vertex!(visitor, u)
-            colormap[vertex_index(u, graph)] = 2
+            vertexcolormap[vertex_index(u, graph)] = 2
         end
     end
 end
 
-function traverse_graph{V,E}(
-    graph::AbstractGraph{V,E},
+function traverse_graph{V,G <: AbstractGraph}(
+    graph::G,
     alg::DepthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
-    colormap = nothing)
+    vertexcolormap = zeros(Int, num_vertices(graph)),
+    edgecolormap = zeros(Int, num_edges(graph)))
 
-    @graph_requires graph adjacency_list vertex_map
+    @graph_requires graph incidence_list vertex_map
 
-    if colormap == nothing
-        colormap = zeros(Int, num_vertices(graph))
-    end
-
-    colormap[vertex_index(s, graph)] = 1
+    vertexcolormap[vertex_index(s, graph)] = 1
     if !discover_vertex!(visitor, s)
         return
     end
 
-    snbs = out_neighbors(s, graph)
-    sstate = start(snbs)
-    stack = [(s, snbs, sstate)]
+    segs = out_edges(s, graph)
+    sstate = start(segs)
+    stack = [(s, segs, sstate)]
 
-    depth_first_visit_impl!(graph, stack, colormap, visitor)
+    depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
 end
 
 
@@ -82,30 +86,33 @@ end
 
 type DFSCyclicTestVisitor <: AbstractGraphVisitor
     found_cycle::Bool
+
     DFSCyclicTestVisitor() = new(false)
 end
 
-function examine_neighbor!{V}(vis::DFSCyclicTestVisitor, u::V, v::V, color::Int)
-    if color == 1
+function examine_neighbor!{V}(
+    vis::DFSCyclicTestVisitor,
+    u::V,
+    v::V,
+    vcolor::Int,
+    ecolor::Int)
+
+    if vcolor == 1 && ecolor == 0
         vis.found_cycle = true
     end
 end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-function test_cyclic_by_dfs(graph::AbstractGraph)
-    @graph_requires graph vertex_list adjacency_list vertex_map
-    
-    if !is_directed(graph)
-        throw(ArgumentError("test_cyclic_by_dfs: The input graph must be directed."))
-    end
+function test_cyclic_by_dfs{G <: AbstractGraph}(graph::G)
+    @graph_requires graph vertex_list incidence_list vertex_map
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = DFSCyclicTestVisitor()
 
     for s in vertices(graph)
         if cmap[vertex_index(s, graph)] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, colormap=cmap)
+            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
 
         if visitor.found_cycle
@@ -128,8 +135,8 @@ type TopologicalSortVisitor{V} <: AbstractGraphVisitor
 end
 
 
-function examine_neighbor!{V}(visitor::TopologicalSortVisitor{V}, u::V, v::V, color::Int)
-    if color == 1
+function examine_neighbor!{V}(visitor::TopologicalSortVisitor{V}, u::V, v::V, vcolor::Int, ecolor::Int)
+    if vcolor == 1
         throw(ArgumentError("The input graph contains at least one loop."))
     end
 end
@@ -139,26 +146,17 @@ function close_vertex!{V}(visitor::TopologicalSortVisitor{V}, v::V)
 end
 
 function topological_sort_by_dfs{V}(graph::AbstractGraph{V})
-    @graph_requires graph vertex_list adjacency_list vertex_map
-    
-    if !is_directed(graph)
-        throw(ArgumentError("topological_sort_by_dfs: The input graph must be directed."))
-    end
+    @graph_requires graph vertex_list incidence_list vertex_map
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = TopologicalSortVisitor{V}(num_vertices(graph))
 
     for s in vertices(graph)
         if cmap[s] == 0
-            traverse_graph(graph, DepthFirst(), s, visitor, colormap=cmap)
+            traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
         end
     end
 
     reverse(visitor.vertices)
 end
-
-
-
-
-
 

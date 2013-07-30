@@ -12,7 +12,7 @@ discover_vertex!(vis::AbstractGraphVisitor, v) = true
 open_vertex!(vis::AbstractGraphVisitor, v) = nothing
 
 # invoked when a neighbor is discovered & examined
-examine_neighbor!(vis::AbstractGraphVisitor, u, v, color::Int) = nothing
+examine_neighbor!(vis::AbstractGraphVisitor, u, v, color::Int, ecolor::Int) = nothing
 
 # invoked when an edge is discovered & examined
 examine_edge!(vis::AbstractGraphVisitor, e, color::Int) = nothing
@@ -39,11 +39,11 @@ abstract AbstractGraphVisitAlgorithm
 
 type VertexListVisitor{V} <: AbstractGraphVisitor
     vertices::Vector{V}
-    
+
     function VertexListVisitor(n::Integer)
         vs = Array(V, 0)
         sizehint(vs, n)
-        new(vs)        
+        new(vs)
     end
 end
 
@@ -53,17 +53,17 @@ function discover_vertex!{V}(visitor::VertexListVisitor{V}, v::V)
 end
 
 function visited_vertices{V,E}(
-    graph::AbstractGraph{V,E}, 
+    graph::AbstractGraph{V,E},
     alg::AbstractGraphVisitAlgorithm,
     sources)
-    
+
     visitor = VertexListVisitor{V}(num_vertices(graph))
     traverse_graph(graph, alg, sources, visitor)
     visitor.vertices::Vector{V}
 end
 
 
-# Print visit log 
+# Print visit log
 
 type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
@@ -77,8 +77,8 @@ end
 open_vertex!(vis::LogGraphVisitor, v) = println(vis.io, "open vertex: $v")
 close_vertex!(vis::LogGraphVisitor, v) = println(vis.io, "close vertex: $v")
 
-function examine_neighbor!(vis::LogGraphVisitor, u, v, color::Int) 
-    println(vis.io, "examine neighbor: $u -> $v (color = $color)")
+function examine_neighbor!(vis::LogGraphVisitor, u, v, vcolor::Int, ecolor::Int)
+    println(vis.io, "examine neighbor: $u -> $v (vertexcolor = $vcolor, edgecolor= $ecolor)")
 end
 
 function examine_edge!(vis::LogGraphVisitor, e, color::Int)
@@ -90,6 +90,6 @@ function traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorit
     traverse_graph(g, alg, sources, visitor)
 end
 
-traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm, 
+traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm,
     sources) = traverse_graph_withlog(g, alg, sources, STDOUT)
 
