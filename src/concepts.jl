@@ -21,8 +21,8 @@ implements_edge_map(g::AbstractGraph) = false
 implements_bidirectional_adjacency_list(g::AbstractGraph) = false
 implements_bidirectional_incidence_list(g::AbstractGraph) = false
 
-# This ensures that 
-# When implements_bidirectional_adjlist is set to true, 
+# This ensures that
+# When implements_bidirectional_adjlist is set to true,
 # implements_adjlist is automatically true without being overrided
 
 implements_adjacency_list(g::AbstractGraph) = implements_bidirectional_adjacency_list(g)
@@ -33,18 +33,18 @@ implements_adjacency_matrix(g::AbstractGraph) = false
 # macro to simplify concept declaration
 
 const _supported_graph_concept_symbols = Set(
-    :vertex_list, :edge_list, :vertex_map, :edge_map, 
-    :adjacency_list, :incidence_list, 
-    :bidirectional_adjacency_list, :bidirectional_incidence_list, 
+    :vertex_list, :edge_list, :vertex_map, :edge_map,
+    :adjacency_list, :incidence_list,
+    :bidirectional_adjacency_list, :bidirectional_incidence_list,
     :adjacency_matrix )
 
 function _graph_implements_code(G::Symbol, concepts::Symbol...)
     stmts = Expr[]
-    for c in concepts   
-        if !contains(_supported_graph_concept_symbols, c)
+    for c in concepts
+        if !(c in _supported_graph_concept_symbols)
             error("Invalid concept name: $c")
         end
-           
+
         fun = symbol(string("implements_", string(c)))
         stmt = :( $(fun)(::$(G)) = true )
         push!(stmts, stmt)
@@ -59,7 +59,7 @@ end
 # macro to check interface requirements
 
 function _graph_requires_stmt(g::Symbol, concept::Symbol)
-    if !contains(_supported_graph_concept_symbols, concept)
+    if !(concept in _supported_graph_concept_symbols)
         error("Invalid concept name: $c")
     end
     fun = symbol(string("implements_", string(concept)))

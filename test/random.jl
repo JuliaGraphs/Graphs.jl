@@ -40,7 +40,7 @@ let g = watts_strogatz_graph(n, k, beta)
 	for i = 1:n
 		on = out_neighbors(i,g)
 		for j = 1:k/2
-			@test contains(on, ((i+j - 1) % n) + 1)
+			@test (((i+j - 1) % n) + 1 in on)
 		end
 	end
 end

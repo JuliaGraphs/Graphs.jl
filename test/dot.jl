@@ -23,20 +23,20 @@ let g=inclist(ExVertex, is_directed=false)
 
     attrs["baz"] = "qux"
     # Below here we do some messing around so as not to assert on dict iteration order.
-    @test contains(["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
-                      "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"], to_dot(attrs))
+    @test (to_dot(attrs) in ["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
+                                "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"])
 
     sp = split(to_dot(g), "\n")
-    @test contains(sp, "1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]") ||
-          contains(sp, "1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]")
+    @test ("1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]" in sp) ||
+          ("1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]" in sp)
 end
 
 # Edge attributes get layed out correctly
-let 
+let
     g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
     add_vertex!(g, ExVertex(1, "label1"))
     add_vertex!(g, ExVertex(2, "label2"))
-    
+
     add_edge!(g, vertices(g)[1], vertices(g)[2])
 
     e = out_edges(vertices(g)[2], g)[1]
@@ -48,8 +48,8 @@ let
     attrs["baz"] = "qux"
 
     sp = split(to_dot(g), "\n")
-    @test contains(sp, "1 -- 2 [\"foo\"=\"bar\",\"baz\"=\"qux\"]") ||
-          contains(sp, "1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]")
+    @test ("1 -- 2 [\"foo\"=\"bar\",\"baz\"=\"qux\"]" in sp) ||
+          ("1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]" in sp)
 end
 
 let g=simple_graph(0, is_directed=false)

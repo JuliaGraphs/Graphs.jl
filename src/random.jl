@@ -20,7 +20,7 @@ end
 
 # Generate a 'small world' random graph based on the Watts-Strogatz model.
 # Written with much reference to the implementation from GraphStream <http://graphstream-project.org>.
-# The resulting graph has n vertices, 
+# The resulting graph has n vertices,
 #   Each vertex has a base degree of k  (n > k, k >= 2, k must be even.)
 #   There is a beta chance of each edge being 'rewired'
 function watts_strogatz_graph{GT<:AbstractGraph}(g::GT, n::Integer, k::Integer, beta::Real)
@@ -49,7 +49,7 @@ function watts_strogatz_graph{GT<:AbstractGraph}(g::GT, n::Integer, k::Integer, 
                     if (target >= i)
                         target += 1
                     end
-                    if !contains(out_neighbors(i,g), target)
+                    if !(target in out_neighbors(i,g))
                         add_edge!(g,i, target)
                         break
                     end
