@@ -23,12 +23,12 @@ let g=inclist(ExVertex, is_directed=false)
 
     attrs["baz"] = "qux"
     # Below here we do some messing around so as not to assert on dict iteration order.
-    @test contains(["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
-                      "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"], to_dot(attrs))
+    @test in(to_dot(attrs), ["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
+                                "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"])
 
     sp = split(to_dot(g), "\n")
-    @test contains(sp, "1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]") ||
-          contains(sp, "1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]")
+    @test in("1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]", sp) ||
+          in("1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]", sp)
 end
 
 # Edge attributes get layed out correctly
@@ -48,8 +48,8 @@ let
     attrs["baz"] = "qux"
 
     sp = split(to_dot(g), "\n")
-    @test contains(sp, "1 -- 2 [\"foo\"=\"bar\",\"baz\"=\"qux\"]") ||
-          contains(sp, "1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]")
+    @test in("1 -- 2 [\"foo\"=\"bar\",\"baz\"=\"qux\"]", sp) ||
+          in("1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]", sp)
 end
 
 let g=simple_graph(0, is_directed=false)

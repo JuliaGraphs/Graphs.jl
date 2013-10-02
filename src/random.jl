@@ -49,7 +49,7 @@ function watts_strogatz_graph{GT<:AbstractGraph}(g::GT, n::Integer, k::Integer, 
                     if (target >= i)
                         target += 1
                     end
-                    if !contains(out_neighbors(i,g), target)
+                    if !in(target, out_neighbors(i,g))
                         add_edge!(g,i, target)
                         break
                     end

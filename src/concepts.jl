@@ -40,8 +40,8 @@ const _supported_graph_concept_symbols = Set(
 
 function _graph_implements_code(G::Symbol, concepts::Symbol...)
     stmts = Expr[]
-    for c in concepts   
-        if !contains(_supported_graph_concept_symbols, c)
+    for c in concepts
+        if !in(c, _supported_graph_concept_symbols)
             error("Invalid concept name: $c")
         end
            
@@ -59,7 +59,7 @@ end
 # macro to check interface requirements
 
 function _graph_requires_stmt(g::Symbol, concept::Symbol)
-    if !contains(_supported_graph_concept_symbols, concept)
+    if !in(concept, _supported_graph_concept_symbols)
         error("Invalid concept name: $c")
     end
     fun = symbol(string("implements_", string(concept)))
