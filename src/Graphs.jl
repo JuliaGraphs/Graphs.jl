@@ -20,11 +20,10 @@ module Graphs
         @graph_implements, @graph_requires,
     
         # common interfaces
-        vertex_type, edge_type, source, target, edge, revedge,
+        vertex_type, edge_type, source, target, revedge,
         is_directed, is_mutable, vertex_index, edge_index,
         num_vertices, vertices, num_edges, edges, 
         out_degree, out_neighbors, out_edges,
-        in_degree, in_neighbors, in_edges,   
         attributes,     
         
         # common
@@ -45,7 +44,7 @@ module Graphs
         GenericGraph, SimpleGraph, simple_graph, graph,
         
         # gmatrix
-        adjacency_matrix, weight_matrix, laplacian_matrix,
+        adjacency_matrix, weight_matrix, distance_matrix, laplacian_matrix,
         adjacency_matrix_sparse, weight_matrix_sparse, laplacian_matrix_sparse,
         sparse2adjacencylist,
         

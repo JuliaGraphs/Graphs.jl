@@ -133,10 +133,6 @@ function adjacency_matrix(g::AbstractGraph)
     
     @graph_requires g vertex_list vertex_map 
     
-    n = num_vertices(g)
-    ui::Int = 0
-    vi::Int = 0
-    
     if implements_edge_list(g)
         adjacency_matrix(is_directed(g), num_vertices(g), edges(g))
         
@@ -154,9 +150,6 @@ end
 function adjacency_matrix_sparse(g::AbstractGraph)
 
     @graph_requires g vertex_list vertex_map
-
-    n = num_vertices(g)
-    ne = num_edges(g)
 
     if implements_edge_list(g)
         adjacency_matrix_sparse(is_directed(g), num_vertices(g), edges(g))
@@ -295,6 +288,64 @@ function weight_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W})
 
 end
 
+
+###########################################################
+#
+#   Distance matrix
+#
+###########################################################
+
+function distance_matrix{D}(is_directed::Bool, n::Int, edges, distances::AbstractVector{D})
+    dmap = infs(D, n, n)
+	dmap[diagind(dmap)] = zero(D)
+    if is_directed
+        for e in edges
+            d = distances[edge_index(e)]
+            ui = vertex_index(source(e))
+            vi = vertex_index(target(e))
+			tmp = dmap[ui, vi]
+			dmap[ui, vi] = isinf(tmp) ? d : tmp + d
+        end
+    else
+        for e in edges
+            d = distances[edge_index(e)]
+            ui = vertex_index(source(e))
+            vi = vertex_index(target(e))
+			tmp = dmap[ui, vi]
+            dmap[ui, vi] = isinf(tmp) ? d : tmp + d
+            dmap[vi, ui] = dmap[ui, vi]
+        end
+    end
+    dmap   
+end
+
+function distance_matrix{D}(g::AbstractGraph, distances::AbstractVector{D})
+    
+    @graph_requires g vertex_list
+    
+    n::Int = num_vertices(g)
+        
+    if implements_edge_list(g)
+        weight_matrix(is_directed(g), n, edges(g), distances)
+    
+    elseif implements_incidence_list(g)
+		
+        dmap = infs(D, n, n)
+		dmap[diagind(dmap)] = zero(D)
+        for u in vertices(g)
+            ui = vertex_index(u)
+            for e in out_edges(u, g)
+                d = distances[edge_index(e)]
+                vi = vertex_index(target(e))
+				tmp = dmap[ui, vi]
+				dmap[ui, vi] = isinf(tmp) ? d : tmp + d
+            end
+        end
+        dmap       
+    else
+        throw(ArgumentError("Graph must implement either edge_list or incidence_list."))
+    end        
+end
 
 ###########################################################
 #
