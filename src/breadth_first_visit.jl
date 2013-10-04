@@ -20,12 +20,13 @@ function breadth_first_visit_impl!(
         open_vertex!(visitor, u)
 
         for v in out_neighbors(u, graph)
-            v_color::Int = colormap[v]
+            vi = vertex_index(v)
+            v_color::Int = colormap[vi]
             # TODO: Incorporate edge colors to BFS
             examine_neighbor!(visitor, u, v, v_color, -1)
 
             if v_color == 0
-                colormap[vertex_index(v, graph)] = 1
+                colormap[vi] = 1
                 if !discover_vertex!(visitor, v)
                     return
                 end

@@ -67,6 +67,17 @@ wm0u_s = sparse(wm0u)
 @test weight_matrix_sparse(gd, eweights) == wm0_s
 @test weight_matrix_sparse(gu, eweights) == wm0u_s
 
+# distance matrix
+dm0  = [0. 1. 2. Inf; Inf 0. Inf 3.; Inf Inf 0. 4.; Inf Inf Inf 0.]
+dm0u = [0. 1. 2. Inf; 1. 0. Inf 3.; 2. Inf 0. 4.; Inf 3. 4. 0.]
+
+@test distance_matrix(true, 4, edges, eweights) == dm0
+@test distance_matrix(false, 4, edges, eweights) == dm0u
+
+@test distance_matrix(gd, eweights) == dm0
+@test distance_matrix(gu, eweights) == dm0u
+
+
 # Laplacian matrix
 
 L0 = [2. -1. -1. 0.; -1. 2. 0. -1.; -1. 0. 2. -1.; 0. -1. -1. 2.]

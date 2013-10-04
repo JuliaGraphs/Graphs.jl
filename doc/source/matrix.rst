@@ -44,7 +44,31 @@ A *weight matrix* is defined as
 
     Constructs a weight matrix from a graph and a vector of edge weights. Here, ``g`` must implement ``edge_map`` and (``edge_list`` or ``incidence_list``).
     
+
+Distance Matrix
+-------------
+
+A *distance matrix* is defined as
+
+.. math::
+
+    W(u, v) = \begin{cases}
+        0 & u = v \\
+        w(e) & u \ne v \text{ and } \{u, v\} \in E \\
+        Inf & \text{otherwise}
+    \end{cases}
     
+.. py:function:: distance_matrix(is_directed, n, edges, eweights)
+
+    Constructs a distance matrix from a list of edges and a vector of edge weights. 
+    
+.. py:function:: distance_matrix(graph, eweights)
+
+    Constructs a distance matrix from a graph and a vector of edge weights. Here, ``g`` must implement ``edge_map`` and (``edge_list`` or ``incidence_list``).
+    
+	
+	
+	
 Laplacian Matrix
 -----------------
 
