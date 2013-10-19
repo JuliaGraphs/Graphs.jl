@@ -67,7 +67,7 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
             if indices[v_idx(w)] == 0 # w is un-visited
                 strongconnect(w)
                 lowlinks[v_idx] = min(lowlinks[v_idx], lowlinks[w_idx])
-            elseif contains(stack, w)
+            elseif (w in stack)
                 lowlinks[v_idx] = min(lowlinks[v_idx], indices[w_idx])
             end
         end
