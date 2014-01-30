@@ -127,7 +127,7 @@ end
 function close_vertex!(vis::TarjanVisitor, v)
     v_idx = vis.vertex_index(v)
     if vis.index[v_idx] == vis.lowlink[end]
-        component = vis.stack[vis.index[v_idx]:]
+        component = vis.stack[vis.index[v_idx]:end]
         splice!(vis.stack, vis.index[v_idx]:length(vis.stack))
         pop!(vis.lowlink)
         push!(vis.components, component)
