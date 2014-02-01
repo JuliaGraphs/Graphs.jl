@@ -95,6 +95,6 @@ inclist{V}(vty::Type{V}; is_directed::Bool = true) =
                                 inclist(V, Edge{V}, is_directed=is_directed)
 
 function inclist{V, E}(vty::Type{V}, ety::Type{E}; is_directed::Bool = true)
-    inclist = Array(Vector{E},0)
-    VectorIncidenceList{V, E}(is_directed, Array(V, 0), 0, inclist)
+    _inclist = Array(Vector{E},0)
+    VectorIncidenceList{V, E}(is_directed, Array(V, 0), 0, _inclist)
 end
