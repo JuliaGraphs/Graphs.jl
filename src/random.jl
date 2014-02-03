@@ -38,7 +38,7 @@ function watts_strogatz_graph{GT<:AbstractGraph}(g::GT, n::Integer, k::Integer, 
     # For each vertex in the graph:
     for i in 1:n
         # For the next k/2 higher indexed nodes:
-        for j in 1:k/2
+        for j in 1:div(k,2)
             # Either make an edge to the neighbor or a long edge across the graph.
             if rand() > beta
                 add_edge!(g, i, ((i+j - 1) % n) + 1 )
