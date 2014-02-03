@@ -24,8 +24,8 @@ let g=inclist(ExVertex, is_directed=false)
     attrs["baz"] = "qux"
     # Below here we do some messing around so as not to assert on dict iteration order.
 
-    @test to_dot(attrs) in (["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
-                      "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"])
+    @test to_dot(attrs) in ["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
+                            "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"]
 
     sp = split(to_dot(g), "\n")
     @test ("1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]" in sp) ||

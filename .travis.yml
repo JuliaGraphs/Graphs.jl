@@ -12,7 +12,6 @@ before_install:
     - git config --global user.email "travis@example.net"
 script:
     - julia -e 'versioninfo(); Pkg.init(); Pkg.add("DataStructures")'
-    - mkdir -p ~/.julia/Graphs
-    - cp -R ./* ~/.julia/Graphs/
-    - julia ~/.julia/Graphs/runtests.jl
-    
+    - julia -e 'run(`ln -s $(pwd()) $(Pkg.dir())/Graphs`); Pkg.resolve()'
+    - julia ./runtests.jl
+
