@@ -1,4 +1,3 @@
-
 ###########################################################
 #
 #   GenericIncidenceList{V, E, VList, IncList}
@@ -79,6 +78,7 @@ function add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V)
     if !g.is_directed
         push!(g.inclist[vi], revedge(e))
     end
+    e
 end
 
 # mutation
