@@ -4,13 +4,26 @@
 #
 #################################################
 
-# the root type of all graphs
+### the root type of all graphs
 abstract AbstractGraph{V, E}
 
 vertex_type{V,E}(g::AbstractGraph{V,E}) = V
 edge_type{V,E}(g::AbstractGraph{V,E}) = E
 
-# concepts checking
+### concepts
+
+const graph_concept_symbols = Set(
+    :vertex_list, 
+    :edge_list, 
+    :vertex_map, 
+    :edge_map,
+    :adjacency_list, 
+    :incidence_list,
+    :bidirectional_adjacency_list, 
+    :bidirectional_incidence_list,
+    :adjacency_matrix )
+
+### concepts checking functions
 
 implements_vertex_list(g::AbstractGraph) = false
 implements_edge_list(g::AbstractGraph) = false
@@ -30,24 +43,15 @@ implements_incidence_list(g::AbstractGraph) = implements_bidirectional_incidence
 
 implements_adjacency_matrix(g::AbstractGraph) = false
 
-# macro to simplify concept declaration
 
-const _supported_graph_concept_symbols = Set(
-    :vertex_list, :edge_list, :vertex_map, :edge_map,
-    :adjacency_list, :incidence_list,
-    :bidirectional_adjacency_list, :bidirectional_incidence_list,
-    :adjacency_matrix )
+### macro to simplify concept declaration
 
 function _graph_implements_code(G::Symbol, concepts::Symbol...)
     stmts = Expr[]
     for c in concepts
-        if !(c in _supported_graph_concept_symbols)
-            error("Invalid concept name: $c")
-        end
-
-        fun = symbol(string("implements_", string(c)))
-        stmt = :( $(fun)(::$(G)) = true )
-        push!(stmts, stmt)
+        (c in graph_concept_symbols) || error("Invalid concept name: $c")
+        fun = symbol(string("implements_", c))
+        push!(stmts, :( $(fun)(::$(G)) = true ))
     end
     Expr(:block, stmts...)
 end
@@ -56,21 +60,15 @@ macro graph_implements(G, concepts...)
     esc(_graph_implements_code(G, concepts...))
 end
 
-# macro to check interface requirements
-
-function _graph_requires_stmt(g::Symbol, concept::Symbol)
-    if !(concept in _supported_graph_concept_symbols)
-        error("Invalid concept name: $c")
-    end
-    fun = symbol(string("implements_", string(concept)))
-    msg = "The graph $(g) does not implement a required concept: $(concept)."
-    :( $(fun)($g) ? nothing : throw(ArgumentError($msg)) )
-end
+### macro to check interface requirements
 
 function _graph_requires_code(g::Symbol, concepts::Symbol...)
     stmts = Expr[]
     for c in concepts
-        push!(stmts, _graph_requires_stmt(g, c))
+        (c in graph_concept_symbols) || error("Invalid concept name: $c")
+        fun = symbol(string("implements_", c))
+        msg = "The graph $(g) does not implement a required concept: $(c)."
+        push!(stmts, :($(fun)($g) ? nothing : error($msg)) )
     end
     Expr(:block, stmts...)
 end
