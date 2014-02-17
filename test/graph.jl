@@ -102,7 +102,7 @@ names = ["a", "b", "c", "d"]
 
 for i = 1 : length(names)
     v = add_vertex!(egd, names[i])
-    @test vertex_index(v) == i
+    @test vertex_index(v, egd) == i
 end
 
 @test num_vertices(egd) == 4

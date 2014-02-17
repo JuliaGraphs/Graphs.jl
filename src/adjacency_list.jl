@@ -39,12 +39,8 @@ out_neighbors(v, g::GenericAdjacencyList) = g.adjlist[vertex_index(v)]
 # mutation
 
 function add_vertex!{V}(g::AdjacencyList{V}, v::V)
-    nv::Int = num_vertices(g)
-    iv::Int = vertex_index(v)
-    if iv != nv + 1
-        throw(ArgumentError("Invalid vertex index."))
-    end        
-    
+    nv::Int = num_vertices(g)    
+    @assert vertex_index(v) == nv + 1
     push!(g.vertices, v)
     push!(g.adjlist, Array(V,0))
     v
@@ -58,19 +54,13 @@ function add_vertex!{K}(g::AdjacencyList{KeyVertex{K}}, key::K)
     v
 end
 
-
 function add_edge!{V}(g::GenericAdjacencyList{V}, u::V, v::V)
     nv::Int = num_vertices(g)
-    iu::Int = vertex_index(u, g)
-    iv::Int = vertex_index(v, g)
-    
-    if iu < 1 || iu > nv || iv < 1 || iv > nv
-        throw(ArgumentError("The vertex u or v is invalid."))
-    end
+    iu::Int = vertex_index(u); (1 <= iu <= nv) || error("Invalid index of vertex u.")
+    iv::Int = vertex_index(v); (1 <= iv <= nv) || error("Invalid index of vertex v.")
     
     push!(g.adjlist[iu], v)
     g.nedges += 1
-    
     if !g.is_directed
         push!(g.adjlist[iv], u)
     end

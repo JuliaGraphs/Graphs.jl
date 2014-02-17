@@ -20,7 +20,7 @@ function breadth_first_visit_impl!(
         open_vertex!(visitor, u)
 
         for v in out_neighbors(u, graph)
-            vi = vertex_index(v)
+            vi = vertex_index(v, graph)
             v_color::Int = colormap[vi]
             # TODO: Incorporate edge colors to BFS
             examine_neighbor!(visitor, u, v, v_color, -1)
@@ -93,26 +93,30 @@ end
 
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
-type GDistanceVisitor <: AbstractGraphVisitor
+immutable GDistanceVisitor{G<:AbstractGraph} <: AbstractGraphVisitor
+    graph::G
     dists::Vector{Int}
 end
 
+GDistanceVisitor{G<:AbstractGraph}(g::G, dists) = GDistanceVisitor{G}(g, dists)
+
 function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
     if vcolor == 0
+        g = visitor.graph
         dists = visitor.dists
-        dists[vertex_index(v)] = dists[vertex_index(u)] + 1
+        dists[vertex_index(v, g)] = dists[vertex_index(u, g)] + 1
     end
 end
 
 function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, s::V, dists::DMap)
-    visitor = GDistanceVisitor(dists)
+    visitor = GDistanceVisitor(graph, dists)
     dists[vertex_index(s, graph)] = 0
     traverse_graph(graph, BreadthFirst(), s, visitor)
     dists
 end
 
 function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, sources::AbstractVector{V}, dists::DMap)
-    visitor = GDistanceVisitor(dists)
+    visitor = GDistanceVisitor(graph, dists)
     for s in sources
         dists[vertex_index(s, graph)] = 0
     end
