@@ -19,7 +19,8 @@ module Graphs
         implements_adjacency_matrix,
         @graph_implements, @graph_requires,
     
-        # common interfaces
+        # common 
+        make_vertex, make_edge,
         vertex_type, edge_type, source, target, revedge,
         is_directed, is_mutable, vertex_index, edge_index,
         num_vertices, vertices, num_edges, edges, 
@@ -87,6 +88,7 @@ module Graphs
     include("concepts.jl")
     include("common.jl")
     
+    include("edge_list.jl")
     include("adjacency_list.jl")
     include("incidence_list.jl")
     include("graph.jl")

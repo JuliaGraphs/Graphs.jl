@@ -1,668 +1,413 @@
 ###########################################################
 #
-#   Adjacency matrix
+#   Generic matrix generation functions
 #
 ###########################################################
 
-function adjacency_matrix(is_directed::Bool, n::Int, edges)    
-    ui::Int = 0
-    vi::Int = 0
-    
-    a = falses(n, n)
-    
-    if is_directed    
-        for e in edges
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e)) 
-            a[ui, vi] = true
+function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
+    @graph_requires g vertex_list vertex_map
+
+    if implements_edge_list(graph)
+        if is_directed(graph)
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                a[ui, vi] = get(gen, g, u, v)
+            end
+        else
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, u, v)
+                a[ui, vi] = val
+                a[vi, ui] = val
+            end
+        end
+
+    elseif implements_incidence_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    a[ui, vi] = get(gen, g, u, v)
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+                    a[ui, vi] = val
+                    a[vi, ui] = val
+                end
+            end
+        end
+
+    elseif implements_adjacency_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for v in out_neighbors(u, g)
+                    vi = vertex_index(v, g)
+                    a[ui, vi] = get(gen, g, u, v)
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for v in out_neighbors(u, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+                    a[ui, vi] = val
+                    a[vi, ui] = val
+                end                
+            end
         end
     else
-        for e in edges
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e)) 
-            a[ui, vi] = true
-            a[vi, ui] = true
-        end        
+        error("graph does not implement required interface.")
     end
+
     return a
 end
 
-function adjacency_matrix_sparse(is_directed::Bool, n::Int, edges)
-    ne = length(edges)
+matrix_from_adjpairs(g::AbstractGraph, gen) = 
+    (n = num_vertices(g); adjacency_matrix!(zeros(eltype(g), n, n), g, gen))
 
-    if !is_directed
-        ne *= 2
-    end
 
-    idx = 1
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    if is_directed
-        for e in edges
-            ui[idx] = vertex_index(source(e))
-            vi[idx] = vertex_index(target(e))
-            idx += 1
-        end
-    else
-        for e in edges
-            src = source(e)
-            tgt = target(e)
-            ui[idx] = vertex_index(src)
-            vi[idx] = vertex_index(tgt)
-            idx += 1
-            ui[idx] = vertex_index(tgt)
-            vi[idx] = vertex_index(src)
-            idx += 1
-        end
-    end
-    sparse(ui, vi, ones(ne), n, n)
-end
+function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
+    @graph_requires graph vertex_list vertex_map
 
-function adjacency_matrix_by_adjlist(g::AbstractGraph)
-    n::Int = num_vertices(g)
-    a = falses(n, n)    
-    for u in vertices(g)
-        ui = vertex_index(u, g)
-        for v in out_neighbors(u, g)
-            vi = vertex_index(v, g)
-            a[ui, vi] = true
-        end
-    end
-    return a     
-end
-
-function adjacency_matrix_by_adjlist_sparse(g::AbstractGraph)
     n = num_vertices(g)
-    ne = num_edges(g)
-    if !is_directed(g)
-        ne *= 2
-    end
+    m = num_edges(g)
+    ne = is_directed(g) ? m : 2m
+    I = Array(Int, ne)
+    J = Array(Int, ne)
+    vals = Array(eltype(g), ne)
+    idx = 0
 
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    idx = 1
-    for u in vertices(g)
-        uu = vertex_index(u, g)
-        for v in out_neighbors(u, g)
-            vv = vertex_index(v, g)
-            ui[idx] = uu
-            vi[idx] = vv
-            idx += 1
+    if implements_edge_list(graph)
+        if is_directed(graph)
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, u, v)
+
+                idx += 1
+                I[idx] = ui
+                J[idx] = vi
+                vals[idx] = val
+            end
+        else
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, u, v)
+                
+                idx += 1
+                I[idx] = ui
+                J[idx] = vi
+                vals[idx] = val
+
+                idx += 1
+                I[idx] = vi
+                J[idx] = ui
+                vals[idx] = val
+            end
+        end
+
+    elseif implements_incidence_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+                    
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+                    
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
+
+                    idx += 1
+                    I[idx] = vi
+                    J[idx] = ui
+                    vals[idx] = val
+                end
+            end
+        end
+
+    elseif implements_adjacency_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for v in out_neighbors(u, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+                    
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for v in out_neighbors(u, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, u, v)
+
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
+
+                    idx += 1
+                    I[idx] = vi
+                    J[idx] = ui
+                    vals[idx] = val
+                end                
+            end
         end
     end
-    sparse(ui, vi, ones(ne), n, n)
+
+    @assert(idx == ne)
+    sparse(I, J, vals, n, n)
 end
 
-function adjacency_matrix_by_inclist(g::AbstractGraph)
-    n::Int = num_vertices(g)
-    a = falses(n, n)
-    for u in vertices(g)
-        ui = vertex_index(u, g)
-        for e in out_edges(u, g)
-            vi = vertex_index(target(e, g), g)
-            a[ui, vi] = true
-        end
-    end    
-    return a     
-end
 
-function adjacency_matrix_by_inclist_sparse(g::AbstractGraph)
-    n = num_vertices(g)
-    ne = num_edges(g)
-    if !is_directed(g)
-        ne *= 2
-    end
-
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    idx = 1
-    for u in vertices(g)
-        uu = vertex_index(u, g)
-        for e in out_edges(u,g)
-            vv = vertex_index(target(e, g), g)
-            ui[idx] = uu
-            vi[idx] = vv
-            idx += 1
-        end
-    end
-    sparse(ui, vi, ones(ne), n, n)
-end
-
-function adjacency_matrix(g::AbstractGraph)
-    # convert a graph to an adjacency matrix
-    
-    @graph_requires g vertex_list vertex_map 
-    
-    if implements_edge_list(g)
-        adjacency_matrix(is_directed(g), num_vertices(g), edges(g))
-        
-    elseif implements_adjacency_list(g)
-        adjacency_matrix_by_adjlist(g)
-        
-    elseif implements_incidence_list(g)
-        adjacency_matrix_by_inclist(g)
-
-    else
-        throw(ArgumentError("g must implement edge_list, adjacency_list, or incidence_list"))
-    end
-end
-
-function adjacency_matrix_sparse(g::AbstractGraph)
-
+function matrix_from_edges!(a::AbstractMatrix, g::AbstractGraph, gen)
     @graph_requires g vertex_list vertex_map
 
-    if implements_edge_list(g)
-        adjacency_matrix_sparse(is_directed(g), num_vertices(g), edges(g))
-    elseif implements_adjacency_list(g)
-        adjacency_matrix_by_adjlist_sparse(g)
-    elseif implements_incidence_list(g)
-        adjacency_matrix_by_inclist_sparse(g)
-    else
-        throw(ArgumentError("g must implement edge_list, adjacency_list, or incididence list"))
-    end
-end
-    
-
-###########################################################
-#
-#   Weight matrix
-#
-###########################################################
-    
-    
-function weight_matrix{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVector{W})
-    wmap = zeros(W, (n, n))
-    if is_directed
-        for e in edges
-            w = eweights[edge_index(e)]
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e))
-            wmap[ui, vi] += w
-        end
-    else
-        for e in edges
-            w = eweights[edge_index(e)]
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e))
-            wmap[ui, vi] += w
-            wmap[vi, ui] += w
-        end
-    end
-    wmap   
-end    
-
-function weight_matrix_sparse{W}(is_directed::Bool, n::Int, edges, eweights::AbstractVector{W})
-    ne = length(edges)
-    if !is_directed
-        ne *= 2
-    end
-
-    idx = 1
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(W, ne)
-    if is_directed
-        for e in edges
-            ui[idx] = vertex_index(source(e))
-            vi[idx] = vertex_index(target(e))
-            w[idx] = eweights[edge_index(e)]
-            idx += 1
-        end
-    else
-        for e in edges
-            src = source(e)
-            tgt = target(e)
-            ww = eweights[edge_index(e)]
-            ui[idx] = vertex_index(src)
-            vi[idx] = vertex_index(tgt)
-            w[idx] = ww
-            idx += 1
-            ui[idx] = vertex_index(tgt)
-            vi[idx] = vertex_index(src)
-            w[idx] = ww
-            idx += 1
-        end
-    end
-    sparse(ui, vi, w, n, n)
-end
-
-function weight_matrix{W}(g::AbstractGraph, eweights::AbstractVector{W})
-    
-    @graph_requires g vertex_list vertex_map edge_map
-    
-    n::Int = num_vertices(g)
-    ui::Int = 0
-    vi::Int = 0
-        
-    if implements_edge_list(g)
-        weight_matrix(is_directed(g), n, edges(g), eweights)
-    
-    elseif implements_incidence_list(g)
-        wmap = zeros(W, (n, n))
-        for u in vertices(g)
-            ui = vertex_index(u, g)
-            for e in out_edges(u, g)
-                w = eweights[edge_index(e, g)]
-                vi = vertex_index(target(e, g), g)
-                wmap[ui, vi] += w
+    if implements_edge_list(graph)
+        if is_directed(graph)
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                a[ui, vi] = get(gen, g, e)
+            end
+        else
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, e)
+                a[ui, vi] = val
+                a[vi, ui] = val
             end
         end
-        wmap       
+
+    elseif implements_incidence_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    a[ui, vi] = get(gen, g, e)
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, e)
+                    a[ui, vi] = val
+                    a[vi, ui] = val
+                end
+            end
+        end
     else
-        throw(ArgumentError("g must implement either edge_list or incidence_list."))
-    end        
+        error("graph does not implement required interface.")
+    end
+
+    return a
 end
 
-function weight_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W})
 
-    @graph_requires g vertex_list vertex_map edge_map
+function sparse_matrix_from_edges(g::AbstractGraph, gen)
+    @graph_requires graph vertex_list vertex_map
 
     n = num_vertices(g)
-    ne = num_edges(g)
-    if !is_directed(g)
-        ne *= 2
-    end
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(W, ne)
+    m = num_edges(g)
+    ne = is_directed(g) ? m : 2m
+    I = Array(Int, ne)
+    J = Array(Int, ne)
+    vals = Array(eltype(g), ne)
+    idx = 0
 
-    if implements_edge_list(g)
-        weight_matrix_sparse(is_directed(g), n, edges(g), eweights)
-    elseif implements_incidence_list(g)
-        idx = 1
-        for u in vertices(g)
-            uu = vertex_index(u, g)
-            for e in out_edges(u, g)
-                ww = eweights[edge_index(e, g)]
-                vv = vertex_index(target(e, g), g)
-                ui[idx] = uu
-                vi[idx] = vv
-                w[idx] = ww
+    if implements_edge_list(graph)
+        if is_directed(graph)
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, u, v)
+
                 idx += 1
+                I[idx] = ui
+                J[idx] = vi
+                vals[idx] = val
             end
-        end
-        sparse(ui, vi, w, n, n)
-    else
-        throw(ArgumentError("g must implement either edge_list or incidence_list."))
-    end
-
-end
-
-
-###########################################################
-#
-#   Distance matrix
-#
-###########################################################
-
-function distance_matrix{D}(is_directed::Bool, n::Int, edges, distances::AbstractVector{D})
-    dmap = infs(D, n, n)
-	dmap[diagind(dmap)] = zero(D)
-    if is_directed
-        for e in edges
-            d = distances[edge_index(e)]
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e))
-			tmp = dmap[ui, vi]
-			dmap[ui, vi] = isinf(tmp) ? d : tmp + d
-        end
-    else
-        for e in edges
-            d = distances[edge_index(e)]
-            ui = vertex_index(source(e))
-            vi = vertex_index(target(e))
-			tmp = dmap[ui, vi]
-            dmap[ui, vi] = isinf(tmp) ? d : tmp + d
-            dmap[vi, ui] = dmap[ui, vi]
-        end
-    end
-    dmap   
-end
-
-function distance_matrix{D}(g::AbstractGraph, distances::AbstractVector{D})
-    
-    @graph_requires g vertex_list
-    
-    n::Int = num_vertices(g)
-        
-    if implements_edge_list(g)
-        weight_matrix(is_directed(g), n, edges(g), distances)
-    
-    elseif implements_incidence_list(g)
-		
-        dmap = infs(D, n, n)
-		dmap[diagind(dmap)] = zero(D)
-        for u in vertices(g)
-            ui = vertex_index(u)
-            for e in out_edges(u, g)
-                d = distances[edge_index(e)]
-                vi = vertex_index(target(e))
-				tmp = dmap[ui, vi]
-				dmap[ui, vi] = isinf(tmp) ? d : tmp + d
-            end
-        end
-        dmap       
-    else
-        throw(ArgumentError("Graph must implement either edge_list or incidence_list."))
-    end        
-end
-
-###########################################################
-#
-#   Laplacian matrix
-#
-###########################################################
-
-function laplacian_matrix(n::Int, edges)    
-    L = zeros(n, n)
-    ui::Int = 0
-    vi::Int = 0
-    
-    for e in edges
-        ui = vertex_index(source(e))
-        vi = vertex_index(target(e))
-        
-        L[ui,ui] += 1.
-        L[vi,vi] += 1.        
-        L[ui,vi] -= 1.
-        L[vi,ui] -= 1.        
-    end
-    return L
-end
-
-function laplacian_matrix_sparse(n::Int, edges)
-
-    ne = 4*length(edges)  # For every edge we have 4 entries
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(Int, ne)
-
-    idx = 1
-    for e in edges
-        uu = vertex_index(source(e))
-        vv = vertex_index(target(e))
-        ui[idx] = uu
-        vi[idx] = uu
-        w[idx] = 1.
-        idx += 1
-        ui[idx] = vv
-        vi[idx] = vv
-        w[idx] = 1.
-        idx += 1
-        ui[idx] = uu
-        vi[idx] = vv
-        w[idx] = -1.
-        idx += 1
-        ui[idx] = vv
-        vi[idx] = uu
-        w[idx] = -1.
-        idx += 1
-    end
-    sparse(ui, vi, w, n, n)
-end
-
-function laplacian_matrix_by_adjlist(g)
-    n::Int = num_vertices(g)
-    ui::Int = 0
-    vi::Int = 0
-    
-    L = zeros(n, n)
-    for u in vertices(g)
-        ui = vertex_index(u, g)
-        for v in out_neighbors(u, g)
-            vi = vertex_index(v, g)
-            
-            L[ui, ui] += 1.
-            L[ui, vi] -= 1.
-        end
-    end
-    return L
-end
-
-function laplacian_matrix_by_adjlist_sparse(g)
-    # Note: num_edges(g) only counts edges once, but they show up twice in the
-    # loops below, and for each edge we will generate two entries =>
-    # 4*num_edges.
-    n = num_vertices(g)
-    ne = 4*num_edges(g)
-
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(Float64, ne)
-
-    idx = 1
-    for u in vertices(g)
-        uu = vertex_index(u, g)
-        for v in out_neighbors(u, g)
-            vv = vertex_index(v, g)
-
-            ui[idx] = uu
-            vi[idx] = uu
-            w[idx] = 1.
-            idx += 1
-
-            ui[idx] = uu
-            vi[idx] = vv
-            w[idx] = -1.
-            idx += 1
-        end
-    end
-    sparse(ui, vi, w, n, n)
-end
-
-function laplacian_matrix_by_inclist(g)
-    n::Int = num_vertices(g)
-    ui::Int = 0
-    vi::Int = 0
-    
-    L = zeros(n, n)
-    for u in vertices(g)
-        ui = vertex_index(u)
-        for e in out_edges(u, g)
-            vi = vertex_index(target(e, g))
-            
-            L[ui, ui] += 1.
-            L[ui, vi] -= 1.
-        end
-    end
-    return L
-end
-
-function laplacian_matrix_by_inclist_sparse(g)
-
-    n = num_vertices(g)
-    ne = 4*num_edges(g)
-
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(Float64, ne)
-    idx = 1
-    for u in vertices(g)
-        uu = vertex_index(u)
-        for e in out_edges(u, g)
-            vv = vertex_index(target(e, g))
-            ui[idx] = uu
-            vi[idx] = uu
-            w[idx] = 1
-            idx += 1
-            ui[idx] = uu
-            vi[idx] = vv
-            w[idx] = -1
-            idx += 1
-        end
-    end
-    sparse(ui, vi, w, n, n)
-end
-
-function laplacian_matrix(g::AbstractGraph)
-
-    @graph_requires g vertex_list vertex_map 
-    
-    if is_directed(g)
-        throw(Argument("g must be an undirected graph."))
-    end   
-    
-    if implements_edge_list(g)
-        laplacian_matrix(n, edges(g))
-        
-    elseif implements_adjacency_list(g)
-        laplacian_matrix_by_adjlist(g)
-            
-    elseif implements_incidence_list(g)
-        laplacian_matrix_by_inclist(g)
-
-    else
-        throw(ArgumentError("g must implement edge_list, adjacency_list, or incidence_list."))
-    end  
-end
-
-function laplacian_matrix_sparse(g::AbstractGraph)
-    
-    @graph_requires g vertex_list vertex_map
-
-    if is_directed(g)
-        throw(Argument("g must be an undirected graph."))
-    end
-
-    if implements_edge_list(g)
-        laplacian_matrix_sparse(n, edges(g))
-    elseif implements_adjacency_list(g)
-        laplacian_matrix_by_adjlist_sparse(g)
-    elseif implements_incidence_list(g)
-        laplacian_matrix_by_inclist_sparse(g)
-    else
-        throw(ArgumentError("g must implement edge_list, adjacency_list, or incidence list."))
-    end
-end
-
-function laplacian_matrix{W}(n::Int, edges, eweights::AbstractVector{W})
-    L = zeros(W, (n, n))
-    ui::Int = 0
-    vi::Int = 0
-    
-    for e in edges
-        w = eweights[edge_index(e)]
-        ui = vertex_index(source(e))
-        vi = vertex_index(target(e))
-        
-        L[ui, ui] += w
-        L[vi, vi] += w
-        L[ui, vi] -= w
-        L[vi, ui] -= w
-    end        
-    return L
-end
-
-function laplacian_matrix_sparse{W}(n::Int, edges, eweights::AbstractVector{W})
-
-    ne = 4*length(edges)
-    
-    ui = Array(Int, ne)
-    vi = Array(Int, ne)
-    w = Array(Int, ne)
-    idx = 1
-    for e in edges
-        ww = eweights[edge_index(e)]
-        uu = vertex_index(source(e))
-        vv = vertex_index(target(e))
-
-        ui[idx] = uu
-        vi[idx] = uu
-        w[idx] = ww
-        idx += 1
-
-        ui[idx] = vv
-        vi[idx] = vv
-        w[idx] = ww
-        idx += 1
-
-        ui[idx] = uu
-        vi[idx] = vv
-        w[idx] = -ww
-        idx += 1
-
-        ui[idx] = vv
-        vi[idx] = uu
-        w[idx] = -ww
-        idx += 1
-    end
-    sparse(ui, vi, w, n, n)
-end
-
-function laplacian_matrix{W}(g::AbstractGraph, eweights::AbstractVector{W})
-
-    @graph_requires g vertex_list vertex_map edge_map
-    
-    if is_directed(g)
-        throw(ArgumentError("g must be an undirected graph."))
-    end
-    
-    n::Int = num_vertices(g)
-    ui::Int = 0
-    vi::Int = 0    
-    
-    if implements_edge_list(g)
-        L = laplacian_matrix(n, edges(g), eweights)
-        
-    elseif implements_incidence_list(g)
-        L = zeros(n, n)
-        for u in vertices(g)
-            ui = vertex_index(u)
-            for e in out_edges(u, g)
-                w = eweights[edge_index(e, g)]
-                vi = vertex_index(target(e, g))
+        else
+            for e in edges(graph)
+                u = source(e, g)
+                v = target(e, g)
+                ui = vertex_index(u, g)
+                vi = vertex_index(v, g)
+                val = get(gen, g, u, v)
                 
-                L[ui, ui] += w
-                L[ui, vi] -= w
+                idx += 1
+                I[idx] = ui
+                J[idx] = vi
+                vals[idx] = val
+
+                idx += 1
+                I[idx] = vi
+                J[idx] = ui
+                vals[idx] = val
             end
         end
-        L
-    else
-        throw(ArgumentError("g must implement edge_list or incidence_list."))
-    end  
-end
 
-function laplacian_matrix_sparse{W}(g::AbstractGraph, eweights::AbstractVector{W})
+    elseif implements_incidence_list(graph)
+        if is_directed(graph)
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, e)
+                    
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
+                end
+            end
+        else
+            for u in vertices(g)
+                ui = vertex_index(u, g)
+                for e in out_edges(u, g)
+                    v = target(e, g)
+                    vi = vertex_index(v, g)
+                    val = get(gen, g, e)
+                    
+                    idx += 1
+                    I[idx] = ui
+                    J[idx] = vi
+                    vals[idx] = val
 
-    @graph_requires g vertex_list vertex_map edge_map
-
-    if is_directed(g)
-        throw(ArgumentError("g must be an undirected graph."))
-    end
-
-    n = num_vertices(g)
-
-    if implements_edge_list(g)
-        laplacian_matrix_sparse(n, edges(g), eweights)
-    elseif implements_incidence_list(g)
-        ne = 4*num_edges(g)
-        ui = Array(Int, ne)
-        vi = Array(Int, ne)
-        w = Array(W, ne)
-        idx = 1
-        for u in vertices(g)
-            uu = vertex_index(u)
-            for e in out_edges(u, g)
-                ww = eweights[edge_index(e, g)]
-                vv = vertex_index(target(e, g))
-                
-                ui[idx] = uu
-                vi[idx] = uu
-                w[idx] = ww
-                idx += 1
-
-                ui[idx] = uu
-                vi[idx] = vv
-                w[idx] = -ww
-                idx += 1
+                    idx += 1
+                    I[idx] = vi
+                    J[idx] = ui
+                    vals[idx] = val
+                end
             end
         end
-        sparse(ui, vi, w, n, n)
-               
-    else
-        throw(ArgumentError("g must implement edge_list or incidence_list."))
     end
+
+    @assert(idx == ne)
+    sparse(I, J, vals, n, n)
 end
+
+
+
+###########################################################
+#
+#   Specific matrices from graphs
+#
+###########################################################
+
+### adjacency matrix
+
+type _GenUnit{T} end
+
+Base.get{T,V}(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) = one(T)
+Base.eltype{T}(::_GenUnit{T}) = T
+
+adjacency_matrix{T<:Number}(g::AbstractGraph, ::Type{T}) = matrix_from_adjpairs(g, _GenUnit{T}())
+adjacency_matrix(g::AbstractGraph) = adjacency_matrix(g, Bool)
+
+adjacency_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T}) = sparse_matrix_from_adjpairs(g, _GenUnit{T}())
+adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
+
+### weight matrix
+    
+type _GenEdgeWeight{Weights}
+    weights::Weights
+end
+
+_GenEdgeWeight(weights::AbstractVector) = _GenEdgeWeight{typeof(weights)}(weights)
+
+Base.get{V,E}(gen::_GenEdgeWeight, g::AbstractGraph{V,E}, e::E) = gen.weights[edge_index(e, g)]
+Base.eltype(gen::_GenEdgeWeight) = eltype(gen.weights)
+
+weight_matrix(g::AbstractGraph, weights::AbstractVector) = matrix_from_edges(g, _GenEdgeWeight(weights))
+weight_matrix_sparse(g::AbstractGraph, weights::AbstractVector) = sparse_matrix_from_edges(g, _GenEdgeWeight(weights))
+
+### distance matrix
+
+distance_matrix(g::AbstractGraph, dists::AbstractVector, d0) = 
+    (n = num_vertices(g); matrix_from_edges!(fill(d0, n, n), g, _GenEdgeWeight(dists)))
+
+distance_matrix{T<:Real}(g::AbstractGraph, dists::AbstractVector{T}) = 
+    distance_matrix(g, dists, typemax(T))
+
+### laplacian matrix
+
+type _GenLaplacian{T} end
+
+Base.get{T,V}(::_GenLaplacian{T}, g::AbstractGraph{V}, u::V, v::V) = 
+    convert(T, vertex_index(u) == vertex_index(v) ? out_degree(u, g) : -1)
+Base.eltype{T}(::_GenLaplacian{T}) = T
+
+laplacian_matrix{T<:Number}(g::AbstractGraph, ::Type{T}) = matrix_from_adjpairs(g, _GenLaplacian{T}())
+laplacian_matrix(g::AbstractGraph) = laplacian_matrix(g, Float64)
+
+laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T}) = sparse_matrix_from_adjpairs(g, _GenLaplacian{T}())
+laplacian_matrix_sparse(g::AbstractGraph) = laplacian_matrix_sparse(g, Float64)
+
+## TODO: weighted laplacian matrix 
+
+
+###########################################################
+#
+#   adjacency list from matrix
+#
+###########################################################
 
 function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
     colptr = A.colptr

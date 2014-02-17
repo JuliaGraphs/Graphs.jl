@@ -41,45 +41,33 @@ out_neighbors(v, g::GenericIncidenceList) = out_neighbors_proxy(g.inclist[vertex
 
 # mutation
 
-function add_vertex!{V,E}(g::VectorIncidenceList{V,E}, v::V)
-    nv::Int = num_vertices(g)
+function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
     iv::Int = vertex_index(v)
-    if iv != nv + 1
+    if iv != num_vertices(g) + 1
         throw(ArgumentError("Invalid vertex index."))
     end        
-    
     push!(g.vertices, v)
     push!(g.inclist, Array(E,0))
     v
 end
 
-function add_vertex!{K}(g::IncidenceList{KeyVertex{K}}, key::K)
-    nv::Int = num_vertices(g)
-    v = KeyVertex(nv+1, key)
-    push!(g.vertices, v)
-    push!(g.inclist, Array(Edge{KeyVertex{K}},0))
-    v
-end
+add_vertex!(g::GenericIncidenceList, x) = add_vertex!(g, make_vertex(g, x))
 
-
-function add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V)
-    nv::Int = num_vertices(g)
-    ui::Int = vertex_index(u)
-    vi::Int = vertex_index(v)
-    
-    if !(ui >= 1 && ui <= nv && vi >= 1 && vi <= nv)
-        throw(ArgumentError("u or v is not a valid vertex."))
-    end
-    ei::Int = (g.nedges += 1)
-
-    e = E(ei, u, v)
+function add_edge!{V,E}(g::GenericIncidenceList{V,E}, u::V, v::V, e::E)
+    # add an edge between (u, v)
+    ui::Int = vertex_index(u, g)
     push!(g.inclist[ui], e)
-    
+    g.nedges += 1
+
     if !g.is_directed
+        vi::Int = vertex_index(v, g)
         push!(g.inclist[vi], revedge(e))
     end
-    e
 end
+
+add_edge!{V,E}(g::GenericIncidenceList{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
+add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
+
 
 # mutation
 

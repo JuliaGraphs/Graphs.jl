@@ -15,6 +15,8 @@ immutable KeyVertex{K}
     key::K
 end
 
+KeyVertex{K}(idx::Int, key::K) = KeyVertex{K}(idx, key)
+make_vertex{V<:KeyVertex}(g::AbstractGraph{V}, key) = V(num_vertices(g) + 1, key)
 vertex_index(v::KeyVertex) = v.index
 
 type ExVertex
@@ -25,8 +27,10 @@ type ExVertex
     ExVertex(i::Int, label::String) = new(i, label, AttributeDict())    
 end
 
+make_vertex(g::AbstractGraph{ExVertex}, label::String) = ExVertex(num_vertices(g) + 1, utf8(label))
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
+
 
 #################################################
 #
@@ -39,15 +43,16 @@ immutable Edge{V}
     source::V
     target::V
 end
-
 typealias IEdge Edge{Int}
+
+Edge{V}(i::Int, s::V, t::V) = Edge{V}(i, s, t)
+make_edge{V,E<:Edge}(g::AbstractGraph{V,E}, s::V, t::V) = Edge(num_edges(g) + 1, s, t)
+
+revedge{V}(e::Edge{V}) = Edge(e.index, e.target, e.source)
 
 edge_index(e::Edge) = e.index
 source(e::Edge) = e.source
 target(e::Edge) = e.target
-
-revedge{V}(e::Edge{V}) = Edge(e.index, e.target, e.source)
-
 source{V}(e::Edge{V}, g::AbstractGraph{V}) = e.source
 target{V}(e::Edge{V}, g::AbstractGraph{V}) = e.target
 
@@ -56,25 +61,20 @@ type ExEdge{V}
     source::V
     target::V
     attributes::AttributeDict
-    
-    function ExEdge(idx::Int, s::V, t::V)
-        attrs = AttributeDict()
-        new(idx, s, t, attrs)
-    end
-    
-    function ExEdge(idx::Int, s::V, t::V, attrs::AttributeDict)
-        new(idx, s, t, attrs)
-    end
 end
 
+ExEdge{V}(i::Int, s::V, t::V) = ExEdge{V}(i, s, t, AttributeDict())
+ExEdge{V}(i::Int, s::V, t::V, attrs::AttributeDict) = ExEdge{V}(i, s, t, attrs)
+make_edge{V}(g::AbstractGraph{V}, s::V, t::V) = ExEdge(num_edges(g) + 1, s, t)
+
+revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.attributes)
+
+edge_index(e::ExEdge) = e.index
 source(e::ExEdge) = e.source
 target(e::ExEdge) = e.target
 source{V}(e::ExEdge{V}, g::AbstractGraph{V}) = e.source
 target{V}(e::ExEdge{V}, g::AbstractGraph{V}) = e.target
 attributes(e::ExEdge, g::AbstractGraph) = e.attributes
-
-edge_index(e::ExEdge) = e.index
-revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.attributes)
 
 
 #################################################

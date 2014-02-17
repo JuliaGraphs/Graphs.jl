@@ -3,7 +3,7 @@ tests = [
 	"adjlist",
 	"inclist",
 	"graph",
-	"gmatrix",
+	#"gmatrix",
 	"bfs",
 	"dfs",
 	"conn_comp",

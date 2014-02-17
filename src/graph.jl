@@ -43,49 +43,31 @@ out_edges(v, g::GenericGraph) = g.inclist[vertex_index(v)]
 # mutation
 
 function add_vertex!{V,E}(g::GenericGraph{V,E}, v::V)
-    vi = vertex_index(v)
-    if vi != length(g.vertices) + 1
-        throw(ArgumentError("Invalid vertex index."))
-    end
+    @assert vertex_index(v) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.adjlist, Array(V, 0))
     push!(g.inclist, Array(E, 0))
     v
 end
+add_vertex!(g::GenericGraph, x) = add_vertex!(g, make_vertex(g, x))
 
-add_vertex!{K}(g::GenericGraph{KeyVertex{K}}, key::K) = add_vertex!(g, KeyVertex(length(g.vertices)+1, key))
-add_vertex!(g::GenericGraph{ExVertex}, label::String) = add_vertex!(g, ExVertex(length(g.vertices)+1, label))
-
-function add_edge!{V,E}(g::GenericGraph{V,E}, e::E)
-    nv::Int = num_vertices(g)   
-    
-    u::V = source(e)
-    v::V = target(e)
-    ui::Int = vertex_index(u, g)
-    vi::Int = vertex_index(v, g)
-    
-    if !(ui >= 1 && ui <= nv && vi >= 1 && vi <= nv)
-        throw(ArgumentError("u or v is not a valid vertex."))
-    end
-    ei::Int = length(g.edges) + 1
-    
-    if edge_index(e) != ei
-        throw(ArgumentError("Invalid edge index."))
-    end
-    
+function add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V, e::E)
+    # add an edge e between u and v
+    @assert edge_index(e) == num_edges(g) + 1
+    ui = vertex_index(u, g)::Int
     push!(g.edges, e)
     push!(g.adjlist[ui], v)
     push!(g.inclist[ui], e)
-    
     if !g.is_directed
-        push!(g.adjlist[vi], u)       
+        vi = vertex_index(v, g)::Int
+        push!(g.adjlist[vi], u)
         push!(g.inclist[vi], revedge(e))
     end
     e
 end
 
-add_edge!{V}(g::GenericGraph{V,Edge{V}}, u::V, v::V) = add_edge!(g, IEdge(length(g.edges)+1, u, v))
-add_edge!{V}(g::GenericGraph{V,ExEdge{V}}, u::V, v::V) = add_edge!(g, ExEdge{V}(length(g.edges)+1, u, v))
+add_edge!{V,E}(g::GenericGraph{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
+add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
 
 # construction
 

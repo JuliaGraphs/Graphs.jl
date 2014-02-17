@@ -7,7 +7,7 @@ function kruskal_select{V,E,W}(
     sorted_wedges::AbstractVector{WeightedEdge{E,W}},
     K::Integer)
     
-    @graph_requires vertex_map    
+    @graph_requires graph vertex_map    
     
     n = num_vertices(graph)
     re = Array(E, 0)
