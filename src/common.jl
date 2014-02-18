@@ -123,6 +123,11 @@ done(proxy::OutNeighborsProxy, s::Int) =  s > proxy.len
 #
 ################################################
 
+isnz(x::Bool) = x
+isnz(x::Number) = x != zero(x)
+
+multivecs{T}(::Type{T}, n::Int) = [T[] for _ =1:n]
+
 function collect_edges{V,E}(graph::AbstractGraph{V,E})
             
     if implements_edge_list(graph)

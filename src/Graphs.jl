@@ -27,11 +27,13 @@ module Graphs
         out_degree, out_neighbors, out_edges,
         attributes,     
         
-        # common
         KeyVertex, Edge, WeightedEdge, ExVertex, ExEdge, AttributeDict,
         collect_edges, collect_weighted_edges,
         
         add_edge!, add_vertex!, add_edges!, add_vertices!,
+
+        # edge_list
+        GenericEdgeList, EdgeList, simple_edgelist, edgelist,
     
         # adjacency_list
         GenericAdjacencyList, SimpleAdjacencyList, AdjacencyList, 

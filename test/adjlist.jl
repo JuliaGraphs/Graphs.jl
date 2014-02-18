@@ -66,20 +66,6 @@ for i = 1 : 3
     @test out_neighbors(i, gu) == nbs[i]
 end
 
-# another constructor
-
-g = simple_adjlist({[2, 3], [3], [2], Int[]})
-
-@test num_vertices(g) == 4
-@test num_edges(g) == 4
-
-@test is_directed(g) == true
-nbs = {[2, 3], [3], [2], Int[]}
-for i = 1 : 3
-    @test out_degree(i, g) == length(nbs[i])
-    @test out_neighbors(i, g) == nbs[i]
-end
-
 # adjacency list with key vertices
 
 g = adjlist(KeyVertex{ASCIIString})
