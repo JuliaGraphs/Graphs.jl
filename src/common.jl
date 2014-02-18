@@ -63,6 +63,10 @@ type ExEdge{V}
     attributes::AttributeDict
 end
 
+=={V}(e1::ExEdge{V}, e2::ExEdge{V}) = (e1.index == e2.index && 
+                                       e1.source == e2.source && 
+                                       e1.target == e2.target)
+
 ExEdge{V}(i::Int, s::V, t::V) = ExEdge{V}(i, s, t, AttributeDict())
 ExEdge{V}(i::Int, s::V, t::V, attrs::AttributeDict) = ExEdge{V}(i, s, t, attrs)
 make_edge{V}(g::AbstractGraph{V}, s::V, t::V) = ExEdge(num_edges(g) + 1, s, t)
@@ -83,38 +87,59 @@ attributes(e::ExEdge, g::AbstractGraph) = e.attributes
 #
 ################################################
 
-immutable VecProxy{A, I}
-    vec::A
-    len::Int
+# general reindexed vector
+
+immutable ReindexedVec{T, Vec<:AbstractVector, I<:AbstractVector{Int}}
+    src::Vec
     inds::I
 end
 
-vec_proxy{A,I}(vec::A, inds::I) = VecProxy(vec, length(inds), inds)
+ReindexedVec{T}(a::AbstractVector{T}, inds::AbstractVector{Int}) = 
+    ReindexedVec{T,typeof(a),typeof(inds)}(a, inds)
 
-length(proxy::VecProxy) = proxy.len
-isempty(proxy::VecProxy) = isempty(proxy.inds)
-getindex(proxy::VecProxy, i::Integer) = proxy.vec[proxy.inds[i]]
+length(a::ReindexedVec) = length(a.inds)
+isempty(a::ReindexedVec) = isempty(a.inds)
+getindex(a::ReindexedVec, i::Integer) = a.src[a.inds[i]]
 
-start(proxy::VecProxy) = 1
-next(proxy::VecProxy, s::Int) = (proxy.vec[proxy.inds[s]], s+1)
-done(proxy::VecProxy, s::Int) =  s > proxy.len
+start(a::ReindexedVec) = start(a.inds)
+done(a::ReindexedVec, s) = done(a.inds, s)
+next(a::ReindexedVec, s) = ((i, s) = next(a.inds); (a.src[i], s))
 
-# out_neighbors proxy
+# iterating over targets
 
-immutable OutNeighborsProxy{EList}
-    len::Int
-    edges::EList
+immutable TargetIterator{G<:AbstractGraph,EList}
+    g::G
+    lst::EList
 end
 
-out_neighbors_proxy{EList}(edges::EList) = OutNeighborsProxy(length(edges), edges)
+TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) = 
+    TargetIterator{G,EList}(g, lst)
 
-length(proxy::OutNeighborsProxy) = proxy.len
-isempty(proxy::OutNeighborsProxy) = proxy.len == 0
-getindex(proxy::OutNeighborsProxy, i::Integer) = target(proxy.edges[i])
+length(a::TargetIterator) = length(a.lst)
+isempty(a::TargetIterator) = isempty(a.lst)
+getindex(a::TargetIterator, i::Integer) = target(a.edges[i], a.g)
 
-start(proxy::OutNeighborsProxy) = 1
-next(proxy::OutNeighborsProxy, s::Int) = (proxy[s], s+1)
-done(proxy::OutNeighborsProxy, s::Int) =  s > proxy.len
+start(a::TargetIterator) = start(a.lst)
+done(a::TargetIterator, s) = done(a.lst, s)
+next(a::TargetIterator, s::Int) = ((e, s) = next(a.lst, s); (target(e, a.g), s))
+
+# iterating over sources
+
+immutable SourceIterator{G<:AbstractGraph,EList}
+    g::G
+    lst::EList
+end
+
+SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) = 
+    SourceIterator{G,EList}(g, lst)
+
+length(a::SourceIterator) = length(a.lst)
+isempty(a::SourceIterator) = isempty(a.lst)
+getindex(a::SourceIterator, i::Integer) = source(a.edges[i], a.g)
+
+start(a::SourceIterator) = start(a.lst)
+done(a::SourceIterator, s) = done(a.lst, s)
+next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 
 
 #################################################

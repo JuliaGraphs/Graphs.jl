@@ -3,6 +3,7 @@
 using Graphs
 using Base.Test
 
+
 #################################################
 #
 #  SimpleDirectedGraph
@@ -11,14 +12,32 @@ using Base.Test
 
 sgd = simple_graph(4)
 
+# concept test
+
+@test implements_vertex_list(sgd)    == true
+@test implements_edge_list(sgd)      == true
+@test implements_vertex_map(sgd)     == true
+@test implements_edge_map(sgd)       == true
+
+@test implements_adjacency_list(sgd) == true
+@test implements_incidence_list(sgd) == true
+@test implements_bidirectional_adjacency_list(sgd) == true
+@test implements_bidirectional_incidence_list(sgd) == true
+@test implements_adjacency_matrix(sgd) == false
+
+# properties
+
 @test is_directed(sgd) == true
 @test num_vertices(sgd) == 4
 @test num_edges(sgd) == 0
 
 for u = 1 : 4
     @test out_degree(u, sgd) == 0
+    @test in_degree(u, sgd) == 0
     @test isempty(out_neighbors(u, sgd))
     @test isempty(out_edges(u, sgd))
+    @test isempty(in_neighbors(u, sgd))
+    @test isempty(in_edges(u, sgd))
 end
 
 es = [  add_edge!(sgd, 1, 2)
@@ -28,20 +47,33 @@ es = [  add_edge!(sgd, 1, 2)
 
 @test num_edges(sgd) == 4
 
-@test out_degree(1, sgd) == 2
-@test out_degree(2, sgd) == 1
-@test out_degree(3, sgd) == 1
-@test out_degree(4, sgd) == 0
+# outgoing 
+
+@test [out_degree(v, sgd) for v = 1:4] == [2, 1, 1, 0]
 
 @test out_edges(1, sgd) == es[1:2]
 @test out_edges(2, sgd) == [es[3]]
 @test out_edges(3, sgd) == [es[4]]
 @test isempty(out_edges(4, sgd))
 
-@test out_neighbors(1, sgd) == [2, 3]
-@test out_neighbors(2, sgd) == [4]
-@test out_neighbors(3, sgd) == [4]
+@test collect(out_neighbors(1, sgd)) == [2, 3]
+@test collect(out_neighbors(2, sgd)) == [4]
+@test collect(out_neighbors(3, sgd)) == [4]
 @test isempty(out_neighbors(4, sgd))
+
+# incoming
+
+@test [in_degree(v, sgd) for v = 1:4] == [0, 1, 1, 2]
+
+@test isempty(in_edges(1, sgd))
+@test in_edges(2, sgd) == [es[1]]
+@test in_edges(3, sgd) == [es[2]]
+@test in_edges(4, sgd) == [es[3:4]]
+
+@test isempty(in_neighbors(1, sgd))
+@test collect(in_neighbors(2, sgd)) == [1]
+@test collect(in_neighbors(3, sgd)) == [1]
+@test collect(in_neighbors(4, sgd)) == [2, 3]
 
 
 #################################################
@@ -73,20 +105,33 @@ rs = [revedge(e) for e in es]
 
 @test num_edges(sgu) == 5
 
-@test out_degree(1, sgu) == 3
-@test out_degree(2, sgu) == 2
-@test out_degree(3, sgu) == 2
-@test out_degree(4, sgu) == 3
+# outgoing
 
-@test out_neighbors(1, sgu) == [2, 3, 4]
-@test out_neighbors(2, sgu) == [1, 4]
-@test out_neighbors(3, sgu) == [1, 4]
-@test out_neighbors(4, sgu) == [2, 3, 1]
+@test [out_degree(v, sgu) for v = 1:4] == [3, 2, 2, 3]
 
 @test out_edges(1, sgu) == [es[1], es[2], rs[5]]
 @test out_edges(2, sgu) == [rs[1], es[3]]
 @test out_edges(3, sgu) == [rs[2], es[4]]
 @test out_edges(4, sgu) == [rs[3], rs[4], es[5]]
+
+@test collect(out_neighbors(1, sgu)) == [2, 3, 4]
+@test collect(out_neighbors(2, sgu)) == [1, 4]
+@test collect(out_neighbors(3, sgu)) == [1, 4]
+@test collect(out_neighbors(4, sgu)) == [2, 3, 1]
+
+# incoming
+
+@test [in_degree(v, sgu) for v = 1:4] == [3, 2, 2, 3]
+
+@test in_edges(1, sgu) == [rs[1], rs[2], es[5]]
+@test in_edges(2, sgu) == [es[1], rs[3]]
+@test in_edges(3, sgu) == [es[2], rs[4]]
+@test in_edges(4, sgu) == [es[3], es[4], rs[5]]
+
+@test collect(in_neighbors(1, sgu)) == [2, 3, 4]
+@test collect(in_neighbors(2, sgu)) == [1, 4]
+@test collect(in_neighbors(3, sgu)) == [1, 4]
+@test collect(in_neighbors(4, sgu)) == [2, 3, 1]
 
 
 #################################################
@@ -95,44 +140,55 @@ rs = [revedge(e) for e in es]
 #
 #################################################
 
-egd = graph(ExVertex, ExEdge{ExVertex})
+egd = graph(ExVertex[], ExEdge{ExVertex}[])
 @test is_directed(egd) == true
 
 names = ["a", "b", "c", "d"]
 
-for i = 1 : length(names)
-    v = add_vertex!(egd, names[i])
+for (i, x) in enumerate(names)
+    v = add_vertex!(egd, x)
     @test vertex_index(v, egd) == i
 end
+vs = vertices(egd)
 
 @test num_vertices(egd) == 4
 @test num_edges(egd) == 0
-
-vs = egd.vertices
 
 add_edge!(egd, vs[1], vs[2])
 add_edge!(egd, vs[1], vs[3])
 add_edge!(egd, vs[2], vs[4])
 add_edge!(egd, vs[3], vs[4])
-
-es = egd.edges
+es = edges(egd)
 
 @test num_edges(egd) == 4
 
-@test out_degree(1, egd) == 2
-@test out_degree(2, egd) == 1
-@test out_degree(3, egd) == 1
-@test out_degree(4, egd) == 0
+# outgoing
 
-@test out_edges(1, egd) == es[1:2]
-@test out_edges(2, egd) == [es[3]]
-@test out_edges(3, egd) == [es[4]]
-@test isempty(out_edges(4, egd))
+@test [out_degree(v, egd) for v in vs] == [2, 1, 1, 0]
 
-@test out_neighbors(1, egd) == [vs[2], vs[3]]
-@test out_neighbors(2, egd) == [vs[4]]
-@test out_neighbors(3, egd) == [vs[4]]
-@test isempty(out_neighbors(4, egd))
+@test out_edges(vs[1], egd) == es[1:2]
+@test out_edges(vs[2], egd) == [es[3]]
+@test out_edges(vs[3], egd) == [es[4]]
+@test isempty(out_edges(vs[4], egd))
+
+@test collect(out_neighbors(vs[1], egd)) == [vs[2], vs[3]]
+@test collect(out_neighbors(vs[2], egd)) == [vs[4]]
+@test collect(out_neighbors(vs[3], egd)) == [vs[4]]
+@test isempty(out_neighbors(vs[4], egd))
+
+# incoming
+
+@test [in_degree(v, egd) for v in vs] == [0, 1, 1, 2]
+
+@test isempty(in_edges(vs[1], egd))
+@test in_edges(vs[2], egd) == [es[1]]
+@test in_edges(vs[3], egd) == [es[2]]
+@test in_edges(vs[4], egd) == es[3:4]
+
+@test isempty(in_neighbors(vs[1], egd))
+@test collect(in_neighbors(vs[2], egd)) == [vs[1]]
+@test collect(in_neighbors(vs[3], egd)) == [vs[1]]
+@test collect(in_neighbors(vs[4], egd)) == vs[2:3]
 
 
 #################################################
@@ -141,39 +197,55 @@ es = egd.edges
 #
 #################################################
 
-egu = graph(ExVertex, ExEdge{ExVertex}, is_directed=false)
+egu = graph(ExVertex[], ExEdge{ExVertex}[]; is_directed=false)
 @test is_directed(egu) == false
 
 names = ["a", "b", "c", "d"]
 
-for i = 1 : length(names)
-    v = add_vertex!(egu, names[i])
-    @test vertex_index(v) == i
+for (i, x) in enumerate(names)
+    v = add_vertex!(egu, x)
+    @test vertex_index(v, egu) == i
 end
+vs = vertices(egu)
 
 @test num_vertices(egu) == 4
 @test num_edges(egu) == 0
-
-vs = vertices(egu)
 
 add_edge!(egu, vs[1], vs[2])
 add_edge!(egu, vs[1], vs[3])
 add_edge!(egu, vs[2], vs[4])
 add_edge!(egu, vs[3], vs[4])
-add_edge!(egu, vs[4], vs[1])
-
-es = egu.edges
+es = edges(egu)
 rs = [revedge(e) for e in es]
 
-@test num_edges(egu) == 5
+@test num_edges(egu) == 4
 
-@test out_degree(1, egu) == 3
-@test out_degree(2, egu) == 2
-@test out_degree(3, egu) == 2
-@test out_degree(4, egu) == 3
+# outgoing
 
-@test out_neighbors(1, egu) == vs[[2, 3, 4]]
-@test out_neighbors(2, egu) == vs[[1, 4]]
-@test out_neighbors(3, egu) == vs[[1, 4]]
-@test out_neighbors(4, egu) == vs[[2, 3, 1]]
+@test [out_degree(v, egu) for v in vs] == [2, 2, 2, 2]
+
+@test out_edges(vs[1], egu) == [es[1], es[2]]
+@test out_edges(vs[2], egu) == [rs[1], es[3]]
+@test out_edges(vs[3], egu) == [rs[2], es[4]]
+@test out_edges(vs[4], egu) == [rs[3], rs[4]]
+
+@test collect(out_neighbors(vs[1], egu)) == [vs[2], vs[3]]
+@test collect(out_neighbors(vs[2], egu)) == [vs[1], vs[4]]
+@test collect(out_neighbors(vs[3], egu)) == [vs[1], vs[4]]
+@test collect(out_neighbors(vs[4], egu)) == [vs[2], vs[3]]
+
+# incoming
+
+@test [in_degree(v, egu) for v in vs] == [2, 2, 2, 2]
+
+@test in_edges(vs[1], egu) == [rs[1], rs[2]]
+@test in_edges(vs[2], egu) == [es[1], rs[3]]
+@test in_edges(vs[3], egu) == [es[2], rs[4]]
+@test in_edges(vs[4], egu) == [es[3], es[4]]
+
+@test collect(in_neighbors(vs[1], egu)) == [vs[2], vs[3]]
+@test collect(in_neighbors(vs[2], egu)) == [vs[1], vs[4]]
+@test collect(in_neighbors(vs[3], egu)) == [vs[1], vs[4]]
+@test collect(in_neighbors(vs[4], egu)) == [vs[2], vs[3]]
+
 

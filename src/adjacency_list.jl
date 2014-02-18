@@ -25,8 +25,7 @@ typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 ## construction
 
 simple_adjlist(nv::Int; is_directed::Bool=true) = SimpleAdjacencyList(is_directed, 1:nv, 0, multivecs(Int, nv)) 
-adjlist{V}(vty::Type{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, V[], 0, Vector{V}[])
-
+adjlist{V}(::Type{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, V[], 0, Vector{V}[])
 
 ## required interfaces
 
@@ -34,12 +33,12 @@ is_directed(g::GenericAdjacencyList) = g.is_directed
 
 num_vertices(g::GenericAdjacencyList) = length(g.vertices)
 vertices(g::GenericAdjacencyList) = g.vertices
-vertex_index(v, g::GenericAdjacencyList) = vertex_index(v)
+vertex_index{V}(v::V, g::GenericAdjacencyList{V}) = vertex_index(v)
 
 num_edges(g::GenericAdjacencyList) = g.nedges
 
-out_degree(v, g::GenericAdjacencyList) = length(g.adjlist[vertex_index(v)])
-out_neighbors(v, g::GenericAdjacencyList) = g.adjlist[vertex_index(v)]
+out_degree{V}(v::V, g::GenericAdjacencyList{V}) = length(g.adjlist[vertex_index(v)])
+out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v)]
 
 
 ## mutation

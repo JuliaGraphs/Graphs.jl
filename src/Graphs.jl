@@ -1,8 +1,8 @@
 module Graphs
     using DataStructures
     
-    import Base.start, Base.done, Base.next, Base.show
-    import Base.length, Base.isempty, Base.getindex, Base.isless
+    import Base: start, done, next, show, ==
+    import Base: length, isempty, size, getindex, isless
     
     export
         AbstractGraph,
@@ -25,6 +25,7 @@ module Graphs
         is_directed, is_mutable, vertex_index, edge_index,
         num_vertices, vertices, num_edges, edges, 
         out_degree, out_neighbors, out_edges,
+        in_degree, in_neighbors, in_edges,
         attributes,     
         
         KeyVertex, Edge, WeightedEdge, ExVertex, ExEdge, AttributeDict,
@@ -44,7 +45,7 @@ module Graphs
         simple_inclist, inclist,
         
         # graph
-        GenericGraph, SimpleGraph, simple_graph, graph,
+        GenericGraph, SimpleGraph, Graph, simple_graph, graph,
         
         # gmatrix
         adjacency_matrix, weight_matrix, distance_matrix, laplacian_matrix,

@@ -31,13 +31,12 @@ vertices(g::GenericIncidenceList) = g.vertices
 
 num_edges(g::GenericIncidenceList) = g.nedges
 
-vertex_index(v, g::GenericIncidenceList) = vertex_index(v)
-edge_index(e, g::GenericIncidenceList) = edge_index(e)
+vertex_index{V}(v::V, g::GenericIncidenceList{V}) = vertex_index(v)
+edge_index{V,E}(e::E, g::GenericIncidenceList{V,E}) = edge_index(e)
 
-out_degree(v, g::GenericIncidenceList) = length(g.inclist[vertex_index(v)])
-out_edges(v, g::GenericIncidenceList) = g.inclist[vertex_index(v)]
-
-out_neighbors(v, g::GenericIncidenceList) = out_neighbors_proxy(g.inclist[vertex_index(v)])
+out_edges{V}(v::V, g::GenericIncidenceList{V}) = g.inclist[vertex_index(v)]
+out_degree{V}(v::V, g::GenericIncidenceList{V}) = length(out_edges(v, g))
+out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist[vertex_index(v)])
 
 # mutation
 
