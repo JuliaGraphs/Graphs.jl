@@ -25,7 +25,9 @@ typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 ## construction
 
 simple_adjlist(nv::Int; is_directed::Bool=true) = SimpleAdjacencyList(is_directed, 1:nv, 0, multivecs(Int, nv)) 
-adjlist{V}(::Type{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, V[], 0, Vector{V}[])
+
+adjlist{V}(vs::Vector{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, vs, 0, Vector{V}[])
+adjlist{V}(::Type{V}; is_directed::Bool=true) = adjlist(V[]; is_directed=is_directed)
 
 ## required interfaces
 

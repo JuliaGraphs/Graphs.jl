@@ -17,10 +17,21 @@ type GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
 end
 
 typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, Range1{Int}, Vector{Vector{IEdge}}}
-typealias VectorIncidenceList{V, E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
-typealias IncidenceList{V} VectorIncidenceList{V, Edge{V}}
+typealias IncidenceList{V,E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
 
 @graph_implements GenericIncidenceList vertex_list vertex_map edge_map adjacency_list incidence_list
+
+# construction
+
+simple_inclist(nv::Integer; is_directed::Bool=true) = 
+    SimpleIncidenceList(is_directed, 1:int(nv), 0, multivecs(IEdge, nv))
+
+inclist{V,E}(vs::Vector{V}, ::Type{E}; is_directed::Bool = true) = 
+    IncidenceList{V,E}(is_directed, vs, 0, multivecs(E, length(vs)))
+
+inclist{V,E}(::Type{V}, ::Type{E}; is_directed::Bool = true) = inclist(V[], E; is_directed=is_directed)
+inclist{V}(vs::Vector{V}; is_directed::Bool = true) = inclist(vs, Edge{V}; is_directed=is_directed)
+inclist{V}(::Type{V}; is_directed::Bool = true) = inclist(V[], Edge{V}; is_directed=is_directed)
 
 # required interfaces
 
@@ -67,21 +78,3 @@ end
 add_edge!{V,E}(g::GenericIncidenceList{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
 add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
 
-
-# mutation
-
-function simple_inclist(nv::Int; is_directed::Bool = true)
-    inclist = Array(Vector{Edge{Int}}, nv)    
-    for i = 1 : nv
-        inclist[i] = Array(Edge{Int}, 0)
-    end
-    SimpleIncidenceList(is_directed, 1:nv, 0, inclist)
-end
-
-inclist{V}(vty::Type{V}; is_directed::Bool = true) =
-                                inclist(V, Edge{V}, is_directed=is_directed)
-
-function inclist{V, E}(vty::Type{V}, ety::Type{E}; is_directed::Bool = true)
-    _inclist = Array(Vector{E},0)
-    VectorIncidenceList{V, E}(is_directed, Array(V, 0), 0, _inclist)
-end

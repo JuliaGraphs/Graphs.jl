@@ -151,7 +151,7 @@ let
 end
 
 let
-	g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
+	g = inclist(ExVertex, ExEdge{ExVertex}; is_directed=false)
 
 	vs = [ add_vertex!(g, ExVertex(1,"a")),
 	       add_vertex!(g, ExVertex(2,"b")),
