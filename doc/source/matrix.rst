@@ -15,10 +15,6 @@ An *adjacency matrix* is defined as
         0 & \text{otherwise}
     \end{cases}
     
-.. py:function:: adjacency_matrix(is_directed, n, edges)
-
-    Constructs an adjacency matrix from a list of edges (over ``n`` vertices).
-    
 .. py:function:: adjacency_matrix(graph)
 
     Constructs an adjacency matrix for a graph.
@@ -35,18 +31,14 @@ A *weight matrix* is defined as
         w(e) & e = (u, v) \in E \\
         0 & \text{otherwise}
     \end{cases}
-    
-.. py:function:: weight_matrix(is_directed, n, edges, eweights)
 
-    Constructs a weight matrix from a list of edges and a vector of edge weights. 
-    
 .. py:function:: weight_matrix(graph, eweights)
 
     Constructs a weight matrix from a graph and a vector of edge weights. Here, ``g`` must implement ``edge_map`` and (``edge_list`` or ``incidence_list``).
     
 
 Distance Matrix
--------------
+-----------------
 
 A *distance matrix* is defined as
 
@@ -58,16 +50,10 @@ A *distance matrix* is defined as
         Inf & \text{otherwise}
     \end{cases}
     
-.. py:function:: distance_matrix(is_directed, n, edges, eweights)
-
-    Constructs a distance matrix from a list of edges and a vector of edge weights. 
-    
 .. py:function:: distance_matrix(graph, eweights)
 
     Constructs a distance matrix from a graph and a vector of edge weights. Here, ``g`` must implement ``edge_map`` and (``edge_list`` or ``incidence_list``).
     
-	
-	
 	
 Laplacian Matrix
 -----------------
@@ -81,10 +67,6 @@ Laplacian Matrix
         -1 & u \ne v \text{ and } \{u, v\} \in E \\
         0 & \text{otherwise}
     \end{cases}
-
-.. py:function:: laplacian_matrix(n, edges)
-
-    Constructs a Laplacian matrix from a list of edges (over ``n`` vertices).
     
 .. py:function:: laplacian_matrix(graph)
 
@@ -92,9 +74,6 @@ Laplacian Matrix
     
 For graphs with weighted edges, we have
 
-.. py:function:: laplacian_matrix(n, edges, eweights)
-
-    Constructs a weighted Laplacian matrix from a list of edges together with a vector of edge weights. 
     
 .. py:function:: laplacian_matrix(graph, eweights)
 
