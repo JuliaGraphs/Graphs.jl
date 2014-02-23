@@ -12,7 +12,7 @@ edge_type{V,E}(g::AbstractGraph{V,E}) = E
 
 ### concepts
 
-const graph_concept_symbols = Set(
+const graph_concept_symbols = Set([
     :vertex_list, 
     :edge_list, 
     :vertex_map, 
@@ -21,7 +21,7 @@ const graph_concept_symbols = Set(
     :incidence_list,
     :bidirectional_adjacency_list, 
     :bidirectional_incidence_list,
-    :adjacency_matrix )
+    :adjacency_matrix])
 
 ### concepts checking functions
 
