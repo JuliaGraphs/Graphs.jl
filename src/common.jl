@@ -135,7 +135,7 @@ SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
 
 length(a::SourceIterator) = length(a.lst)
 isempty(a::SourceIterator) = isempty(a.lst)
-getindex(a::SourceIterator, i::Integer) = source(a.edges[i], a.g)
+getindex(a::SourceIterator, i::Integer) = source(a.lst[i], a.g)
 
 start(a::SourceIterator) = start(a.lst)
 done(a::SourceIterator, s) = done(a.lst, s)
