@@ -117,7 +117,7 @@ TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
 
 length(a::TargetIterator) = length(a.lst)
 isempty(a::TargetIterator) = isempty(a.lst)
-getindex(a::TargetIterator, i::Integer) = target(a.edges[i], a.g)
+getindex(a::TargetIterator, i::Integer) = target(a.lst[i], a.g)
 
 start(a::TargetIterator) = start(a.lst)
 done(a::TargetIterator, s) = done(a.lst, s)

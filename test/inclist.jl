@@ -71,6 +71,12 @@ add_edge!(gd, 4, 5)
 
 @test collect_edges(gd) == [Edge(1,1,2), Edge(3,1,3), Edge(2,2,4), Edge(5,2,3), Edge(4,3,4), Edge(6,4,5)]
 
+target_it = out_neighbors(1, gd)
+@test !isempty(target_it)
+@test length(target_it) == 2
+@test target_it[1] == 2
+@test target_it[2] == 3
+
 
 #################################################
 #
