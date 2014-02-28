@@ -50,7 +50,7 @@ function traverse_graph{V,E}(
 
     @graph_requires graph adjacency_list vertex_map
 
-    que = queue(V)
+    que = Queue(V)
 
     colormap[vertex_index(s, graph)] = 1
     if !discover_vertex!(visitor, s)
@@ -71,7 +71,7 @@ function traverse_graph{V,E}(
 
     @graph_requires graph adjacency_list vertex_map
 
-    que = queue(V)
+    que = Queue(V)
 
     for s in sources
         colormap[vertex_index(s, graph)] = 1
