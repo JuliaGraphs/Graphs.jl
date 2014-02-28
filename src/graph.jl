@@ -69,14 +69,14 @@ in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 
 # mutation
 
-function add_vertex!{V,E}(g::GenericGraph{V,E}, v::V)
+function add_vertex!{V}(g::GenericGraph{V}, v::V)
     @assert vertex_index(v) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.finclist, Int[])
     push!(g.binclist, Int[])
     v
 end
-add_vertex!(g::GenericGraph, x) = add_vertex!(g, make_vertex(g, x))
+add_vertex!{V}(g::GenericGraph{V}, x) = add_vertex!(g, make_vertex(g, x))
 
 function add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V, e::E)
     # add an edge e between u and v
