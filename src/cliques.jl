@@ -1,4 +1,25 @@
+###########################################################
+#
+#   Maximal cliques of undirected graph
+#
+##########################################################
+
 function maximal_cliques{V}(g::AbstractGraph{V})
+    """
+    Finds all maximal cliques of an undirected graph.
+
+    julia> using Graphs
+    julia> g = simple_adjlist(3, is_directed=false)
+    julia> add_edge!(g, 1, 2)
+    julia> add_edge!(g, 2, 3)
+    julia> maximal_cliques(g)
+    2-element Array{Array{Int64,N},1}:
+     [2,3]
+     [2,1]
+
+    Adapted from the NetworkX find_cliques function: http://networkx.lanl.gov/reference/generated/networkx.algorithms.clique.find_cliques.html#networkx.algorithms.clique.find_cliques
+    """
+
     @graph_requires g vertex_list adjacency_list
 
     if is_directed(g)
