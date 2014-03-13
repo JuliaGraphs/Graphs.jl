@@ -12,6 +12,7 @@ tests = [
     "mst",
     "floyd",
     "dot",
+    "cliques",
     "random" ]
 
 
