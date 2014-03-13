@@ -1,4 +1,10 @@
 function find_cliques{V}(g::AbstractGraph{V})
+    @graph_requires g vertex_list adjacency_list
+
+    if is_directed(g)
+        throw(ArgumentError("graph must be undirected."))
+    end
+
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
     nnbrs = Dict()
