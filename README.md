@@ -35,5 +35,5 @@ In addition to the generic abstraction, there are other important features:
 
 ### Documentation
 
-Please refer to [*Graph.jl Documentation*](http://julialang.org/Graphs.jl/index.html) for detailed documentation.
+Please refer to [*Graph.jl Documentation*](http://graphsjl-docs.readthedocs.org/en/latest/) for latest documentation.
 
