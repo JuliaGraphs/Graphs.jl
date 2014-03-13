@@ -84,7 +84,7 @@ In graph theory, a clique in an undirected graph is a subset of its vertices
 such that every two vertices in the subset are connected by an edge. A maximal
 clique is the largest clique containing a given node.
 
-.. py:function:: find_cliques(g)
+.. py:function:: maximal_cliques(g)
 
     Returns a vector of maximal cliques, where each maximal clique is represented by a vector of vertices. Here, ``g`` must be an undirected graph, and implement ``vertex_list`` and ``adjacency_list``.
     

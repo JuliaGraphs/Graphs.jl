@@ -7,7 +7,7 @@ end
 
 function test_cliques(graph, expected)
     # Make test results insensitive to ordering
-    setofsets(find_cliques(graph)) == setofsets(expected)
+    setofsets(maximal_cliques(graph)) == setofsets(expected)
 end
 
 g = simple_adjlist(3, is_directed=false)

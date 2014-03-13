@@ -68,7 +68,7 @@ module Graphs
         connected_components, strongly_connected_components,
 
         # cliques
-        find_cliques,
+        maximal_cliques,
         
         # dijkstra_spath
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 

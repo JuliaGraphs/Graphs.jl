@@ -1,4 +1,4 @@
-function find_cliques{V}(g::AbstractGraph{V})
+function maximal_cliques{V}(g::AbstractGraph{V})
     @graph_requires g vertex_list adjacency_list
 
     if is_directed(g)
