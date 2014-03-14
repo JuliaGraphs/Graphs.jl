@@ -9,6 +9,7 @@ Graph Algorithms
 - topological sorting
 - shortest paths: Dijkstra, Floyd-Warshall
 - minimum spanning trees: Prim, Kruskal
+- random graph generation
 - more algorithms are being implemented
 
 
@@ -227,23 +228,51 @@ Kruskal's algorithm finds a minimum spanning tree (or forest) by gradually uniti
     :param K:           the number of trees in the resultant forest. If ``K = 1``, it ends up with a tree. This argument is optional. By default, it is set to ``1``.
     
     :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights. 
-    
 
 
+Random Graphs
+-------------
 
-    
-    
+Erdős–Rényi graphs
+~~~~~~~~~~~~~~~~~~
 
+The `Erdős–Rényi model <https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model>`_ sets an edge between each pair of vertices with equal
+probability, independently of the other edges.
 
+.. py:function:: erdos_renyi_graph(g, n, p[; has_self_loops=false])
 
+    Add edges between vertices 1:n of graph ``g`` randomly, adding each possible edge with probability ``p`` independently of all others.
 
+    :param g:           the input graph
+    :param n:           the number of vertices between which to add edges
+    :param p:           the probability with which to add each edge
+    :param has_self_loops:      whether to consider edges ``v -> v``.
 
+    :returns: the graph ``g``.
 
+.. py:function:: erdos_renyi_graph(n, p[, has_self_loops=false])
 
+    Convenience function to construct an ``n``-vertex Erdős–Rényi graph as an incidence list.
 
+Watts-Strogatz graphs
+~~~~~~~~~~~~~~~~~~~~~
 
+The `Watts–Strogatz
+model <https://en.wikipedia.org/wiki/Watts_and_Strogatz_model>`_ is a random
+graph generation model that produces graphs with small-world properties,
+including short average path lengths and high clustering.
 
+.. py:function:: watts_strogatz_graph(g, n, k, beta)
 
+    Adjust the edges between vertices 1:n of the graph ``g`` in accordance with the Watts-Strogatz model.
 
+    :param g:           the input graph
+    :param n:           the number of vertices between which to adjust edges
+    :param k:           the base degree of each vertex (n > k, k >= 2, k must be even.)
+    :param beta:        the probability of each edge being "rewired".
 
+    :returns: the graph ``g``.
 
+.. py:function:: watts_strogatz_graph(n, k, beta)
+
+    Convenience function to construct an ``n``-vertex Watts-Strogatz graph as an incidence list.
