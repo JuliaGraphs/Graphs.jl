@@ -7,7 +7,7 @@ Graph Algorithms
 - cycle detection
 - connected components
 - topological sorting
-- shortest paths: Dijkstra, Floyd-Warshall
+- shortest paths: Dijkstra, Floyd-Warshall, A*
 - minimum spanning trees: Prim, Kruskal
 - random graph generation
 - more algorithms are being implemented
@@ -102,7 +102,10 @@ Topological sorting of an acyclic directed graph is a linear ordering of vertice
 Shortest Paths
 ---------------
 
-This package implements two classic algorithms for finding shortest paths: *Dijkstra's algorithm* and *Floyd-Warshall algorithm* algorithm. We plan to implement *Bellman-Ford algorithm* and *Johnson's algorithm* in near future.
+This package implements three classic algorithms for finding shortest paths:
+*Dijkstra's algorithm*, the *Floyd-Warshall algorithm*, and the *A\*
+algorithm*. We plan to implement the *Bellman-Ford algorithm* and *Johnson's
+algorithm* in the near future.
 
 Dijkstra's Algorithm
 ~~~~~~~~~~~~~~~~~~~~
@@ -194,6 +197,21 @@ Floyd-Warshall's algorithm
 
     Performs Floyd-Warshall algorithm inplace, and writes the next-hop matrix. When this function finishes, ``nexts[i,j]`` is the next hop of ``i`` along the shortest path from ``i`` to ``j``. One can reconstruct the shortest path based on this matrix. 
 
+
+A*
+~~
+
+.. py:function:: shortest_path(graph, dists, s, t[, heuristic])
+
+    Find the shortest path between vertices ``s`` and ``t`` of ``graph`` using Hart, Nilsson and Raphael's `A* algorithm <http://en.wikipedia.org/wiki/A*_search_algorithm>`_.
+
+    :param graph: the input graph
+    :param dists: the edge distance matrix
+    :param s: the start vertex
+    :param t: the end vertex
+    :param heuristic: a function underestimating the distance from its input node to ``t``.
+
+    :returns: an array of edges representing the shortest path.
 
 Minimum Spanning Trees
 -----------------------

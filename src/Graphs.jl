@@ -74,6 +74,9 @@ module Graphs
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
         dijkstra_shortest_paths!, dijkstra_shortest_paths, 
         dijkstra_shortest_paths_withlog, 
+
+        # a_star_spath
+        shortest_path,
         
         # prim_mst
         PrimStates, create_prim_states, AbstractPrimVisitor,
@@ -107,6 +110,7 @@ module Graphs
     
     include("connected_components.jl")
     include("dijkstra_spath.jl")
+    include("a_star_spath.jl")
     include("prim_mst.jl")
     include("kruskal_mst.jl")
     include("floyd_warshall.jl")
