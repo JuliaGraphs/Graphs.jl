@@ -15,3 +15,16 @@ add_edge!(g, 1, 2)
 @test test_cliques(g, Array[[1,2], [3]])
 add_edge!(g, 2, 3)
 @test test_cliques(g, Array[[1,2], [2,3]])
+
+# Test for "pivotdonenbrs not defined" bug
+h = simple_inclist(6, is_directed=false)
+add_edge!(h, 1, 2)
+add_edge!(h, 1, 3)
+add_edge!(h, 1, 4)
+add_edge!(h, 2, 5)
+add_edge!(h, 2, 6)
+add_edge!(h, 3, 4)
+add_edge!(h, 3, 6)
+add_edge!(h, 5, 6)
+
+@test maximal_cliques(h) != []
