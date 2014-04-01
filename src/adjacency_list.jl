@@ -70,7 +70,7 @@ end
 function simple_adjlist{T<:Number}(A::AbstractMatrix{T}; is_directed::Bool=true)
     n = size(A, 1)
     size(A, 2) == n || error("A must be square")
-    alist = multivecs(n)
+    alist = multivecs(Int, n)
     m = 0
 
     @inbounds if is_directed
