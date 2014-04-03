@@ -12,7 +12,7 @@ end
 
 # Get the dot representation of a graph as a string.
 function to_dot(graph::AbstractGraph)
-    str = IOString()
+    str = IOBuffer()
     to_dot(graph, str)
     takebuf_string(str)
 end
