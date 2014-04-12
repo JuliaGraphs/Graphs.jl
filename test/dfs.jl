@@ -62,8 +62,8 @@ for tset in testsets
 
         # Topological sort
         if gtest.is_cyclic
-            @test_throws ArgumentError topological_sort_by_dfs(g)  # g2 contains a loop
-            @test_throws ArgumentError topological_sort_by_dfs(gEx)  # g2 contains a loop
+            @test_throws topological_sort_by_dfs(g)  # g2 contains a loop
+            @test_throws topological_sort_by_dfs(gEx)  # g2 contains a loop
 
         elseif !isempty(gtest.topo_sort)
             ts = topological_sort_by_dfs(g)
