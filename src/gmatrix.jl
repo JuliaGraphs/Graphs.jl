@@ -45,7 +45,7 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
 end
 
 matrix_from_adjpairs(g::AbstractGraph, gen) = 
-    (n = num_vertices(g); matrix_from_adjpairs!(zeros(eltype(g), n, n), g, gen))
+    (n = num_vertices(g); matrix_from_adjpairs!(zeros(eltype(gen), n, n), g, gen))
 
 
 function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
@@ -56,7 +56,7 @@ function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
     ne = is_directed(g) ? m : 2m
     I = Array(Int, ne)
     J = Array(Int, ne)
-    vals = Array(eltype(g), ne)
+    vals = Array(eltype(gen), ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -166,7 +166,7 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
     ne = is_directed(g) ? m : 2m
     I = Array(Int, ne)
     J = Array(Int, ne)
-    vals = Array(eltype(g), ne)
+    vals = Array(eltype(gen), ne)
     idx = 0
 
     if implements_edge_list(g)
