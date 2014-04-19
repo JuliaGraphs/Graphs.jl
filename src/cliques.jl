@@ -30,6 +30,7 @@ function maximal_cliques{V}(g::AbstractGraph{V})
     maxconn = -1
     nnbrs = Dict()
     pivotnbrs = Set() # handle empty graph
+    pivotdonenbrs = Set()  # initialize
 
     for n in vertices(g)
         nbrs = Set()
