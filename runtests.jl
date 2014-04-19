@@ -9,6 +9,7 @@ tests = [
     "dfs",
     "conn_comp",
     "dijkstra",
+    "a_star_spath",
     "mst",
     "floyd",
     "dot",
