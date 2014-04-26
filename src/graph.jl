@@ -37,7 +37,7 @@ simple_graph(n::Integer; is_directed::Bool=true) =
 
 function graph{V,E}(vs::Vector{V}, es::Vector{E}; is_directed::Bool=true)
     n = length(vs)
-    g = Graph{V,E}(is_directed, vs, es, multivecs(E, n), multivecs(E, n))
+    g = Graph{V,E}(is_directed, vs, E[], multivecs(E, n), multivecs(E, n))
     for e in es
         add_edge!(g, e)
     end
