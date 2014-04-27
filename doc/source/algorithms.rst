@@ -96,7 +96,7 @@ Topological sorting of an acyclic directed graph is a linear ordering of vertice
 
 .. py:function:: topological_sort_by_dfs(g)
 
-    Returns a topological sorting of the vertices in ``g`` in the form of a vector of vertices. Here, ``g`` must be a directed graph, and implement ``vertex_list``, ``vertex_map``, and ``adjacency_list``.
+    Returns a topological sorting of the vertices in ``g`` in the form of a vector of vertices. Here, ``g`` may be directed or undirected, and implement ``vertex_list``, ``vertex_map``, and ``adjacency_list``.
     
     
 Shortest Paths
