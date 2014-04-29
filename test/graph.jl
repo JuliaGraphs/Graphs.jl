@@ -249,3 +249,14 @@ rs = [revedge(e) for e in es]
 @test collect(in_neighbors(vs[4], egu)) == [vs[2], vs[3]]
 
 
+#################################################
+#
+#  graph() constructor
+#
+#################################################
+
+v = [ExVertex(1,""),ExVertex(2,"")]
+e = [ExEdge(1,v[1],v[2])]
+g = graph(v,e,is_directed=true)
+@test num_edges(g) == 1
+@test num_vertices(g) == 2
