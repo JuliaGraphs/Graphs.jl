@@ -17,12 +17,12 @@ dir_acyclic = GraphTest(
     [(1,2), (1,3), (1,6), (2,4), (2,5), (3,5), (3,6)],
     [1, 2, 4, 5, 3, 6],
     false,
-    [])
+    [1,3,6,2,5,4])
 undir_acyclic = GraphTest(
     [(1,2), (1,3), (1,6), (2,4), (2,5)],
     [],
     false,
-    [])
+    [1,6,3,2,5,4])
 cyclic  = GraphTest(
     [(1,2), (1,3), (1,6), (2,4), (2,5), (3,5), (3,6), (5,1)],
     [1, 2, 4, 5, 3, 6],
@@ -70,7 +70,7 @@ for tset in testsets
             @assert ts == gtest.topo_sort
 
             ts = topological_sort_by_dfs(gEx)
-            @assert ts == gtest.topo_sort
+            @assert [vertex_index(e,gEx) for e in ts] == gtest.topo_sort
         end
     end
 end

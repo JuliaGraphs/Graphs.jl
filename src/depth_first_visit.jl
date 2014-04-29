@@ -136,7 +136,7 @@ end
 
 
 function examine_neighbor!{V}(visitor::TopologicalSortVisitor{V}, u::V, v::V, vcolor::Int, ecolor::Int)
-    if vcolor == 1
+    if vcolor == 1 && ecolor == 0
         throw(ArgumentError("The input graph contains at least one loop."))
     end
 end
