@@ -4,7 +4,7 @@ Vertices and Edges
 Vertex Types
 -------------
 
-A vertex can be of any Julia type. For example, it can be an integer, a character, or a string. In a simplistic setting where there is additional information associated with a vertex, it is recommended to use ``Int`` as the vertex type, which would lead to the best performance.
+A vertex can be of any Julia type. For example, it can be an integer, a character, or a string. In a simplistic setting where there is no additional information associated with a vertex, it is recommended to use ``Int`` as the vertex type, which would lead to the best performance.
 
 This package provides two specific vertex types: ``KeyVertex`` and ``ExVertex``. The definition of ``KeyVertex`` is:
 
