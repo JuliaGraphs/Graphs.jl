@@ -40,6 +40,8 @@ for u = 1 : 4
     @test isempty(in_edges(u, sgd))
 end
 
+@test collect_edges(sgd) == []
+
 es = [  add_edge!(sgd, 1, 2)
         add_edge!(sgd, 1, 3)
         add_edge!(sgd, 2, 4)
@@ -76,6 +78,7 @@ es = [  add_edge!(sgd, 1, 2)
 @test collect(in_neighbors(4, sgd)) == [2, 3]
 
 
+@test collect_edges(sgd) == [Edge(1,1,2), Edge(2,1,3), Edge(3,2,4), Edge(4,3,4)]
 #################################################
 #
 #  SimpleUndirectedGraph
