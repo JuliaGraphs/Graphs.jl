@@ -154,20 +154,20 @@ isnz(x::Number) = x != zero(x)
 multivecs{T}(::Type{T}, n::Int) = [T[] for _ =1:n]
 
 function collect_edges{V,E}(graph::AbstractGraph{V,E})
-            
+    local edge_list            
     if implements_edge_list(graph)
         collect(edges(graph))                
             
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)
-        edges = Array(E, 0)    
-        sizehint(edges, num_edges(graph))
+        edge_list = Array(E, 0)    
+        sizehint(edge_list, num_edges(graph))
     
         for v in vertices(graph)
             for e in out_edges(v, graph)
-                push!(edges, e)
+                push!(edge_list, e)
             end
         end    
-        edges
+        edge_list
     else
         throw(ArgumentError("graph must implement either edge_list or incidence_list."))
     end    
