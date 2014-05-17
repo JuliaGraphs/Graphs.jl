@@ -41,6 +41,22 @@ s1 = dijkstra_shortest_paths(g1, eweights1, [1])
 @test s1.dists == [0., 8., 5., 9., 7.]
 @test s1.colormap == [2, 2, 2, 2, 2]
 
+# Check early termination
+
+type EndWhenNode <: AbstractDijkstraVisitor
+  n::Int
+end
+
+function Graphs.include_vertex!(visitor::EndWhenNode, u, v, d)
+  v != visitor.n
+end
+
+s1b = dijkstra_shortest_paths(g1, eweights1, [1], visitor=EndWhenNode(5))
+
+@test s1b.parents == [1, 3, 1, 3, 3]
+@test s1b.dists == [0.0, 8.0, 5.0, 14.0, 7.0]
+@test s1b.colormap == [2, 1, 2, 1, 2] 
+
 # g2: the example in Wikipedia
 g2 = simple_inclist(6, is_directed=false)
 
