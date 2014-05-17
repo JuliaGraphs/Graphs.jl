@@ -121,7 +121,8 @@ Dijkstra's Algorithm
     
     :returns:           An instance of ``DijkstraStates`` that encapsulates the results.
     
-Here, ``graph`` can be directed or undirected. It must implement ``vertex_map`` and ``incidence_list``. The following is an example that shows how to use this function:
+Here, ``graph`` can be directed or undirected. It must implement
+``vertex_map``, ``edge_map`` and ``incidence_list``. The following is an example that shows how to use this function:
 
 .. code-block:: python
 
