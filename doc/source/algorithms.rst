@@ -42,9 +42,9 @@ Here, ``visitor`` must be an instance of a sub-type of ``AbstractGraphVisitor``.
 
     invoked when a vertex ``v`` is about to examine ``v``'s neighbors.
     
-.. py:function:: examine_neighbor!(visitor, u, v, color)
+.. py:function:: examine_neighbor!(visitor, u, v, color, ecolor)
 
-    invoked when a neighbor/out-going edge is examined. Here ``color`` is the status of ``v``.
+    invoked when a neighbor/out-going edge is examined. Here ``color`` is the status of ``v``, and ``ecolor`` is the status of the outgoing edge. Edge statuses are currently only considered by depth-first search.
     
 .. py:function:: close_vertex!(visitor, v)
 
