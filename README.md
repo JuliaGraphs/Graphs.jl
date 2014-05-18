@@ -22,8 +22,11 @@ In addition to the generic abstraction, there are other important features:
     - cycle detection
     - connected components
     - topological sorting
-    - shortest paths: Dijkstra, Floyd-Warshall
+    - shortest paths: Dijkstra, Floyd-Warshall, A\*
     - minimum spanning trees: Prim, Kruskal
+    - maximal cliques
+    - random graph generation: Erdős–Rényi, Watts-Strogatz (see the
+      RandomGraphs.jl package for more random graph models)
     - more algorithms are being implemented
     
 * Matrix-based characterization: adjacency matrix, weight matrix, Laplacian matrix
