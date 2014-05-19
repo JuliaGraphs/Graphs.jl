@@ -41,7 +41,7 @@ function kruskal_select{V,E,W}(
     return (re, rw)
 end
 
-function kruskal_minimum_spantree(graph::AbstractGraph, eweights::AbstractEdgeLengthVisitor; K::Integer=1)
+function kruskal_minimum_spantree(graph::AbstractGraph, eweights::AbstractEdgePropertyInspector; K::Integer=1)
     
     # collect & sort edges
     
@@ -54,6 +54,6 @@ end
 
 
 function kruskal_minimum_spantree(graph::AbstractGraph, eweights::AbstractVector; K::Integer=1)
-    visitor::AbstractEdgeLengthVisitor = VectorEdgeLengthVisitor(eweights)
+    visitor::AbstractEdgePropertyInspector = VectorEdgePropertyInspector(eweights)
     kruskal_minimum_spantree(graph, visitor, K=K)
 end

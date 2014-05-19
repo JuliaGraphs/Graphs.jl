@@ -21,7 +21,7 @@ function a_star_impl!{V,D}(
     graph::AbstractGraph{V},# the graph
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
-    edge_dists::AbstractEdgeLengthVisitor{D},  # cost of each edge
+    edge_dists::AbstractEdgePropertyInspector{D},  # cost of each edge
     heuristic::Function,    # heuristic fn (under)estimating distance to target
     t::V)  # the end vertex
 
@@ -50,7 +50,7 @@ end
 
 function shortest_path{V,E,D}(
     graph::AbstractGraph{V,E},  # the graph
-    edge_dists::AbstractEdgeLengthVisitor{D},      # cost of each edge
+    edge_dists::AbstractEdgePropertyInspector{D},      # cost of each edge
     s::V,                       # the start vertex
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
@@ -68,7 +68,7 @@ function shortest_path{V,E,D}(
     s::V,                       # the start vertex
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
-    edge_len::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
+    edge_len::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
     shortest_path(graph, edge_len, s, t, heuristic)
 end
 

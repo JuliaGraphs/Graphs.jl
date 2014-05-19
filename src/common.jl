@@ -147,24 +147,24 @@ next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 #
 ################################################
 
-abstract AbstractEdgeLengthVisitor{T}
+abstract AbstractEdgePropertyInspector{T}
 
-edge_length_requirement{T, V}(visitor::AbstractEdgeLengthVisitor{T}, g::AbstractGraph{V}) = nothing
+edge_length_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
 
-type ConstantEdgeLengthVisitor{T} <: AbstractEdgeLengthVisitor{T}
+type ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   value::T
 end
 
-edge_length{T}(visitor::ConstantEdgeLengthVisitor{T}, e, g) = visitor.value
+edge_length{T}(visitor::ConstantEdgePropertyInspector{T}, e, g) = visitor.value
 
 
-type VectorEdgeLengthVisitor{T} <: AbstractEdgeLengthVisitor{T}
+type VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   values::Vector{T}
 end
 
-edge_length{T,V}(visitor::VectorEdgeLengthVisitor{T}, e, g::AbstractGraph{V}) = visitor.values[edge_index(e, g)]
+edge_length{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{V}) = visitor.values[edge_index(e, g)]
 
-edge_length_requirement{T, V}(visitor::AbstractEdgeLengthVisitor{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
+edge_length_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
 
 
 
@@ -207,7 +207,7 @@ end
 
 isless{E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight < b.weight
 
-function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractEdgeLengthVisitor{W})
+function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractEdgePropertyInspector{W})
     
     edge_length_requirement(weights, graph)	    
 
@@ -235,6 +235,6 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
 end
 
 function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
-    visitor::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
+    visitor::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
     collect_weighted_edges(graph, visitor)
 end

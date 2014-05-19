@@ -103,7 +103,7 @@ end
 function process_neighbors!{V,D,Heap,H}(
     state::DijkstraStates{V,D,Heap,H}, 
     graph::AbstractGraph{V},
-    edge_dists::AbstractEdgeLengthVisitor{D},
+    edge_dists::AbstractEdgePropertyInspector{D},
     u::V, du::D, visitor::AbstractDijkstraVisitor)
     
     dists::Vector{D} = state.dists
@@ -144,7 +144,7 @@ end
 
 function dijkstra_shortest_paths!{V, D, Heap, H}(
     graph::AbstractGraph{V},                # the graph
-    edge_dists::AbstractEdgeLengthVisitor{D}, # distances associated with edges    
+    edge_dists::AbstractEdgePropertyInspector{D}, # distances associated with edges    
     sources::AbstractVector{V},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
     state::DijkstraStates{V,D,Heap,H})      # the states   
@@ -209,7 +209,7 @@ function dijkstra_shortest_paths{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
 
-    edge_len::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
+    edge_len::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
     state = create_dijkstra_states(graph, D)    
     dijkstra_shortest_paths!(graph, edge_len, [s], visitor, state)
 end
@@ -218,7 +218,7 @@ function dijkstra_shortest_paths{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V}; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     
-    edge_len::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
+    edge_len::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
     state = create_dijkstra_states(graph, D)    
     dijkstra_shortest_paths!(graph, edge_len, sources, visitor, state)
 end
