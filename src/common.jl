@@ -141,6 +141,32 @@ start(a::SourceIterator) = start(a.lst)
 done(a::SourceIterator, s) = done(a.lst, s)
 next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 
+#################################################
+#
+#  Edge Length Visitors
+#
+################################################
+
+abstract AbstractEdgeLengthVisitor{T}
+
+edge_length_requirement{T, V}(visitor::AbstractEdgeLengthVisitor{T}, g::AbstractGraph{V}) = nothing
+
+type ConstantEdgeLengthVisitor{T} <: AbstractEdgeLengthVisitor{T}
+  value::T
+end
+
+edge_length{T}(visitor::ConstantEdgeLengthVisitor{T}, e, g) = visitor.value
+
+
+type VectorEdgeLengthVisitor{T} <: AbstractEdgeLengthVisitor{T}
+  values::Vector{T}
+end
+
+edge_length{T,V}(visitor::VectorEdgeLengthVisitor{T}, e, g::AbstractGraph{V}) = visitor.values[edge_index(e, g)]
+
+edge_length_requirement{T, V}(visitor::AbstractEdgeLengthVisitor{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
+
+
 
 #################################################
 #
@@ -181,23 +207,23 @@ end
 
 isless{E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight < b.weight
 
-function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
+function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractEdgeLengthVisitor{W})
     
-    @graph_requires graph edge_map
-    
+    edge_length_requirement(weights, graph)	    
+
     wedges = Array(WeightedEdge{E,W}, 0)
     sizehint(wedges, num_edges(graph))
             
     if implements_edge_list(graph)
         for e in edges(graph)
-            w = weights[edge_index(e, graph)]
+            w = edge_length(weights, e, graph)
             push!(wedges, WeightedEdge(e, w))
         end               
             
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)    
         for v in vertices(graph)
             for e in out_edges(v, graph)
-                w = weights[edge_index(e, graph)]
+                w = edge_length(weights, e, graph)
                 push!(wedges, WeightedEdge(e, w))
             end
         end    
@@ -208,3 +234,7 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
     return wedges  
 end
 
+function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
+    visitor::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
+    collect_weighted_edges(graph, visitor)
+end

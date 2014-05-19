@@ -33,6 +33,8 @@ module Graphs
         
         add_edge!, add_vertex!, add_edges!, add_vertices!,
 
+        AbstractEdgeLengthVisitor, VectorEdgeLengthVisitor, ConstantEdgeLengthVisitor, edge_length, edge_length_requirement,
+
         # edge_list
         GenericEdgeList, EdgeList, simple_edgelist, edgelist,
     

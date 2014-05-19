@@ -103,7 +103,7 @@ end
 function process_neighbors!{V,D,Heap,H}(
     state::DijkstraStates{V,D,Heap,H}, 
     graph::AbstractGraph{V},
-    edge_dists::Vector{D},
+    edge_dists::AbstractEdgeLengthVisitor{D},
     u::V, du::D, visitor::AbstractDijkstraVisitor)
     
     dists::Vector{D} = state.dists
@@ -119,7 +119,7 @@ function process_neighbors!{V,D,Heap,H}(
         v_color::Int = colormap[iv]
         
         if v_color == 0                        
-            dists[iv] = dv = du + edge_dists[edge_index(e, graph)]
+            dists[iv] = dv = du + edge_length(edge_dists, e, graph)
             parents[iv] = u
             colormap[iv] = 1
             discover_vertex!(visitor, u, v, dv)
@@ -128,7 +128,7 @@ function process_neighbors!{V,D,Heap,H}(
             hmap[iv] = push!(heap, DijkstraHEntry(v, dv))
             
         elseif v_color == 1
-            dv = du + edge_dists[edge_index(e, graph)]
+            dv = du + edge_length(edge_dists, e, graph)
             if dv < dists[iv]
                 dists[iv] = dv
                 parents[iv] = u 
@@ -144,12 +144,13 @@ end
 
 function dijkstra_shortest_paths!{V, D, Heap, H}(
     graph::AbstractGraph{V},                # the graph
-    edge_dists::Vector{D},                  # distances associated with edges    
+    edge_dists::AbstractEdgeLengthVisitor{D}, # distances associated with edges    
     sources::AbstractVector{V},             # the sources
     visitor::AbstractDijkstraVisitor,       # visitor object
     state::DijkstraStates{V,D,Heap,H})      # the states   
     
-    @graph_requires graph incidence_list vertex_map edge_map
+    @graph_requires graph incidence_list vertex_map
+    edge_length_requirement(edge_dists, graph)
 
     # get state fields
     
@@ -208,16 +209,18 @@ function dijkstra_shortest_paths{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, s::V; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
 
+    edge_len::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
     state = create_dijkstra_states(graph, D)    
-    dijkstra_shortest_paths!(graph, edge_dists, [s], visitor, state)
+    dijkstra_shortest_paths!(graph, edge_len, [s], visitor, state)
 end
 
 function dijkstra_shortest_paths{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V}; 
     visitor::AbstractDijkstraVisitor=TrivialDijkstraVisitor())
     
+    edge_len::AbstractEdgeLengthVisitor{D} = VectorEdgeLengthVisitor(edge_dists)
     state = create_dijkstra_states(graph, D)    
-    dijkstra_shortest_paths!(graph, edge_dists, sources, visitor, state)
+    dijkstra_shortest_paths!(graph, edge_len, sources, visitor, state)
 end
 
 function dijkstra_shortest_paths_withlog{V,D}(
