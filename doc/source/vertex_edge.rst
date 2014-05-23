@@ -24,7 +24,7 @@ The definition of ``ExVertex`` is:
     type ExVertex
         index::Int
         label::UTF8String
-        attributes::Dict{UTF8String,Any}  
+        attributes::Dict{UTF8String,Any}
     end
 
 The ``ExVertex`` type allows one to attach a label as well as other attributes to a vertex. The constructor of this type takes an index and a label string as arguments. The following code shows how one can create an instance of ``ExVertex`` and attach a price to it.
@@ -39,20 +39,20 @@ The ``ExVertex`` type implements a ``vertex_index`` function, as
 .. py:function:: vertex_index(v)
 
     returns the index of the vertex ``v``.
-    
+
 In addition, for integers, we have
 
 .. code-block:: python
 
     vertex_index(v::Integer) = v
-    
+
 This makes it convenient to use integers as vertices in graphs.
 
 
 Edge Types
 -----------
 
-This package provides two edge types: ``Edge`` and ``ExEdge``. The former is a basic edge type that simply encapsulates the source and target vertices of an edge, while the latter allows one to specify attributes.  
+This package provides two edge types: ``Edge`` and ``ExEdge``. The former is a basic edge type that simply encapsulates the source and target vertices of an edge, while the latter allows one to specify attributes.
 
 The definition of ``Edge`` is given by
 
@@ -63,7 +63,7 @@ The definition of ``Edge`` is given by
         source::V
         target::V
     end
-    
+
     typealias IEdge Edge{Int}
 
 The definition of ``ExEdge`` is given by
@@ -77,9 +77,9 @@ The definition of ``ExEdge`` is given by
         attributes::Dict{UTF8String,Any}
     end
 
-``ExEdge`` has two constructors, one takes ``index``, ``source``, and ``target`` as arguments, while the other use all four fields. 
-    
-One can either construct an edge directly using the constructors, or use the ``add_edge`` methods for graphs, which can automatically assign an index to a new edge. 
+``ExEdge`` has two constructors, one takes ``index``, ``source``, and ``target`` as arguments, while the other use all four fields.
+
+One can either construct an edge directly using the constructors, or use the ``add_edge`` methods for graphs, which can automatically assign an index to a new edge.
 
 Both edge types implement the following methods:
 
@@ -90,7 +90,7 @@ Both edge types implement the following methods:
 .. py:function:: source(e)
 
     returns the source vertex of the edge ``e``.
-    
+
 .. py:function:: target(e)
 
     returns the target vertex of the edge ``e``.
@@ -98,5 +98,16 @@ Both edge types implement the following methods:
 .. py::function:: revedge(e)
 
     returns a new edge, exactly the same except source and target are switched.
-    
+
 A custom edge type ``E{V}`` which is constructible by ``E(index::Int, s::V, t::V)`` and implements the above methods is usable in the ``VectorIncidenceList`` parametric type.  Construct such a list with ``inclist(V,E{V})``, where E and V are your vertex and edge types.  See test/inclist.jl for an example.
+
+Edge Properties
+---------------
+
+Many algorithms use a property of an edge such as length, weight,
+flow, etc. as input. As the algorithms do not mandate any structure
+for the edge types, these edge properties can be passed through to the
+algorithm by an ``EdgePropertyInspector``.  An
+``EdgePropertyInspector`` when passed to the ``edge_property`` method
+along with an edge and a graph, will return that property of an edge.
+

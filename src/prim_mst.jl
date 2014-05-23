@@ -8,9 +8,9 @@
 
 type PrimStates{V,W,Heap,H}
     parents::Vector{V}
-    colormap::Vector{Int}    
+    colormap::Vector{Int}
     weightmap::Vector{W}
-    
+
     heap::Heap
     hmap::Vector{H}
 end
@@ -27,15 +27,15 @@ end
 
 function create_prim_states{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
     n = num_vertices(g)
-    
+
     parents = Array(V, n)
     colormap = zeros(Int, n)
     weightmap = zeros(W, n)
-    
+
     heap = mutable_binary_minheap(PrimHEntry{V,E,W})
-    hmap = zeros(Int, n)       
-    
-    PrimStates(parents, colormap, weightmap, heap, hmap)                 
+    hmap = zeros(Int, n)
+
+    PrimStates(parents, colormap, weightmap, heap, hmap)
 end
 
 
@@ -68,12 +68,12 @@ end
 
 # default visitor
 
-type PrimVisitor{E,W} <: AbstractPrimVisitor    
+type PrimVisitor{E,W} <: AbstractPrimVisitor
     edges::Vector{E}
     weights::Vector{W}
 end
 
-function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})    
+function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
     edges = Array(E, 0)
     weights = Array(W, 0)
     n = num_vertices(g)
@@ -127,36 +127,36 @@ function process_neighbors!{V,E,W,Heap,H}(
     visitor::AbstractPrimVisitor,       # visitor object
     u::V,                               # the vertex whose neighbor to be examined
     state::PrimStates{V,W,Heap,H})      # the states (created)
-    
+
     parents::Vector{V} = state.parents
     colormap::Vector{Int} = state.colormap
     weightmap::Vector{W} = state.weightmap
     heap::Heap = state.heap
-    hmap::Vector{H} = state.hmap  
-    
-    ew::W = zero(W)   
-    
+    hmap::Vector{H} = state.hmap
+
+    ew::W = zero(W)
+
     for e in out_edges(u, graph)
         v = target(e, graph)
         vi = vertex_index(v, graph)
         v_color = colormap[vi]
-        
+
         if v_color == 0
-            ew = edge_length(edge_weights, e, graph)
+            ew = edge_property(edge_weights, e, graph)
             colormap[vi] = 1
             weightmap[vi] = ew
             discover_vertex!(visitor, v, e, ew)
-            
+
             hmap[vi] = push!(heap, PrimHEntry(v, e, ew))
-            
+
         elseif v_color == 1
-            ew = edge_length(edge_weights, e, graph)
+            ew = edge_property(edge_weights, e, graph)
             if ew < weightmap[vi]
                 weightmap[vi] = ew
-                
+
                 update_vertex!(visitor, v, e, ew)
                 update!(heap, hmap[vi], PrimHEntry(v, e, ew))
-            end                    
+            end
         end
     end
 end
@@ -164,52 +164,52 @@ end
 
 function prim_minimum_spantree!{V,E,W,Heap,H}(
     graph::AbstractGraph{V,E},          # the graph
-    edge_weights::AbstractEdgePropertyInspector{W},            # weights associated with edges    
+    edge_weights::AbstractEdgePropertyInspector{W},            # weights associated with edges
     root::V,                            # the root vertex
     visitor::AbstractPrimVisitor,       # visitor object
     state::PrimStates{V,W,Heap,H})        # the states (created)
-    
+
     @graph_requires graph vertex_map incidence_list
-    
+
     if is_directed(graph)
         throw(ArgumentError("graph must be undirected."))
     end
-              
+
     # initialize
-    
+
     root_idx = vertex_index(root, graph)
     state.parents[root_idx] = root
     state.colormap[root_idx] = 2
-    
+
     process_neighbors!(graph, edge_weights, visitor, root, state)
     close_vertex!(visitor, root)
-    
+
     # main loop
-    
+
     heap::Heap = state.heap
-    
+
     while !isempty(heap)
         entry = pop!(heap)
         v::V = entry.vertex
         e::E = entry.edge
         w::W = entry.weight
-        
+
         state.colormap[vertex_index(v, graph)] = 2
         if !include_vertex!(visitor, v, e, w)
             return
         end
         process_neighbors!(graph, edge_weights, visitor, v, state)
-        close_vertex!(visitor, v)        
-    end    
+        close_vertex!(visitor, v)
+    end
 end
 
 # convenient functions
 
 function prim_minimum_spantree{V,E,W}(
-    graph::AbstractGraph{V,E}, 
-    edge_weight_vec::Vector{W}, 
+    graph::AbstractGraph{V,E},
+    edge_weight_vec::Vector{W},
     root::V)
-    
+
     state = create_prim_states(graph, W)
     visitor = default_prim_visitor(graph, W)
     edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
@@ -218,10 +218,10 @@ function prim_minimum_spantree{V,E,W}(
 end
 
 function prim_minimum_spantree_withlog{V,E,W}(
-    graph::AbstractGraph{V,E}, 
-    edge_weight_vec::Vector{W}, 
+    graph::AbstractGraph{V,E},
+    edge_weight_vec::Vector{W},
     root::V)
-    
+
     state = create_prim_states(graph, W)
     visitor = LogPrimVisitor(STDOUT)
     edge_weights = VectorEdgePropertyInspector(edge_weight_vec)

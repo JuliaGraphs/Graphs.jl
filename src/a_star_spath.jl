@@ -36,7 +36,7 @@ function a_star_impl!{V,D}(
             if colormap[v] < 2
                 colormap[v] = 1
                 new_path = cat(1, path, edge)
-                path_cost = cost_so_far + edge_length(edge_dists, edge, graph)
+                path_cost = cost_so_far + edge_property(edge_dists, edge, graph)
                 enqueue!(frontier,
                         (path_cost, new_path, v),
                         path_cost + heuristic(v))
