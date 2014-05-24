@@ -2,7 +2,7 @@ Graph Types
 ===========
 
 This package provides several graph types that implement different subsets of interfaces.
-In particular, it has three graph types:
+In particular, it has four graph types:
 
 * ``GenericEdgeList``
 * ``GenericAdjacencyList``
