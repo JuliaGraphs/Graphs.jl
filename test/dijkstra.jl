@@ -54,9 +54,9 @@ end
 edgel = AttributeEdgePropertyInspector{Float64}("length")
 s1ex = dijkstra_shortest_paths(g1ex, edgel, [1])
 
-@test s1.parents == [1, 3, 1, 2, 3]
-@test s1.dists == [0., 8., 5., 9., 7.]
-@test s1.colormap == [2, 2, 2, 2, 2]
+@test s1ex.parents == [1, 3, 1, 2, 3]
+@test s1ex.dists == [0., 8., 5., 9., 7.]
+@test s1ex.colormap == [2, 2, 2, 2, 2]
 
 # Check early termination
 
