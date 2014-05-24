@@ -41,6 +41,23 @@ s1 = dijkstra_shortest_paths(g1, eweights1, [1])
 @test s1.dists == [0., 8., 5., 9., 7.]
 @test s1.colormap == [2, 2, 2, 2, 2]
 
+
+g1ex = graph([i for i in 1:5], ExEdge{Int}[], is_directed=true)
+
+#todo -- this should be doable in a comprehension, I can't get the types to work
+for (i,v) in enumerate(g1_wedges)
+    ed = ExEdge(i, v[1], v[2])
+    ed.attributes["length"] = v[3]
+    add_edge!(g1ex, ed)
+end
+
+edgel = AttributeEdgePropertyInspector{Float64}("length")
+s1ex = dijkstra_shortest_paths(g1ex, edgel, [1])
+
+@test s1.parents == [1, 3, 1, 2, 3]
+@test s1.dists == [0., 8., 5., 9., 7.]
+@test s1.colormap == [2, 2, 2, 2, 2]
+
 # Check early termination
 
 type EndWhenNode <: AbstractDijkstraVisitor

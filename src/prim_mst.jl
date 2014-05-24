@@ -217,6 +217,18 @@ function prim_minimum_spantree{V,E,W}(
     return (visitor.edges, visitor.weights)
 end
 
+
+function prim_minimum_spantree{V,E,W}(
+    graph::AbstractGraph{V,E},
+    edge_weights::AbstractEdgePropertyInspector{W},
+    root::V)
+
+    state = create_prim_states(graph, W)
+    visitor = default_prim_visitor(graph, W)
+    prim_minimum_spantree!(graph, edge_weights, root, visitor, state)
+    return (visitor.edges, visitor.weights)
+end
+
 function prim_minimum_spantree_withlog{V,E,W}(
     graph::AbstractGraph{V,E},
     edge_weight_vec::Vector{W},

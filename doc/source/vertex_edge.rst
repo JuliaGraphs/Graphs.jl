@@ -111,3 +111,33 @@ algorithm by an ``EdgePropertyInspector``.  An
 ``EdgePropertyInspector`` when passed to the ``edge_property`` method
 along with an edge and a graph, will return that property of an edge.
 
+All edge property inspectors should be declared as a subtype of
+``AbstractEdgePropertyInspector{T}`` where ``T`` is the type of the
+edge property.  The edge propery inspector should respond to the
+following methods.
+
+.. py::function:: edge_property(i, e, g)
+
+  returns the edge property of edge ``e`` in graph ``g`` selected by
+  inspector ``i``.
+
+.. py::function:: edge_property_requirement(i, g)
+
+  checks that graph ``g`` implements the interface(s) necessary for
+  inspector ``i``
+
+Three edge property inspectors are provided
+``ConstantEdgePropertyInspector``, ``VectorEdgePropertyInspector`` and
+``AttributeEdgePropertyInspector``.
+
+``ConstantEdgePropertyInspector(c)`` constructs an edge property
+inspector that returns the constant ``c`` for each edge.
+
+``VectorEdgePropertyInspector(v)`` constructs an edge property
+inspector that returns ``v[edge_index(e, g)]``.  It requires that
+``g`` implement the ``edge_map`` interface.
+
+``AttributeEdgePropertyInspector(name)``  constructs an edge property
+inspector that returns the named attribute from an ``ExEdge``.
+``AttributeEdgePropertyInspector`` requires that the graph implements
+the ``edge_map`` interface.

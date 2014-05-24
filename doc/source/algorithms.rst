@@ -115,7 +115,8 @@ Dijkstra's Algorithm
     Performs Dijkstra's algorithm to find shortest paths to all vertices from input sources. 
     
     :param graph:       The input graph
-    :param edge_dists:  The vector of edge distances
+    :param edge_dists:  The vector of edge distances or an edge
+			property inspector.
     :param source:      The source vertex (or vertices)
     :param visitor:     An visitor instance
     
@@ -207,7 +208,7 @@ A*
     Find the shortest path between vertices ``s`` and ``t`` of ``graph`` using Hart, Nilsson and Raphael's `A* algorithm <http://en.wikipedia.org/wiki/A*_search_algorithm>`_.
 
     :param graph: the input graph
-    :param dists: the edge distance matrix
+    :param dists: the edge distance matrix or an edge property inspector
     :param s: the start vertex
     :param t: the end vertex
     :param heuristic: a function underestimating the distance from its input node to ``t``.
@@ -229,7 +230,7 @@ Prim's algorithm finds a minimum spanning tree by growing from a root vertex, ad
     Perform Prim's algorithm to find a minimum spanning tree. 
     
     :param graph:       the input graph
-    :param eweights:    the edge weights
+    :param eweights:    the edge weights (a vector or an edge property inspector)
     :param root:        the root vertex
     
     :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights. 
@@ -243,7 +244,7 @@ Kruskal's algorithm finds a minimum spanning tree (or forest) by gradually uniti
 .. py:function:: kruskal_minimum_spantree(graph, eweights[, K=1])
 
     :param graph:       the input graph
-    :param eweights:    the edge weights
+    :param eweights:    the edge weights (a vector or an edge property inspector)
     :param K:           the number of trees in the resultant forest. If ``K = 1``, it ends up with a tree. This argument is optional. By default, it is set to ``1``.
     
     :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights. 
