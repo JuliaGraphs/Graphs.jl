@@ -9,7 +9,7 @@ In particular, it has four graph types:
 * ``GenericIncidenceList``
 * ``GenericGraph``
 
-All of these types of parametric types. One can easily derive customized graph types using different type parameters. 
+All of these types are parametric. One can easily derive customized graph types using different type parameters. 
 
 Edge List
 -----------
