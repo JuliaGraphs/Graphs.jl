@@ -28,12 +28,12 @@ function maximal_cliques{V}(g::AbstractGraph{V})
 
     # Cache nbrs and find first pivot (highest degree)
     maxconn = -1
-    nnbrs = Dict()
-    pivotnbrs = Set() # handle empty graph
-    pivotdonenbrs = Set()  # initialize
+    nnbrs = Dict{V,Set{V}}()
+    pivotnbrs = Set{V}() # handle empty graph
+    pivotdonenbrs = Set{V}()  # initialize
 
     for n in vertices(g)
-        nbrs = Set()
+        nbrs = Set{V}()
         union!(nbrs, out_neighbors(n, g))
         delete!(nbrs, n) # ignore edges between n and itself
         conn = length(nbrs)
@@ -47,11 +47,11 @@ function maximal_cliques{V}(g::AbstractGraph{V})
     end
 
     # Initial setup
-    cand = Set()
+    cand = Set{V}()
     union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
-    done = Set()
-    stack = (Set, Set, Set)[]
+    done = Set{V}()
+    stack = (Set{V}, Set{V}, Set{V})[]
     clique_so_far = V[]
     cliques = Array{V}[]
 
@@ -82,7 +82,7 @@ function maximal_cliques{V}(g::AbstractGraph{V})
             continue
         end
         # Shortcut--only one node left!
-        if !isempty(new_done) && length(new_cand) == 1
+        if isempty(new_done) && length(new_cand) == 1
             push!(cliques, cat(1, clique_so_far, collect(new_cand)))
             pop!(clique_so_far)
             continue
