@@ -1,12 +1,12 @@
 module Graphs
     using DataStructures
-    
+
     import Base: start, done, next, show, ==
     import Base: length, isempty, size, getindex, isless
-    
+
     export
         AbstractGraph,
-    
+
         # concept checking
         implements_vertex_list,
         implements_edge_list,
@@ -18,96 +18,100 @@ module Graphs
         implements_bidirectional_incidence_list,
         implements_adjacency_matrix,
         @graph_implements, @graph_requires,
-    
-        # common 
+
+        # common
         make_vertex, make_edge,
         vertex_type, edge_type, source, target, revedge,
         is_directed, is_mutable, vertex_index, edge_index,
-        num_vertices, vertices, num_edges, edges, 
+        num_vertices, vertices, num_edges, edges,
         out_degree, out_neighbors, out_edges,
         in_degree, in_neighbors, in_edges,
-        attributes,     
-        
+        attributes,
+
         KeyVertex, Edge, WeightedEdge, ExVertex, ExEdge, AttributeDict,
         collect_edges, collect_weighted_edges,
-        
+
         add_edge!, add_vertex!, add_edges!, add_vertices!,
+
+        AbstractEdgePropertyInspector, VectorEdgePropertyInspector,
+        ConstantEdgePropertyInspector, AttributeEdgePropertyInspector,
+        edge_property, edge_property_requirement,
 
         # edge_list
         GenericEdgeList, EdgeList, simple_edgelist, edgelist,
-    
+
         # adjacency_list
-        GenericAdjacencyList, SimpleAdjacencyList, AdjacencyList, 
+        GenericAdjacencyList, SimpleAdjacencyList, AdjacencyList,
         simple_adjlist, adjlist,
-        
+
         # incidence_list
-        GenericIncidenceList, SimpleIncidenceList, VectorIncidenceList, IncidenceList, 
+        GenericIncidenceList, SimpleIncidenceList, VectorIncidenceList, IncidenceList,
         simple_inclist, inclist,
-        
+
         # graph
         GenericGraph, SimpleGraph, Graph, simple_graph, graph,
-        
+
         # gmatrix
         adjacency_matrix, weight_matrix, distance_matrix, laplacian_matrix,
         adjacency_matrix_sparse, weight_matrix_sparse, laplacian_matrix_sparse,
         sparse2adjacencylist,
-        
+
         # graph_visit
         AbstractGraphVisitor, TrivialGraphVisitor, LogGraphVisitor,
         discover_vertex!, open_vertex!, close_vertex!,
-        examine_neighbor!, examine_edge!, 
+        examine_neighbor!, examine_edge!,
         visited_vertices, traverse_graph, traverse_graph_withlog,
-        
+
         # breadth_first_visit
-        BreadthFirst, gdistances, gdistances!, 
-        
+        BreadthFirst, gdistances, gdistances!,
+
         # depth_first_visit
         DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
-        
+
         # connected_components
         connected_components, strongly_connected_components,
 
         # cliques
         maximal_cliques,
-        
+
         # dijkstra_spath
-        DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor, 
-        dijkstra_shortest_paths!, dijkstra_shortest_paths, 
-        dijkstra_shortest_paths_withlog, 
+        DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor,
+        dijkstra_shortest_paths!, dijkstra_shortest_paths,
+        dijkstra_shortest_paths_withlog,
 
         # a_star_spath
         shortest_path,
-        
+
         # prim_mst
         PrimStates, create_prim_states, AbstractPrimVisitor,
         prim_minimum_spantree!, prim_minimum_spantree, prim_minimum_spantree_withlog,
-        
+
         # kruskal_mst
         kruskal_select, kruskal_minimum_spantree,
-        
+
         # floyd_warshall
         floyd_warshall!, floyd_warshall,
-                
-        # Graphviz 
+
+        # Graphviz
         to_dot, plot,
-        
+
         # Random Graph Generation
         erdos_renyi_graph, watts_strogatz_graph
-        
+
     include("concepts.jl")
     include("common.jl")
-    
+
     include("edge_list.jl")
     include("adjacency_list.jl")
     include("incidence_list.jl")
     include("graph.jl")
     include("show.jl")
     include("gmatrix.jl")
-    
+
     include("graph_visit.jl")
     include("breadth_first_visit.jl")
     include("depth_first_visit.jl")
-    
+
     include("connected_components.jl")
     include("dijkstra_spath.jl")
     include("a_star_spath.jl")

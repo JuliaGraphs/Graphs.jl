@@ -23,8 +23,8 @@ type ExVertex
     index::Int
     label::UTF8String
     attributes::AttributeDict
-    
-    ExVertex(i::Int, label::String) = new(i, label, AttributeDict())    
+
+    ExVertex(i::Int, label::String) = new(i, label, AttributeDict())
 end
 
 make_vertex(g::AbstractGraph{ExVertex}, label::String) = ExVertex(num_vertices(g) + 1, utf8(label))
@@ -63,8 +63,8 @@ type ExEdge{V}
     attributes::AttributeDict
 end
 
-=={V}(e1::ExEdge{V}, e2::ExEdge{V}) = (e1.index == e2.index && 
-                                       e1.source == e2.source && 
+=={V}(e1::ExEdge{V}, e2::ExEdge{V}) = (e1.index == e2.index &&
+                                       e1.source == e2.source &&
                                        e1.target == e2.target)
 
 ExEdge{V}(i::Int, s::V, t::V) = ExEdge{V}(i, s, t, AttributeDict())
@@ -94,7 +94,7 @@ immutable ReindexedVec{T, Vec<:AbstractVector, I<:AbstractVector{Int}}
     inds::I
 end
 
-ReindexedVec{T}(a::AbstractVector{T}, inds::AbstractVector{Int}) = 
+ReindexedVec{T}(a::AbstractVector{T}, inds::AbstractVector{Int}) =
     ReindexedVec{T,typeof(a),typeof(inds)}(a, inds)
 
 length(a::ReindexedVec) = length(a.inds)
@@ -112,7 +112,7 @@ immutable TargetIterator{G<:AbstractGraph,EList}
     lst::EList
 end
 
-TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) = 
+TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
     TargetIterator{G,EList}(g, lst)
 
 length(a::TargetIterator) = length(a.lst)
@@ -130,7 +130,7 @@ immutable SourceIterator{G<:AbstractGraph,EList}
     lst::EList
 end
 
-SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) = 
+SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
     SourceIterator{G,EList}(g, lst)
 
 length(a::SourceIterator) = length(a.lst)
@@ -141,7 +141,38 @@ start(a::SourceIterator) = start(a.lst)
 done(a::SourceIterator, s) = done(a.lst, s)
 next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 
+#################################################
+#
+#  Edge Length Visitors
+#
+################################################
 
+abstract AbstractEdgePropertyInspector{T}
+
+edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
+
+type ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+  value::T
+end
+
+edge_property{T}(visitor::ConstantEdgePropertyInspector{T}, e, g) = visitor.value
+
+
+type VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+  values::Vector{T}
+end
+
+edge_property{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{V}) = visitor.values[edge_index(e, g)]
+
+edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
+
+type AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+  attribute::UTF8String
+end
+
+function edge_property{T}(visitor::AttributeEdgePropertyInspector{T},edge::ExEdge, g)
+    convert(T,edge.attributes[visitor.attribute])
+end
 #################################################
 #
 #  convenient functions
@@ -154,23 +185,23 @@ isnz(x::Number) = x != zero(x)
 multivecs{T}(::Type{T}, n::Int) = [T[] for _ =1:n]
 
 function collect_edges{V,E}(graph::AbstractGraph{V,E})
-    local edge_list            
+    local edge_list
     if implements_edge_list(graph)
-        collect(edges(graph))                
-            
+        collect(edges(graph))
+
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)
-        edge_list = Array(E, 0)    
+        edge_list = Array(E, 0)
         sizehint(edge_list, num_edges(graph))
-    
+
         for v in vertices(graph)
             for e in out_edges(v, graph)
                 push!(edge_list, e)
             end
-        end    
+        end
         edge_list
     else
         throw(ArgumentError("graph must implement either edge_list or incidence_list."))
-    end    
+    end
 end
 
 
@@ -181,30 +212,34 @@ end
 
 isless{E,W}(a::WeightedEdge{E,W}, b::WeightedEdge{E,W}) = a.weight < b.weight
 
-function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
-    
-    @graph_requires graph edge_map
-    
+function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractEdgePropertyInspector{W})
+
+    edge_property_requirement(weights, graph)
+
     wedges = Array(WeightedEdge{E,W}, 0)
     sizehint(wedges, num_edges(graph))
-            
+
     if implements_edge_list(graph)
         for e in edges(graph)
-            w = weights[edge_index(e, graph)]
+            w = edge_property(weights, e, graph)
             push!(wedges, WeightedEdge(e, w))
-        end               
-            
-    elseif implements_vertex_list(graph) && implements_incidence_list(graph)    
+        end
+
+    elseif implements_vertex_list(graph) && implements_incidence_list(graph)
         for v in vertices(graph)
             for e in out_edges(v, graph)
-                w = weights[edge_index(e, graph)]
+                w = edge_property(weights, e, graph)
                 push!(wedges, WeightedEdge(e, w))
             end
-        end    
+        end
     else
         throw(ArgumentError("graph must implement either edge_list or incidence_list."))
-    end  
-    
-    return wedges  
+    end
+
+    return wedges
 end
 
+function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::AbstractVector{W})
+    visitor::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
+    collect_weighted_edges(graph, visitor)
+end
