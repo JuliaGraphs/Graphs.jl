@@ -79,6 +79,11 @@ module Graphs
         dijkstra_shortest_paths!, dijkstra_shortest_paths,
         dijkstra_shortest_paths_withlog,
 
+        # bellmanford
+        BellmanFordStates, create_bellman_ford_states, NegativeCycleError, 
+        bellman_ford_shortest_paths!, bellman_ford_shortest_paths,
+        has_negative_edge_cycle,
+
         # a_star_spath
         shortest_path,
 
@@ -114,6 +119,7 @@ module Graphs
 
     include("connected_components.jl")
     include("dijkstra_spath.jl")
+    include("bellmanford.jl")
     include("a_star_spath.jl")
     include("prim_mst.jl")
     include("kruskal_mst.jl")

@@ -181,6 +181,39 @@ The user can (optionally) provide a visitor that perform operations along with t
     Invoked when a vertex is closed (all its neighbors have been examined).
 
 
+Bellman Ford Algorithm
+~~~~~~~~~~~~~~~~~~~~
+
+.. py:function:: bellman_ford_shortest_paths(graph, edge_dists, source)
+
+    Performs Dijkstra's algorithm to find shortest paths to all vertices from input sources. 
+    
+    :param graph:       The input graph
+    :param edge_dists:  The vector of edge distances or an edge
+			property inspector.
+    :param source:      The source vertex (or vertices)
+    
+    :returns:           An instance of ``BellmanFordStates`` that encapsulates the results.
+    
+Here, ``graph`` can be directed or undirected. Weights can be negative
+for a directed graph. It must implement
+``vertex_map``, ``edge_map`` and ``incidence_list``.  If there is a
+negative weight cycle an exception of ``NegativeCycleError`` is thrown.
+
+The result has several fields, among which the following are most useful:
+
+* ``parents[i]``:  the parent vertex of the i-th vertex. The parent of each source vertex is itself.
+* ``dists[i]``:  the minimum distance from the i-th vertex to source.
+
+.. py:function:: has_negative_edge_cycle(graph, edge_dists)
+
+		 Tests if the graph has a negative weight cycle.
+
+    :param graph:       The input graph
+    :param edge_dists:  The vector of edge distances or an edge
+			property inspector.
+    :returns: ``true`` if there is a negative weight cycle, ``false`` otherwise.
+
 Floyd-Warshall's algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
