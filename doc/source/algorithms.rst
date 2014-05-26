@@ -186,7 +186,7 @@ Bellman Ford Algorithm
 
 .. py:function:: bellman_ford_shortest_paths(graph, edge_dists, source)
 
-    Performs Dijkstra's algorithm to find shortest paths to all vertices from input sources. 
+    Performs Bellman Ford algorithm to find shortest paths to all vertices from input sources. 
     
     :param graph:       The input graph
     :param edge_dists:  The vector of edge distances or an edge
@@ -212,7 +212,7 @@ The result has several fields, among which the following are most useful:
     :param graph:       The input graph
     :param edge_dists:  The vector of edge distances or an edge
 			property inspector.
-    :returns: ``true`` if there is a negative weight cycle, ``false`` otherwise.
+    :returns: ``true`` if there is a negative weight cycle, ``false`` otherwise.e
 
 Floyd-Warshall's algorithm
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,4 +1,4 @@
-# Test of Dijkstra's algorithm for shorest paths
+# Test of Bellman Ford algorithm for shortest paths
 
 using Graphs
 using Base.Test
