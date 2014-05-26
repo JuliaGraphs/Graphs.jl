@@ -68,3 +68,35 @@ add_edge!(g2, MyEdge{Int}(46, 10, 1, -10.0))
 @test has_negative_edge_cycle(g2, insp)
 @test_throws NegativeCycleError bellman_ford_shortest_paths(g2, insp, [1])
 
+# g1: the example in CLR[~S] (1st Ed. Figure 25.7)
+g3 = simple_inclist(5)
+
+g3_wedges = [
+    (1, 2,  5.),
+    (1, 3, -4.),
+    (1, 4,  8.),
+    (2, 1, -2.),
+    (3, 2,  7.),
+    (3, 5,  2.),
+    (4, 2, -3.),
+    (4, 3,  9.),
+    (5, 4,  7.),
+    (5, 1,  6.)]
+
+ne3 = length(g3_wedges)
+eweights3 = zeros(ne3)
+for i = 1 : ne3
+    we = g3_wedges[i]
+    add_edge!(g3, we[1], we[2])
+    eweights3[i] = we[3]
+end
+
+@assert num_vertices(g3) == 5
+@assert num_edges(g3) == 10
+
+
+s3 = bellman_ford_shortest_paths(g3, eweights3, [5])
+
+@test s3.parents == [2, 4, 1, 5, 5] 
+@test s3.dists == [2.0, 4.0, -2.0, 7.0, 0.0]
+@test !has_negative_edge_cycle(g3, eweights1)
