@@ -2,6 +2,7 @@
 tests = [
     "edgelist",
     "adjlist",
+    "bellman_test",
     "inclist",
     "graph",
     "gmatrix",
