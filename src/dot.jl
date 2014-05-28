@@ -25,24 +25,24 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
     write(stream, "$(graph_type_string(graph)) graphname {\n")
     if implements_edge_list(graph)
         for edge in edges(graph)
-            write(stream,"$(vertex_index(source(edge))) $(edge_op(graph)) $(vertex_index(target(edge)))\n")
+            write(stream,"$(vertex_index(source(edge), graph)) $(edge_op(graph)) $(vertex_index(target(edge), graph))\n")
         end
     elseif implements_vertex_list(graph) && (implements_incidence_list(graph) || implements_adjacency_list(graph))
         for vertex in vertices(graph)
             if has_vertex_attrs && !isempty(attributes(vertex, graph))
-                write(stream, "$(vertex_index(vertex)) $(to_dot(attributes(vertex, graph)))\n")
+                write(stream, "$(vertex_index(vertex, graph)) $(to_dot(attributes(vertex, graph)))\n")
             end
             if implements_incidence_list(graph)
                 for e in out_edges(vertex, graph)
                     n = target(e, graph)
-                    if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
-                        write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))$(has_edge_attrs ? string(" ", to_dot(attributes(e, graph))) : "")\n")
+                    if is_directed(graph) || vertex_index(n, graph) > vertex_index(vertex, graph)
+                        write(stream,"$(vertex_index(vertex, graph)) $(edge_op(graph)) $(vertex_index(n, graph))$(has_edge_attrs ? string(" ", to_dot(attributes(e, graph))) : "")\n")
                     end
                 end
             else # implements_adjacency_list
                 for n in out_neighbors(vertex, graph)
-                    if is_directed(graph) || vertex_index(n) > vertex_index(vertex)
-                        write(stream,"$(vertex_index(vertex)) $(edge_op(graph)) $(vertex_index(n))\n")
+                    if is_directed(graph) || vertex_index(n, graph) > vertex_index(vertex, graph)
+                        write(stream,"$(vertex_index(vertex, graph)) $(edge_op(graph)) $(vertex_index(n))\n")
                     end
                 end
             end

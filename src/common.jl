@@ -31,6 +31,17 @@ make_vertex(g::AbstractGraph{ExVertex}, label::String) = ExVertex(num_vertices(g
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
+typealias ProvidedVertexType Union(Integer, KeyVertex, ExVertex)
+
+# vertex_index for (V !<: ProvidedVertexType)
+
+function vertex_index{V}(v::V, g::AbstractGraph{V})
+    @graph_requires g vertex_list
+    return vertex_index(v, vertices(g))
+end
+
+vertex_index(v, vs::AbstractArray) = findfirst(vs, v)
+
 
 #################################################
 #

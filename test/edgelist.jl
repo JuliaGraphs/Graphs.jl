@@ -49,22 +49,24 @@ gu = simple_edgelist(5, eds; is_directed=false)
 
 ## edge list (based on vector of vertices)
 
-g = edgelist(ExVertex[], ExEdge{ExVertex}[])
+for T in [ ExVertex, ASCIIString ]
+    g = edgelist(T[], ExEdge{T}[])
 
-vs = [ add_vertex!(g, "a"), 
-       add_vertex!(g, "b"), 
-       add_vertex!(g, "c") ]
+    vs = [ add_vertex!(g, "a"), 
+           add_vertex!(g, "b"), 
+           add_vertex!(g, "c") ]
 
-es = [ add_edge!(g, vs[1], vs[2]), 
-       add_edge!(g, vs[1], vs[3]) ]
+    es = [ add_edge!(g, vs[1], vs[2]), 
+           add_edge!(g, vs[1], vs[3]) ]
 
-@test vertex_type(g) == ExVertex
-@test edge_type(g) == ExEdge{ExVertex}
-@test is_directed(g)
+    @test vertex_type(g) == T
+    @test edge_type(g) == ExEdge{T}
+    @test is_directed(g)
 
-@test num_vertices(g) == 3
-@test vertices(g) == vs
+    @test num_vertices(g) == 3
+    @test vertices(g) == vs
 
-@test num_edges(g) == 2
-@test edges(g) == es
+    @test num_edges(g) == 2
+    @test edges(g) == es
+end
 
