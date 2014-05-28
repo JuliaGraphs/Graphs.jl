@@ -46,7 +46,6 @@ out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v,g)
 ## mutation
 
 function add_vertex!{V}(g::GenericAdjacencyList{V}, v::V)
-    @assert !isa(V, ProvidedVertexType) || vertex_index(v) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.adjlist, Array(V,0))
     v

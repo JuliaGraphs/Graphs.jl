@@ -52,7 +52,6 @@ out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist
 # mutation
 
 function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
-    @assert !isa(V, ProvidedVertexType) || vertex_index(v,g) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.inclist, Array(E,0))
     v

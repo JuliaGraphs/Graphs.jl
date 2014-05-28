@@ -70,7 +70,6 @@ in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 # mutation
 
 function add_vertex!{V}(g::GenericGraph{V}, v::V)
-    @assert !isa(V, ProvidedVertexType) || vertex_index(v, g) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.finclist, Int[])
     push!(g.binclist, Int[])
@@ -80,7 +79,6 @@ add_vertex!{V}(g::GenericGraph{V}, x) = add_vertex!(g, make_vertex(g, x))
 
 function add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V, e::E)
     # add an edge e between u and v
-    @assert edge_index(e) == num_edges(g) + 1
     ui = vertex_index(u, g)::Int
     vi = vertex_index(v, g)::Int
 
