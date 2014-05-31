@@ -55,14 +55,14 @@ vertices(g::GenericGraph) = g.vertices
 num_edges(g::GenericGraph) = length(g.edges)
 edges(g::GenericGraph) = g.edges
 
-vertex_index{V}(v::V, g::GenericGraph{V}) = vertex_index(v)
+vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = vertex_index(v)
 edge_index{V,E}(e::E, g::GenericGraph{V,E}) = edge_index(e)
 
-out_edges{V}(v::V, g::GenericGraph{V}) = g.finclist[vertex_index(v)]
+out_edges{V}(v::V, g::GenericGraph{V}) = g.finclist[vertex_index(v, g)]
 out_degree{V}(v::V, g::GenericGraph{V}) = length(out_edges(v, g))
 out_neighbors{V}(v::V, g::GenericGraph{V}) = TargetIterator(g, out_edges(v, g))
 
-in_edges{V}(v::V, g::GenericGraph{V}) = g.binclist[vertex_index(v)]
+in_edges{V}(v::V, g::GenericGraph{V}) = g.binclist[vertex_index(v, g)]
 in_degree{V}(v::V, g::GenericGraph{V}) = length(in_edges(v, g))
 in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 
@@ -70,7 +70,6 @@ in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 # mutation
 
 function add_vertex!{V}(g::GenericGraph{V}, v::V)
-    @assert vertex_index(v) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.finclist, Int[])
     push!(g.binclist, Int[])
@@ -80,7 +79,6 @@ add_vertex!{V}(g::GenericGraph{V}, x) = add_vertex!(g, make_vertex(g, x))
 
 function add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V, e::E)
     # add an edge e between u and v
-    @assert edge_index(e) == num_edges(g) + 1
     ui = vertex_index(u, g)::Int
     vi = vertex_index(v, g)::Int
 

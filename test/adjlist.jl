@@ -68,34 +68,36 @@ end
 
 # adjacency list with key vertices
 
-g = adjlist(KeyVertex{ASCIIString})
+for g in [adjlist(KeyVertex{ASCIIString}), adjlist(ASCIIString)]
 
-vs = [  add_vertex!(g, "a"), 
-        add_vertex!(g, "b"), 
-        add_vertex!(g, "c") ]
+    vs = [  add_vertex!(g, "a"), 
+            add_vertex!(g, "b"), 
+            add_vertex!(g, "c") ]
+    
+    @test num_vertices(g) == 3
 
-@test num_vertices(g) == 3
+    for i = 1 : 3
+        v = vs[i]
+        @test vertices(g)[i] == v
+        @test !isa(v, KeyVertex) || v.index == i
+        @test out_degree(v, g) == 0
+    end
 
-for i = 1 : 3
-    v = vs[i]
-    @test vertices(g)[i] == v
-    @test v.index == i
-    @test out_degree(v, g) == 0
+    add_edge!(g, vs[1], vs[2])
+    add_edge!(g, vs[1], vs[3])
+    add_edge!(g, vs[2], vs[3])
+
+    @test num_edges(g) == 3
+
+    @test out_degree(vs[1], g) == 2
+    @test out_degree(vs[2], g) == 1
+    @test out_degree(vs[3], g) == 0
+
+    @test out_neighbors(vs[1], g) == [vs[2], vs[3]]
+    @test out_neighbors(vs[2], g) == [vs[3]]
+    @test isempty(out_neighbors(vs[3], g))
+
 end
-
-add_edge!(g, vs[1], vs[2])
-add_edge!(g, vs[1], vs[3])
-add_edge!(g, vs[2], vs[3])
-
-@test num_edges(g) == 3
-
-@test out_degree(vs[1], g) == 2
-@test out_degree(vs[2], g) == 1
-@test out_degree(vs[3], g) == 0
-
-@test out_neighbors(vs[1], g) == [vs[2], vs[3]]
-@test out_neighbors(vs[2], g) == [vs[3]]
-@test isempty(out_neighbors(vs[3], g))
 
 # # construct via adjacency matrix
 # A = [true true true; false false true; false false true]

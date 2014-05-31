@@ -42,20 +42,16 @@ vertices(g::GenericIncidenceList) = g.vertices
 
 num_edges(g::GenericIncidenceList) = g.nedges
 
-vertex_index{V}(v::V, g::GenericIncidenceList{V}) = vertex_index(v)
+vertex_index{V<:ProvidedVertexType}(v::V, g::GenericIncidenceList{V}) = vertex_index(v)
 edge_index{V,E}(e::E, g::GenericIncidenceList{V,E}) = edge_index(e)
 
-out_edges{V}(v::V, g::GenericIncidenceList{V}) = g.inclist[vertex_index(v)]
+out_edges{V}(v::V, g::GenericIncidenceList{V}) = g.inclist[vertex_index(v, g)]
 out_degree{V}(v::V, g::GenericIncidenceList{V}) = length(out_edges(v, g))
-out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist[vertex_index(v)])
+out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist[vertex_index(v, g)])
 
 # mutation
 
 function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
-    iv::Int = vertex_index(v)
-    if iv != num_vertices(g) + 1
-        throw(ArgumentError("Invalid vertex index."))
-    end        
     push!(g.vertices, v)
     push!(g.inclist, Array(E,0))
     v

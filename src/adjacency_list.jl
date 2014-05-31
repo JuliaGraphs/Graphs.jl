@@ -35,18 +35,17 @@ is_directed(g::GenericAdjacencyList) = g.is_directed
 
 num_vertices(g::GenericAdjacencyList) = length(g.vertices)
 vertices(g::GenericAdjacencyList) = g.vertices
-vertex_index{V}(v::V, g::GenericAdjacencyList{V}) = vertex_index(v)
+vertex_index{V<:ProvidedVertexType}(v::V, g::GenericAdjacencyList{V}) = vertex_index(v)
 
 num_edges(g::GenericAdjacencyList) = g.nedges
 
-out_degree{V}(v::V, g::GenericAdjacencyList{V}) = length(g.adjlist[vertex_index(v)])
-out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v)]
+out_degree{V}(v::V, g::GenericAdjacencyList{V}) = length(g.adjlist[vertex_index(v,g)])
+out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v,g)]
 
 
 ## mutation
 
 function add_vertex!{V}(g::GenericAdjacencyList{V}, v::V)
-    @assert vertex_index(v) == num_vertices(g) + 1
     push!(g.vertices, v)
     push!(g.adjlist, Array(V,0))
     v
