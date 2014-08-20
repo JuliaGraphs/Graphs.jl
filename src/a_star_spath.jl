@@ -55,7 +55,7 @@ function shortest_path{V,E,D}(
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
             # heuristic (under)estimating distance to target
-    frontier = PriorityQueue{(D,Array{E,1},V),D}()
+    frontier = VERSION < v"0.4-" ? PriorityQueue{(D,Array{E,1},V),D}() : PriorityQueue((D,Array{E,1},V),D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
     colormap[s] = 1
