@@ -23,7 +23,7 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
     has_edge_attrs = method_exists(attributes, (edge_type(graph), G))
 
     write(stream, "$(graph_type_string(graph)) graphname {\n")
-    if implements_edge_list(graph)
+    if implements_edge_list(graph) && implements_vertex_map(graph)
         for edge in edges(graph)
             write(stream,"$(vertex_index(source(edge), graph)) $(edge_op(graph)) $(vertex_index(target(edge), graph))\n")
         end
@@ -42,7 +42,7 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
             else # implements_adjacency_list
                 for n in out_neighbors(vertex, graph)
                     if is_directed(graph) || vertex_index(n, graph) > vertex_index(vertex, graph)
-                        write(stream,"$(vertex_index(vertex, graph)) $(edge_op(graph)) $(vertex_index(n))\n")
+                        write(stream,"$(vertex_index(vertex, graph)) $(edge_op(graph)) $(vertex_index(n,graph))\n")
                     end
                 end
             end
