@@ -1,4 +1,3 @@
-
 tests = [
     "edgelist",
     "adjlist",
@@ -19,8 +18,7 @@ tests = [
 
 
 for t in tests
-    tp = joinpath("test", "$(t).jl")
+    tp = joinpath(Pkg.dir("Graphs"),"test","$(t).jl")
     println("running $(tp) ...")
     include(tp)
 end
-
