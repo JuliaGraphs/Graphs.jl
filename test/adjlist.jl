@@ -49,7 +49,7 @@ add_edge!(gd, 2, 3)
 
 @test num_edges(gd) == 3
 
-nbs = {[2, 3], [3], Int[]}
+nbs = Any[[2, 3], [3], Int[]]
 for i = 1 : 3
     @test out_degree(i, gd) == length(nbs[i])
     @test out_neighbors(i, gd) == nbs[i]
@@ -60,7 +60,7 @@ add_edge!(gu, 2, 3)
 
 @test num_edges(gu) == 2
 
-nbs = {[2], [1, 3], [2]}
+nbs = Any[[2], [1, 3], [2]]
 for i = 1 : 3
     @test out_degree(i, gu) == length(nbs[i])
     @test out_neighbors(i, gu) == nbs[i]
