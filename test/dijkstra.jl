@@ -72,7 +72,7 @@ s1b = dijkstra_shortest_paths(g1, eweights1, [1], visitor=EndWhenNode(5))
 
 @test s1b.parents == [1, 3, 1, 3, 3]
 @test s1b.dists == [0.0, 8.0, 5.0, 14.0, 7.0]
-@test s1b.colormap == [2, 1, 2, 1, 2] 
+@test s1b.colormap == [2, 1, 2, 1, 2]
 
 # g2: the example in Wikipedia
 g2 = simple_inclist(6, is_directed=false)
@@ -95,7 +95,7 @@ for i = 1 : ne
     add_edge!(g2, we[1], we[2])
     eweights2[i] = we[3]
 end
-    
+
 @assert num_vertices(g2) == 6
 @assert num_edges(g2) == 9
 
@@ -110,7 +110,3 @@ s2 = dijkstra_shortest_paths(g2, eweights2, [1])
 @test s2.parents == [1, 1, 1, 3, 6, 3]
 @test s2.dists == [0., 7., 9., 20., 20., 11.]
 @test s2.colormap == [2, 2, 2, 2, 2, 2]
-
-
-
-

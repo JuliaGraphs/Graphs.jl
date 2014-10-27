@@ -24,7 +24,7 @@ typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 
 ## construction
 
-simple_adjlist(nv::Int; is_directed::Bool=true) = SimpleAdjacencyList(is_directed, 1:nv, 0, multivecs(Int, nv)) 
+simple_adjlist(nv::Int; is_directed::Bool=true) = SimpleAdjacencyList(is_directed, 1:nv, 0, multivecs(Int, nv))
 
 adjlist{V}(vs::Vector{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, vs, 0, Vector{V}[])
 adjlist{V}(::Type{V}; is_directed::Bool=true) = adjlist(V[]; is_directed=is_directed)
@@ -53,7 +53,7 @@ end
 add_vertex!(g::GenericAdjacencyList, x) = add_vertex!(g, make_vertex(g, x))
 
 function add_edge!{V}(g::GenericAdjacencyList{V}, u::V, v::V)
-    nv::Int = num_vertices(g)    
+    nv::Int = num_vertices(g)
     iu = vertex_index(u, g)::Int
     push!(g.adjlist[iu], v)
     g.nedges += 1
@@ -100,4 +100,3 @@ function simple_adjlist{T<:Number}(A::AbstractMatrix{T}; is_directed::Bool=true)
     end
     return SimpleAdjacencyList(is_directed, 1:n, m, alist)
 end
-

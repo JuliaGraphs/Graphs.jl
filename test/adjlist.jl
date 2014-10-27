@@ -70,10 +70,10 @@ end
 
 for g in [adjlist(KeyVertex{ASCIIString}), adjlist(ASCIIString)]
 
-    vs = [  add_vertex!(g, "a"), 
-            add_vertex!(g, "b"), 
+    vs = [  add_vertex!(g, "a"),
+            add_vertex!(g, "b"),
             add_vertex!(g, "c") ]
-    
+
     @test num_vertices(g) == 3
 
     for i = 1 : 3

@@ -80,7 +80,7 @@ module Graphs
         dijkstra_shortest_paths_withlog,
 
         # bellmanford
-        BellmanFordStates, create_bellman_ford_states, NegativeCycleError, 
+        BellmanFordStates, create_bellman_ford_states, NegativeCycleError,
         bellman_ford_shortest_paths!, bellman_ford_shortest_paths,
         has_negative_edge_cycle,
 
@@ -130,4 +130,3 @@ module Graphs
 
     include("random.jl")
 end
-

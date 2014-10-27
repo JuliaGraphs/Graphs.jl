@@ -8,10 +8,10 @@ type GenericGraph{V,E,VList,EList,IncList} <: AbstractGraph{V,E}
     vertices::VList     # an indexable container of vertices
     edges::EList        # an indexable container of edges
     finclist::IncList   # forward incidence list
-    binclist::IncList   # backward incidence list 
+    binclist::IncList   # backward incidence list
 end
 
-@graph_implements GenericGraph vertex_list edge_list vertex_map edge_map 
+@graph_implements GenericGraph vertex_list edge_list vertex_map edge_map
 @graph_implements GenericGraph bidirectional_adjacency_list bidirectional_incidence_list
 
 # SimpleGraph:
@@ -28,10 +28,10 @@ typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}}}
 
 # construction
 
-simple_graph(n::Integer; is_directed::Bool=true) = 
-    SimpleGraph(is_directed,  
+simple_graph(n::Integer; is_directed::Bool=true) =
+    SimpleGraph(is_directed,
                 1:int(n),  # vertices
-                IEdge[],   # edges 
+                IEdge[],   # edges
                 multivecs(IEdge, n), # finclist
                 multivecs(IEdge, n)) # binclist
 
@@ -96,4 +96,3 @@ end
 
 add_edge!{V,E}(g::GenericGraph{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
 add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
-

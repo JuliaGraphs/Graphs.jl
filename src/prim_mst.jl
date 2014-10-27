@@ -239,4 +239,3 @@ function prim_minimum_spantree_withlog{V,E,W}(
     edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
     prim_minimum_spantree!(graph, edge_weights, root, visitor, state)
 end
-

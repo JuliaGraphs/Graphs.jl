@@ -13,16 +13,16 @@ g_gra = simple_graph(nv)
 
 shuff = [1:nv]
 
-for u = 1 : nv                
+for u = 1 : nv
     for j in 1 :  deg
-        
+
         v = u
-        
+
         while v == u
             k = rand(j+1:nv)
             shuff[j], shuff[k] = shuff[k], shuff[j]
             v = shuff[j]
-        end        
+        end
         add_edge!(g_adj, u, v)
         add_edge!(g_inc, u, v)
         add_edge!(g_gra, u, v)
@@ -101,5 +101,3 @@ println("Benchmark of depth-first traversal")
 println("Benchmark of Dijkstra shortest paths")
 @graph_bench run_dijkstra SimpleIncidenceList g_inc 5
 @graph_bench run_dijkstra SimpleGraph g_gra 5
-
-

@@ -19,13 +19,13 @@ function create_bellman_ford_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
     parents = Array(V, n)
     dists = fill(typemax(D), n)
-    
-    BellmanFordStates(parents, dists)                 
+
+    BellmanFordStates(parents, dists)
 end
 
 function bellman_ford_shortest_paths!{V,D}(
     graph::AbstractGraph{V},
-    edge_dists::AbstractEdgePropertyInspector{D}, 
+    edge_dists::AbstractEdgePropertyInspector{D},
     sources::AbstractVector{V},
     state::BellmanFordStates{V,D})
 
@@ -72,7 +72,7 @@ end
 
 function bellman_ford_shortest_paths{V,D}(
     graph::AbstractGraph{V},
-    edge_dists::AbstractEdgePropertyInspector{D}, 
+    edge_dists::AbstractEdgePropertyInspector{D},
     sources::AbstractVector{V})
     state = create_bellman_ford_states(graph, D)
     bellman_ford_shortest_paths!(graph, edge_dists, sources, state)

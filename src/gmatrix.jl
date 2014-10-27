@@ -35,7 +35,7 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
                 vi = vertex_index(v, g)
                 val = get(gen, g, u, v)
                 a[ui, vi] = val
-            end                
+            end
         end
     else
         error("g does not implement required interface.")
@@ -44,7 +44,7 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
     return a
 end
 
-matrix_from_adjpairs(g::AbstractGraph, gen) = 
+matrix_from_adjpairs(g::AbstractGraph, gen) =
     (n = num_vertices(g); matrix_from_adjpairs!(zeros(eltype(gen), n, n), g, gen))
 
 
@@ -80,7 +80,7 @@ function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
                 ui = vertex_index(u, g)
                 vi = vertex_index(v, g)
                 val = get(gen, g, u, v)
-                
+
                 idx += 1
                 I[idx] = ui
                 J[idx] = vi
@@ -123,7 +123,7 @@ function matrix_from_edges!(a::AbstractMatrix, g::AbstractGraph, gen)
                 v = target(e, g)
                 ui = vertex_index(u, g)
                 vi = vertex_index(v, g)
-                val = get(gen, g, e)                
+                val = get(gen, g, e)
                 a[ui, vi] = val
             end
         else
@@ -155,7 +155,7 @@ function matrix_from_edges!(a::AbstractMatrix, g::AbstractGraph, gen)
     return a
 end
 
-matrix_from_edges(g::AbstractGraph, gen) = 
+matrix_from_edges(g::AbstractGraph, gen) =
     (n = num_vertices(g); matrix_from_edges!(zeros(eltype(gen), n, n), g, gen))
 
 function sparse_matrix_from_edges(g::AbstractGraph, gen)
@@ -190,7 +190,7 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
                 ui = vertex_index(u, g)
                 vi = vertex_index(v, g)
                 val = get(gen, g, e)
-                
+
                 idx += 1
                 I[idx] = ui
                 J[idx] = vi
@@ -210,7 +210,7 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
                 v = target(e, g)
                 vi = vertex_index(v, g)
                 val = get(gen, g, e)
-                
+
                 idx += 1
                 I[idx] = ui
                 J[idx] = vi
@@ -245,7 +245,7 @@ adjacency_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T}) = sparse_matrix_
 adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
 
 ### weight matrix
-    
+
 type _GenEdgeWeight{Weights}
     weights::Weights
 end
@@ -268,10 +268,10 @@ function init_distancemat{T<:Number}(n::Int, dinf::T)
     return a
 end
 
-distance_matrix(g::AbstractGraph, dists::AbstractVector, dinf) = 
+distance_matrix(g::AbstractGraph, dists::AbstractVector, dinf) =
     (n = num_vertices(g); matrix_from_edges!(init_distancemat(n, dinf), g, _GenEdgeWeight(dists)))
 
-distance_matrix{T<:Real}(g::AbstractGraph, dists::AbstractVector{T}) = 
+distance_matrix{T<:Real}(g::AbstractGraph, dists::AbstractVector{T}) =
     distance_matrix(g, dists, typemax(T))
 
 
@@ -388,7 +388,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
             vi = vertex_index(v, g)
             if ui != vi
                 idx += 1
-                I[idx] = ui 
+                I[idx] = ui
                 J[idx] = vi
                 vals[idx] = -1
 
@@ -408,7 +408,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
                 vi = vertex_index(v, g)
                 if ui < vi
                     idx += 1
-                    I[idx] = ui 
+                    I[idx] = ui
                     J[idx] = vi
                     vals[idx] = -1
 
@@ -425,7 +425,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
     else
         error("g does not implement proper interface.")
     end
-    
+
     for i = 1:n
         di = degs[i]
         if isnz(di)
@@ -469,7 +469,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
             if ui != vi
                 wi = eweights[edge_index(e, g)]
                 idx += 1
-                I[idx] = ui 
+                I[idx] = ui
                 J[idx] = vi
                 vals[idx] = -wi
 
@@ -491,7 +491,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
                 if ui < vi
                     wi = eweights[edge_index(e, g)]
                     idx += 1
-                    I[idx] = ui 
+                    I[idx] = ui
                     J[idx] = vi
                     vals[idx] = -wi
 
@@ -508,7 +508,7 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
     else
         error("g does not implement proper interface.")
     end
-    
+
     for i = 1:n
         di = degs[i]
         if isnz(di)

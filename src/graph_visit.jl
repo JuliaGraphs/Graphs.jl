@@ -92,4 +92,3 @@ end
 
 traverse_graph_withlog(g::AbstractGraph, alg::AbstractGraphVisitAlgorithm,
     sources) = traverse_graph_withlog(g, alg, sources, STDOUT)
-

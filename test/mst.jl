@@ -19,8 +19,8 @@ wedges = [
     (6, 7, 11.) ]
 
 m = length(wedges)
-eweights = zeros(m)    
-    
+eweights = zeros(m)
+
 for i = 1 : m
     we = wedges[i]
     add_edge!(g, we[1], we[2])

@@ -49,7 +49,7 @@ es = [  add_edge!(sgd, 1, 2)
 
 @test num_edges(sgd) == 4
 
-# outgoing 
+# outgoing
 
 @test [out_degree(v, sgd) for v = 1:4] == [2, 1, 1, 0]
 
@@ -100,7 +100,7 @@ end
 add_edge!(sgu, 1, 2)
 add_edge!(sgu, 1, 3)
 add_edge!(sgu, 2, 4)
-add_edge!(sgu, 3, 4) 
+add_edge!(sgu, 3, 4)
 add_edge!(sgu, 4, 1)
 
 es = sgu.edges

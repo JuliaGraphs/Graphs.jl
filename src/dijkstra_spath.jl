@@ -243,4 +243,3 @@ function dijkstra_shortest_paths_withlog{V,D}(
     graph::AbstractGraph{V}, edge_dists::Vector{D}, sources::AbstractVector{V})
     dijkstra_shortest_paths(graph, edge_dists, sources, visitor=LogDijkstraVisitor(STDOUT))
 end
-
