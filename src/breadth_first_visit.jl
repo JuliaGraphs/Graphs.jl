@@ -128,4 +128,3 @@ function gdistances(graph::AbstractGraph, sources; defaultdist::Int=-1)
     dists = fill(defaultdist, num_vertices(graph))
     gdistances!(graph, sources, dists)
 end
-

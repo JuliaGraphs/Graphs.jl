@@ -13,10 +13,10 @@ typealias EdgeList{V,E} GenericEdgeList{V,E,Vector{V},Vector{E}}
 
 # construction
 
-simple_edgelist{E}(nv::Integer, edges::Vector{E}; is_directed::Bool=true) = 
+simple_edgelist{E}(nv::Integer, edges::Vector{E}; is_directed::Bool=true) =
     SimpleEdgeList{E}(is_directed, 1:int(nv), edges)
 
-edgelist{V,E}(vertices::Vector{V}, edges::Vector{E}; is_directed::Bool=true) = 
+edgelist{V,E}(vertices::Vector{V}, edges::Vector{E}; is_directed::Bool=true) =
     EdgeList{V,E}(is_directed, vertices, edges)
 
 
@@ -39,5 +39,3 @@ add_vertex!{V}(g::GenericEdgeList{V}, x) = add_vertex!(g, make_vertex(g, x))
 
 add_edge!{V,E}(g::GenericEdgeList{V,E}, e::E) = (push!(g.edges, e); e)
 add_edge!{V,E}(g::GenericEdgeList{V,E}, u::V, v::V) = add_edge!(g, make_edge(g, u, v))
-
-

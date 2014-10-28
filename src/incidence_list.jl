@@ -10,7 +10,7 @@
 ###########################################################
 
 type GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
-    is_directed::Bool    
+    is_directed::Bool
     vertices::VList
     nedges::Int
     inclist::IncList
@@ -23,10 +23,10 @@ typealias IncidenceList{V,E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector
 
 # construction
 
-simple_inclist(nv::Integer; is_directed::Bool=true) = 
+simple_inclist(nv::Integer; is_directed::Bool=true) =
     SimpleIncidenceList(is_directed, 1:int(nv), 0, multivecs(IEdge, nv))
 
-inclist{V,E}(vs::Vector{V}, ::Type{E}; is_directed::Bool = true) = 
+inclist{V,E}(vs::Vector{V}, ::Type{E}; is_directed::Bool = true) =
     IncidenceList{V,E}(is_directed, vs, 0, multivecs(E, length(vs)))
 
 inclist{V,E}(::Type{V}, ::Type{E}; is_directed::Bool = true) = inclist(V[], E; is_directed=is_directed)
@@ -73,4 +73,3 @@ end
 
 add_edge!{V,E}(g::GenericIncidenceList{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
 add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
-

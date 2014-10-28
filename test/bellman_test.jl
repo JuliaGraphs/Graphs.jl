@@ -97,6 +97,6 @@ end
 
 s3 = bellman_ford_shortest_paths(g3, eweights3, [5])
 
-@test s3.parents == [2, 4, 1, 5, 5] 
+@test s3.parents == [2, 4, 1, 5, 5]
 @test s3.dists == [2.0, 4.0, -2.0, 7.0, 0.0]
 @test !has_negative_edge_cycle(g3, eweights1)

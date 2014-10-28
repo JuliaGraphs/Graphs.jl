@@ -97,7 +97,7 @@ type TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
     components::Vector{Vector{V}}
 end
 
-TarjanVisitor{V}(graph::AbstractGraph{V}) = TarjanVisitor{typeof(graph),V}(graph, 
+TarjanVisitor{V}(graph::AbstractGraph{V}) = TarjanVisitor{typeof(graph),V}(graph,
         V[], Int[], zeros(Int, num_vertices(graph)), Vector{V}[])
 
 function discover_vertex!(vis::TarjanVisitor, v)

@@ -98,4 +98,3 @@ Lw_s = sparse(Lw)
 
 @test laplacian_matrix_sparse(gu_elst, eweights) == Lw_s
 @test laplacian_matrix_sparse(gu_ilst, eweights) == Lw_s
-

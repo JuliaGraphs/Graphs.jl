@@ -42,7 +42,7 @@ scc = strongly_connected_components(g)
 # test 2, from Vazirani's notes
 # (http://www.cs.berkeley.edu/~vazirani/s99cs170/notes/lec12.pdf)
 
-eds = [(1, 2), (2, 3), (2, 4), (2, 5), (3, 6), 
+eds = [(1, 2), (2, 3), (2, 4), (2, 5), (3, 6),
        (4, 5), (4, 7), (5, 2), (5, 6), (5, 7),
        (6, 3), (6, 8), (7, 8), (7, 10), (8, 7),
        (9, 7), (10, 9), (10, 11), (11, 12), (12, 10)]

@@ -8,11 +8,11 @@ Graphs.jl is a Julia package that provides graph types and algorithms. The desig
 
 ### Main Features
 
-An important aspect of *Graphs.jl* is the generic abstraction of graph concepts expressed via standardized interfaces, which allows access to a graph's structure while hiding the implementation details. This encourages reuse of data structures and algorithms. In particular, one can write generic graph algorithms that can be applied to different graph types as long as they implement the required interface. 
+An important aspect of *Graphs.jl* is the generic abstraction of graph concepts expressed via standardized interfaces, which allows access to a graph's structure while hiding the implementation details. This encourages reuse of data structures and algorithms. In particular, one can write generic graph algorithms that can be applied to different graph types as long as they implement the required interface.
 
 In addition to the generic abstraction, there are other important features:
 
-* A variety of graph types tailored to different purposes 
+* A variety of graph types tailored to different purposes
     - generic adjacency list
     - generic incidence list
     - a simple graph type with compact and efficient representation
@@ -29,7 +29,7 @@ In addition to the generic abstraction, there are other important features:
     - random graph generation: Erdős–Rényi, Watts-Strogatz (see the
       RandomGraphs.jl package for more random graph models)
     - more algorithms are being implemented
-    
+
 * Matrix-based characterization: adjacency matrix, weight matrix, Laplacian matrix
 
 * All data structures and algorithms are implemented in *pure Julia*, and thus they are portable.
@@ -40,4 +40,3 @@ In addition to the generic abstraction, there are other important features:
 ### Documentation
 
 Please refer to [*Graph.jl Documentation*](http://graphsjl-docs.readthedocs.org/en/latest/) for latest documentation.
-

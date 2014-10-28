@@ -52,11 +52,11 @@ gu = simple_edgelist(5, eds; is_directed=false)
 for T in [ ExVertex, ASCIIString ]
     g = edgelist(T[], ExEdge{T}[])
 
-    vs = [ add_vertex!(g, "a"), 
-           add_vertex!(g, "b"), 
+    vs = [ add_vertex!(g, "a"),
+           add_vertex!(g, "b"),
            add_vertex!(g, "c") ]
 
-    es = [ add_edge!(g, vs[1], vs[2]), 
+    es = [ add_edge!(g, vs[1], vs[2]),
            add_edge!(g, vs[1], vs[3]) ]
 
     @test vertex_type(g) == T
@@ -69,4 +69,3 @@ for T in [ ExVertex, ASCIIString ]
     @test num_edges(g) == 2
     @test edges(g) == es
 end
-

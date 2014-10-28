@@ -2,11 +2,11 @@ using Graphs
 using Base.Test
 
 function has_match(regex, str)
-	!isa(match(regex, str), Nothing)
+    !isa(match(regex, str), Nothing)
 end
 
 function xor(a, b)
-	(a || b) && !(a && b)
+    (a || b) && !(a && b)
 end
 
 # Vertex attributes get layed out correctly

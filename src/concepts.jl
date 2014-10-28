@@ -13,13 +13,13 @@ edge_type{V,E}(g::AbstractGraph{V,E}) = E
 ### concepts
 
 const graph_concept_symbols = Set([
-    :vertex_list, 
-    :edge_list, 
-    :vertex_map, 
+    :vertex_list,
+    :edge_list,
+    :vertex_map,
     :edge_map,
-    :adjacency_list, 
+    :adjacency_list,
     :incidence_list,
-    :bidirectional_adjacency_list, 
+    :bidirectional_adjacency_list,
     :bidirectional_incidence_list,
     :adjacency_matrix])
 
@@ -76,4 +76,3 @@ end
 macro graph_requires(g, concepts...)
     esc(_graph_requires_code(g, concepts...))
 end
-

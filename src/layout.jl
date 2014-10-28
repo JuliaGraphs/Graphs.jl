@@ -3,7 +3,7 @@
 
 function layout_random(g::GenericGraph, dim=2)
     # Generate random locations in unit-square.
-    # 
+    #
     # Each node is associated with a dim-dimensional random vector in
     # [0,1]^{dim}.
     #
@@ -13,10 +13,10 @@ function layout_random(g::GenericGraph, dim=2)
     # Returns: Dict keyed by vertices with positions as values.
     #
     # Ported from networkx.
-    
+
     n = num_vertices(g)
     pos = rand(n, dim)
-    
+
     return Dict(g.vertices, pos)
 end
 
@@ -45,9 +45,9 @@ function _spectral_sparse{T<:Real}(L::CSCMatrix{T}, dim=2)
 end
 
 function layout_spectral(g::GenericGraph, dim=2, scale=1)
-    # Use eigenvectors of graph Laplacian as coordinates of 
+    # Use eigenvectors of graph Laplacian as coordinates of
     # nodes.
-    # 
+    #
     # g : graph to embed
     # dim : number of dimensions to use
     #
@@ -57,16 +57,16 @@ function layout_spectral(g::GenericGraph, dim=2, scale=1)
     #   * Sparse eigen-solver used for large graphs.
     #
     # Based on networkx version.
-    
+
     error("Spectral not done yet")
 
 end
 
 function layout_spectral{W}(g::GenericGraph, eweights::AbstractVector{W},
                          dim=2, scale=1)
-    # Use eigenvectors of weighted graph Laplacian as coordinates of 
+    # Use eigenvectors of weighted graph Laplacian as coordinates of
     # nodes.
-    # 
+    #
     # g : graph to embed
     # dim : number of dimensions to use
     #
@@ -76,7 +76,7 @@ function layout_spectral{W}(g::GenericGraph, eweights::AbstractVector{W},
     #   * Sparse eigen-solver used for large graphs.
     #
     # Based on networkx version.
-    
+
     error("Weighted spectral not done yet")
 
 end

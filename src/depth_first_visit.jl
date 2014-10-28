@@ -159,4 +159,3 @@ function topological_sort_by_dfs{V}(graph::AbstractGraph{V})
 
     reverse(visitor.vertices)
 end
-
