@@ -8,8 +8,6 @@ typealias AttributeDict Dict{UTF8String, Any}
 #
 ################################################
 
-vertex_index(v::Integer) = v
-
 immutable KeyVertex{K}
     index::Int
     key::K
@@ -37,7 +35,10 @@ typealias ProvidedVertexType Union(Integer, KeyVertex, ExVertex)
 
 function vertex_index{V}(v::V, g::AbstractGraph{V})
     @graph_requires g vertex_list
-    return vertex_index(v, vertices(g))
+    if applicable(vertex_index, v)
+        return vertex_index(v)
+    end
+    return vertex_index(v, vertices(g)) # slow linear search
 end
 
 vertex_index(v, vs::AbstractArray) = findfirst(vs, v)

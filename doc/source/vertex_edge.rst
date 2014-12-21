@@ -4,7 +4,7 @@ Vertices and Edges
 Vertex Types
 -------------
 
-A vertex can be of any Julia type. For example, it can be an integer, a character, or a string. In a simplistic setting where there is no additional information associated with a vertex, it is recommended to use ``Int`` as the vertex type, which would lead to the best performance.
+A vertex can be of any Julia type. For example, it can be an integer, a character, or a string.
 
 This package provides two specific vertex types: ``KeyVertex`` and ``ExVertex``. The definition of ``KeyVertex`` is:
 
@@ -40,14 +40,7 @@ The ``ExVertex`` type implements a ``vertex_index`` function, as
 
     returns the index of the vertex ``v``.
 
-In addition, for integers, we have
-
-.. code-block:: python
-
-    vertex_index(v::Integer) = v
-
-This makes it convenient to use integers as vertices in graphs.
-
+``SimpleGraph`` is a special case where the vertices are of type ``Int`` and store both their index and identity. In all other graphs, ``Int`` vertices are unordered indices.
 
 Edge Types
 -----------

@@ -10,7 +10,8 @@ using Base.Test
 #
 #################################################
 
-sgd = simple_graph(4)
+sgd = simple_graph(3)
+add_vertex!(sgd)
 
 # concept test
 

@@ -42,7 +42,6 @@ vertices(g::GenericIncidenceList) = g.vertices
 
 num_edges(g::GenericIncidenceList) = g.nedges
 
-vertex_index{V<:ProvidedVertexType}(v::V, g::GenericIncidenceList{V}) = vertex_index(v)
 edge_index{V,E}(e::E, g::GenericIncidenceList{V,E}) = edge_index(e)
 
 out_edges{V}(v::V, g::GenericIncidenceList{V}) = g.inclist[vertex_index(v, g)]
