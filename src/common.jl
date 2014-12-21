@@ -29,9 +29,9 @@ make_vertex(g::AbstractGraph{ExVertex}, label::String) = ExVertex(num_vertices(g
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
-typealias ProvidedVertexType Union(Integer, KeyVertex, ExVertex)
+typealias ProvidedVertexType Union(KeyVertex, ExVertex)
 
-# vertex_index for (V !<: ProvidedVertexType)
+vertex_index{V<:ProvidedVertexType}(v::V, g::AbstractGraph{V}) = vertex_index(v)
 
 function vertex_index{V}(v::V, g::AbstractGraph{V})
     @graph_requires g vertex_list
