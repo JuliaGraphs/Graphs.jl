@@ -55,7 +55,8 @@ vertices(g::GenericGraph) = g.vertices
 num_edges(g::GenericGraph) = length(g.edges)
 edges(g::GenericGraph) = g.edges
 
-vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = vertex_index(v)
+vertex_index(v::Integer, g::SimpleGraph) = (v <= g.vertices[end]? v: 0)
+
 edge_index{V,E}(e::E, g::GenericGraph{V,E}) = edge_index(e)
 
 out_edges{V}(v::V, g::GenericGraph{V}) = g.finclist[vertex_index(v, g)]
@@ -68,6 +69,17 @@ in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 
 
 # mutation
+
+function add_vertex!(g::SimpleGraph)
+    # ensure SimpleGraph indices are consecutive, allowing O(1) indexing
+    v = g.vertices[end] + 1
+    g.vertices = 1:v
+    push!(g.finclist, Int[])
+    push!(g.binclist, Int[])
+    v
+end
+
+@deprecate add_vertex!(g::SimpleGraph,v) add_vertex!(g::SimpleGraph)
 
 function add_vertex!{V}(g::GenericGraph{V}, v::V)
     push!(g.vertices, v)

@@ -35,7 +35,6 @@ is_directed(g::GenericAdjacencyList) = g.is_directed
 
 num_vertices(g::GenericAdjacencyList) = length(g.vertices)
 vertices(g::GenericAdjacencyList) = g.vertices
-vertex_index{V<:ProvidedVertexType}(v::V, g::GenericAdjacencyList{V}) = vertex_index(v)
 
 num_edges(g::GenericAdjacencyList) = g.nedges
 

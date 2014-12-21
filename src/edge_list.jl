@@ -26,7 +26,6 @@ is_directed(g::GenericEdgeList) = g.is_directed
 
 num_vertices(g::GenericEdgeList) = length(g.vertices)
 vertices(g::GenericEdgeList) = g.vertices
-vertex_index{V<:ProvidedVertexType}(v::V, g::GenericEdgeList{V}) = vertex_index(v)
 
 num_edges(g::GenericEdgeList) = length(g.edges)
 edges(g::GenericEdgeList) = g.edges
