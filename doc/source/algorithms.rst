@@ -123,7 +123,10 @@ Dijkstra's Algorithm
     :returns:           An instance of ``DijkstraStates`` that encapsulates the results.
     
 Here, ``graph`` can be directed or undirected. It must implement
-``vertex_map``, ``edge_map`` and ``incidence_list``. The following is an example that shows how to use this function:
+``vertex_map``, ``edge_map`` and ``incidence_list``. `edge_dists` is optional; if not specified, 
+default distances of `1` are used for each edge.
+
+The following is an example that shows how to use this function:
 
 .. code-block:: python
 
