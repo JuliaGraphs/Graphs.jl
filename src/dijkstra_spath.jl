@@ -247,3 +247,37 @@ end
 dijkstra_shortest_paths{V}(
     graph::AbstractGraph{V}, s::V
 ) = dijkstra_shortest_paths(graph, ones(num_vertices(graph)), s)
+
+function dijkstra_shortest_paths_explicit{V}(g::AbstractGraph{V},source::V, all...)
+    state = dijkstra_shortest_paths(g, source, all...)
+    allvertices = g.vertices
+    patharr = Array(Vector{V},0)
+    parents = state.parents
+    dists = state.dists
+    for i in 1:length(parents)
+        path = V[]
+        currvertex = allvertices[i]
+        connected = isdefined(parents,i) && (parents[i] in allvertices)
+        if connected    # that is, the current node has a valid parent
+            currparent = parents[i]
+            currvind = i
+            currpind = vertex_index(currparent, g)
+            lastparent = nothing
+            lastparentind = -1
+            # parent(src) == src and dist=0 when we're at the source
+            # so check to make sure we still have some path to follow
+            while (currvertex != currparent) && (dists[currvind] != zero(Float64))
+                # we do
+                push!(path, currvertex)
+                # follow the parent
+                currvertex = currparent
+                currparent = parents[currpind]
+                currvind = vertex_index(currvertex, g)
+                currpind = vertex_index(currparent, g)
+            end
+            push!(path, currvertex)
+        end
+        push!(patharr, reverse(path))
+    end
+    return patharr
+end

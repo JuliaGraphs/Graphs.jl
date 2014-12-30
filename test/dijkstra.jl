@@ -110,3 +110,9 @@ s2 = dijkstra_shortest_paths(g2, eweights2, [1])
 @test s2.parents == [1, 1, 1, 3, 6, 3]
 @test s2.dists == [0., 7., 9., 20., 20., 11.]
 @test s2.colormap == [2, 2, 2, 2, 2, 2]
+
+g3 = simple_graph(4)
+add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4)
+sps = dijkstra_shortest_paths_explicit(g3,2)
+@test length(sps[1]) == 0
+@test sps[4][2] == 3
