@@ -8,6 +8,7 @@
 
 type DijkstraStates{V,D<:Number,Heap,H}
     parents::Vector{V}
+    hasparent::Vector{Bool}
     dists::Vector{D}
     colormap::Vector{Int}
     heap::Heap
@@ -26,12 +27,13 @@ end
 function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
     parents = Array(V, n)
+    hasparent = fill(false, n)
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry{V,D})
     hmap = zeros(Int, n)
 
-    DijkstraStates(parents, dists, colormap, heap, hmap)
+    DijkstraStates(parents, hasparent, dists, colormap, heap, hmap)
 end
 
 ###################################################################
@@ -96,6 +98,7 @@ end
 function set_source!{V,D}(state::DijkstraStates{V,D}, g::AbstractGraph{V}, s::V)
     i = vertex_index(s, g)
     state.parents[i] = s
+    state.hasparent[i] = true
     state.dists[i] = 0
     state.colormap[i] = 2
 end
@@ -108,6 +111,7 @@ function process_neighbors!{V,D,Heap,H}(
 
     dists::Vector{D} = state.dists
     parents::Vector{V} = state.parents
+    hasparent::Vector{Bool} = state.hasparent
     colormap::Vector{Int} = state.colormap
     heap::Heap = state.heap
     hmap::Vector{H} = state.hmap
@@ -121,6 +125,7 @@ function process_neighbors!{V,D,Heap,H}(
         if v_color == 0
             dists[iv] = dv = du + edge_property(edge_dists, e, graph)
             parents[iv] = u
+            hasparent[iv] = true
             colormap[iv] = 1
             discover_vertex!(visitor, u, v, dv)
 
@@ -132,6 +137,7 @@ function process_neighbors!{V,D,Heap,H}(
             if dv < dists[iv]
                 dists[iv] = dv
                 parents[iv] = u
+                hasparent[iv] = true
 
                 # update the value on the heap
                 update_vertex!(visitor, u, v, dv)
@@ -250,34 +256,24 @@ dijkstra_shortest_paths{V}(
 
 function dijkstra_shortest_paths_explicit{V}(g::AbstractGraph{V},source::V, all...)
     state = dijkstra_shortest_paths(g, source, all...)
-    allvertices = g.vertices
-    patharr = Array(Vector{V},0)
     parents = state.parents
-    dists = state.dists
-    for i in 1:length(parents)
-        path = V[]
-        currvertex = allvertices[i]
-        connected = isdefined(parents,i) && (parents[i] in allvertices)
-        if connected    # that is, the current node has a valid parent
-            currparent = parents[i]
-            currvind = i
-            currpind = vertex_index(currparent, g)
-            lastparent = nothing
-            lastparentind = -1
-            # parent(src) == src and dist=0 when we're at the source
-            # so check to make sure we still have some path to follow
-            while (currvertex != currparent) && (dists[currvind] != zero(Float64))
-                # we do
-                push!(path, currvertex)
-                # follow the parent
-                currvertex = currparent
-                currparent = parents[currpind]
-                currvind = vertex_index(currvertex, g)
-                currpind = vertex_index(currparent, g)
+    hasparent = state.hasparent
+    
+    nstates = length(parents)
+    all_paths = Array(Vector{V},nstates)
+    for i in 1:nstates
+        all_paths[i] = V[]
+        child_index = i
+        if hasparent[child_index]
+            parent_index = parents[child_index]
+            while child_index != parent_index
+                push!(all_paths[i], child_index)
+                child_index = parent_index
+                parent_index = parents[child_index]
             end
-            push!(path, currvertex)
+            push!(all_paths[i], child_index)
+            reverse!(all_paths[i])
         end
-        push!(patharr, reverse(path))
     end
-    return patharr
+    all_paths
 end

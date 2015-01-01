@@ -146,12 +146,12 @@ The following is an example that shows how to use this function:
         (5, 1, 7.),
         (3, 4, 9.) ]
 
-    ne = length(g1_wedges)
+    ne = length(inputs)
     dists = zeros(ne)
 
     for i = 1 : ne
         a = inputs[i]
-        add_edge!(g1, a[1], a[2])   # add edge
+        add_edge!(g, a[1], a[2])   # add edge
         dists[i] = a[3]             # set distance
     end
 
@@ -163,6 +163,7 @@ The following is an example that shows how to use this function:
 The result has several fields, among which the following are most useful:
 
 * ``parents[i]``:  the parent vertex of the i-th vertex. The parent of each source vertex is itself.
+* ``hasparent[i]``:  ``true`` if the i-th vertex has a parent, and ``false`` otherwise. When ``hasparent[i] == false``, it means that the vertex at index ``i`` isn't reachable from any source. Note that ``hasparent[i] == true`` for all source vertices.
 * ``dists[i]``:  the minimum distance from the i-th vertex to source.
 
 The user can (optionally) provide a visitor that perform operations along with the algorithm. The visitor must be an instance of a sub type of ``AbstractDijkstraVisitor``, which may implement part of all of the following methods.
