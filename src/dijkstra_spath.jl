@@ -252,7 +252,7 @@ end
 
 dijkstra_shortest_paths{V}(
     graph::AbstractGraph{V}, s::V
-) = dijkstra_shortest_paths(graph, ones(num_vertices(graph)), s)
+) = dijkstra_shortest_paths(graph, ones(num_edges(graph)), s)
 
 function dijkstra_shortest_paths_explicit{V}(g::AbstractGraph{V},source::V, all...)
     state = dijkstra_shortest_paths(g, source, all...)
