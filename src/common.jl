@@ -203,7 +203,7 @@ function collect_edges{V,E}(graph::AbstractGraph{V,E})
 
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)
         edge_list = Array(E, 0)
-        sizehint(edge_list, num_edges(graph))
+        sizehint!(edge_list, num_edges(graph))
 
         for v in vertices(graph)
             for e in out_edges(v, graph)
@@ -229,7 +229,7 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
     edge_property_requirement(weights, graph)
 
     wedges = Array(WeightedEdge{E,W}, 0)
-    sizehint(wedges, num_edges(graph))
+    sizehint!(wedges, num_edges(graph))
 
     if implements_edge_list(graph)
         for e in edges(graph)

@@ -15,8 +15,8 @@ function kruskal_select{V,E,W}(
 
     if n > 1
         dsets = IntDisjointSets(n)
-        sizehint(re, n-1)
-        sizehint(rw, n-1)
+        sizehint!(re, n-1)
+        sizehint!(rw, n-1)
 
         ui::Int = 0
         vi::Int = 0

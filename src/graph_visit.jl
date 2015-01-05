@@ -42,7 +42,7 @@ type VertexListVisitor{V} <: AbstractGraphVisitor
 
     function VertexListVisitor(n::Integer=0)
         vs = Array(V, 0)
-        sizehint(vs, n)
+        sizehint!(vs, n)
         new(vs)
     end
 end
