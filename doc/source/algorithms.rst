@@ -184,12 +184,35 @@ The user can (optionally) provide a visitor that perform operations along with t
 
     Invoked when a vertex is closed (all its neighbors have been examined).
 
-.. py:function:: dijkstra_shortest_paths_explicit(graph, edge_dists, source[, visitor])
-Returns the explicit paths using ``dijkstra_shortest_paths()`` as an array of
-vectors of vertices from the source to each target. Empty vectors are used to
-indicate vertices that are unreachable from the source. Parameters are the same
-as described in ``dijkstra_shortest_paths()``.
+.. py:function:: enumerate_paths(result[, dest])
 
+    Returns an array of vectors (containing vertices), whose ``i``-th element corresponds to the path from a source to vertex ``dest[i]``. Empty vectors indicate vertices that are unreachable from the source. ``dest`` can be a subset of vertices, or left unspecified (in which case, all the vertices in the graph will be considered). If ``dest`` is a single vertex, then the result is just an array of vertices, corresponding to the path from a source to ``dest``.
+
+    **Remark**: ``enumerate_paths`` is applicable to both ``DijkstraStates`` and ``BellmanFordStates``.
+
+    The following is an example that shows how to use this function:
+
+.. code-block:: python
+
+    julia> using Graphs
+    julia> g3 = simple_graph(4)
+    julia> add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4);
+    julia> s3 = dijkstra_shortest_paths(g3,2)
+    julia> sps = enumerate_paths(s3) # dest: all vertices
+    4-element Array{Array{Int64,1},1}:
+     []
+     [2]
+     [2,3]
+     [2,3,4]
+    julia> sps = enumerate_paths(s3, [2,4]) # dest: subset of vertices
+    2-element Array{Array{Int64,1},1}:
+     [2]
+     [2,3,4]
+    julia> sps = enumerate_paths(s3, 4) # dest: single vertex
+    3-element Array{Int64,1}:
+     2
+     3
+     4
 
 Bellman Ford Algorithm
 ~~~~~~~~~~~~~~~~~~~~

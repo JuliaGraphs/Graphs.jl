@@ -29,11 +29,48 @@ end
 @assert num_vertices(g1) == 5
 @assert num_edges(g1) == 10
 
+# Single Source
 
 s1 = bellman_ford_shortest_paths(g1, eweights1, [1])
 
 @test s1.parents == [1, 3, 1, 2, 3]
 @test s1.dists == [0., 8., 5., 9., 7.]
+@test s1.hasparent == [false, true, true, true, true]
+
+## all destinations
+sps = enumerate_paths(s1)
+@test length(sps) == 5
+@test sps[1] == [1]
+@test sps[2] == [1,3,2]
+@test sps[3] == [1,3]
+@test sps[4] == [1,3,2,4]
+@test sps[5] == [1,3,5]
+
+## multiple destinations
+sps = enumerate_paths(s1, [2,4])
+@test length(sps) == 2
+@test sps[1] == [1,3,2]
+@test sps[2] == [1,3,2,4]
+
+## single destination
+sps = enumerate_paths(s1, 2)
+@test sps == [1,3,2]
+@test sps == enumerate_paths(s1, [2])[1]
+
+# Multiple Sources
+
+s1 = bellman_ford_shortest_paths(g1, eweights1, [1, 2])
+@test s1.parents == [1, 2, 2, 2, 3]
+@test s1.dists == [0., 0., 2., 1., 4.]
+@test s1.hasparent == [false, false, true, true, true]
+
+sps = enumerate_paths(s1)
+@test sps[1] == [1]
+@test sps[2] == [2]
+@test sps[3] == [2,3]
+@test sps[4] == [2,4]
+@test sps[5] == [2,3,5]
+
 @test !has_negative_edge_cycle(g1, eweights1)
 
 immutable MyEdge{V}
