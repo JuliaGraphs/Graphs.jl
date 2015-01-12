@@ -98,7 +98,7 @@ end
 function set_source!{V,D}(state::DijkstraStates{V,D}, g::AbstractGraph{V}, s::V)
     i = vertex_index(s, g)
     state.parents[i] = s
-    state.hasparent[i] = true
+    state.hasparent[i] = false
     state.dists[i] = 0
     state.colormap[i] = 2
 end
@@ -252,28 +252,28 @@ end
 
 dijkstra_shortest_paths{V}(
     graph::AbstractGraph{V}, s::V
-) = dijkstra_shortest_paths(graph, ones(num_edges(graph)), s)
+) = dijkstra_shortest_paths(graph, ones(num_vertices(graph)), s)
 
-function dijkstra_shortest_paths_explicit{V}(g::AbstractGraph{V},source::V, all...)
-    state = dijkstra_shortest_paths(g, source, all...)
+function enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}, dest::Vector{V})
     parents = state.parents
     hasparent = state.hasparent
     
-    nstates = length(parents)
-    all_paths = Array(Vector{V},nstates)
-    for i in 1:nstates
+    num_dest = length(dest)
+    all_paths = Array(Vector{V},num_dest)
+    for i=1:num_dest
         all_paths[i] = V[]
-        child_index = i
-        if hasparent[child_index]
-            parent_index = parents[child_index]
-            while child_index != parent_index
-                push!(all_paths[i], child_index)
-                child_index = parent_index
-                parent_index = parents[child_index]
+        index = dest[i]
+        if hasparent[index] || parents[index] == index
+            while hasparent[index]
+                push!(all_paths[i], index)
+                index = parents[index]
             end
-            push!(all_paths[i], child_index)
+            push!(all_paths[i], index)
             reverse!(all_paths[i])
         end
     end
     all_paths
 end
+
+enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}, dest::V) = enumerate_paths(state, V[dest])[1]
+enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}) = enumerate_paths(state, [1:length(state.parents)])
