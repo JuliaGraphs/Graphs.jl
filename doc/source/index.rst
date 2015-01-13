@@ -15,7 +15,7 @@ Contents
    graphs.rst
    algorithms.rst
    matrix.rst
-   
+   generators.rst  
 
 
 Indices and tables
