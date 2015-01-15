@@ -10,7 +10,7 @@ type NegativeCycleError <: Exception end
 
 type BellmanFordStates{V,D<:Number}
     parents::Vector{V}
-    hasparent::Vector{Bool}
+    parent_indices::Vector{Int}
     dists::Vector{D}
 end
 
@@ -19,10 +19,10 @@ end
 function create_bellman_ford_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
     parents = Array(V, n)
-    hasparent = fill(false, n)
+    parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
 
-    BellmanFordStates(parents,hasparent, dists)
+    BellmanFordStates(parents, parent_indices, dists)
 end
 
 function bellman_ford_shortest_paths!{V,D}(
@@ -40,6 +40,7 @@ function bellman_ford_shortest_paths!{V,D}(
         i = vertex_index(v, graph)
         state.dists[i] = 0
         state.parents[i] = v
+        state.parent_indices[i] = i
         push!(active, v)
     end
     no_changes = false
@@ -55,7 +56,7 @@ function bellman_ford_shortest_paths!{V,D}(
                 if state.dists[vind] > state.dists[uind] + edist
                     state.dists[vind] = state.dists[uind] + edist
                     state.parents[vind] = u
-                    state.hasparent[vind] = true
+                    state.parent_indices[vind] = vertex_index(u, graph)
                     no_changes = false
                     push!(new_active, v)
                 end
@@ -108,28 +109,4 @@ function has_negative_edge_cycle{V, D}(
     edge_inspector = VectorEdgePropertyInspector{D}(edge_dists)
     has_negative_edge_cycle(graph, edge_inspector)
 end
-
-function enumerate_paths{V,D<:Number}(state::BellmanFordStates{V,D}, dest::Vector{V})
-    parents = state.parents
-    hasparent = state.hasparent
-    
-    num_dest = length(dest)
-    all_paths = Array(Vector{V},num_dest)
-    for i=1:num_dest
-        all_paths[i] = V[]
-        index = dest[i]
-        if hasparent[index] || parents[index] == index
-            while hasparent[index]
-                push!(all_paths[i], index)
-                index = parents[index]
-            end
-            push!(all_paths[i], index)
-            reverse!(all_paths[i])
-        end
-    end
-    all_paths
-end
-
-enumerate_paths{V,D<:Number}(state::BellmanFordStates{V,D}, dest) = enumerate_paths(state, [dest])[1]
-enumerate_paths{V,D<:Number}(state::BellmanFordStates{V,D}) = enumerate_paths(state, [1:length(state.parents)])
 

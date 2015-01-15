@@ -78,7 +78,7 @@ module Graphs
         DijkstraStates, create_dijkstra_states, AbstractDijkstraVisitor,
         dijkstra_shortest_paths!, dijkstra_shortest_paths,
         dijkstra_shortest_paths_withlog,
-        enumerate_paths,
+        enumerate_paths, enumerate_indices,
 
         # bellmanford
         BellmanFordStates, create_bellman_ford_states, NegativeCycleError,

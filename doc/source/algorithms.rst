@@ -184,35 +184,58 @@ The user can (optionally) provide a visitor that perform operations along with t
 
     Invoked when a vertex is closed (all its neighbors have been examined).
 
-.. py:function:: enumerate_paths(result[, dest])
+.. py:function:: enumerate_paths(vertices, parent_indices[, dest])
 
-    Returns an array of vectors (containing vertices), whose ``i``-th element corresponds to the path from a source to vertex ``dest[i]``. Empty vectors indicate vertices that are unreachable from the source. ``dest`` can be a subset of vertices, or left unspecified (in which case, all the vertices in the graph will be considered). If ``dest`` is a single vertex, then the result is just an array of vertices, corresponding to the path from a source to ``dest``.
+    Returns an array of vectors (containing vertices), whose ``i``-th element corresponds to the path from a source to vertex ``dest[i]``. Empty vectors indicate vertices that are unreachable from the source. ``dest`` can be a subset of indices, or left unspecified (in which case, all the indices will be considered). If ``dest`` is a single index, then the result is just an array of vertices, corresponding to the path from a source to ``dest``.
 
-    **Remark**: ``enumerate_paths`` is applicable to both ``DijkstraStates`` and ``BellmanFordStates``.
+.. py:function:: enumerate_indices(parent_indices[, dest])
+
+    Returns an array of indices corresponding to the vertices returned by `enumerate_paths(vertices, parent_indices[, dest])`
 
     The following is an example that shows how to use this function:
 
 .. code-block:: python
 
-    julia> using Graphs
-    julia> g3 = simple_graph(4)
-    julia> add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4);
-    julia> s3 = dijkstra_shortest_paths(g3,2)
-    julia> sps = enumerate_paths(s3) # dest: all vertices
+    julia> g4 = Graphs.inclist([4,5,6,7],is_directed=true)
+    julia> add_edge!(g4,4,5); add_edge!(g4,4,6); add_edge!(g4,5,6); add_edge!(g4,6,7)
+    julia> s4 = dijkstra_shortest_paths(g4,5)
+    julia> sps = enumerate_indices(s4.parent_indices) # dest: all indices
     4-element Array{Array{Int64,1},1}:
      []
      [2]
      [2,3]
      [2,3,4]
-    julia> sps = enumerate_paths(s3, [2,4]) # dest: subset of vertices
+
+    julia> enumerate_indices(s4.parent_indices, [2,4]) # dest: subset of indices
     2-element Array{Array{Int64,1},1}:
      [2]
      [2,3,4]
-    julia> sps = enumerate_paths(s3, 4) # dest: single vertex
+
+    julia> enumerate_indices(s4.parent_indices, 4) # dest: single index
     3-element Array{Int64,1}:
      2
      3
      4
+
+    julia> enumerate_paths(vertices(g4), s4.parent_indices) # dest: all vertices
+    4-element Array{Array{Int64,1},1}:
+     []
+     [5]
+     [5,6]
+     [5,6,7]
+
+    julia> enumerate_paths(vertices(g4), s4.parent_indices, [2,4]) # dest: subset of vertices
+    2-element Array{Array{Int64,1},1}:
+     [5]
+     [5,6,7]
+
+    julia> enumerate_paths(vertices(g4), s4.parent_indices, 4) # dest: single vertex
+    3-element Array{Int64,1}:
+     5
+     6
+     7
+
+**Remark**: ``enumerate_paths`` and ``enumerate_indices`` are applicable to the results from both ``dijkstra_shortest_paths`` and ``bellman_ford_shortest_paths``.
 
 Bellman Ford Algorithm
 ~~~~~~~~~~~~~~~~~~~~
