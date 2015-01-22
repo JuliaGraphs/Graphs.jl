@@ -3,12 +3,13 @@
 # It implements edge_list, adjacency_list and incidence_list
 #
 
-type GenericGraph{V,E,VList,EList,IncList} <: AbstractGraph{V,E}
+type GenericGraph{V,E,VList,EList,IncList,VDict} <: AbstractGraph{V,E}
     is_directed::Bool
     vertices::VList     # an indexable container of vertices
     edges::EList        # an indexable container of edges
     finclist::IncList   # forward incidence list
     binclist::IncList   # backward incidence list
+    indexof::VDict   # dictionary storing index for each vertex
 end
 
 @graph_implements GenericGraph vertex_list edge_list vertex_map edge_map
@@ -22,9 +23,9 @@ end
 #   AdjList:    Vector{Vector{Int}}
 #   IncList:    Vector{Vector{IEdge}}
 #
-typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}}}
+typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}},Dict{Int,Int}}
 
-typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}}}
+typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}},Dict{V,Int}}
 
 # construction
 
@@ -33,11 +34,15 @@ simple_graph(n::Integer; is_directed::Bool=true) =
                 1:int(n),  # vertices
                 IEdge[],   # edges
                 multivecs(IEdge, n), # finclist
-                multivecs(IEdge, n)) # binclist
+                multivecs(IEdge, n), # binclist
+                (Int => Int)[]) # indices (not used for simple graph)
 
 function graph{V,E}(vs::Vector{V}, es::Vector{E}; is_directed::Bool=true)
     n = length(vs)
-    g = Graph{V,E}(is_directed, vs, E[], multivecs(E, n), multivecs(E, n))
+    g = Graph{V,E}(is_directed, V[], E[], multivecs(E, n), multivecs(E, n), (V =>Int)[])
+    for v in vs
+        add_vertex!(g,v)
+    end
     for e in es
         add_edge!(g, e)
     end
@@ -56,6 +61,10 @@ num_edges(g::GenericGraph) = length(g.edges)
 edges(g::GenericGraph) = g.edges
 
 vertex_index(v::Integer, g::SimpleGraph) = (v <= g.vertices[end]? v: 0)
+# If V is either ExVertex or KeyVertex call vertex_index on v
+vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = vertex_index(v)
+# Else return index given by dictionary
+vertex_index{V}(v::V,g::GenericGraph{V}) = try g.indexof[v] catch 0 end
 
 edge_index{V,E}(e::E, g::GenericGraph{V,E}) = edge_index(e)
 
@@ -85,6 +94,7 @@ function add_vertex!{V}(g::GenericGraph{V}, v::V)
     push!(g.vertices, v)
     push!(g.finclist, Int[])
     push!(g.binclist, Int[])
+    g.indexof[v] = length(g.vertices)
     v
 end
 add_vertex!{V}(g::GenericGraph{V}, x) = add_vertex!(g, make_vertex(g, x))
