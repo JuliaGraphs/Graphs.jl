@@ -3,13 +3,13 @@
 # It implements edge_list, adjacency_list and incidence_list
 #
 
-type GenericGraph{V,E,VList,EList,IncList,VDict} <: AbstractGraph{V,E}
+type GenericGraph{V,E,VList,EList,IncList} <: AbstractGraph{V,E}
     is_directed::Bool
     vertices::VList     # an indexable container of vertices
     edges::EList        # an indexable container of edges
     finclist::IncList   # forward incidence list
     binclist::IncList   # backward incidence list
-    indexof::VDict   # dictionary storing index for each vertex
+    indexof::Dict{V,Int}   # dictionary storing index for each vertex
 end
 
 @graph_implements GenericGraph vertex_list edge_list vertex_map edge_map
@@ -23,9 +23,9 @@ end
 #   AdjList:    Vector{Vector{Int}}
 #   IncList:    Vector{Vector{IEdge}}
 #
-typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}},Dict{Int,Int}}
+typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}}}
 
-typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}},Dict{V,Int}}
+typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}}}
 
 # construction
 
