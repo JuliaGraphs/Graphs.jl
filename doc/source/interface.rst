@@ -63,14 +63,16 @@ Vertex Map interface
 
 .. py:function:: vertex_index(v, g)
 
-    returns the index of a vertex ``v`` in graph ``g``.
+    returns the index of a vertex ``v`` in graph ``g``. Each vertex
+    must have a unique index between 1 and ``num_vertices``.
     
 Edge Map interface
 ------------------
 
 .. py:function:: edge_index(e, g)
 
-    returns the index of a vertex ``e`` in graph ``g``.
+    returns the index of an edge ``e`` in graph ``g``. Each edge
+    must have a unique index between 1 and ``num_edges``.
         
     
 Adjacency List interface
@@ -106,7 +108,7 @@ Incidence List interface
     
 .. py:function:: out_edges(v, g)
 
-    returns the number of outgoing edges from vertex ``v`` in graph ``g``.
+    returns an iterable view/container of outgoing edges from vertex ``v`` in graph ``g``.
     
 .. py:function:: source(e, g)
 
@@ -138,11 +140,11 @@ This interface refines the ``Incidence List`` and requires the implementation of
 
 .. py:function:: in_degree(v, g)
         
-    returns the number of incoming edges from vertex ``v`` in graph ``g``.
+    returns the number of incoming edges to vertex ``v`` in graph ``g``.
     
 .. py:function:: in_edges(v, g)
 
-    returns the number of incoming edges from vertex ``v`` in graph ``g``.    
+    returns an iterable view/container of the incoming edges to vertex ``v`` in graph ``g``.
          
 
     
