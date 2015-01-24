@@ -102,7 +102,20 @@ module Graphs
         to_dot, plot,
 
         # Random Graph Generation
-        erdos_renyi_graph, watts_strogatz_graph
+        erdos_renyi_graph, watts_strogatz_graph,
+
+        # Static Graph Generation
+        simple_complete_graph, simple_star_graph, simple_path_graph,
+        simple_wheel_graph, simple_diamond_graph, simple_bull_graph,
+        simple_chvatal_graph, simple_cubical_graph, simple_desargues_graph,
+        simple_dodecahedral_graph, simple_frucht_graph, simple_heawood_graph,
+        simple_house_graph, simple_house_x_graph, simple_icosahedral_graph,
+        simple_krackhardt_kite_graph, moebius_kantor_graph, simple_octahedral_graph,
+        simple_pappus_graph, simple_petersen_graph, simple_sedgewick_maze_graph,
+        simple_tetrahedral_graph, simple_truncated_cube_graph,
+        simple_truncated_tetrahedron_graph, simple_tutte_graph
+
+
 
     include("concepts.jl")
     include("common.jl")
@@ -130,4 +143,5 @@ module Graphs
     include("dot.jl")
 
     include("random.jl")
+    include("generators.jl")
 end

@@ -14,7 +14,8 @@ tests = [
     "floyd",
     "dot",
     "cliques",
-    "random" ]
+    "random",
+    "generators" ]
 
 
 for t in tests
