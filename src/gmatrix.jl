@@ -542,7 +542,7 @@ function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
     s = 0
     for j in 1:n
         adjj = Ti[]
-        sizehint(adjj, colptr[j+1] - colptr[j] - 1)
+        sizehint!(adjj, colptr[j+1] - colptr[j] - 1)
         for k in colptr[j]:(colptr[j+1] - 1)
             rvk = A.rowval[k]
             if rvk != j push!(adjj, rvk) end
