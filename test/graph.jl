@@ -267,3 +267,47 @@ e = [ExEdge(1,v[1],v[2])]
 g = graph(v,e,is_directed=true)
 @test num_edges(g) == 1
 @test num_vertices(g) == 2
+
+# Integer vertices and edges
+n = 100
+m = 1000
+vs = rand(1:10*n,n)
+es = Edge{Int}[]
+for i in 1:m
+  push!(es,Edge(i,vs[rand(1:n,1)[1]],vs[rand(1:n,1)[1]]))
+end
+g = graph(vs,es)
+for i in 1:m
+  add_edge!(g,vs[rand(1:n,1)[1]],vs[rand(1:n,1)[1]])
+end
+
+@test num_vertices(g) == n
+@test num_edges(g) == 2 * m
+for v in vs
+  @test vertex_index(v,g) == g.indexof[v]
+end
+for i in 1:m
+  @test edge_index(es[i],g) == i
+end
+
+# same for undirected graph
+n = 100
+m = 1000
+vs = rand(1:10*n,n)
+es = Edge{Int}[]
+for i in 1:m
+  push!(es,Edge(i,vs[rand(1:n,1)[1]],vs[rand(1:n,1)[1]]))
+end
+g = graph(vs,es,is_directed=false)
+for i in 1:m
+  add_edge!(g,vs[rand(1:n,1)[1]],vs[rand(1:n,1)[1]])
+end
+
+@test num_vertices(g) == n
+@test num_edges(g) == 2 * m
+for v in vs
+  @test vertex_index(v,g) == g.indexof[v]
+end
+for i in 1:m
+  @test edge_index(es[i],g) == i
+end
