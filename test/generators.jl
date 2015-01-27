@@ -64,7 +64,7 @@ g = moebius_kantor_graph()
 @test num_vertices(g) == 16 && num_edges(g) == 24
 
 g = simple_octahedral_graph()
-@test num_vertices(g) == 10 && num_edges(g) == 12
+@test num_vertices(g) == 6 && num_edges(g) == 12
 
 g = simple_pappus_graph()
 @test num_vertices(g) == 18 && num_edges(g) == 27
