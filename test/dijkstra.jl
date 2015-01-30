@@ -115,17 +115,51 @@ g3 = simple_graph(4)
 add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4)
 
 s3 = dijkstra_shortest_paths(g3,2)
-sps = enumerate_paths(s3)
+sps = enumerate_paths(vertices(g3), s3.parent_indices)
 @test length(sps) == 4
 @test sps[1] == []
 @test sps[2] == [2]
 @test sps[3] == [2, 3]
 @test sps[4] == [2, 3, 4]
 
-sps = enumerate_paths(s3, [2,4])
+sps = enumerate_paths(vertices(g3), s3.parent_indices, [2,4])
 @test length(sps) == 2
 @test sps[1] == [2]
 @test sps[2] == [2, 3, 4]
 
-sps = enumerate_paths(s3, 4)
+sps = enumerate_paths(vertices(g3), s3.parent_indices, 4)
 @test sps == [2, 3, 4]
+
+g4 = Graphs.inclist([4,5,6,7],is_directed=true)
+add_edge!(g4,4,5); add_edge!(g4,4,6); add_edge!(g4,5,6); add_edge!(g4,6,7)
+
+s4 = dijkstra_shortest_paths(g4,5)
+sps = enumerate_indices(s4.parent_indices)
+@test length(sps) == 4
+@test sps[1] == []
+@test sps[2] == [2]
+@test sps[3] == [2, 3]
+@test sps[4] == [2, 3, 4]
+
+sps = enumerate_indices(s4.parent_indices, [2,4])
+@test length(sps) == 2
+@test sps[1] == [2]
+@test sps[2] == [2, 3, 4]
+
+sps = enumerate_indices(s4.parent_indices, 4)
+@test sps == [2, 3, 4]
+
+sps = enumerate_paths(vertices(g4), s4.parent_indices)
+@test length(sps) == 4
+@test sps[1] == []
+@test sps[2] == [5]
+@test sps[3] == [5, 6]
+@test sps[4] == [5, 6, 7]
+
+sps = enumerate_paths(vertices(g4), s4.parent_indices, [2,4])
+@test length(sps) == 2
+@test sps[1] == [5]
+@test sps[2] == [5, 6, 7]
+
+sps = enumerate_paths(vertices(g4), s4.parent_indices, 4)
+@test sps == [5, 6, 7]

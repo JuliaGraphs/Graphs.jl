@@ -8,7 +8,7 @@
 
 type DijkstraStates{V,D<:Number,Heap,H}
     parents::Vector{V}
-    hasparent::Vector{Bool}
+    parent_indices::Vector{Int}
     dists::Vector{D}
     colormap::Vector{Int}
     heap::Heap
@@ -27,13 +27,13 @@ end
 function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
     parents = Array(V, n)
-    hasparent = fill(false, n)
+    parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
     heap = mutable_binary_minheap(DijkstraHEntry{V,D})
     hmap = zeros(Int, n)
 
-    DijkstraStates(parents, hasparent, dists, colormap, heap, hmap)
+    DijkstraStates(parents, parent_indices, dists, colormap, heap, hmap)
 end
 
 ###################################################################
@@ -98,7 +98,7 @@ end
 function set_source!{V,D}(state::DijkstraStates{V,D}, g::AbstractGraph{V}, s::V)
     i = vertex_index(s, g)
     state.parents[i] = s
-    state.hasparent[i] = false
+    state.parent_indices[i] = i
     state.dists[i] = 0
     state.colormap[i] = 2
 end
@@ -111,7 +111,7 @@ function process_neighbors!{V,D,Heap,H}(
 
     dists::Vector{D} = state.dists
     parents::Vector{V} = state.parents
-    hasparent::Vector{Bool} = state.hasparent
+    parent_indices::Vector{Int} = state.parent_indices
     colormap::Vector{Int} = state.colormap
     heap::Heap = state.heap
     hmap::Vector{H} = state.hmap
@@ -125,7 +125,7 @@ function process_neighbors!{V,D,Heap,H}(
         if v_color == 0
             dists[iv] = dv = du + edge_property(edge_dists, e, graph)
             parents[iv] = u
-            hasparent[iv] = true
+            parent_indices[iv] = vertex_index(u, graph)
             colormap[iv] = 1
             discover_vertex!(visitor, u, v, dv)
 
@@ -137,7 +137,7 @@ function process_neighbors!{V,D,Heap,H}(
             if dv < dists[iv]
                 dists[iv] = dv
                 parents[iv] = u
-                hasparent[iv] = true
+                parent_indices[iv] = vertex_index(u, graph)
 
                 # update the value on the heap
                 update_vertex!(visitor, u, v, dv)
@@ -254,19 +254,16 @@ dijkstra_shortest_paths{V}(
     graph::AbstractGraph{V}, s::V
 ) = dijkstra_shortest_paths(graph, ones(num_vertices(graph)), s)
 
-function enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}, dest::Vector{V})
-    parents = state.parents
-    hasparent = state.hasparent
-    
-    num_dest = length(dest)
-    all_paths = Array(Vector{V},num_dest)
+function enumerate_indices(parent_indices::Vector{Int}, dest_indices::Vector{Int})
+    num_dest = length(dest_indices)
+    all_paths = Array(Vector{Int},num_dest)
     for i=1:num_dest
-        all_paths[i] = V[]
-        index = dest[i]
-        if hasparent[index] || parents[index] == index
-            while hasparent[index]
+        all_paths[i] = Int[]
+        index = dest_indices[i]
+        if parent_indices[index] != 0
+            while parent_indices[index] != index
                 push!(all_paths[i], index)
-                index = parents[index]
+                index = parent_indices[index]
             end
             push!(all_paths[i], index)
             reverse!(all_paths[i])
@@ -275,5 +272,8 @@ function enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}, dest::Ve
     all_paths
 end
 
-enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}, dest::V) = enumerate_paths(state, V[dest])[1]
-enumerate_paths{V,D,Heap,H}(state::DijkstraStates{V,D,Heap,H}) = enumerate_paths(state, [1:length(state.parents)])
+enumerate_indices(parent_indices::Vector{Int}, dest_index::Int) = enumerate_indices(parent_indices, Int[dest_index])[1]
+enumerate_indices(parent_indices::Vector{Int}) = enumerate_indices(parent_indices, [1:length(parent_indices)])
+enumerate_paths(vertices, parent_indices::Vector{Int}, dest_indices::Vector{Int}) = [vertices[i] for i in enumerate_indices(parent_indices, dest_indices)]
+enumerate_paths(vertices, parent_indices::Vector{Int}, dest_index::Int) = enumerate_paths(vertices, parent_indices, [dest_index])[1]
+enumerate_paths(vertices, parent_indices::Vector{Int}) = enumerate_paths(vertices, parent_indices, [1:length(parent_indices)])

@@ -35,10 +35,9 @@ s1 = bellman_ford_shortest_paths(g1, eweights1, [1])
 
 @test s1.parents == [1, 3, 1, 2, 3]
 @test s1.dists == [0., 8., 5., 9., 7.]
-@test s1.hasparent == [false, true, true, true, true]
 
 ## all destinations
-sps = enumerate_paths(s1)
+sps = enumerate_paths(vertices(g1), s1.parent_indices)
 @test length(sps) == 5
 @test sps[1] == [1]
 @test sps[2] == [1,3,2]
@@ -47,24 +46,23 @@ sps = enumerate_paths(s1)
 @test sps[5] == [1,3,5]
 
 ## multiple destinations
-sps = enumerate_paths(s1, [2,4])
+sps = enumerate_paths(vertices(g1), s1.parent_indices, [2,4])
 @test length(sps) == 2
 @test sps[1] == [1,3,2]
 @test sps[2] == [1,3,2,4]
 
 ## single destination
-sps = enumerate_paths(s1, 2)
+sps = enumerate_paths(vertices(g1), s1.parent_indices, 2)
 @test sps == [1,3,2]
-@test sps == enumerate_paths(s1, [2])[1]
+@test sps == enumerate_paths(vertices(g1), s1.parent_indices, [2])[1]
 
 # Multiple Sources
 
 s1 = bellman_ford_shortest_paths(g1, eweights1, [1, 2])
 @test s1.parents == [1, 2, 2, 2, 3]
 @test s1.dists == [0., 0., 2., 1., 4.]
-@test s1.hasparent == [false, false, true, true, true]
 
-sps = enumerate_paths(s1)
+sps = enumerate_paths(vertices(g1), s1.parent_indices)
 @test sps[1] == [1]
 @test sps[2] == [2]
 @test sps[3] == [2,3]
