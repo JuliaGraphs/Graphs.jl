@@ -112,12 +112,12 @@ s2 = dijkstra_shortest_paths(g2, eweights2, [1])
 @test s2.colormap == [2, 2, 2, 2, 2, 2]
 
 g3 = simple_graph(4)
-add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4)
+add_edge!(g3,1,2); add_edge!(g3,1,3); add_edge!(g3,2,3); add_edge!(g3,3,4); add_edge!(g3,4,3); add_edge!(g3,3,1)
 
 s3 = dijkstra_shortest_paths(g3,2)
 sps = enumerate_paths(vertices(g3), s3.parent_indices)
 @test length(sps) == 4
-@test sps[1] == []
+@test sps[1] == [2,3,1]
 @test sps[2] == [2]
 @test sps[3] == [2, 3]
 @test sps[4] == [2, 3, 4]

@@ -252,7 +252,7 @@ end
 
 dijkstra_shortest_paths{V}(
     graph::AbstractGraph{V}, s::V
-) = dijkstra_shortest_paths(graph, ones(num_vertices(graph)), s)
+) = dijkstra_shortest_paths(graph, ones(num_edges(graph)), s)
 
 function enumerate_indices(parent_indices::Vector{Int}, dest_indices::Vector{Int})
     num_dest = length(dest_indices)
