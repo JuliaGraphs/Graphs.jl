@@ -347,12 +347,12 @@ This package implements Simple Minimum Cut
 Simple Minimum Cut
 ~~~~~~~~~~~~~~~~~
 
-Stoer's simple minimum cut gets the minimum cut of an undirected graph, given the weight of the edges. 
+Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 
-.. py:function:: min_cut(graph, eweights)
+.. py:function:: min_cut(graph[, eweights])
 
     :param graph:       the input graph
-    :param eweights:    the edge weights (a vector or an edge property inspector)
+    :param eweights:    the edge weights (a vector or an edge property inspector). This argument is optional. If not given edges are weight "1"
 
     :returns:   ``(parity, bestcut)``, where ``parity`` is a vector of boolean values that determines the partition and ``bestcut`` is the weight of the cut that makes this partition.
 

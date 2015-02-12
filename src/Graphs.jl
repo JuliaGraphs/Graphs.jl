@@ -69,7 +69,7 @@ module Graphs
         DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
 
         # maximum_adjacency_visit
-        MaximumAdjacency, min_cut,
+        MaximumAdjacency, AbstractMASVisitor, min_cut, maximum_adjacency_visit,
 
         # connected_components
         connected_components, strongly_connected_components,
