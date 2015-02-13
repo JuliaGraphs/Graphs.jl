@@ -273,7 +273,7 @@ function enumerate_indices(parent_indices::Vector{Int}, dest_indices::Vector{Int
 end
 
 enumerate_indices(parent_indices::Vector{Int}, dest_index::Int) = enumerate_indices(parent_indices, Int[dest_index])[1]
-enumerate_indices(parent_indices::Vector{Int}) = enumerate_indices(parent_indices, [1:length(parent_indices)])
+enumerate_indices(parent_indices::Vector{Int}) = enumerate_indices(parent_indices, collect(1:length(parent_indices)))
 enumerate_paths(vertices, parent_indices::Vector{Int}, dest_indices::Vector{Int}) = [vertices[i] for i in enumerate_indices(parent_indices, dest_indices)]
 enumerate_paths(vertices, parent_indices::Vector{Int}, dest_index::Int) = enumerate_paths(vertices, parent_indices, [dest_index])[1]
-enumerate_paths(vertices, parent_indices::Vector{Int}) = enumerate_paths(vertices, parent_indices, [1:length(parent_indices)])
+enumerate_paths(vertices, parent_indices::Vector{Int}) = enumerate_paths(vertices, parent_indices, collect(1:length(parent_indices)))
