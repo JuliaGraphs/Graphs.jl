@@ -42,11 +42,11 @@ function traverse_graph{V,E,W}(
   colormap::Vector{Int},
   ::Type{W})
 
-  #Julia 0.3
-  #pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
-
-  #Julia 0.4
-  pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
+  if VERSION > v"0.4.0-"
+    pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
+  else
+    pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
+  end
 
   # Set number of visited neighbours for all vertices to 0
   for v in vertices(graph)
