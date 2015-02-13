@@ -35,11 +35,11 @@ simple_graph(n::Integer; is_directed::Bool=true) =
                 IEdge[],   # edges
                 multivecs(IEdge, n), # finclist
                 multivecs(IEdge, n), # binclist
-                (Int => Int)[]) # indices (not used for simple graph)
+                Dict{Int, Int}()) # indices (not used for simple graph)
 
 function graph{V,E}(vs::Vector{V}, es::Vector{E}; is_directed::Bool=true)
     n = length(vs)
-    g = Graph{V,E}(is_directed, V[], E[], multivecs(E, n), multivecs(E, n), (V =>Int)[])
+    g = Graph{V,E}(is_directed, V[], E[], multivecs(E, n), multivecs(E, n), Dict{V,Int}())
     for v in vs
         add_vertex!(g,v)
     end
