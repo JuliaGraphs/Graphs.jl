@@ -356,6 +356,15 @@ Stoer's simple minimum cut gets the minimum cut of an undirected graph.
 
     :returns:   ``(parity, bestcut)``, where ``parity`` is a vector of boolean values that determines the partition and ``bestcut`` is the weight of the cut that makes this partition.
 
+.. py:function: maximum_adjacency_visit(graph[, eweights]; log, io)
+
+    :param graph:       the input graph
+    :param eweights:    the edge weights (a vector or an edge property inspector). This argument is optional. If not given edges are weight "1"
+    :log:               Boolean value, whether to print out visitor events. Optional, defaults to ``false``.
+    :io:                Where to output log. Optional, defaults to ``STDOUT``. 
+
+    :returns:   ``vertices``, the vertices traversed by maximum adjacency search. 
+
 Random Graphs
 -------------
 

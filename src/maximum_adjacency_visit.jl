@@ -42,7 +42,11 @@ function traverse_graph{V,E,W}(
   colormap::Vector{Int},
   ::Type{W})
 
-  pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
+  #Julia 0.3
+  #pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
+
+  #Julia 0.4
+  pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
 
   # Set number of visited neighbours for all vertices to 0
   for v in vertices(graph)
@@ -207,5 +211,5 @@ end
 
 function maximum_adjacency_visit{V,E}(graph::AbstractGraph{V,E}; log::Bool=false, io::IO=STDOUT)
   m = num_edges(graph)
-  maximum_adjacency_visit(graph,ones(m),log, io)
+  maximum_adjacency_visit(graph,ones(m); log=log, io=io)
 end
