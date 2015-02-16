@@ -3,12 +3,13 @@ Graph Algorithms
 
 ``Graphs.jl`` implements a collection of classic graph algorithms:
 
-- graph traversal with visitor support: BFS, DFS
+- graph traversal with visitor support: BFS, DFS, MAS
 - cycle detection
 - connected components
 - topological sorting
 - shortest paths: Dijkstra, Floyd-Warshall, A*
 - minimum spanning trees: Prim, Kruskal
+- flow: Minimum Cut
 - random graph generation
 - more algorithms are being implemented
 
@@ -16,7 +17,7 @@ Graph Algorithms
 Graph Traversal
 ---------------
 
-Graph traversal refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements two traversal schemes: *breadth-first* and *depth-first*.
+Graph traversal refers to a process that traverses vertices of a graph following certain order (starting from user-input sources). This package implements three traversal schemes: *breadth-first*, *depth-first*, and *Maximum-Adjacency*.
 
 During traveral, each vertex maintains a status (also called *color*), which is an integer value defined as below:
 
@@ -338,6 +339,31 @@ Kruskal's algorithm finds a minimum spanning tree (or forest) by gradually uniti
 
     :returns:   ``(re, rw)``, where ``re`` is a vector of edges that constitute the resultant tree, and ``rw`` is the vector of corresponding edge weights.
 
+Flow
+-----------------------
+
+This package implements Simple Minimum Cut
+
+Simple Minimum Cut
+~~~~~~~~~~~~~~~~~
+
+Stoer's simple minimum cut gets the minimum cut of an undirected graph.
+
+.. py:function:: min_cut(graph[, eweights])
+
+    :param graph:       the input graph
+    :param eweights:    the edge weights (a vector or an edge property inspector). This argument is optional. If not given edges are weight "1"
+
+    :returns:   ``(parity, bestcut)``, where ``parity`` is a vector of boolean values that determines the partition and ``bestcut`` is the weight of the cut that makes this partition.
+
+.. py:function: maximum_adjacency_visit(graph[, eweights]; log, io)
+
+    :param graph:       the input graph
+    :param eweights:    the edge weights (a vector or an edge property inspector). This argument is optional. If not given edges are weight "1"
+    :log:               Boolean value, whether to print out visitor events. Optional, defaults to ``false``.
+    :io:                Where to output log. Optional, defaults to ``STDOUT``. 
+
+    :returns:   ``vertices``, the vertices traversed by maximum adjacency search. 
 
 Random Graphs
 -------------

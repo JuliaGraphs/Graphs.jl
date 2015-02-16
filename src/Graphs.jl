@@ -68,6 +68,9 @@ module Graphs
         # depth_first_visit
         DepthFirst, test_cyclic_by_dfs, topological_sort_by_dfs,
 
+        # maximum_adjacency_visit
+        MaximumAdjacency, AbstractMASVisitor, min_cut, maximum_adjacency_visit,
+
         # connected_components
         connected_components, strongly_connected_components,
 
@@ -115,6 +118,8 @@ module Graphs
         simple_tetrahedral_graph, simple_truncated_cube_graph,
         simple_truncated_tetrahedron_graph, simple_tutte_graph
 
+        
+
 
 
     include("concepts.jl")
@@ -130,6 +135,7 @@ module Graphs
     include("graph_visit.jl")
     include("breadth_first_visit.jl")
     include("depth_first_visit.jl")
+    include("maximum_adjacency_visit.jl")
 
     include("connected_components.jl")
     include("dijkstra_spath.jl")
