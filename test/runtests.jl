@@ -15,7 +15,8 @@ tests = [
     "dot",
     "cliques",
     "random",
-    "generators" ]
+    "generators",
+    "maximum_adjacency_visit" ]
 
 
 for t in tests
