@@ -53,6 +53,29 @@ let
           ("1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]" in sp)
 end
 
+# Graph attributes get layed out correctly
+let
+    g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
+    add_vertex!(g, ExVertex(1, "label1"))
+    add_vertex!(g, ExVertex(2, "label2"))
+    add_edge!(g, vertices(g)[1], vertices(g)[2])
+    e = out_edges(vertices(g)[2], g)[1]
+    graph_attrs = AttributeDict()
+
+    graph_attrs["foo"]="bar"
+    sp = split(to_dot(g, graph_attrs), "\n")
+    @test ("\"foo\"=\"bar\";" in sp)
+    @test !("\"baz\"=\"qux\";" in sp)
+
+    graph_attrs["baz"]="qux"
+    sp = split(to_dot(g, graph_attrs), "\n")
+    @test ("\"foo\"=\"bar\";" in sp)
+    @test ("\"baz\"=\"qux\";" in sp)
+end
+
+
+
+
 let g=simple_graph(0, is_directed=false)
     @test to_dot(g) == "graph graphname {\n}\n"
 end
