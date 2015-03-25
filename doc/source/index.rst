@@ -16,7 +16,7 @@ Contents
    algorithms.rst
    matrix.rst
    generators.rst  
-
+   examples.rst
 
 Indices and tables
 ------------------
