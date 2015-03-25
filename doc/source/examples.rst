@@ -1,9 +1,7 @@
 Examples
 ========
 
-To help you to get started with Graphs.jl, here is a simple example:
-
-.. code-block:: python
+To help you to get started with Graphs.jl, here is a simple example::
 
     julia> using Graphs
 
@@ -24,16 +22,12 @@ To help you to get started with Graphs.jl, here is a simple example:
 
 .. figure:: simple_graph.png
 
-We can also generate simple graphs with graph generators. For example,
-
-.. code-block:: python
+We can also generate simple graphs with graph generators. For example::
 
      julia> g2 = simple_cubical_graph()
      Undirected Graph (8 vertices, 12 edges)
 
-and check the number of vertices and edges with 
-
-.. code-block:: python
+and check the number of vertices and edges with::
 
      julia> num_vertices(g2)
      8
@@ -41,9 +35,7 @@ and check the number of vertices and edges with
      julia> num_edges(g2)
      12
 
-We can use an adjacency matrix to represent ``g2``:
-
-.. code-block:: python
+We can use an adjacency matrix to represent ``g2``::
 
      julia> adjacency_matrix(g2)
      8x8 Array{Bool,2}:
