@@ -80,6 +80,11 @@ es = [  add_edge!(sgd, 1, 2)
 
 
 @test collect_edges(sgd) == [Edge(1,1,2), Edge(2,1,3), Edge(3,2,4), Edge(4,3,4)]
+
+sgd = simple_graph(0)
+v = add_vertex!(sgd)
+@test v == 1
+
 #################################################
 #
 #  SimpleUndirectedGraph
