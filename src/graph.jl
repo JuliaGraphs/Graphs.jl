@@ -81,7 +81,7 @@ in_neighbors{V}(v::V, g::GenericGraph{V}) = SourceIterator(g, in_edges(v, g))
 
 function add_vertex!(g::SimpleGraph)
     # ensure SimpleGraph indices are consecutive, allowing O(1) indexing
-    v = g.vertices[end] + 1
+    v = length(g.vertices)+1
     g.vertices = 1:v
     push!(g.finclist, Int[])
     push!(g.binclist, Int[])
