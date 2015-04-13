@@ -4,25 +4,26 @@
 # http://www.graphviz.org/pub/scm/graphviz2/doc/info/lang.html
 
 # Write the dot representation of a graph to a file by name.
-function to_dot(graph::AbstractGraph, filename::String)
+function to_dot(graph::AbstractGraph, filename::String,attrs::AttributeDict=AttributeDict())
     open(filename,"w") do f
-        to_dot(graph, f)
+        to_dot(graph, f, attrs)
     end
 end
 
 # Get the dot representation of a graph as a string.
-function to_dot(graph::AbstractGraph)
+function to_dot(graph::AbstractGraph, attrs::AttributeDict=AttributeDict())
     str = IOBuffer()
-    to_dot(graph, str)
+    to_dot(graph, str, attrs)
     takebuf_string(str)
 end
 
 # Write the dot representation of a graph to a stream.
-function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
+function to_dot{G<:AbstractGraph}(graph::G, stream::IO,attrs::AttributeDict)
     has_vertex_attrs = method_exists(attributes, (vertex_type(graph), G))
     has_edge_attrs = method_exists(attributes, (edge_type(graph), G))
 
     write(stream, "$(graph_type_string(graph)) graphname {\n")
+    write(stream, "$(to_dot_graph(attrs))")
     if implements_edge_list(graph) && implements_vertex_map(graph)
         for edge in edges(graph)
             write(stream,"$(vertex_index(source(edge), graph)) $(edge_op(graph)) $(vertex_index(target(edge), graph))\n")
@@ -53,12 +54,20 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO)
     write(stream, "}\n")
     stream
 end
-
+#write node attributes example: [shape=box, style=filled]
 function to_dot(attrs::AttributeDict)
     if isempty(attrs)
         ""
     else
         string("[",join(map(to_dot,collect(attrs)),","),"]")
+    end
+end
+# write a graph wide attributes example: size = "4,4";
+function to_dot_graph(attrs::AttributeDict)
+    if isempty(attrs)
+        ""
+    else
+        string(join(map(to_dot, collect(attrs)),";\n"),";\n")
     end
 end
 
