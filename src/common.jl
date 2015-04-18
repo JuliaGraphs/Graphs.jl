@@ -194,6 +194,8 @@ end
 isnz(x::Bool) = x
 isnz(x::Number) = x != zero(x)
 
+intrange(n::Integer) = 1:convert(Int,n)
+
 multivecs{T}(::Type{T}, n::Int) = [T[] for _ =1:n]
 
 function collect_edges{V,E}(graph::AbstractGraph{V,E})

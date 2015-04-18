@@ -14,7 +14,7 @@ typealias EdgeList{V,E} GenericEdgeList{V,E,Vector{V},Vector{E}}
 # construction
 
 simple_edgelist{E}(nv::Integer, edges::Vector{E}; is_directed::Bool=true) =
-    SimpleEdgeList{E}(is_directed, 1:int(nv), edges)
+    SimpleEdgeList{E}(is_directed, intrange(nv), edges)
 
 edgelist{V,E}(vertices::Vector{V}, edges::Vector{E}; is_directed::Bool=true) =
     EdgeList{V,E}(is_directed, vertices, edges)

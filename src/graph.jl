@@ -31,7 +31,7 @@ typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}}}
 
 simple_graph(n::Integer; is_directed::Bool=true) =
     SimpleGraph(is_directed,
-                1:int(n),  # vertices
+                intrange(n),  # vertices
                 IEdge[],   # edges
                 multivecs(IEdge, n), # finclist
                 multivecs(IEdge, n), # binclist
