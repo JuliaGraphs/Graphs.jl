@@ -51,7 +51,7 @@ function maximal_cliques{V}(g::AbstractGraph{V})
     union!(cand, keys(nnbrs))
     smallcand = setdiff(cand, pivotnbrs)
     done = Set{V}()
-    stack = (Set{V}, Set{V}, Set{V})[]
+    stack = @compat(Tuple{Set{V}, Set{V}, Set{V}})[]
     clique_so_far = V[]
     cliques = Array{V}[]
 

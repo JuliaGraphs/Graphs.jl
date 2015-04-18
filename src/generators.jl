@@ -81,7 +81,7 @@ function simple_wheel_graph(n::Integer; is_directed=true)
     return g
 end
 
-function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{(T,T)})
+function _make_simple_undirected_graph{T<:Integer}(n::T, edgelist::Vector{@compat Tuple{T,T}})
     g = simple_graph(n, is_directed=false)
     for (s,d) in edgelist
         add_edge!(g,s,d)

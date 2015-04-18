@@ -14,6 +14,7 @@ module AStar
 
 using Graphs
 using Base.Collections
+using Compat
 
 export shortest_path
 
@@ -55,7 +56,7 @@ function shortest_path{V,E,D}(
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
             # heuristic (under)estimating distance to target
-    frontier = VERSION < v"0.4-" ? PriorityQueue{(D,Array{E,1},V),D}() : PriorityQueue((D,Array{E,1},V),D)
+    frontier = VERSION < v"0.4-" ? PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}() : PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
     colormap[s] = 1

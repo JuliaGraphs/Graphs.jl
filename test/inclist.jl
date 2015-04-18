@@ -61,7 +61,7 @@ add_edge!(gd, 4, 5)
 @test collect(out_edges(2, gd)) == [Edge(2, 2, 4), Edge(5, 2, 3)]
 @test collect(out_edges(3, gd)) == [Edge(4, 3, 4)]
 @test collect(out_edges(4, gd)) == [Edge(6, 4, 5)]
-@test collect(out_edges(5, gd)) == Array((Int, Int), 0)
+@test collect(out_edges(5, gd)) == Array(@compat(Tuple{Int, Int}), 0)
 
 @test collect(out_neighbors(1, gd)) == [2, 3]
 @test collect(out_neighbors(2, gd)) == [4, 3]
