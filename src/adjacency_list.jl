@@ -17,7 +17,7 @@ type GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
     adjlist::AdjList
 end
 
-typealias SimpleAdjacencyList GenericAdjacencyList{Int, Range1{Int}, Vector{Vector{Int}}}
+typealias SimpleAdjacencyList GenericAdjacencyList{Int, UnitRange{Int}, Vector{Vector{Int}}}
 typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 
 @graph_implements GenericAdjacencyList vertex_list vertex_map adjacency_list

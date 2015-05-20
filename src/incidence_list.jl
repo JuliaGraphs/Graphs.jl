@@ -16,7 +16,7 @@ type GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
     inclist::IncList
 end
 
-typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, Range1{Int}, Vector{Vector{IEdge}}}
+typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, UnitRange{Int}, Vector{Vector{IEdge}}}
 typealias IncidenceList{V,E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
 
 @graph_implements GenericIncidenceList vertex_list vertex_map edge_map adjacency_list incidence_list

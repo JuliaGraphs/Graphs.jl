@@ -18,12 +18,12 @@ end
 # SimpleGraph:
 #   V:          Int
 #   E:          IEdge
-#   VList:      Range1{Int}
+#   VList:      UnitRange{Int}
 #   EList:      Vector{IEdge}
 #   AdjList:    Vector{Vector{Int}}
 #   IncList:    Vector{Vector{IEdge}}
 #
-typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}}}
+typealias SimpleGraph GenericGraph{Int,IEdge,UnitRange{Int},Vector{IEdge},Vector{Vector{IEdge}}}
 
 typealias Graph{V,E} GenericGraph{V,E,Vector{V},Vector{E},Vector{Vector{E}}}
 
