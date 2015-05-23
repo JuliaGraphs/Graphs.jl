@@ -22,7 +22,7 @@ tests = [
 
 
 for t in tests
-    tp = joinpath(Pkg.dir("Graphs"),"test","$(t).jl")
+    tp = joinpath(dirname(@__FILE__), "$(t).jl")
     println("running $(tp) ...")
     include(tp)
 end
