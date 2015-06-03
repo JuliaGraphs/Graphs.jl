@@ -15,6 +15,7 @@ tests = [
     "mst",
     "floyd",
     "dot",
+    "dot2",
     "cliques",
     "random",
     "generators",

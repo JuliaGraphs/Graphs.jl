@@ -24,9 +24,10 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO,attrs::AttributeDict=Attr
 
     write(stream, "$(graph_type_string(graph)) graphname {\n")
     write(stream, "$(to_dot_graph(attrs))")
-    if implements_edge_list(graph) && implements_vertex_map(graph)
+    if implements_edge_list(graph) && implements_vertex_map(graph) 
         for vtx in  vertices(graph)
-            write(stream,"$(vertex_index(vtx,graph))\t$(to_dot(attributes(vtx,graph)))\n")
+            attrs = has_vertex_attrs ?  "\t$(to_dot(attributes(vtx,graph)))" : ""
+            write(stream,"$(vertex_index(vtx,graph))$attrs\n")
         end
         for edge in edges(graph)
             write(stream,"$(vertex_index(source(edge), graph)) $(edge_op(graph)) $(vertex_index(target(edge), graph))\n")
