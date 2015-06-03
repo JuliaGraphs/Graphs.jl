@@ -276,7 +276,23 @@ g = graph(v,e,is_directed=true)
 # Integer vertices and edges
 n = 100
 m = 1000
-vs = rand(1:10*n,n)
+
+# We ensure that vertices have random but different values
+function  uniqueRands(range,nb::Int)
+    result=Dict{Int,Bool}()
+    i= 0
+    while i < nb 
+        r = rand(1:10*n)
+        if !haskey( result, r)
+           i += 1
+           result[r] = true
+        end
+    end
+    collect(keys(result))
+end
+
+vs = uniqueRands(1:10*n,n)
+
 es = Edge{Int}[]
 for i in 1:m
   push!(es,Edge(i,vs[rand(1:n)],vs[rand(1:n)]))
@@ -298,7 +314,9 @@ end
 # same for undirected graph
 n = 100
 m = 1000
-vs = rand(1:10*n,n)
+
+vs = uniqueRands(1:10*n,n)
+
 es = Edge{Int}[]
 for i in 1:m
   push!(es,Edge(i,vs[rand(1:n)],vs[rand(1:n)]))
