@@ -31,7 +31,7 @@ function   rewriteAttrs(a::String)
          offset= m.offsets[1]
          chksum= mod(reduce(+, 0::Int,
                             map(x->convert(Int,x),collect(attrs))  ), 25)
-         ch = Char(convert(Int,'a') - 1 + chksum)
+         ch = convert(Char, convert(Int,'a') - 1 + chksum)
          a[1:offset-1] * "$ch" * a[ offset+length(attrs) : end ]
      else
          return a
