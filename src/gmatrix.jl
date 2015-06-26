@@ -550,7 +550,7 @@ function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
         s += length(adjj)
         adjlist[j] = adjj
     end
-    GenericAdjacencyList{Ti, Range1{Ti}, Vector{Vector{Ti}}}(!ishermitian(A),
+    GenericAdjacencyList{Ti, UnitRange{Ti}, Vector{Vector{Ti}}}(!ishermitian(A),
                                                              one(Ti):convert(Ti,n),
                                                              s, adjlist)
 end

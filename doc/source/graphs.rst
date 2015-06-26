@@ -33,7 +33,7 @@ The package defines the following aliases for convenience:
 
 .. code-block:: python
 
-    typealias SimpleEdgeList{E} GenericEdgeList{Int,E,Range1{Int},Vector{E}}
+    typealias SimpleEdgeList{E} GenericEdgeList{Int,E,UnitRange{Int},Vector{E}}
     typealias EdgeList{V,E} GenericEdgeList{V,E,Vector{V},Vector{E}}
 
 ``GenericEdgeList`` implements the following interfaces
@@ -107,7 +107,7 @@ The package defines following aliases for convenience:
 
 .. code-block:: python
 
-    typealias SimpleAdjacencyList GenericAdjacencyList{Int, Range1{Int}, Vector{Vector{Int}}}
+    typealias SimpleAdjacencyList GenericAdjacencyList{Int, UnitRange{Int}, Vector{Vector{Int}}}
     typealias AdjacencyList{V} GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
     
 ``GenericAdjacencyList`` implements the following interfaces
@@ -194,7 +194,7 @@ The package defines following aliases for convenience:
 
 .. code-block:: python
 
-    typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, Range1{Int}, Vector{Vector{IEdge}}}
+    typealias SimpleIncidenceList GenericIncidenceList{Int, IEdge, UnitRange{Int}, Vector{Vector{IEdge}}}
     typealias IncidenceList{V,E} GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
     
 ``GenericIncidenceList`` implements the following interfaces:
@@ -310,7 +310,7 @@ It also defines ``SimpleGraph`` as follows
 
 .. code-block:: python
 
-    typealias SimpleGraph GenericGraph{Int,IEdge,Range1{Int},Vector{IEdge},Vector{Vector{IEdge}}}
+    typealias SimpleGraph GenericGraph{Int,IEdge,UnitRange{Int},Vector{IEdge},Vector{Vector{IEdge}}}
 
 and a more full-fledged type ``Graph`` as follows
 
