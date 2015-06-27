@@ -12,7 +12,7 @@ end
 function breadth_first_visit_impl!(
     graph::AbstractGraph,   # the graph
     queue,                  # an (initialized) queue that stores the active vertices
-    colormap::Vector{Int},          # an (initialized) color-map to indicate status of vertices
+    colormap,               # an (initialized) color-map to indicate status of vertices
     visitor::AbstractGraphVisitor)  # the visitor
 
     while !isempty(queue)
@@ -40,13 +40,19 @@ function breadth_first_visit_impl!(
     nothing
 end
 
+initialize_colormap{V,E}(graph::AbstractGraph{V,E},visitor) =
+    zeros(Int, num_vertices(graph))
 
 function traverse_graph{V,E}(
     graph::AbstractGraph{V,E},
     alg::BreadthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
-    colormap = zeros(Int, num_vertices(graph)))
+    colormap = nothing)
+
+    if colormap === nothing
+        colormap = initialize_colormap(graph, visitor)
+    end
 
     @graph_requires graph adjacency_list vertex_map
 
@@ -67,7 +73,11 @@ function traverse_graph{V,E}(
     alg::BreadthFirst,
     sources::AbstractVector{V},
     visitor::AbstractGraphVisitor;
-    colormap = zeros(Int, num_vertices(graph)))
+    colormap = nothing)
+
+    if colormap === nothing
+        colormap = initialize_colormap(graph, visitor)
+    end
 
     @graph_requires graph adjacency_list vertex_map
 
@@ -93,12 +103,20 @@ end
 
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
-immutable GDistanceVisitor{G<:AbstractGraph} <: AbstractGraphVisitor
+immutable GDistanceVisitor{G<:AbstractGraph,DMap} <: AbstractGraphVisitor
     graph::G
-    dists::Vector{Int}
+    dists::DMap
 end
 
-GDistanceVisitor{G<:AbstractGraph}(g::G, dists) = GDistanceVisitor{G}(g, dists)
+GDistanceVisitor{G<:AbstractGraph,DMap}(g::G, dists::DMap) = GDistanceVisitor{G,DMap}(g, dists)
+
+function initialize_colormap{V,E,G,DMap<:Dict}(graph::AbstractGraph{V,E},dmap::GDistanceVisitor{G,DMap})
+    colormap = similar(dmap)
+    for k in keys(dmap)
+        colormap[k] = 0
+    end
+    colormap
+end
 
 function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor::Int)
     if vcolor == 0
