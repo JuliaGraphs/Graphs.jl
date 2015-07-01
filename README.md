@@ -39,4 +39,4 @@ In addition to the generic abstraction, there are other important features:
 
 ### Documentation
 
-Please refer to [*Graph.jl Documentation*](http://graphsjl-docs.readthedocs.org/en/latest/) for latest documentation.
+Please refer to [*Graphs.jl Documentation*](http://graphsjl-docs.readthedocs.org/en/latest/) for latest documentation.
