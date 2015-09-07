@@ -24,3 +24,6 @@ floyd_warshall!(dists, nexts)
 @test nexts == nexts0
 
 @test floyd_warshall(eweights) == dists0
+@test_throws ArgumentError floyd_warshall!(rand(3,5))
+@test_throws ArgumentError floyd_warshall!(rand(3,5),rand(1:7,5,5))
+@test_throws ArgumentError floyd_warshall!(rand(5,5),rand(1:7,3,5))

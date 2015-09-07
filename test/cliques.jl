@@ -15,6 +15,9 @@ add_edge!(g, 1, 2)
 @test test_cliques(g, Array[[1,2], [3]])
 add_edge!(g, 2, 3)
 @test test_cliques(g, Array[[1,2], [2,3]])
+g = simple_adjlist(3, is_directed=true)
+add_edge!(g, 1, 2)
+@test_throws ArgumentError test_cliques(g, Array[[1,2], [3]])
 
 # Test for "pivotdonenbrs not defined" bug
 h = simple_inclist(6, is_directed=false)
