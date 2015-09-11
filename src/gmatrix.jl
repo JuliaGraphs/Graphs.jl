@@ -370,7 +370,6 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
     !is_directed(g) || error("g must be undirected.")
 
     n = num_vertices(g)
-    a = zeros(T, n, n)
 
     nnz = num_edges(g) * 2 + n
     I = Array(Int, nnz)
@@ -450,7 +449,6 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
     !is_directed(g) || error("g must be undirected.")
 
     n = num_vertices(g)
-    a = zeros(T, n, n)
 
     nnz = num_edges(g) * 2 + n
     I = Array(Int, nnz)
