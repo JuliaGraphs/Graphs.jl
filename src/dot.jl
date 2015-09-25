@@ -4,7 +4,7 @@
 # http://www.graphviz.org/pub/scm/graphviz2/doc/info/lang.html
 
 # Write the dot representation of a graph to a file by name.
-function to_dot(graph::AbstractGraph, filename::String,attrs::AttributeDict=AttributeDict())
+function to_dot(graph::AbstractGraph, filename::AbstractString, attrs::AttributeDict=AttributeDict())
     open(filename,"w") do f
         to_dot(graph, f, attrs)
     end
@@ -75,7 +75,7 @@ function to_dot_graph(attrs::AttributeDict)
     end
 end
 
-to_dot(attr::String, value) = "\"$attr\"=\"$value\""
+to_dot(attr::AbstractString, value) = "\"$attr\"=\"$value\""
 
 to_dot(attr_tuple::@compat Tuple{UTF8String, Any}) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
 
