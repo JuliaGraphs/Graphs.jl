@@ -22,14 +22,14 @@ type ExVertex
     label::UTF8String
     attributes::AttributeDict
 
-    ExVertex(i::Int, label::String) = new(i, label, AttributeDict())
+    ExVertex(i::Int, label::AbstractString) = new(i, label, AttributeDict())
 end
 
-make_vertex(g::AbstractGraph{ExVertex}, label::String) = ExVertex(num_vertices(g) + 1, utf8(label))
+make_vertex(g::AbstractGraph{ExVertex}, label::AbstractString) = ExVertex(num_vertices(g) + 1, utf8(label))
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
-typealias ProvidedVertexType Union(KeyVertex, ExVertex)
+typealias ProvidedVertexType @compat(Union{KeyVertex, ExVertex})
 
 vertex_index{V<:ProvidedVertexType}(v::V, g::AbstractGraph{V}) = vertex_index(v)
 
