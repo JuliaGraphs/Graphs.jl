@@ -2,7 +2,7 @@ using Graphs
 using Base.Test
 
 function has_match(regex, str)
-    !isa(match(regex, str), Nothing)
+    match(regex, str) !== nothing
 end
 
 function xor(a, b)
