@@ -1,10 +1,10 @@
 # Additional tests of the to_dot function
 
-# This adds tests where: 
+# This adds tests where:
 #   1) there are isolated vertices
 #   2) there are vertex attributes to be shown in .dot
-#   3) the graph verifies implements_edge_list(.) == true 
-#      and                implements_vertex_map(.) == true 
+#   3) the graph verifies implements_edge_list(.) == true
+#      and                implements_vertex_map(.) == true
 
 
 # These functions help with dealing with the fact that in two equivalent
@@ -21,10 +21,12 @@
 #           for testing
 
 # NOTE: if to_dot is modified to emit lines with .dot comments, these tests
-#       mail fail erroneously.... 
+#       mail fail erroneously....
+
+using Compat
 
 comRX = Base.compile(r"^[^\[]+\[([^\[]+)\]\h*$"x)
-function   rewriteAttrs(a::String)
+function   rewriteAttrs(a::AbstractString)
      m = match(comRX,a)
      if m!=nothing
          attrs = m.captures[1]
@@ -38,7 +40,7 @@ function   rewriteAttrs(a::String)
      end
 end
 
-function  check_same_dot(a::String,b::String)
+function  check_same_dot(a::AbstractString,b::AbstractString)
     sa=sort( map( rewriteAttrs, split( a, "\n")))
     sb=sort( map( rewriteAttrs, split( b, "\n")))
     la = map(rewriteAttrs,sa)
@@ -97,10 +99,10 @@ using Base.Test
 ###########
 
 immutable MyVtxType
-    name::String
+    name::AbstractString
 end
 
-import Graphs.attributes 
+import Graphs.attributes
 function Graphs.attributes{G<:AbstractGraph}(vtx::MyVtxType,g::G)
      rd = Graphs.AttributeDict()
      rd["label"]=vtx.name
