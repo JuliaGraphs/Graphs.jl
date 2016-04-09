@@ -31,7 +31,7 @@ export
     KeyVertex, Edge, WeightedEdge, ExVertex, ExEdge, AttributeDict,
     collect_edges, collect_weighted_edges,
 
-    add_edge!, add_vertex!, add_edges!, add_vertices!,
+    add_edge!, add_vertex!,
 
     AbstractEdgePropertyInspector, VectorEdgePropertyInspector,
     ConstantEdgePropertyInspector, AttributeEdgePropertyInspector,
