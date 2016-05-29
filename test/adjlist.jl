@@ -99,6 +99,9 @@ for g in [adjlist(KeyVertex{ASCIIString}), adjlist(ASCIIString)]
 
 end
 
+g = adjlist(collect(1:10),is_directed=false)
+add_edge!(g,1,2)
+
 # # construct via adjacency matrix
 # A = [true true true; false false true; false false true]
 # g = simple_adjlist(A)
