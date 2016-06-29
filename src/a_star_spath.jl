@@ -18,6 +18,8 @@ using Compat
 
 export shortest_path
 
+mkindx(t) = typeof(t) == Int ? t : t.index
+
 function a_star_impl!{V,D}(
     graph::AbstractGraph{V},# the graph
     frontier,               # an initialized heap containing the active vertices
@@ -26,24 +28,28 @@ function a_star_impl!{V,D}(
     heuristic::Function,    # heuristic fn (under)estimating distance to target
     t::V)  # the end vertex
 
+    tindx = mkindx(t)
+
     while !isempty(frontier)
         (cost_so_far, path, u) = dequeue!(frontier)
-        if u == t
+        uindx = mkindx(u)
+        if uindx == tindx
             return path
         end
 
         for edge in out_edges(u, graph)
             v = target(edge)
-            if colormap[v] < 2
-                colormap[v] = 1
+            vindx = mkindx(v)
+            if colormap[vindx] < 2
+                colormap[vindx] = 1
                 new_path = cat(1, path, edge)
                 path_cost = cost_so_far + edge_property(edge_dists, edge, graph)
                 enqueue!(frontier,
                         (path_cost, new_path, v),
-                        path_cost + heuristic(v))
+                        path_cost + heuristic(vindx))
             end
         end
-        colormap[u] = 2
+        colormap[uindx] = 2
     end
     nothing
 end
@@ -59,7 +65,8 @@ function shortest_path{V,E,D}(
     frontier = VERSION < v"0.4-" ? PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}() : PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
-    colormap[s] = 1
+    sindx = mkindx(s)
+    colormap[sindx] = 1
     a_star_impl!(graph, frontier, colormap, edge_dists, heuristic, t)
 end
 
