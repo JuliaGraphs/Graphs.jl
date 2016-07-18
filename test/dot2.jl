@@ -89,7 +89,7 @@ end # module testDOT1
 
 module testDOT2
 
-using Graphs
+using Graphs, Compat
 using Base.Test
 
 ###########
