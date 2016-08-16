@@ -132,7 +132,7 @@ add_edge!(gu, 4, 5)
 #
 #################################################
 let
-    for g in [inclist(KeyVertex{ASCIIString}), inclist(ASCIIString)]
+    for g in [inclist(KeyVertex{Compat.ASCIIString}), inclist(Compat.ASCIIString)]
 
         vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
 

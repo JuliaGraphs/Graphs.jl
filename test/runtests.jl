@@ -1,4 +1,5 @@
 using Compat
+import Compat.String
 
 tests = [
     "edgelist",
