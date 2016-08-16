@@ -68,7 +68,7 @@ end
 
 # adjacency list with key vertices
 
-for g in [adjlist(KeyVertex{String}), adjlist(String)]
+for g in [adjlist(KeyVertex{ASCIIString}), adjlist(ASCIIString)]
 
     vs = [  add_vertex!(g, "a"),
             add_vertex!(g, "b"),

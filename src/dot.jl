@@ -77,7 +77,7 @@ end
 
 to_dot(attr::AbstractString, value) = "\"$attr\"=\"$value\""
 
-to_dot(attr_tuple::@compat Tuple{String, Any}) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
+to_dot(attr_tuple::@compat Tuple{UTF8String, Any}) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
 
 function graph_type_string(graph::AbstractGraph)
     is_directed(graph) ? "digraph" : "graph"
