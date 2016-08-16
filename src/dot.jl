@@ -63,7 +63,7 @@ function to_dot(attrs::AttributeDict)
     if isempty(attrs)
         ""
     else
-        string("[",join(map(a -> to_dot(a[1], a[2]), [attrs...]),","),"]")
+        string("[",join(map(a -> to_dot(a[1], a[2]), collect(attrs)),","),"]")
     end
 end
 # write a graph wide attributes example: size = "4,4";
@@ -71,7 +71,7 @@ function to_dot_graph(attrs::AttributeDict)
     if isempty(attrs)
         ""
     else
-        string(join(map(a -> to_dot(a[1], a[2]), [attrs...]),";\n"),";\n")
+        string(join(map(a -> to_dot(a[1], a[2]), collect(attrs)),";\n"),";\n")
     end
 end
 
