@@ -63,7 +63,7 @@ function to_dot(attrs::AttributeDict)
     if isempty(attrs)
         ""
     else
-        string("[",join(map(a -> to_dot(a[1], a[2]), attrs),","),"]")
+        string("[",join(map(a -> to_dot(a[1], a[2]), collect(attrs)),","),"]")
     end
 end
 # write a graph wide attributes example: size = "4,4";
@@ -71,13 +71,13 @@ function to_dot_graph(attrs::AttributeDict)
     if isempty(attrs)
         ""
     else
-        string(join(map(a -> to_dot(a[1], a[2]), attrs),";\n"),";\n")
+        string(join(map(a -> to_dot(a[1], a[2]), collect(attrs)),";\n"),";\n")
     end
 end
 
 to_dot(attr::AbstractString, value) = "\"$attr\"=\"$value\""
 
-to_dot(attr_tuple::@compat Tuple{UTF8String, Any}) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
+to_dot(attr_tuple::@compat Tuple{String, Any}) = "\"$(attr_tuple[1])\"=\"$(attr_tuple[2])\""
 
 function graph_type_string(graph::AbstractGraph)
     is_directed(graph) ? "digraph" : "graph"

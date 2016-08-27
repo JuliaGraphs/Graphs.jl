@@ -1,6 +1,6 @@
 # Common facilities
 
-typealias AttributeDict Dict{UTF8String, Any}
+typealias AttributeDict Dict{String, Any}
 
 #################################################
 #
@@ -19,13 +19,13 @@ vertex_index(v::KeyVertex) = v.index
 
 type ExVertex
     index::Int
-    label::UTF8String
+    label::Compat.UTF8String
     attributes::AttributeDict
 
     ExVertex(i::Int, label::AbstractString) = new(i, label, AttributeDict())
 end
 
-make_vertex(g::AbstractGraph{ExVertex}, label::AbstractString) = ExVertex(num_vertices(g) + 1, utf8(label))
+make_vertex(g::AbstractGraph{ExVertex}, label::AbstractString) = ExVertex(num_vertices(g) + 1, String(label))
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
@@ -179,7 +179,7 @@ edge_property{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
 
 type AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
-  attribute::UTF8String
+  attribute::Compat.UTF8String
 end
 
 function edge_property{T}(visitor::AttributeEdgePropertyInspector{T},edge::ExEdge, g)

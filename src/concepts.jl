@@ -50,7 +50,7 @@ function _graph_implements_code(G::Symbol, concepts::Symbol...)
     stmts = Expr[]
     for c in concepts
         (c in graph_concept_symbols) || error("Invalid concept name: $c")
-        fun = symbol(string("implements_", c))
+        fun = Symbol(string("implements_", c))
         push!(stmts, :( $(fun)(::$(G)) = true ))
     end
     Expr(:block, stmts...)
@@ -66,7 +66,7 @@ function _graph_requires_code(g::Symbol, concepts::Symbol...)
     stmts = Expr[]
     for c in concepts
         (c in graph_concept_symbols) || error("Invalid concept name: $c")
-        fun = symbol(string("implements_", c))
+        fun = Symbol(string("implements_", c))
         msg = "The graph $(g) does not implement a required concept: $(c)."
         push!(stmts, :($(fun)($g) ? nothing : error($msg)) )
     end

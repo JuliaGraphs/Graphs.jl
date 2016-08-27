@@ -143,7 +143,7 @@ rs = [revedge(e) for e in es]
 @test collect(in_neighbors(4, sgu)) == [2, 3, 1]
 
 
-for T in [ExVertex, ASCIIString]
+for T in [ExVertex, Compat.ASCIIString]
 
 #################################################
 #
