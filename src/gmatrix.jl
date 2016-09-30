@@ -33,8 +33,8 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen; returnp
         tempd = Dict{Int,Int}()
         verts = vertices(g)
         for i in 1:length(verts)
-          p[i] = verts[i].index
-          tempd[verts[i].index] = i
+          p[i] = vertex_index(verts[i], g)
+          tempd[p[i]] = i
         end
         i = 0
         for u in verts

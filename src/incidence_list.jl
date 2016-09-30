@@ -48,6 +48,7 @@ num_vertices(g::GenericIncidenceList) = length(g.vertices)
 # vertices(g::GenericIncidenceList) = g.vertices
 
 # dictionary enables version
+vertices_specific(a::UnitRange{Int64}) = a
 vertices_specific{V}(a::Vector{V}) = a
 vertices_specific{V}(d::Dict{Int64,V}) = collect(values(d))
 vertices(g::GenericIncidenceList) = vertices_specific(g.vertices)
