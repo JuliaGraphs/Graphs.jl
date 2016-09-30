@@ -33,11 +33,11 @@ inclist{V,E}(::Type{V}, ::Type{E}; is_directed::Bool = true) = inclist(V[], E; i
 inclist{V}(vs::Vector{V}; is_directed::Bool = true) = inclist(vs, Edge{V}; is_directed=is_directed)
 inclist{V}(::Type{V}; is_directed::Bool = true) = inclist(V[], Edge{V}; is_directed=is_directed)
 
-# starting work on Dict version
+# First constructors on Dict Inc List version (reusing GenericIncidenceList container and functions, few dispatch changes required)
 typealias IncidenceDict{V,E} GenericIncidenceList{V, E, Dict{Int64,V}, Dict{Int64,Vector{E}}}
 incdict{V,E}(vs::Dict{Int64,V}, ::Type{E}; is_directed::Bool = true) =
     IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int64, E}())
-incdict{V}(vs::Dict{Int64,V}; is_directed::Bool = true) = incdict(vs, Edge{V}; is_directed=is_directed)
+incdict{V}(::Type{V}; is_directed::Bool = true) = incdict(Dict{Int64,V}(), Edge{V}; is_directed=is_directed)
 
 
 # required interfaces
