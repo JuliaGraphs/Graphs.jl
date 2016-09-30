@@ -48,6 +48,9 @@ export
     GenericIncidenceList, SimpleIncidenceList, VectorIncidenceList, IncidenceList,
     simple_inclist, inclist,
 
+    # dict based graphs
+    IncidenceDict, incdict,
+
     # graph
     GenericGraph, SimpleGraph, Graph, simple_graph, graph,
 

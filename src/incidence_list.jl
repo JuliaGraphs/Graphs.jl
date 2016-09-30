@@ -33,12 +33,24 @@ inclist{V,E}(::Type{V}, ::Type{E}; is_directed::Bool = true) = inclist(V[], E; i
 inclist{V}(vs::Vector{V}; is_directed::Bool = true) = inclist(vs, Edge{V}; is_directed=is_directed)
 inclist{V}(::Type{V}; is_directed::Bool = true) = inclist(V[], Edge{V}; is_directed=is_directed)
 
+# starting work on Dict version
+typealias IncidenceDict{V,E} GenericIncidenceList{V, E, Dict{Int64,V}, Dict{Int64,Vector{E}}}
+incdict{V,E}(vs::Dict{Int64,V}, ::Type{E}; is_directed::Bool = true) =
+    IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int64, E}())
+incdict{V}(vs::Dict{Int64,V}; is_directed::Bool = true) = incdict(vs, Edge{V}; is_directed=is_directed)
+
+
 # required interfaces
 
 is_directed(g::GenericIncidenceList) = g.is_directed
 
 num_vertices(g::GenericIncidenceList) = length(g.vertices)
-vertices(g::GenericIncidenceList) = g.vertices
+# vertices(g::GenericIncidenceList) = g.vertices
+
+# dictionary enables version
+vertices_specific{V}(a::Vector{V}) = a
+vertices_specific{V}(d::Dict{Int64,V}) = collect(values(d))
+vertices(g::GenericIncidenceList) = vertices_specific(g.vertices)
 
 num_edges(g::GenericIncidenceList) = g.nedges
 
@@ -50,10 +62,21 @@ out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist
 
 # mutation
 
-function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
-    push!(g.vertices, v)
-    push!(g.inclist, Array(E,0))
+function add_vertex!{V,E}(vertices::Vector{V}, inclist::Vector{E}, v::V)
+    push!(vertices, v)
+    push!(inclist, Array(E,0))
     v
+end
+function add_vertex!{V,E}(vertices::Dict{Int64, V}, inclist::Dict{Int64,E}, v::V)
+  if haskey(vertices, v.index)
+    error("Already have index $(v.index) in g")
+  end
+  vertices[v.index] = v
+  inclist[v.index] = Array(E,0)
+  v
+end
+function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
+  add_vertex!(g.vertices, g.inclist, v)
 end
 
 add_vertex!(g::GenericIncidenceList, x) = add_vertex!(g, make_vertex(g, x))
