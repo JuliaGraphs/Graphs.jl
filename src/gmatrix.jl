@@ -4,9 +4,9 @@
 #
 ###########################################################
 
-function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
+function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen; returnpermutation::Bool=false)
     @graph_requires g vertex_list vertex_map
-
+    p = nothing
     if implements_edge_list(g)
         if is_directed(g)
             for e in edges(g)
@@ -29,23 +29,32 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen)
         end
 
     elseif implements_adjacency_list(g)
-        for u in vertices(g)
+        p = zeros(Int64,size(a,1))
+        tempd = Dict{Int,Int}()
+        verts = vertices(g)
+        for i in 1:length(verts)
+          p[i] = vertex_index(verts[i], g)
+          tempd[p[i]] = i
+        end
+        i = 0
+        for u in verts
+            i+=1
             ui = vertex_index(u, g)
             for v in out_neighbors(u, g)
                 vi = vertex_index(v, g)
                 val = get(gen, g, u, v)
-                a[ui, vi] = val
+                a[i, tempd[vi]] = val # p[i] -> ui, tempd[vi]->i
             end
         end
     else
         error("g does not implement required interface.")
     end
 
-    return a
+    return returnpermutation ? (a, p) : a
 end
 
-matrix_from_adjpairs(g::AbstractGraph, gen) =
-    (n = num_vertices(g); matrix_from_adjpairs!(zeros(eltype(gen), n, n), g, gen))
+matrix_from_adjpairs(g::AbstractGraph, gen; returnpermutation::Bool=false) =
+    (n = num_vertices(g); matrix_from_adjpairs!(zeros(eltype(gen), n, n), g, gen, returnpermutation=returnpermutation))
 
 
 function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
@@ -238,8 +247,8 @@ type _GenUnit{T} end
 Base.get{T,V}(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) = one(T)
 Base.eltype{T}(::_GenUnit{T}) = T
 
-adjacency_matrix{T<:Number}(g::AbstractGraph, ::Type{T}) = matrix_from_adjpairs(g, _GenUnit{T}())
-adjacency_matrix(g::AbstractGraph) = adjacency_matrix(g, Bool)
+adjacency_matrix{T<:Number}(g::AbstractGraph, ::Type{T}; returnpermutation::Bool=false) = matrix_from_adjpairs(g, _GenUnit{T}(), returnpermutation=returnpermutation)
+adjacency_matrix(g::AbstractGraph; returnpermutation::Bool=false) = adjacency_matrix(g, Bool, returnpermutation=returnpermutation)
 
 adjacency_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T}) = sparse_matrix_from_adjpairs(g, _GenUnit{T}())
 adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
