@@ -20,7 +20,8 @@ tests = [
     "cliques",
     "random",
     "generators",
-    "maximum_adjacency_visit" ]
+    "maximum_adjacency_visit",
+    "issue_related_tests" ]
 
 
 for t in tests
