@@ -104,9 +104,9 @@ function add_edge!{V,E}(g::GenericGraph{V,E}, u::V, v::V, e::E)
     ui = vertex_index(u, g)::Int
     vi = vertex_index(v, g)::Int
 
-    push!(g.edges, e)
     push!(g.finclist[ui], e)
     push!(g.binclist[vi], e)
+    push!(g.edges, e)
 
     if !g.is_directed
         rev_e = revedge(e)
