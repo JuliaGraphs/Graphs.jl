@@ -24,7 +24,7 @@ function to_dot{G<:AbstractGraph}(graph::G, stream::IO,attrs::AttributeDict=Attr
 
     write(stream, "$(graph_type_string(graph)) graphname {\n")
     write(stream, "$(to_dot_graph(attrs))")
-    if implements_edge_list(graph) && implements_vertex_map(graph) 
+    if implements_edge_list(graph) && implements_vertex_map(graph)
         for vtx in  vertices(graph)
             attrs = has_vertex_attrs ?  "\t$(to_dot(attributes(vtx,graph)))" : ""
             write(stream,"$(vertex_index(vtx,graph))$attrs\n")
@@ -87,8 +87,16 @@ function edge_op(graph::AbstractGraph)
     is_directed(graph) ? "->" : "--"
 end
 
-function plot(g::AbstractGraph)
-    stdin, proc = open(`neato -Tx11`, "w")
+function plot(g::AbstractGraph;gviz_args="")
+    if !isequal(gviz_args,"")
+        # Provide the command line code for GraphViz directly
+        cla_list = split(gviz_args)
+        arg = `$cla_list`
+    else
+        # Default uses x11 window
+        arg = `neato -Tx11`
+    end
+    stdin, proc = open(arg, "w")
     to_dot(g, stdin)
     close(stdin)
 end
