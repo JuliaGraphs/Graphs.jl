@@ -3,12 +3,13 @@
 [![Build Status](https://travis-ci.org/JuliaLang/Graphs.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/Graphs.jl)
 [![Coverage Status](https://img.shields.io/coveralls/JuliaLang/Graphs.jl.svg)](https://coveralls.io/r/JuliaLang/Graphs.jl?branch=master)
 
-[![Graphs](http://pkg.julialang.org/badges/Graphs_0.3.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.3)
 [![Graphs](http://pkg.julialang.org/badges/Graphs_0.4.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.4)
+[![Graphs](http://pkg.julialang.org/badges/Graphs_0.5.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.5)
+[![Graphs](http://pkg.julialang.org/badges/Graphs_0.6.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.6)
 
-Graphs.jl is a Julia package that provides graph types and algorithms. The design of this package is inspired by the [Boost Graph Library](http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html) (*e.g.* using standardized generic interfaces), while taking advantage of Julia's language features (*e.g.* multiple dispatch).
+Graphs.jl is a Julia package that provides graph types and algorithms. The design of this package is inspired by the [Boost Graph Library](http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html) (*e.g.* using standardized generic interfaces), while taking advantage of Julia's language features (*e.g.* multiple dispatch). This library allows storing of own information in the graph structure -- useful in many cases.
 
-**Note:** as of 2016, this package's original author is no longer actively maintaining it. See the discussion [here]( https://github.com/JuliaArchive/Graphs.jl/issues/227#issuecomment-242917425).
+**Note:** as of 2016, this package's original author is no longer actively maintaining it, but there are several active users in the community. We'll engage as best we can, and feel free to open issues here to improve this library. There is a sister library, [LightGraphs](https://github.com/JuliaGraphs/LightGraphs.jl), focused on a slightly different set of use cases.
 
 ### Main Features
 
