@@ -10,16 +10,21 @@
 type MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: AbstractGraphVisitor
+@static if VERSION > v"0.6-"
+  abstract type AbstractMASVisitor <: AbstractGraphVisitor end
+else
+  abstract AbstractMASVisitor <: AbstractGraphVisitor
+  import Base.Collections.PriorityQueue
+end
 
 function maximum_adjacency_visit_impl!{V,E,W}(
   graph::AbstractGraph{V,E},	                      # the graph
-  pq::Collections.PriorityQueue{V,W},               # priority queue
+  pq::PriorityQueue{V,W},                           # priority queue
   visitor::AbstractMASVisitor,                      # the visitor
   colormap::Vector{Int})                            # traversal status
 
   while !isempty(pq)
-    u = Collections.dequeue!(pq)
+    u = VERSION > v"0.6-" ? DataStructures.dequeue!(pq) : Collections.dequeue!(pq)
     discover_vertex!(visitor, u)
     for e in out_edges(u, graph)
       examine_edge!(visitor, e, 0)
@@ -42,7 +47,9 @@ function traverse_graph{V,E,W}(
   colormap::Vector{Int},
   ::Type{W})
 
-  if VERSION > v"0.4.0-"
+  if VERSION > v"0.6.0-"
+    pq = PriorityQueue(V,W,Base.Order.Reverse)
+  elseif VERSION > v"0.4.0-"
     pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
   else
     pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
