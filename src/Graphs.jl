@@ -4,8 +4,6 @@ using DataStructures, Compat
 import Base: start, done, next, show, ==, <
 import Base: length, isempty, size, getindex, isless
 
-QueueModule = VERSION < v"0.6.0" ? Collections : DataStructures
-
 export
     AbstractGraph,
 

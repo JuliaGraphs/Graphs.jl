@@ -50,10 +50,10 @@ function traverse_graph{V,E,W}(
 
   if VERSION > v"0.6.0-"
     pq = PriorityQueue(V,W,Base.Order.Reverse)
-  elseif VERSION > v"0.4.0-"
+  else  #if VERSION > v"0.4.0-"
     pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
-  else
-    pq = PriorityQueue{V,W}(Base.Order.Reverse) # Collections.
+  # else
+  #   pq = PriorityQueue{V,W}(Base.Order.Reverse) # Collections.
   end
 
   # Set number of visited neighbours for all vertices to 0
