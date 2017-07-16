@@ -16,7 +16,7 @@ function breadth_first_visit_impl!(
     visitor::AbstractGraphVisitor)  # the visitor
 
     while !isempty(queue)
-        u = dequeue!(queue)
+        u = QueueModule.dequeue!(queue)
         open_vertex!(visitor, u)
 
         for v in out_neighbors(u, graph)
@@ -30,7 +30,7 @@ function breadth_first_visit_impl!(
                 if !discover_vertex!(visitor, v)
                     return
                 end
-                enqueue!(queue, v)
+                QueueModule.enqueue!(queue, v)
             end
         end
 
@@ -62,7 +62,7 @@ function traverse_graph{V,E}(
     if !discover_vertex!(visitor, s)
         return
     end
-    enqueue!(que, s)
+    QueueModule.enqueue!(que, s)
 
     breadth_first_visit_impl!(graph, que, colormap, visitor)
 end
@@ -88,7 +88,7 @@ function traverse_graph{V,E}(
         if !discover_vertex!(visitor, s)
             return
         end
-        enqueue!(que, s)
+        QueueModule.enqueue!(que, s)
     end
 
     breadth_first_visit_impl!(graph, que, colormap, visitor)

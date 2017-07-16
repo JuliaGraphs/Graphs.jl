@@ -10,16 +10,16 @@
 type MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-abstract AbstractMASVisitor <: AbstractGraphVisitor
+@compat abstract type AbstractMASVisitor <: AbstractGraphVisitor end
 
 function maximum_adjacency_visit_impl!{V,E,W}(
   graph::AbstractGraph{V,E},	                      # the graph
-  pq::Collections.PriorityQueue{V,W},               # priority queue
+  pq::PriorityQueue{V,W},            # priority queue, was in Collections.
   visitor::AbstractMASVisitor,                      # the visitor
   colormap::Vector{Int})                            # traversal status
 
   while !isempty(pq)
-    u = Collections.dequeue!(pq)
+    u = QueueModule.dequeue!(pq) # Collections
     discover_vertex!(visitor, u)
     for e in out_edges(u, graph)
       examine_edge!(visitor, e, 0)
@@ -43,9 +43,9 @@ function traverse_graph{V,E,W}(
   ::Type{W})
 
   if VERSION > v"0.4.0-"
-    pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
+    pq = PriorityQueue(V,W,Base.Order.Reverse) # Collections.
   else
-    pq = Collections.PriorityQueue{V,W}(Base.Order.Reverse)
+    pq = PriorityQueue{V,W}(Base.Order.Reverse) # Collections.
   end
 
   # Set number of visited neighbours for all vertices to 0
@@ -61,7 +61,7 @@ function traverse_graph{V,E,W}(
   pq[s] = one(W)
 
   #start traversing the graph
-  maximum_adjacency_visit_impl!(graph, pq, visitor, colormap)	
+  maximum_adjacency_visit_impl!(graph, pq, visitor, colormap)
 end
 
 
@@ -114,7 +114,7 @@ function examine_edge!(vis::MinCutVisitor, e, color::Int)
     vis.cutweight -= ew
   else
     vis.cutweight += ew
-  end  
+  end
 end
 
 function close_vertex!(vis::MinCutVisitor, v)
@@ -197,14 +197,14 @@ function min_cut{V,E}(graph::AbstractGraph{V,E})
 end
 
 function maximum_adjacency_visit{V,E,W}(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}; log::Bool=false, io::IO=STDOUT)
-  visitor = MASVisitor(io, V[],edge_weights,log)  
+  visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
 
 function maximum_adjacency_visit{V,E,W}(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=STDOUT)
   edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
-  visitor = MASVisitor(io, V[],edge_weights,log)  
+  visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
