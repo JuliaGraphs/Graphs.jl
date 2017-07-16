@@ -14,7 +14,7 @@ end
 function to_dot(graph::AbstractGraph, attrs::AttributeDict=AttributeDict())
     str = IOBuffer()
     to_dot(graph, str, attrs)
-    takebuf_string(str)
+    @compat String(take!(str)) #takebuf_string(str)
 end
 
 # Write the dot representation of a graph to a stream.

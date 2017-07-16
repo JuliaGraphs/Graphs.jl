@@ -15,6 +15,7 @@ module AStar
 using Graphs
 using Base.Collections
 using Compat
+using DataStructures
 
 export shortest_path
 
@@ -31,7 +32,7 @@ function a_star_impl!{V,D}(
     tindx = mkindx(t)
 
     while !isempty(frontier)
-        (cost_so_far, path, u) = dequeue!(frontier)
+        (cost_so_far, path, u) = DataStructures.dequeue!(frontier)
         uindx = mkindx(u)
         if uindx == tindx
             return path
@@ -44,7 +45,7 @@ function a_star_impl!{V,D}(
                 colormap[vindx] = 1
                 new_path = cat(1, path, edge)
                 path_cost = cost_so_far + edge_property(edge_dists, edge, graph)
-                enqueue!(frontier,
+                DataStructures.enqueue!(frontier,
                         (path_cost, new_path, v),
                         path_cost + heuristic(vindx))
             end
@@ -62,7 +63,7 @@ function shortest_path{V,E,D}(
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
             # heuristic (under)estimating distance to target
-    frontier = VERSION < v"0.4-" ? PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}() : PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
+    frontier = DataStructures.PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
     sindx = mkindx(s)

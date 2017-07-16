@@ -8,8 +8,8 @@ end
 
 @graph_implements GenericEdgeList vertex_list edge_list vertex_map edge_map
 
-typealias SimpleEdgeList{E} GenericEdgeList{Int,E,UnitRange{Int},Vector{E}}
-typealias EdgeList{V,E} GenericEdgeList{V,E,Vector{V},Vector{E}}
+@compat const SimpleEdgeList{E} = GenericEdgeList{Int,E,UnitRange{Int},Vector{E}}
+@compat const EdgeList{V,E} = GenericEdgeList{V,E,Vector{V},Vector{E}}
 
 # construction
 

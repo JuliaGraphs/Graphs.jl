@@ -1,6 +1,6 @@
 # The concept and trivial implementation of graph visitors
 
-abstract AbstractGraphVisitor
+@compat abstract type AbstractGraphVisitor end
 
 # trivial implementation
 
@@ -26,7 +26,7 @@ end
 
 
 # This is the common base for BreadthFirst and DepthFirst
-abstract AbstractGraphVisitAlgorithm
+@compat abstract type AbstractGraphVisitAlgorithm end
 
 
 ###########################################################

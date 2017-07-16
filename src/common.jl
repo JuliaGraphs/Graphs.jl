@@ -1,6 +1,7 @@
 # Common facilities
 
-typealias AttributeDict Dict{String, Any}
+#typealias
+@compat const AttributeDict = Dict{String, Any}
 
 #################################################
 #
@@ -29,7 +30,7 @@ make_vertex(g::AbstractGraph{ExVertex}, label::AbstractString) = ExVertex(num_ve
 vertex_index(v::ExVertex) = v.index
 attributes(v::ExVertex, g::AbstractGraph) = v.attributes
 
-typealias ProvidedVertexType @compat(Union{KeyVertex, ExVertex})
+@compat const ProvidedVertexType = @compat(Union{KeyVertex, ExVertex})
 
 vertex_index{V<:ProvidedVertexType}(v::V, g::AbstractGraph{V}) = vertex_index(v)
 
@@ -55,7 +56,7 @@ immutable Edge{V}
     source::V
     target::V
 end
-typealias IEdge Edge{Int}
+@compat const IEdge = Edge{Int}
 
 Edge{V}(i::Int, s::V, t::V) = Edge{V}(i, s, t)
 make_edge{V,E<:Edge}(g::AbstractGraph{V,E}, s::V, t::V) = Edge(num_edges(g) + 1, s, t)
@@ -159,7 +160,7 @@ next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 #
 ################################################
 
-abstract AbstractEdgePropertyInspector{T}
+@compat abstract type AbstractEdgePropertyInspector{T} end
 
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
 
