@@ -42,7 +42,7 @@ end
 #
 ###################################################################
 
-abstract AbstractDijkstraVisitor
+@compat abstract type AbstractDijkstraVisitor end
 
 # invoked when a new vertex is first encountered
 discover_vertex!(visitor::AbstractDijkstraVisitor, u, v, d) = nothing

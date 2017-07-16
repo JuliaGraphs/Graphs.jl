@@ -159,7 +159,7 @@ next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 #
 ################################################
 
-abstract AbstractEdgePropertyInspector{T}
+@compat abstract type AbstractEdgePropertyInspector{T} end
 
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
 
