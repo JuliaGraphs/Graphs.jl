@@ -1,7 +1,7 @@
 ## Graphs.jl
 
-[![Build Status](https://travis-ci.org/JuliaLang/Graphs.jl.svg?branch=master)](https://travis-ci.org/JuliaLang/Graphs.jl)
-[![Coverage Status](https://img.shields.io/coveralls/JuliaLang/Graphs.jl.svg)](https://coveralls.io/r/JuliaLang/Graphs.jl?branch=master)
+[![Build Status](https://travis-ci.org/JuliaArchive/Graphs.jl.svg?branch=master)](https://travis-ci.org/JuliaArchive/Graphs.jl)
+[![Coverage Status](https://img.shields.io/coveralls/JuliaArchive/Graphs.jl.svg)](https://coveralls.io/r/JuliaArchive/Graphs.jl?branch=master)
 
 [![Graphs](http://pkg.julialang.org/badges/Graphs_0.5.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.5)
 [![Graphs](http://pkg.julialang.org/badges/Graphs_0.6.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.6)
