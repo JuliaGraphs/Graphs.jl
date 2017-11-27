@@ -20,7 +20,7 @@ vertex_index(v::KeyVertex) = v.index
 
 type ExVertex
     index::Int
-    label::Compat.UTF8String
+    label::String #Compat.UTF8String
     attributes::AttributeDict
 
     ExVertex(i::Int, label::AbstractString) = new(i, label, AttributeDict())
@@ -180,7 +180,7 @@ edge_property{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
 
 type AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
-  attribute::Compat.UTF8String
+  attribute::String
 end
 
 function edge_property{T}(visitor::AttributeEdgePropertyInspector{T},edge::ExEdge, g)
@@ -205,7 +205,7 @@ function collect_edges{V,E}(graph::AbstractGraph{V,E})
         collect(edges(graph))
 
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)
-        edge_list = Array(E, 0)
+        edge_list = Array{E}(0)
         sizehint!(edge_list, num_edges(graph))
 
         for v in vertices(graph)
@@ -231,7 +231,7 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
 
     edge_property_requirement(weights, graph)
 
-    wedges = Array(WeightedEdge{E,W}, 0)
+    wedges = Array{WeightedEdge{E,W}}(0)
     sizehint!(wedges, num_edges(graph))
 
     if implements_edge_list(graph)

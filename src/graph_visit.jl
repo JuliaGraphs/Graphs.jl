@@ -41,7 +41,7 @@ type VertexListVisitor{V} <: AbstractGraphVisitor
     vertices::Vector{V}
 
     function VertexListVisitor(n::Integer=0)
-        vs = Array(V, 0)
+        vs = Array{V}(0)
         sizehint!(vs, n)
         new(vs)
     end

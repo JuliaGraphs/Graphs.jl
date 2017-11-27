@@ -65,7 +65,7 @@ out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist
 
 function add_vertex!{V,E}(vertices::Vector{V}, inclist::Vector{E}, v::V)
     push!(vertices, v)
-    push!(inclist, Array(E,0))
+    push!(inclist, Array{E}(0))
     v
 end
 function add_vertex!{V,E}(vertices::Dict{Int64, V}, inclist::Dict{Int64,E}, v::V)
@@ -73,7 +73,7 @@ function add_vertex!{V,E}(vertices::Dict{Int64, V}, inclist::Dict{Int64,E}, v::V
     error("Already have index $(v.index) in g")
   end
   vertices[v.index] = v
-  inclist[v.index] = Array(E,0)
+  inclist[v.index] = Array{E}(0)
   v
 end
 function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)

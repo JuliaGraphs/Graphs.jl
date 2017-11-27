@@ -63,9 +63,9 @@ function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array(Int, ne)
-    J = Array(Int, ne)
-    vals = Array(eltype(gen), ne)
+    I = Array{Int}(ne)
+    J = Array{Int}(ne)
+    vals = Array{eltype(gen)}(ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -173,9 +173,9 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array(Int, ne)
-    J = Array(Int, ne)
-    vals = Array(eltype(gen), ne)
+    I = Array{Int}(ne)
+    J = Array{Int}(ne)
+    vals = Array{eltype(gen)}(ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -381,9 +381,9 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array(Int, nnz)
-    J = Array(Int, nnz)
-    vals = Array(T, nnz)
+    I = Array{Int}(nnz)
+    J = Array{Int}(nnz)
+    vals = Array{T}(nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -460,9 +460,9 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array(Int, nnz)
-    J = Array(Int, nnz)
-    vals = Array(T, nnz)
+    I = Array{Int}(nnz)
+    J = Array{Int}(nnz)
+    vals = Array{T}(nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -545,7 +545,7 @@ function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
     colptr = A.colptr
     rowval = A.rowval
     n = size(A, 1)
-    adjlist = Array(Array{Ti,1}, n)
+    adjlist = Array{Array{Ti,1}}(n)
     s = 0
     for j in 1:n
         adjj = Ti[]

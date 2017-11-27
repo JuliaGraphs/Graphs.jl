@@ -49,7 +49,7 @@ gu = simple_edgelist(5, eds; is_directed=false)
 
 ## edge list (based on vector of vertices)
 
-for T in [ ExVertex, Compat.ASCIIString ]
+for T in [ ExVertex, String ]  # Compat.ASCIIString
     g = edgelist(T[], ExEdge{T}[])
 
     vs = [ add_vertex!(g, "a"),

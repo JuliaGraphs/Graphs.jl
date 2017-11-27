@@ -26,7 +26,7 @@ end
 
 function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
-    parents = Array(V, n)
+    parents = Array{V}(n)
     parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
@@ -256,7 +256,7 @@ dijkstra_shortest_paths{V}(
 
 function enumerate_indices(parent_indices::Vector{Int}, dest_indices::Vector{Int})
     num_dest = length(dest_indices)
-    all_paths = Array(Vector{Int},num_dest)
+    all_paths = Array{Vector{Int}}(num_dest)
     for i=1:num_dest
         all_paths[i] = Int[]
         index = dest_indices[i]

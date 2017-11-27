@@ -63,7 +63,8 @@ function shortest_path{V,E,D}(
     t::V,                       # the end vertex
     heuristic::Function = n -> 0)
             # heuristic (under)estimating distance to target
-    frontier = DataStructures.PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
+    frontier = DataStructures.PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}()
+    # frontier = DataStructures.PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
     sindx = mkindx(s)

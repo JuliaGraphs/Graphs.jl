@@ -18,7 +18,7 @@ end
 
 function create_bellman_ford_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
-    parents = Array(V, n)
+    parents = Array{V}(n)
     parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
 
@@ -109,4 +109,3 @@ function has_negative_edge_cycle{V, D}(
     edge_inspector = VectorEdgePropertyInspector{D}(edge_dists)
     has_negative_edge_cycle(graph, edge_inspector)
 end
-

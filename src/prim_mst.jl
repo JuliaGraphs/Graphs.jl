@@ -28,7 +28,7 @@ end
 function create_prim_states{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
     n = num_vertices(g)
 
-    parents = Array(V, n)
+    parents = Array{V}(n)
     colormap = zeros(Int, n)
     weightmap = zeros(W, n)
 
@@ -74,8 +74,8 @@ type PrimVisitor{E,W} <: AbstractPrimVisitor
 end
 
 function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
-    edges = Array(E, 0)
-    weights = Array(W, 0)
+    edges = Array{E}(0)
+    weights = Array{W}(0)
     n = num_vertices(g)
     if n > 1
         sizehint!(edges, n-1)
