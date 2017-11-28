@@ -50,4 +50,4 @@ parity, bestcut = min_cut(g)
 
 vertices = maximum_adjacency_visit(g)
 
-@test vertices == Int64[1, 2, 5, 6, 3, 7, 4, 8]
+@test vertices == Int[1, 2, 5, 6, 3, 7, 4, 8]

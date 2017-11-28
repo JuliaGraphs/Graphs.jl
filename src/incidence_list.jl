@@ -34,10 +34,10 @@ inclist{V}(vs::Vector{V}; is_directed::Bool = true) = inclist(vs, Edge{V}; is_di
 inclist{V}(::Type{V}; is_directed::Bool = true) = inclist(V[], Edge{V}; is_directed=is_directed)
 
 # First constructors on Dict Inc List version (reusing GenericIncidenceList container and functions, few dispatch changes required)
-@compat const IncidenceDict{V,E} = GenericIncidenceList{V, E, Dict{Int64,V}, Dict{Int64,Vector{E}}}
-incdict{V,E}(vs::Dict{Int64,V}, ::Type{E}; is_directed::Bool = true) =
-    IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int64, E}())
-incdict{V}(::Type{V}; is_directed::Bool = true) = incdict(Dict{Int64,V}(), Edge{V}; is_directed=is_directed)
+@compat const IncidenceDict{V,E} = GenericIncidenceList{V, E, Dict{Int,V}, Dict{Int,Vector{E}}}
+incdict{V,E}(vs::Dict{Int,V}, ::Type{E}; is_directed::Bool = true) =
+    IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int, E}())
+incdict{V}(::Type{V}; is_directed::Bool = true) = incdict(Dict{Int,V}(), Edge{V}; is_directed=is_directed)
 
 
 # required interfaces
@@ -48,9 +48,9 @@ num_vertices(g::GenericIncidenceList) = length(g.vertices)
 # vertices(g::GenericIncidenceList) = g.vertices
 
 # dictionary enables version
-vertices_specific(a::UnitRange{Int64}) = a
+vertices_specific(a::UnitRange{Int}) = a
 vertices_specific{V}(a::Vector{V}) = a
-vertices_specific{V}(d::Dict{Int64,V}) = collect(values(d))
+vertices_specific{V}(d::Dict{Int,V}) = collect(values(d))
 vertices(g::GenericIncidenceList) = vertices_specific(g.vertices)
 
 num_edges(g::GenericIncidenceList) = g.nedges
@@ -68,7 +68,7 @@ function add_vertex!{V,E}(vertices::Vector{V}, inclist::Vector{E}, v::V)
     push!(inclist, Array{E}(0))
     v
 end
-function add_vertex!{V,E}(vertices::Dict{Int64, V}, inclist::Dict{Int64,E}, v::V)
+function add_vertex!{V,E}(vertices::Dict{Int, V}, inclist::Dict{Int,E}, v::V)
   if haskey(vertices, v.index)
     error("Already have index $(v.index) in g")
   end

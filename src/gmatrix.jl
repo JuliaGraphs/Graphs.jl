@@ -29,7 +29,7 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen; returnp
         end
 
     elseif implements_adjacency_list(g)
-        p = zeros(Int64,size(a,1))
+        p = zeros(Int,size(a,1))
         tempd = Dict{Int,Int}()
         verts = vertices(g)
         for i in 1:length(verts)
