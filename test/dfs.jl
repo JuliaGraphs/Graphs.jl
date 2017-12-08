@@ -3,7 +3,7 @@
 using Graphs
 using Base.Test
 
-type GraphTest
+mutable struct GraphTest
     graph_edges::Array{@compat(Tuple{Int,Int}),1}
     dfs_path::Array{Int,1}
     is_cyclic::Bool

@@ -45,7 +45,7 @@ function  check_same_dot(a::AbstractString,b::AbstractString)
     sb=sort( map( rewriteAttrs, split( b, "\n")))
     la = map(rewriteAttrs,sa)
     lb = map(rewriteAttrs,sb)
-    return   la==lb 
+    return   la==lb
 end
 
 
@@ -62,7 +62,7 @@ using Base.Test
 #     and no vertex attributes
 ###########
 
-### 1) graph without node attributes 
+### 1) graph without node attributes
 sgd = simple_graph(3)
 
 @test @show implements_edge_list(sgd)==true
@@ -74,7 +74,7 @@ dot1=to_dot(sgd)
 println(dot1)
 @test Main.check_same_dot(dot1,"digraph graphname {\n1\n2\n3\n4\n}\n")
 
-### 2) graph without node attributes but with some edges 
+### 2) graph without node attributes but with some edges
 add_edge!(sgd,1,3)
 add_edge!(sgd,3,1)
 add_edge!(sgd,2,3)
@@ -98,7 +98,7 @@ using Base.Test
 #     and vertex attributes
 ###########
 
-immutable MyVtxType
+struct MyVtxType
     name::AbstractString
 end
 
@@ -138,7 +138,7 @@ agu = Graphs.graph( map( MyVtxType,[ "a", "b", "c","d"]), Graphs.Edge{MyVtxType}
                       is_directed=false)
 
 vl = agu.vertices
-    
+
 add_edge!(agu, vl[1], vl[3] )
 add_edge!(agu,  vl[2], vl[3])
 

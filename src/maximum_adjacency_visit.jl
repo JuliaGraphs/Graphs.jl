@@ -7,7 +7,7 @@
 #
 #################################################
 
-type MaximumAdjacency <: AbstractGraphVisitAlgorithm
+mutable struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
 @compat abstract type AbstractMASVisitor <: AbstractGraphVisitor end
@@ -89,7 +89,7 @@ end
 #
 #################################################
 
-type MinCutVisitor{G<:AbstractGraph,V,W} <: AbstractMASVisitor
+mutable struct MinCutVisitor{G<:AbstractGraph,V,W} <: AbstractMASVisitor
   graph::G
   parities::Vector{Bool}
   colormap::Vector{Int}
@@ -148,7 +148,7 @@ end
 #
 #################################################
 
-type MASVisitor{V,W} <: AbstractMASVisitor
+mutable struct MASVisitor{V,W} <: AbstractMASVisitor
   io::IO
   vertices::Vector{V}
   edge_weights::AbstractEdgePropertyInspector{W}

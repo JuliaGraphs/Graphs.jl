@@ -182,14 +182,14 @@ next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 
 # edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
 
-type ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+mutable struct ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   value::T
 end
 
 edge_property{T}(visitor::ConstantEdgePropertyInspector{T}, e, g) = visitor.value
 
 
-type VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+mutable struct VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   values::Vector{T}
 end
 
@@ -197,7 +197,7 @@ edge_property{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{
 
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
 
-type AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+mutable struct AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   attribute::String
 end
 
@@ -238,7 +238,7 @@ function collect_edges{V,E}(graph::AbstractGraph{V,E})
 end
 
 
-immutable WeightedEdge{E,W}
+struct WeightedEdge{E,W}
     edge::E
     weight::W
 end

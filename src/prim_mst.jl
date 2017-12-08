@@ -6,7 +6,7 @@
 #
 ###################################################################
 
-type PrimStates{V,W,Heap,H}
+mutable struct PrimStates{V,W,Heap,H}
     parents::Vector{V}
     colormap::Vector{Int}
     weightmap::Vector{W}
@@ -15,7 +15,7 @@ type PrimStates{V,W,Heap,H}
     hmap::Vector{H}
 end
 
-immutable PrimHEntry{V,E,W}
+struct PrimHEntry{V,E,W}
     vertex::V
     edge::E
     weight::W
@@ -63,12 +63,12 @@ close_vertex!(visitor::AbstractPrimVisitor, v) = nothing
 
 # trivial visitor
 
-type TrivialPrimVisitor <: AbstractPrimVisitor
+mutable struct TrivialPrimVisitor <: AbstractPrimVisitor
 end
 
 # default visitor
 
-type PrimVisitor{E,W} <: AbstractPrimVisitor
+mutable struct PrimVisitor{E,W} <: AbstractPrimVisitor
     edges::Vector{E}
     weights::Vector{W}
 end
@@ -93,7 +93,7 @@ end
 
 # log visitor
 
-type LogPrimVisitor <: AbstractPrimVisitor
+mutable struct LogPrimVisitor <: AbstractPrimVisitor
     io::IO
 end
 

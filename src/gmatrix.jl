@@ -242,7 +242,7 @@ end
 
 ### adjacency matrix
 
-type _GenUnit{T} end
+mutable struct _GenUnit{T} end
 
 Base.get{T,V}(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) = one(T)
 Base.eltype{T}(::_GenUnit{T}) = T
@@ -255,7 +255,7 @@ adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
 
 ### weight matrix
 
-type _GenEdgeWeight{Weights}
+mutable struct _GenEdgeWeight{Weights}
     weights::Weights
 end
 

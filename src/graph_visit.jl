@@ -21,7 +21,7 @@ examine_edge!(vis::AbstractGraphVisitor, e, color::Int) = nothing
 close_vertex!(vis::AbstractGraphVisitor, v) = nothing
 
 
-type TrivialGraphVisitor <: AbstractGraphVisitor
+mutable struct TrivialGraphVisitor <: AbstractGraphVisitor
 end
 
 
@@ -37,13 +37,13 @@ end
 
 # List vertices by the order of being discovered
 
-type VertexListVisitor{V} <: AbstractGraphVisitor
+mutable struct VertexListVisitor{V} <: AbstractGraphVisitor
     vertices::Vector{V}
 
-    function VertexListVisitor(n::Integer=0)
+    function VertexListVisitor{V}(n::Integer=0) where {V}
         vs = Array{V}(0)
         sizehint!(vs, n)
-        new(vs)
+        new{V}(vs)
     end
 end
 
@@ -65,7 +65,7 @@ end
 
 # Print visit log
 
-type LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
+mutable struct LogGraphVisitor{S<:IO} <: AbstractGraphVisitor
     io::S
 end
 

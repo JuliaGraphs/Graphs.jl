@@ -10,7 +10,7 @@
 #
 #################################################
 
-type GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
+mutable struct GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
     is_directed::Bool
     vertices::VList
     nedges::Int

@@ -9,7 +9,7 @@
 #
 ###########################################################
 
-type GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
+mutable struct GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
     is_directed::Bool
     vertices::VList
     nedges::Int

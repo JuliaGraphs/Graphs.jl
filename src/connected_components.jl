@@ -89,7 +89,7 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
     components
 end
 
-type TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
+mutable struct TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
     graph::G
     stack::Vector{V}
     lowlink::Vector{Int}

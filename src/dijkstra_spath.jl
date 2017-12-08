@@ -6,7 +6,7 @@
 #
 ###################################################################
 
-type DijkstraStates{V,D<:Number,Heap,H}
+mutable struct DijkstraStates{V,D<:Number,Heap,H}
     parents::Vector{V}
     parent_indices::Vector{Int}
     dists::Vector{D}
@@ -15,7 +15,7 @@ type DijkstraStates{V,D<:Number,Heap,H}
     hmap::Vector{H}
 end
 
-immutable DijkstraHEntry{V,D}
+struct DijkstraHEntry{V,D}
     vertex::V
     dist::D
 end
@@ -61,13 +61,13 @@ close_vertex!(visitor::AbstractDijkstraVisitor, v) = nothing
 
 # trivial visitor
 
-type TrivialDijkstraVisitor <: AbstractDijkstraVisitor
+mutable struct TrivialDijkstraVisitor <: AbstractDijkstraVisitor
 end
 
 
 # log visitor
 
-type LogDijkstraVisitor <: AbstractDijkstraVisitor
+mutable struct LogDijkstraVisitor <: AbstractDijkstraVisitor
     io::IO
 end
 
