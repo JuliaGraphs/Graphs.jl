@@ -3,7 +3,7 @@ Graph Generators
 
 ``Graphs.jl`` implements a collection of classic graph generators, each of which returns a ``simple_graph``:
 
-.. py:function:: static_complete_graph(n[, is_directed=true])
+.. py:function:: simple_complete_graph(n[, is_directed=true])
 
     Creates a (default directed) complete graph with ``n`` vertices. A complete graph has edges connecting each pair of vertices.
 
