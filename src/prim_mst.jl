@@ -6,7 +6,7 @@
 #
 ###################################################################
 
-type PrimStates{V,W,Heap,H}
+mutable struct PrimStates{V,W,Heap,H}
     parents::Vector{V}
     colormap::Vector{Int}
     weightmap::Vector{W}
@@ -15,7 +15,7 @@ type PrimStates{V,W,Heap,H}
     hmap::Vector{H}
 end
 
-immutable PrimHEntry{V,E,W}
+struct PrimHEntry{V,E,W}
     vertex::V
     edge::E
     weight::W
@@ -28,7 +28,7 @@ end
 function create_prim_states{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
     n = num_vertices(g)
 
-    parents = Array(V, n)
+    parents = Array{V}(n)
     colormap = zeros(Int, n)
     weightmap = zeros(W, n)
 
@@ -63,19 +63,19 @@ close_vertex!(visitor::AbstractPrimVisitor, v) = nothing
 
 # trivial visitor
 
-type TrivialPrimVisitor <: AbstractPrimVisitor
+mutable struct TrivialPrimVisitor <: AbstractPrimVisitor
 end
 
 # default visitor
 
-type PrimVisitor{E,W} <: AbstractPrimVisitor
+mutable struct PrimVisitor{E,W} <: AbstractPrimVisitor
     edges::Vector{E}
     weights::Vector{W}
 end
 
 function default_prim_visitor{V,E,W}(g::AbstractGraph{V,E}, ::Type{W})
-    edges = Array(E, 0)
-    weights = Array(W, 0)
+    edges = Array{E}(0)
+    weights = Array{W}(0)
     n = num_vertices(g)
     if n > 1
         sizehint!(edges, n-1)
@@ -93,7 +93,7 @@ end
 
 # log visitor
 
-type LogPrimVisitor <: AbstractPrimVisitor
+mutable struct LogPrimVisitor <: AbstractPrimVisitor
     io::IO
 end
 

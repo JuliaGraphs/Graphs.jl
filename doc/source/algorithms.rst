@@ -201,37 +201,37 @@ The user can (optionally) provide a visitor that perform operations along with t
     julia> add_edge!(g4,4,5); add_edge!(g4,4,6); add_edge!(g4,5,6); add_edge!(g4,6,7)
     julia> s4 = dijkstra_shortest_paths(g4,5)
     julia> sps = enumerate_indices(s4.parent_indices) # dest: all indices
-    4-element Array{Array{Int64,1},1}:
+    4-element Array{Array{Int,1},1}:
      []
      [2]
      [2,3]
      [2,3,4]
 
     julia> enumerate_indices(s4.parent_indices, [2,4]) # dest: subset of indices
-    2-element Array{Array{Int64,1},1}:
+    2-element Array{Array{Int,1},1}:
      [2]
      [2,3,4]
 
     julia> enumerate_indices(s4.parent_indices, 4) # dest: single index
-    3-element Array{Int64,1}:
+    3-element Array{Int,1}:
      2
      3
      4
 
     julia> enumerate_paths(vertices(g4), s4.parent_indices) # dest: all vertices
-    4-element Array{Array{Int64,1},1}:
+    4-element Array{Array{Int,1},1}:
      []
      [5]
      [5,6]
      [5,6,7]
 
     julia> enumerate_paths(vertices(g4), s4.parent_indices, [2,4]) # dest: subset of vertices
-    2-element Array{Array{Int64,1},1}:
+    2-element Array{Array{Int,1},1}:
      [5]
      [5,6,7]
 
     julia> enumerate_paths(vertices(g4), s4.parent_indices, 4) # dest: single vertex
-    3-element Array{Int64,1}:
+    3-element Array{Int,1}:
      5
      6
      7

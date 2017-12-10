@@ -7,7 +7,7 @@
 #
 #################################################
 
-type MaximumAdjacency <: AbstractGraphVisitAlgorithm
+mutable struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
 @compat abstract type AbstractMASVisitor <: AbstractGraphVisitor end
@@ -49,13 +49,15 @@ function traverse_graph{V,E,W}(
   colormap::Vector{Int},
   ::Type{W})
 
-  # if VERSION > v"0.6.0-"
-    pq = DataStructures.PriorityQueue(V,W,Base.Order.Reverse)
-  # else  #if VERSION > v"0.4.0-"
-  #   pq = Collections.PriorityQueue(V,W,Base.Order.Reverse)
-  # # else
-  # #   pq = PriorityQueue{V,W}(Base.Order.Reverse) # Collections.
-  # end
+  # @show Base.Order.Reverse
+  # @show Base.Order.ReverseOrdering
+  # PriorityQueue{K, V}(::Type{K}, ::Type{V}, o::Ordering) is deprecated, use PriorityQueue{K, V, typeof(o)}(o)
+  # pq = DataStructures.PriorityQueue(V,W,Base.Order.Reverse)
+  # pq = DataStructures.PriorityQueue(V,W,Base.Order.Reverse)
+  # @show pq
+  pq = DataStructures.PriorityQueue{V,W}(Base.Order.Reverse)
+  # @show pq
+  # pq = DataStructures.PriorityQueue{V,W,Base.Order.Reverse}()
 
   # Set number of visited neighbours for all vertices to 0
   for v in vertices(graph)
@@ -87,7 +89,7 @@ end
 #
 #################################################
 
-type MinCutVisitor{G<:AbstractGraph,V,W} <: AbstractMASVisitor
+mutable struct MinCutVisitor{G<:AbstractGraph,V,W} <: AbstractMASVisitor
   graph::G
   parities::Vector{Bool}
   colormap::Vector{Int}
@@ -146,7 +148,7 @@ end
 #
 #################################################
 
-type MASVisitor{V,W} <: AbstractMASVisitor
+mutable struct MASVisitor{V,W} <: AbstractMASVisitor
   io::IO
   vertices::Vector{V}
   edge_weights::AbstractEdgePropertyInspector{W}

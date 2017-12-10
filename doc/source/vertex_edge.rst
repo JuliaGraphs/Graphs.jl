@@ -10,7 +10,7 @@ This package provides two specific vertex types: ``KeyVertex`` and ``ExVertex``.
 
 .. code-block:: python
 
-    immutable KeyVertex{K}
+    struct KeyVertex{K}
         index::Int
         key::K
     end
@@ -21,7 +21,7 @@ The definition of ``ExVertex`` is:
 
 .. code-block:: python
 
-    type ExVertex
+    mutable struct ExVertex
         index::Int
         label::UTF8String
         attributes::Dict{UTF8String,Any}
@@ -51,7 +51,7 @@ The definition of ``Edge`` is given by
 
 .. code-block:: python
 
-    immutable Edge{V}
+    struct Edge{V}
         index::Int
         source::V
         target::V
@@ -63,7 +63,7 @@ The definition of ``ExEdge`` is given by
 
 .. code-block:: python
 
-    type ExEdge{V}
+    mutable struct ExEdge{V}
         index::Int
         source::V
         target::V

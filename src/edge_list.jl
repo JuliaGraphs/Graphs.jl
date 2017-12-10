@@ -1,6 +1,6 @@
 # graph represented by a light-weight edge list
 
-type GenericEdgeList{V,E,VList,EList} <: AbstractGraph{V,E}
+mutable struct GenericEdgeList{V,E,VList,EList} <: AbstractGraph{V,E}
     is_directed::Bool
     vertices::VList
     edges::EList

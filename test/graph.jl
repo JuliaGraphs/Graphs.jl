@@ -143,7 +143,7 @@ rs = [revedge(e) for e in es]
 @test collect(in_neighbors(4, sgu)) == [2, 3, 1]
 
 
-for T in [ExVertex, Compat.ASCIIString]
+for T in [ExVertex, String]  #Compat.ASCIIString
 
 #################################################
 #
@@ -281,7 +281,7 @@ m = 1000
 function  uniqueRands(range,nb::Int)
     result=Dict{Int,Bool}()
     i= 0
-    while i < nb 
+    while i < nb
         r = rand(1:10*n)
         if !haskey( result, r)
            i += 1

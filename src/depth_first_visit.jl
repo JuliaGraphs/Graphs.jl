@@ -7,7 +7,7 @@
 #
 #################################################
 
-type DepthFirst <: AbstractGraphVisitAlgorithm
+mutable struct DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function depth_first_visit_impl!{V,E}(
@@ -84,7 +84,7 @@ end
 
 # Test whether a graph is cyclic
 
-type DFSCyclicTestVisitor <: AbstractGraphVisitor
+mutable struct DFSCyclicTestVisitor <: AbstractGraphVisitor
     found_cycle::Bool
 
     DFSCyclicTestVisitor() = new(false)
@@ -124,11 +124,11 @@ end
 
 # Topological sort using DFS
 
-type TopologicalSortVisitor{V} <: AbstractGraphVisitor
+mutable struct TopologicalSortVisitor{V} <: AbstractGraphVisitor
     vertices::Vector{V}
 
     function TopologicalSortVisitor(n::Int)
-        vs = Array(Int, 0)
+        vs = Array{Int}(0)
         sizehint!(vs, n)
         new(vs)
     end

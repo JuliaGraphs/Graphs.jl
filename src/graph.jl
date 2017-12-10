@@ -3,7 +3,7 @@
 # It implements edge_list, adjacency_list and incidence_list
 #
 
-type GenericGraph{V,E,VList,EList,IncList} <: AbstractGraph{V,E}
+mutable struct GenericGraph{V,E,VList,EList,IncList} <: AbstractGraph{V,E}
     is_directed::Bool
     vertices::VList     # an indexable container of vertices
     edges::EList        # an indexable container of edges
@@ -62,9 +62,9 @@ edges(g::GenericGraph) = g.edges
 
 vertex_index(v::Integer, g::SimpleGraph) = (v <= g.vertices[end]? v: 0)
 # If V is either ExVertex or KeyVertex call vertex_index on v
-vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = vertex_index(v)
+# vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = vertex_index(v) # not quite sure what's going on here
 # Else return index given by dictionary
-vertex_index{V<:ProvidedVertexType}(v::V,g::GenericGraph{V}) = try g.indexof[v] catch 0 end
+vertex_index{V<:ProvidedVertexType}(v::V, g::GenericGraph{V}) = try g.indexof[v] catch 0 end
 
 edge_index{V,E}(e::E, g::GenericGraph{V,E}) = edge_index(e)
 

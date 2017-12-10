@@ -103,12 +103,14 @@ end
 
 # Get the map of the (geodesic) distances from vertices to source by BFS
 
-immutable GDistanceVisitor{G<:AbstractGraph,DMap} <: AbstractGraphVisitor
+struct GDistanceVisitor{G<:AbstractGraph,DMap} <: AbstractGraphVisitor
     graph::G
     dists::DMap
+    GDistanceVisitor(g::G, dists::DMap) where {G <: AbstractGraph, DMap} = new{G,DMap}(g, dists)
+    GDistanceVisitor{G,DMap}(g::G, dists::DMap) where {G <: AbstractGraph, DMap} = new{G,DMap}(g, dists)
 end
 
-GDistanceVisitor{G<:AbstractGraph,DMap}(g::G, dists::DMap) = GDistanceVisitor{G,DMap}(g, dists)
+# GDistanceVisitor{G<:AbstractGraph,DMap}(g::G, dists::DMap) = GDistanceVisitor{G,DMap}(g, dists)
 
 function initialize_colormap{V,E,G,DMap<:Dict}(graph::AbstractGraph{V,E},dmap::GDistanceVisitor{G,DMap})
     colormap = similar(dmap)

@@ -12,7 +12,7 @@ function connected_components{V}(graph::AbstractGraph{V})
     !is_directed(graph) || error("graph must be undirected.")
 
     cmap = zeros(Int, num_vertices(graph))
-    components = Array(Vector{V}, 0)
+    components = Array{Vector{V}}(0)
 
     for v in vertices(graph)
         if cmap[vertex_index(v, graph)] == 0
@@ -44,10 +44,10 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
     is_directed(graph) || error("graph must be directed.")
 
     preorder_idx = 1
-    stack        = Array(V, 0)
+    stack        = Array{V}(0)
     lowlinks     = zeros(Int, num_vertices(graph))
     indices      = zeros(Int, num_vertices(graph))
-    components   = Array(Vector{V}, 0)
+    components   = Array{Vector{V}}(0)
 
     function strongconnect(v)
         v_idx = vertex_index(v, graph)
@@ -69,7 +69,7 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
 
         # if v is a root node, pop the stack and generate an SCC
         if lowlinks[v_idx] == indices[v_idx]
-            component = Array(typeof(v), 0)
+            component = Array{typeof(v)}(0)
             while !isempty(stack)
                 w = pop!(stack)
                 push!(component, w)
@@ -89,7 +89,7 @@ function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
     components
 end
 
-type TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
+mutable struct TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
     graph::G
     stack::Vector{V}
     lowlink::Vector{Int}
@@ -137,7 +137,7 @@ function strongly_connected_components{V}(graph::AbstractGraph{V})
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     cmap = zeros(Int, num_vertices(graph))
-    components = Array(Vector{V}, 0)
+    components = Array{Vector{V}}(0)
 
     for v in vertices(graph)
         if cmap[vertex_index(v, graph)] == 0 # 0 means not visited yet

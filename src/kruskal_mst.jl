@@ -10,8 +10,8 @@ function kruskal_select{V,E,W}(
     @graph_requires graph vertex_map
 
     n = num_vertices(graph)
-    re = Array(E, 0)
-    rw = Array(W, 0)
+    re = Array{E}(0)
+    rw = Array{W}(0)
 
     if n > 1
         dsets = IntDisjointSets(n)

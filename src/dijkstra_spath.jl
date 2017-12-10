@@ -6,7 +6,7 @@
 #
 ###################################################################
 
-type DijkstraStates{V,D<:Number,Heap,H}
+mutable struct DijkstraStates{V,D<:Number,Heap,H}
     parents::Vector{V}
     parent_indices::Vector{Int}
     dists::Vector{D}
@@ -15,7 +15,7 @@ type DijkstraStates{V,D<:Number,Heap,H}
     hmap::Vector{H}
 end
 
-immutable DijkstraHEntry{V,D}
+struct DijkstraHEntry{V,D}
     vertex::V
     dist::D
 end
@@ -26,7 +26,7 @@ end
 
 function create_dijkstra_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
     n = num_vertices(g)
-    parents = Array(V, n)
+    parents = Array{V}(n)
     parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
@@ -61,13 +61,13 @@ close_vertex!(visitor::AbstractDijkstraVisitor, v) = nothing
 
 # trivial visitor
 
-type TrivialDijkstraVisitor <: AbstractDijkstraVisitor
+mutable struct TrivialDijkstraVisitor <: AbstractDijkstraVisitor
 end
 
 
 # log visitor
 
-type LogDijkstraVisitor <: AbstractDijkstraVisitor
+mutable struct LogDijkstraVisitor <: AbstractDijkstraVisitor
     io::IO
 end
 
@@ -256,7 +256,7 @@ dijkstra_shortest_paths{V}(
 
 function enumerate_indices(parent_indices::Vector{Int}, dest_indices::Vector{Int})
     num_dest = length(dest_indices)
-    all_paths = Array(Vector{Int},num_dest)
+    all_paths = Array{Vector{Int}}(num_dest)
     for i=1:num_dest
         all_paths[i] = Int[]
         index = dest_indices[i]

@@ -10,7 +10,7 @@
 #
 #################################################
 
-type GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
+mutable struct GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{V}}
     is_directed::Bool
     vertices::VList
     nedges::Int
@@ -46,7 +46,7 @@ out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v,g)
 
 function add_vertex!{V}(g::GenericAdjacencyList{V}, v::V)
     push!(g.vertices, v)
-    push!(g.adjlist, Array(V,0))
+    push!(g.adjlist, Array{V}(0))
     v
 end
 add_vertex!(g::GenericAdjacencyList, x) = add_vertex!(g, make_vertex(g, x))

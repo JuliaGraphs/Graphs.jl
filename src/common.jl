@@ -9,18 +9,20 @@
 #
 ################################################
 
-immutable KeyVertex{K}
+struct KeyVertex{K}
     index::Int
     key::K
+    KeyVertex(idx::Int, key::K) where {K} = new{K}(idx, key)
+    KeyVertex{K}(idx::Int, key::K) where {K} = new{K}(idx, key)
 end
 
-KeyVertex{K}(idx::Int, key::K) = KeyVertex{K}(idx, key)
+# KeyVertex{K}(idx::Int, key::K) = KeyVertex{K}(idx, key)
 make_vertex{V<:KeyVertex}(g::AbstractGraph{V}, key) = V(num_vertices(g) + 1, key)
 vertex_index(v::KeyVertex) = v.index
 
-type ExVertex
+mutable struct ExVertex
     index::Int
-    label::Compat.UTF8String
+    label::String #Compat.UTF8String
     attributes::AttributeDict
 
     ExVertex(i::Int, label::AbstractString) = new(i, label, AttributeDict())
@@ -51,14 +53,15 @@ vertex_index(v, vs::AbstractArray) = findfirst(vs, v)
 #
 ################################################
 
-immutable Edge{V}
+struct Edge{V}
     index::Int
     source::V
     target::V
+    Edge(i::Int, s::V, t::V) where {V} = new{V}(i, s, t)
 end
 @compat const IEdge = Edge{Int}
 
-Edge{V}(i::Int, s::V, t::V) = Edge{V}(i, s, t)
+# Edge{V}(i::Int, s::V, t::V) = Edge{V}(i, s, t)
 make_edge{V,E<:Edge}(g::AbstractGraph{V,E}, s::V, t::V) = Edge(num_edges(g) + 1, s, t)
 
 revedge{V}(e::Edge{V}) = Edge(e.index, e.target, e.source)
@@ -69,19 +72,23 @@ target(e::Edge) = e.target
 source{V}(e::Edge{V}, g::AbstractGraph{V}) = e.source
 target{V}(e::Edge{V}, g::AbstractGraph{V}) = e.target
 
-type ExEdge{V}
+mutable struct ExEdge{V}
     index::Int
     source::V
     target::V
     attributes::AttributeDict
+    ExEdge(i::Int, s::V, t::V) where {V} = new{V}(i, s, t, AttributeDict())
+    ExEdge(i::Int, s::V, t::V, attrs::AttributeDict) where {V} = new{V}(i, s, t, attrs)
+    ExEdge{V}(i::Int, s::V, t::V) where {V} = new{V}(i, s, t, AttributeDict())
+    ExEdge{V}(i::Int, s::V, t::V, attrs::AttributeDict) where {V} = new{V}(i, s, t, attrs)
 end
 
 =={V}(e1::ExEdge{V}, e2::ExEdge{V}) = (e1.index == e2.index &&
                                        e1.source == e2.source &&
                                        e1.target == e2.target)
 
-ExEdge{V}(i::Int, s::V, t::V) = ExEdge{V}(i, s, t, AttributeDict())
-ExEdge{V}(i::Int, s::V, t::V, attrs::AttributeDict) = ExEdge{V}(i, s, t, attrs)
+# ExEdge{V}(i::Int, s::V, t::V) = ExEdge{V}(i, s, t, AttributeDict())
+# ExEdge{V}(i::Int, s::V, t::V, attrs::AttributeDict) = ExEdge{V}(i, s, t, attrs)
 make_edge{V}(g::AbstractGraph{V}, s::V, t::V) = ExEdge(num_edges(g) + 1, s, t)
 
 revedge{V}(e::ExEdge{V}) = ExEdge{V}(e.index, e.target, e.source, e.attributes)
@@ -102,13 +109,17 @@ attributes(e::ExEdge, g::AbstractGraph) = e.attributes
 
 # general reindexed vector
 
-immutable ReindexedVec{T, Vec<:AbstractVector, I<:AbstractVector{Int}}
+struct ReindexedVec{T, Vec<:AbstractVector, I<:AbstractVector{Int}}
     src::Vec
     inds::I
+    ReindexedVec(a::AT, inds::I) where {T, AT <: AbstractVector{T}, I <: AbstractVector{Int}} =
+        new{T,typeof(a),typeof(inds)}(a, inds)
+    ReindexedVec{T}(a::AT, inds::I) where {T, AT <: AbstractVector{T}, I <: AbstractVector{Int}} =
+        new{T,typeof(a),typeof(inds)}(a, inds)
 end
 
-ReindexedVec{T}(a::AbstractVector{T}, inds::AbstractVector{Int}) =
-    ReindexedVec{T,typeof(a),typeof(inds)}(a, inds)
+# ReindexedVec{T}(a::AbstractVector{T}, inds::AbstractVector{Int}) =
+#     ReindexedVec{T,typeof(a),typeof(inds)}(a, inds)
 
 length(a::ReindexedVec) = length(a.inds)
 isempty(a::ReindexedVec) = isempty(a.inds)
@@ -120,13 +131,15 @@ next(a::ReindexedVec, s) = ((i, s) = next(a.inds); (a.src[i], s))
 
 # iterating over targets
 
-immutable TargetIterator{G<:AbstractGraph,EList}
+struct TargetIterator{G<:AbstractGraph,EList}
     g::G
     lst::EList
+    TargetIterator(g::G, lst::EList) where {G<:AbstractGraph,EList} = new{G,EList}(g, lst)
+    TargetIterator{G,EList}(g::G, lst::EList) where {G<:AbstractGraph,EList} = new{G,EList}(g, lst)
 end
 
-TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
-    TargetIterator{G,EList}(g, lst)
+# TargetIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
+#     TargetIterator{G,EList}(g, lst)
 
 length(a::TargetIterator) = length(a.lst)
 isempty(a::TargetIterator) = isempty(a.lst)
@@ -138,13 +151,18 @@ next(a::TargetIterator, s::Int) = ((e, s) = next(a.lst, s); (target(e, a.g), s))
 
 # iterating over sources
 
-immutable SourceIterator{G<:AbstractGraph,EList}
+struct SourceIterator{G<:AbstractGraph,EList}
     g::G
     lst::EList
+    SourceIterator(g::G, lst::EList) where {G<:AbstractGraph,EList} =
+        new{G,EList}(g, lst)
+    SourceIterator{G,EList}(g::G, lst::EList) where {G<:AbstractGraph,EList} =
+        new{G,EList}(g, lst)
+
 end
 
-SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
-    SourceIterator{G,EList}(g, lst)
+# SourceIterator{G<:AbstractGraph,EList}(g::G, lst::EList) =
+#     SourceIterator{G,EList}(g, lst)
 
 length(a::SourceIterator) = length(a.lst)
 isempty(a::SourceIterator) = isempty(a.lst)
@@ -162,16 +180,16 @@ next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
 
 @compat abstract type AbstractEdgePropertyInspector{T} end
 
-edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
+# edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = nothing
 
-type ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+mutable struct ConstantEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   value::T
 end
 
 edge_property{T}(visitor::ConstantEdgePropertyInspector{T}, e, g) = visitor.value
 
 
-type VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+mutable struct VectorEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
   values::Vector{T}
 end
 
@@ -179,8 +197,8 @@ edge_property{T,V}(visitor::VectorEdgePropertyInspector{T}, e, g::AbstractGraph{
 
 edge_property_requirement{T, V}(visitor::AbstractEdgePropertyInspector{T}, g::AbstractGraph{V}) = @graph_requires g edge_map
 
-type AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
-  attribute::Compat.UTF8String
+mutable struct AttributeEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T}
+  attribute::String
 end
 
 function edge_property{T}(visitor::AttributeEdgePropertyInspector{T},edge::ExEdge, g)
@@ -205,7 +223,7 @@ function collect_edges{V,E}(graph::AbstractGraph{V,E})
         collect(edges(graph))
 
     elseif implements_vertex_list(graph) && implements_incidence_list(graph)
-        edge_list = Array(E, 0)
+        edge_list = Array{E}(0)
         sizehint!(edge_list, num_edges(graph))
 
         for v in vertices(graph)
@@ -220,7 +238,7 @@ function collect_edges{V,E}(graph::AbstractGraph{V,E})
 end
 
 
-immutable WeightedEdge{E,W}
+struct WeightedEdge{E,W}
     edge::E
     weight::W
 end
@@ -231,7 +249,7 @@ function collect_weighted_edges{V,E,W}(graph::AbstractGraph{V,E}, weights::Abstr
 
     edge_property_requirement(weights, graph)
 
-    wedges = Array(WeightedEdge{E,W}, 0)
+    wedges = Array{WeightedEdge{E,W}}(0)
     sizehint!(wedges, num_edges(graph))
 
     if implements_edge_list(graph)

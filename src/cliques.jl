@@ -13,7 +13,7 @@ function maximal_cliques{V}(g::AbstractGraph{V})
     julia> add_edge!(g, 1, 2)
     julia> add_edge!(g, 2, 3)
     julia> maximal_cliques(g)
-    2-element Array{Array{Int64,N},1}:
+    2-element Array{Array{Int,N},1}:
      [2,3]
      [2,1]
 

@@ -29,7 +29,7 @@ function matrix_from_adjpairs!(a::AbstractMatrix, g::AbstractGraph, gen; returnp
         end
 
     elseif implements_adjacency_list(g)
-        p = zeros(Int64,size(a,1))
+        p = zeros(Int,size(a,1))
         tempd = Dict{Int,Int}()
         verts = vertices(g)
         for i in 1:length(verts)
@@ -63,9 +63,9 @@ function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array(Int, ne)
-    J = Array(Int, ne)
-    vals = Array(eltype(gen), ne)
+    I = Array{Int}(ne)
+    J = Array{Int}(ne)
+    vals = Array{eltype(gen)}(ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -173,9 +173,9 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array(Int, ne)
-    J = Array(Int, ne)
-    vals = Array(eltype(gen), ne)
+    I = Array{Int}(ne)
+    J = Array{Int}(ne)
+    vals = Array{eltype(gen)}(ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -242,7 +242,7 @@ end
 
 ### adjacency matrix
 
-type _GenUnit{T} end
+mutable struct _GenUnit{T} end
 
 Base.get{T,V}(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) = one(T)
 Base.eltype{T}(::_GenUnit{T}) = T
@@ -255,7 +255,7 @@ adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
 
 ### weight matrix
 
-type _GenEdgeWeight{Weights}
+mutable struct _GenEdgeWeight{Weights}
     weights::Weights
 end
 
@@ -381,9 +381,9 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array(Int, nnz)
-    J = Array(Int, nnz)
-    vals = Array(T, nnz)
+    I = Array{Int}(nnz)
+    J = Array{Int}(nnz)
+    vals = Array{T}(nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -460,9 +460,9 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::Abstract
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array(Int, nnz)
-    J = Array(Int, nnz)
-    vals = Array(T, nnz)
+    I = Array{Int}(nnz)
+    J = Array{Int}(nnz)
+    vals = Array{T}(nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -545,7 +545,7 @@ function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
     colptr = A.colptr
     rowval = A.rowval
     n = size(A, 1)
-    adjlist = Array(Array{Ti,1}, n)
+    adjlist = Array{Array{Ti,1}}(n)
     s = 0
     for j in 1:n
         adjj = Ti[]

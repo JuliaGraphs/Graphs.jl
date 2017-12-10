@@ -60,7 +60,7 @@ s1ex = dijkstra_shortest_paths(g1ex, edgel, [1])
 
 # Check early termination
 
-type EndWhenNode <: AbstractDijkstraVisitor
+mutable struct EndWhenNode <: AbstractDijkstraVisitor
   n::Int
 end
 

@@ -71,7 +71,7 @@ sps = enumerate_paths(vertices(g1), s1.parent_indices)
 
 @test !has_negative_edge_cycle(g1, eweights1)
 
-immutable MyEdge{V}
+struct MyEdge{V}
     index::Int
     source::V
     target::V
@@ -91,7 +91,7 @@ for i = 2:10
     end
 end
 
-type MyEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T} end
+mutable struct MyEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T} end
 
 Graphs.edge_property{T,V}(inspector::MyEdgePropertyInspector{T}, e::MyEdge, g::AbstractGraph{V}) = e.dist
 insp =  MyEdgePropertyInspector{Float64}()
