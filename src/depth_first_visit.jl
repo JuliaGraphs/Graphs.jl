@@ -130,7 +130,7 @@ mutable struct TopologicalSortVisitor{V} <: AbstractGraphVisitor
     function TopologicalSortVisitor(n::Int)
         vs = Array{Int}(0)
         sizehint!(vs, n)
-        new(vs)
+        new{V}(vs)
     end
 end
 

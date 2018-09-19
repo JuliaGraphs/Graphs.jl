@@ -1,7 +1,7 @@
 # Test of Dijkstra's algorithm for shorest paths
 
 using Graphs
-using Base.Test
+using Test
 
 # g1: the example in CLRS (2nd Ed.)
 g1 = simple_inclist(5)

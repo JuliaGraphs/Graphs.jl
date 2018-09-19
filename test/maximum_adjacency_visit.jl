@@ -1,7 +1,7 @@
 # Test of Min-Cut and maximum adjacency visit
 
 using Graphs
-using Base.Test
+using Test
 
 g = simple_inclist(8, is_directed=false)
 

@@ -1,5 +1,5 @@
 using Graphs
-using Base.Test
+using Test
 
 import Compat: xor
 

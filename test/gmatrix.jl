@@ -1,7 +1,7 @@
 # Graph to matrices
 
 using Graphs
-using Base.Test
+using Test
 
 
 # data

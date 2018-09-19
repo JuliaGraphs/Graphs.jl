@@ -1,7 +1,7 @@
 # Testing of the graph types
 
 using Graphs
-using Base.Test
+using Test
 
 
 #################################################
@@ -142,7 +142,6 @@ rs = [revedge(e) for e in es]
 @test collect(in_neighbors(3, sgu)) == [1, 4]
 @test collect(in_neighbors(4, sgu)) == [2, 3, 1]
 
-
 for T in [ExVertex, String]  #Compat.ASCIIString
 
 #################################################
@@ -151,55 +150,58 @@ for T in [ExVertex, String]  #Compat.ASCIIString
 #
 #################################################
 
-    egd = graph(T[], ExEdge{T}[])
-    @test is_directed(egd) == true
+egd = graph(T[], ExEdge{T}[])
+@test is_directed(egd) == true
 
-    names = ["a", "b", "c", "d"]
+test_names = ["a", "b", "c", "d"]
 
-    for (i, x) in enumerate(names)
-        v = add_vertex!(egd, x)
-        @test vertex_index(v, egd) == i
-    end
-    vs = vertices(egd)
+for (i, x) in enumerate(test_names)
+    v = add_vertex!(egd, x)
+    @test vertex_index(v, egd) == i
+end
+vs = vertices(egd)
 
-    @test num_vertices(egd) == 4
-    @test num_edges(egd) == 0
+@test num_vertices(egd) == 4
+@test num_edges(egd) == 0
 
-    add_edge!(egd, vs[1], vs[2])
-    add_edge!(egd, vs[1], vs[3])
-    add_edge!(egd, vs[2], vs[4])
-    add_edge!(egd, vs[3], vs[4])
-    es = edges(egd)
+add_edge!(egd, vs[1], vs[2])
+add_edge!(egd, vs[1], vs[3])
+add_edge!(egd, vs[2], vs[4])
+add_edge!(egd, vs[3], vs[4])
+es = edges(egd)
 
-    @test num_edges(egd) == 4
+@test num_edges(egd) == 4
 
-    # outgoing
+# outgoing
 
-    @test [out_degree(v, egd) for v in vs] == [2, 1, 1, 0]
+@test [out_degree(v, egd) for v in vs] == [2, 1, 1, 0]
 
-    @test out_edges(vs[1], egd) == es[1:2]
-    @test out_edges(vs[2], egd) == es[[3]]
-    @test out_edges(vs[3], egd) == es[[4]]
-    @test isempty(out_edges(vs[4], egd))
+@test out_edges(vs[1], egd) == es[1:2]
+@test out_edges(vs[2], egd) == es[[3]]
+@test out_edges(vs[3], egd) == es[[4]]
+@test isempty(out_edges(vs[4], egd))
 
-    @test collect(out_neighbors(vs[1], egd)) == [vs[2], vs[3]]
-    @test collect(out_neighbors(vs[2], egd)) == vs[[4]]
-    @test collect(out_neighbors(vs[3], egd)) == vs[[4]]
-    @test isempty(out_neighbors(vs[4], egd))
+vals1 = iterate(out_neighbors(vs[1], egd))
+vals2 = iterate(out_neighbors(vs[1], egd), vals1[2])
 
-    # incoming
+@test collect(out_neighbors(vs[1], egd)) == [vs[2], vs[3]]
+@test collect(out_neighbors(vs[2], egd)) == vs[[4]]
+@test collect(out_neighbors(vs[3], egd)) == vs[[4]]
+@test isempty(out_neighbors(vs[4], egd))
 
-    @test [in_degree(v, egd) for v in vs] == [0, 1, 1, 2]
+# incoming
 
-    @test isempty(in_edges(vs[1], egd))
-    @test in_edges(vs[2], egd) == es[[1]]
-    @test in_edges(vs[3], egd) == es[[2]]
-    @test in_edges(vs[4], egd) == es[3:4]
+@test [in_degree(v, egd) for v in vs] == [0, 1, 1, 2]
 
-    @test isempty(in_neighbors(vs[1], egd))
-    @test collect(in_neighbors(vs[2], egd)) == vs[[1]]
-    @test collect(in_neighbors(vs[3], egd)) == vs[[1]]
-    @test collect(in_neighbors(vs[4], egd)) == vs[2:3]
+@test isempty(in_edges(vs[1], egd))
+@test in_edges(vs[2], egd) == es[[1]]
+@test in_edges(vs[3], egd) == es[[2]]
+@test in_edges(vs[4], egd) == es[3:4]
+
+@test isempty(in_neighbors(vs[1], egd))
+@test collect(in_neighbors(vs[2], egd)) == vs[[1]]
+@test collect(in_neighbors(vs[3], egd)) == vs[[1]]
+@test collect(in_neighbors(vs[4], egd)) == vs[2:3]
 
 
 #################################################
@@ -208,56 +210,56 @@ for T in [ExVertex, String]  #Compat.ASCIIString
 #
 #################################################
 
-    egu = graph(T[], ExEdge{T}[]; is_directed=false)
-    @test is_directed(egu) == false
+egu = graph(T[], ExEdge{T}[]; is_directed=false)
+@test is_directed(egu) == false
 
-    names = ["a", "b", "c", "d"]
+test_names = ["a", "b", "c", "d"]
 
-    for (i, x) in enumerate(names)
-        v = add_vertex!(egu, x)
-        @test vertex_index(v, egu) == i
-    end
-    vs = vertices(egu)
+for (i, x) in enumerate(test_names)
+    v = add_vertex!(egu, x)
+    @test vertex_index(v, egu) == i
+end
+vs = vertices(egu)
 
-    @test num_vertices(egu) == 4
-    @test num_edges(egu) == 0
+@test num_vertices(egu) == 4
+@test num_edges(egu) == 0
 
-    add_edge!(egu, vs[1], vs[2])
-    add_edge!(egu, vs[1], vs[3])
-    add_edge!(egu, vs[2], vs[4])
-    add_edge!(egu, vs[3], vs[4])
-    es = edges(egu)
-    rs = [revedge(e) for e in es]
+add_edge!(egu, vs[1], vs[2])
+add_edge!(egu, vs[1], vs[3])
+add_edge!(egu, vs[2], vs[4])
+add_edge!(egu, vs[3], vs[4])
+es = edges(egu)
+rs = [revedge(e) for e in es]
 
-    @test num_edges(egu) == 4
+@test num_edges(egu) == 4
 
-    # outgoing
+# outgoing
 
-    @test [out_degree(v, egu) for v in vs] == [2, 2, 2, 2]
+@test [out_degree(v, egu) for v in vs] == [2, 2, 2, 2]
 
-    @test out_edges(vs[1], egu) == [es[1], es[2]]
-    @test out_edges(vs[2], egu) == [rs[1], es[3]]
-    @test out_edges(vs[3], egu) == [rs[2], es[4]]
-    @test out_edges(vs[4], egu) == [rs[3], rs[4]]
+@test out_edges(vs[1], egu) == [es[1], es[2]]
+@test out_edges(vs[2], egu) == [rs[1], es[3]]
+@test out_edges(vs[3], egu) == [rs[2], es[4]]
+@test out_edges(vs[4], egu) == [rs[3], rs[4]]
 
-    @test collect(out_neighbors(vs[1], egu)) == [vs[2], vs[3]]
-    @test collect(out_neighbors(vs[2], egu)) == [vs[1], vs[4]]
-    @test collect(out_neighbors(vs[3], egu)) == [vs[1], vs[4]]
-    @test collect(out_neighbors(vs[4], egu)) == [vs[2], vs[3]]
+@test collect(out_neighbors(vs[1], egu)) == [vs[2], vs[3]]
+@test collect(out_neighbors(vs[2], egu)) == [vs[1], vs[4]]
+@test collect(out_neighbors(vs[3], egu)) == [vs[1], vs[4]]
+@test collect(out_neighbors(vs[4], egu)) == [vs[2], vs[3]]
 
-    # incoming
+# incoming
 
-    @test [in_degree(v, egu) for v in vs] == [2, 2, 2, 2]
+@test [in_degree(v, egu) for v in vs] == [2, 2, 2, 2]
 
-    @test in_edges(vs[1], egu) == [rs[1], rs[2]]
-    @test in_edges(vs[2], egu) == [es[1], rs[3]]
-    @test in_edges(vs[3], egu) == [es[2], rs[4]]
-    @test in_edges(vs[4], egu) == [es[3], es[4]]
+@test in_edges(vs[1], egu) == [rs[1], rs[2]]
+@test in_edges(vs[2], egu) == [es[1], rs[3]]
+@test in_edges(vs[3], egu) == [es[2], rs[4]]
+@test in_edges(vs[4], egu) == [es[3], es[4]]
 
-    @test collect(in_neighbors(vs[1], egu)) == [vs[2], vs[3]]
-    @test collect(in_neighbors(vs[2], egu)) == [vs[1], vs[4]]
-    @test collect(in_neighbors(vs[3], egu)) == [vs[1], vs[4]]
-    @test collect(in_neighbors(vs[4], egu)) == [vs[2], vs[3]]
+@test collect(in_neighbors(vs[1], egu)) == [vs[2], vs[3]]
+@test collect(in_neighbors(vs[2], egu)) == [vs[1], vs[4]]
+@test collect(in_neighbors(vs[3], egu)) == [vs[1], vs[4]]
+@test collect(in_neighbors(vs[4], egu)) == [vs[2], vs[3]]
 
 end
 
@@ -291,13 +293,13 @@ function  uniqueRands(range,nb::Int)
     collect(keys(result))
 end
 
-vs = uniqueRands(1:10*n,n)
+global vs = uniqueRands(1:10*n,n)
 
-es = Edge{Int}[]
+global es = Edge{Int}[]
 for i in 1:m
   push!(es,Edge(i,vs[rand(1:n)],vs[rand(1:n)]))
 end
-g = graph(vs,es)
+global g = graph(vs,es)
 for i in 1:m
   add_edge!(g,vs[rand(1:n)],vs[rand(1:n)])
 end
@@ -312,16 +314,16 @@ for i in 1:m
 end
 
 # same for undirected graph
-n = 100
-m = 1000
+global n = 100
+global m = 1000
 
-vs = uniqueRands(1:10*n,n)
+global vs = uniqueRands(1:10*n,n)
 
-es = Edge{Int}[]
+global es = Edge{Int}[]
 for i in 1:m
   push!(es,Edge(i,vs[rand(1:n)],vs[rand(1:n)]))
 end
-g = graph(vs,es,is_directed=false)
+global g = graph(vs,es,is_directed=false)
 for i in 1:m
   add_edge!(g,vs[rand(1:n)],vs[rand(1:n)])
 end

@@ -1,5 +1,5 @@
 using Graphs
-using Base.Test
+using Test
 
 g = simple_complete_graph(5)
 @test num_vertices(g) == 5 && num_edges(g) == 20

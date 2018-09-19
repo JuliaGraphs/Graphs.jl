@@ -53,7 +53,7 @@ end
 module testDOT1
 
 using Graphs
-using Base.Test
+using Test
 
 
 ###########
@@ -90,7 +90,7 @@ end # module testDOT1
 module testDOT2
 
 using Graphs, Compat
-using Base.Test
+using Test
 
 ###########
 #     test dot output for graphs for which

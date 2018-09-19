@@ -13,7 +13,7 @@ module AStar
 # code in its own module.
 
 using Graphs
-using Base.Collections
+# using Base. # in DataStructures? Julia 0.7.0
 using Compat
 using DataStructures
 

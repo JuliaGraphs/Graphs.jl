@@ -1,5 +1,5 @@
 using Compat
-import Compat.String
+# import Compat.String
 
 tests = [
     "edgelist",
@@ -24,7 +24,8 @@ tests = [
     "issue_related_tests" ]
 
 
-for t in tests
+for t in tests[5:6]
+    @show t
     tp = joinpath(dirname(@__FILE__), "$(t).jl")
     println("running $(tp) ...")
     include(tp)

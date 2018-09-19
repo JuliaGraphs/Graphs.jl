@@ -1,7 +1,7 @@
 # Test of connected components
 
 using Graphs
-using Base.Test
+using Test
 
 g = simple_adjlist(8, is_directed=false)
 

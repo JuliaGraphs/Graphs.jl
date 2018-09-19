@@ -1,7 +1,7 @@
 # Test of Depth-first visit
 
 using Graphs
-using Base.Test
+using Test
 
 mutable struct GraphTest
     graph_edges::Array{@compat(Tuple{Int,Int}),1}

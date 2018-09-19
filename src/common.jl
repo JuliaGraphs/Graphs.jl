@@ -129,6 +129,7 @@ start(a::ReindexedVec) = start(a.inds)
 done(a::ReindexedVec, s) = done(a.inds, s)
 next(a::ReindexedVec, s) = ((i, s) = next(a.inds); (a.src[i], s))
 
+
 # iterating over targets
 
 struct TargetIterator{G<:AbstractGraph,EList}
@@ -147,7 +148,16 @@ getindex(a::TargetIterator, i::Integer) = target(a.lst[i], a.g)
 
 start(a::TargetIterator) = start(a.lst)
 done(a::TargetIterator, s) = done(a.lst, s)
-next(a::TargetIterator, s::Int) = ((e, s) = next(a.lst, s); (target(e, a.g), s))
+next(a::TargetIterator, s::Int) = ((e, s) = next(a.lst, s); (target(e, a.g), s)) # likely deprecated
+
+## next(ed::Vector{<:Union{Edge,ExEdge}}) = (; ed[1]) # target(ed)
+# next(iter::TargetIterator) = (@show e = next(iter.lst); target(e, iter.g))
+
+Base.length(iter::TargetIterator) = length(iter.lst)
+# Base.eltype(iter::TargetIterator) = ??
+function Base.iterate(it::TargetIterator, (el, i)=(0, 0))
+	return i >= length(it) ? nothing : (target(it.lst[i+1], it.g), (target(it.lst[i+1], it.g), i + 1))
+end
 
 # iterating over sources
 
@@ -171,6 +181,13 @@ getindex(a::SourceIterator, i::Integer) = source(a.lst[i], a.g)
 start(a::SourceIterator) = start(a.lst)
 done(a::SourceIterator, s) = done(a.lst, s)
 next(a::SourceIterator, s::Int) = ((e, s) = next(a.lst, s); (source(e, a.g), s))
+
+
+Base.length(iter::SourceIterator) = length(iter.lst)
+# Base.eltype(iter::SourceIterator) = ??
+function Base.iterate(it::SourceIterator, (el, i)=(0, 0))
+	return i >= length(it) ? nothing : (source(it.lst[i+1], it.g), (source(it.lst[i+1], it.g), i + 1))
+end
 
 #################################################
 #

@@ -1,7 +1,7 @@
 # Test of the A* algorithm for finding the shortest path between two vertices
 
 using Graphs
-using Base.Test
+using Test
 
 # The "touring Romania" example from Russell and Norvig
 g1 = simple_inclist(20, is_directed=false)
