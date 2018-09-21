@@ -6,9 +6,9 @@
 #
 ###################################################################
 
-type NegativeCycleError <: Exception end
+mutable struct NegativeCycleError <: Exception end
 
-type BellmanFordStates{V,D<:Number}
+mutable struct BellmanFordStates{V,D<:Number}
     parents::Vector{V}
     parent_indices::Vector{Int}
     dists::Vector{D}
@@ -16,20 +16,20 @@ end
 
 # create Bellman Ford states
 
-function create_bellman_ford_states{V,D<:Number}(g::AbstractGraph{V}, ::Type{D})
+function create_bellman_ford_states(g::AbstractGraph{V}, ::Type{D}) where {V,D<:Number}
     n = num_vertices(g)
-    parents = Array{V}(n)
+    parents = Array{V}(undef, n)
     parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
 
     BellmanFordStates(parents, parent_indices, dists)
 end
 
-function bellman_ford_shortest_paths!{V,D}(
+function bellman_ford_shortest_paths!(
     graph::AbstractGraph{V},
     edge_dists::AbstractEdgePropertyInspector{D},
     sources::AbstractVector{V},
-    state::BellmanFordStates{V,D})
+    state::BellmanFordStates{V,D}) where {V,D}
 
     @graph_requires graph incidence_list vertex_map vertex_list
     edge_property_requirement(edge_dists, graph)
@@ -74,25 +74,26 @@ function bellman_ford_shortest_paths!{V,D}(
 end
 
 
-function bellman_ford_shortest_paths{V,D}(
+function bellman_ford_shortest_paths(
     graph::AbstractGraph{V},
     edge_dists::AbstractEdgePropertyInspector{D},
-    sources::AbstractVector{V})
+    sources::AbstractVector{V}) where {V,D}
+    #
     state = create_bellman_ford_states(graph, D)
     bellman_ford_shortest_paths!(graph, edge_dists, sources, state)
 end
 
-function bellman_ford_shortest_paths{V,D}(
+function bellman_ford_shortest_paths(
     graph::AbstractGraph{V},
     edge_dists::Vector{D},
-    sources::AbstractVector{V})
+    sources::AbstractVector{V}) where {V,D}
     edge_inspector = VectorEdgePropertyInspector{D}(edge_dists)
     bellman_ford_shortest_paths(graph, edge_inspector, sources)
 end
 
-function has_negative_edge_cycle{V, D}(
+function has_negative_edge_cycle(
     graph::AbstractGraph{V},
-    edge_dists::AbstractEdgePropertyInspector{D})
+    edge_dists::AbstractEdgePropertyInspector{D}) where {V, D}
     try
         bellman_ford_shortest_paths(graph, edge_dists, vertices(graph))
     catch e
@@ -103,9 +104,9 @@ function has_negative_edge_cycle{V, D}(
     return false
 end
 
-function has_negative_edge_cycle{V, D}(
+function has_negative_edge_cycle(
     graph::AbstractGraph{V},
-    edge_dists::Vector{D})
+    edge_dists::Vector{D}) where {V, D}
     edge_inspector = VectorEdgePropertyInspector{D}(edge_dists)
     has_negative_edge_cycle(graph, edge_inspector)
 end

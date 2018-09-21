@@ -6,7 +6,7 @@
 #
 ##########################################################
 
-function connected_components{V}(graph::AbstractGraph{V})
+function connected_components(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     !is_directed(graph) || error("graph must be undirected.")
@@ -38,7 +38,7 @@ end
 # http://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
 # on April 29, 2013.
 #
-function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
+function strongly_connected_components_recursive(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     is_directed(graph) || error("graph must be directed.")
@@ -97,7 +97,7 @@ mutable struct TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
     components::Vector{Vector{V}}
 end
 
-TarjanVisitor{V}(graph::AbstractGraph{V}) = TarjanVisitor{typeof(graph),V}(graph,
+TarjanVisitor(graph::AbstractGraph{V}) where {V} = TarjanVisitor{typeof(graph),V}(graph,
         V[], Int[], zeros(Int, num_vertices(graph)), Vector{V}[])
 
 function discover_vertex!(vis::TarjanVisitor, v)
@@ -133,7 +133,7 @@ end
 # http://code.activestate.com/recipes/578507-strongly-connected-components-of-a-directed-graph/
 # on April 30, 2013.
 #
-function strongly_connected_components{V}(graph::AbstractGraph{V})
+function strongly_connected_components(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     cmap = zeros(Int, num_vertices(graph))

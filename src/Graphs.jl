@@ -2,6 +2,7 @@ isdefined(Base, :__precompile__) && __precompile__()
 
 module Graphs
 using DataStructures, Compat
+using SparseArrays
 
 import Base: start, done, next, show, ==, <
 import Base: length, isempty, size, getindex, isless

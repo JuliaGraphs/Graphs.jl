@@ -2,10 +2,10 @@
 
 
 # select edges from a sorted list of weighted edges
-function kruskal_select{V,E,W}(
+function kruskal_select(
     graph::AbstractGraph{V,E},
     sorted_wedges::AbstractVector{WeightedEdge{E,W}},
-    K::Integer)
+    K::Integer) where {V,E,W}
 
     @graph_requires graph vertex_map
 

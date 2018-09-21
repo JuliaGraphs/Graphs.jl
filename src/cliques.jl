@@ -4,7 +4,7 @@
 #
 ##########################################################
 
-function maximal_cliques{V}(g::AbstractGraph{V})
+function maximal_cliques(g::AbstractGraph{V}) where {V}
     """
     Finds all maximal cliques of an undirected graph.
 
@@ -83,7 +83,7 @@ function maximal_cliques{V}(g::AbstractGraph{V})
         end
         # Shortcut--only one node left!
         if isempty(new_done) && length(new_cand) == 1
-            push!(cliques, cat(1, clique_so_far, collect(new_cand)))
+            push!(cliques, cat(clique_so_far, collect(new_cand), dims=1))
             pop!(clique_so_far)
             continue
         end

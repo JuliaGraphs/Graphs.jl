@@ -21,13 +21,13 @@ export shortest_path
 
 mkindx(t) = typeof(t) == Int ? t : t.index
 
-function a_star_impl!{V,D}(
+function a_star_impl!(
     graph::AbstractGraph{V},# the graph
     frontier,               # an initialized heap containing the active vertices
     colormap::Vector{Int},  # an (initialized) color-map to indicate status of vertices
     edge_dists::AbstractEdgePropertyInspector{D},  # cost of each edge
     heuristic::Function,    # heuristic fn (under)estimating distance to target
-    t::V)  # the end vertex
+    t::V) where {V,D} # the end vertex
 
     tindx = mkindx(t)
 
@@ -56,13 +56,13 @@ function a_star_impl!{V,D}(
 end
 
 
-function shortest_path{V,E,D}(
+function shortest_path(
     graph::AbstractGraph{V,E},  # the graph
     edge_dists::AbstractEdgePropertyInspector{D},      # cost of each edge
     s::V,                       # the start vertex
     t::V,                       # the end vertex
-    heuristic::Function = n -> 0)
-            # heuristic (under)estimating distance to target
+    heuristic::Function = n -> 0) where {V,E,D} # heuristic (under)estimating distance to target
+    #
     frontier = DataStructures.PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}()
     # frontier = DataStructures.PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
     frontier[(zero(D), E[], s)] = zero(D)
@@ -72,12 +72,13 @@ function shortest_path{V,E,D}(
     a_star_impl!(graph, frontier, colormap, edge_dists, heuristic, t)
 end
 
-function shortest_path{V,E,D}(
+function shortest_path(
     graph::AbstractGraph{V,E},  # the graph
     edge_dists::Vector{D},      # cost of each edge
     s::V,                       # the start vertex
     t::V,                       # the end vertex
-    heuristic::Function = n -> 0)
+    heuristic::Function = n -> 0 )  where {V,E,D}
+    #
     edge_len::AbstractEdgePropertyInspector{D} = VectorEdgePropertyInspector(edge_dists)
     shortest_path(graph, edge_len, s, t, heuristic)
 end

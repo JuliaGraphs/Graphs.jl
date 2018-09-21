@@ -10,19 +10,19 @@
 mutable struct DepthFirst <: AbstractGraphVisitAlgorithm
 end
 
-function depth_first_visit_impl!{V,E}(
+function depth_first_visit_impl!(
     graph::AbstractGraph{V,E},      # the graph
     stack,                          # an (initialized) stack of vertex
     vertexcolormap::Vector{Int},    # an (initialized) color-map to indicate status of vertices
     edgecolormap::Vector{Int},      # an (initialized) color-map to indicate status of edges
-    visitor::AbstractGraphVisitor)  # the visitor
+    visitor::AbstractGraphVisitor) where {V,E} # the visitor
 
     while !isempty(stack)
         u, uegs, tstate = pop!(stack)
         found_new_vertex = false
-
-        while !done(uegs, tstate) && !found_new_vertex
-            v_edge, tstate = next(uegs, tstate)
+        while tstate <= length(uegs) && !found_new_vertex #!done(uegs, tstate)
+            v_edge, tstate = iterate(uegs, tstate)
+            # v_edge, tstate = next(uegs, tstate)
             v = v_edge.target
             v_color = vertexcolormap[vertex_index(v, graph)]
             e_color = edgecolormap[edge_index(v_edge, graph)]
@@ -42,7 +42,7 @@ function depth_first_visit_impl!{V,E}(
 
                 open_vertex!(visitor, v)
                 vegs = out_edges(v, graph)
-                push!(stack, (v, vegs, start(vegs)))
+                push!(stack, (v, vegs, 1)) # push!(stack, (v, vegs, start(vegs)))
             end
         end
 
@@ -53,13 +53,13 @@ function depth_first_visit_impl!{V,E}(
     end
 end
 
-function traverse_graph{V,G <: AbstractGraph}(
+function traverse_graph(
     graph::G,
     alg::DepthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
     vertexcolormap = zeros(Int, num_vertices(graph)),
-    edgecolormap = zeros(Int, num_edges(graph)))
+    edgecolormap = zeros(Int, num_edges(graph))) where {V,G <: AbstractGraph}
 
     @graph_requires graph incidence_list vertex_map
 
@@ -69,7 +69,7 @@ function traverse_graph{V,G <: AbstractGraph}(
     end
 
     segs = out_edges(s, graph)
-    sstate = start(segs)
+    sstate = 1 #sstate = start(segs)
     stack = [(s, segs, sstate)]
 
     depth_first_visit_impl!(graph, stack, vertexcolormap, edgecolormap, visitor)
@@ -90,12 +90,12 @@ mutable struct DFSCyclicTestVisitor <: AbstractGraphVisitor
     DFSCyclicTestVisitor() = new(false)
 end
 
-function examine_neighbor!{V}(
+function examine_neighbor!(
     vis::DFSCyclicTestVisitor,
     u::V,
     v::V,
     vcolor::Int,
-    ecolor::Int)
+    ecolor::Int) where {V}
 
     if vcolor == 1 && ecolor == 0
         vis.found_cycle = true
@@ -104,7 +104,7 @@ end
 
 discover_vertex!(vis::DFSCyclicTestVisitor, v) = !vis.found_cycle
 
-function test_cyclic_by_dfs{G <: AbstractGraph}(graph::G)
+function test_cyclic_by_dfs(graph::G) where {G <: AbstractGraph}
     @graph_requires graph vertex_list incidence_list vertex_map
 
     cmap = zeros(Int, num_vertices(graph))
@@ -126,31 +126,30 @@ end
 
 mutable struct TopologicalSortVisitor{V} <: AbstractGraphVisitor
     vertices::Vector{V}
-
-    function TopologicalSortVisitor(n::Int)
-        vs = Array{Int}(0)
-        sizehint!(vs, n)
-        new{V}(vs)
+    function TopologicalSortVisitor{V}(n::Int) where V
+      vs = Array{Int}(undef, 0)
+      sizehint!(vs, n)
+      new{V}(vs)
     end
 end
 
 
-function examine_neighbor!{V}(visitor::TopologicalSortVisitor{V}, u::V, v::V, vcolor::Int, ecolor::Int)
+function examine_neighbor!(visitor::TopologicalSortVisitor{V}, u::V, v::V, vcolor::Int, ecolor::Int) where {V}
     if vcolor == 1 && ecolor == 0
         throw(ArgumentError("The input graph contains at least one loop."))
     end
 end
 
-function close_vertex!{V}(visitor::TopologicalSortVisitor{V}, v::V)
+function close_vertex!(visitor::TopologicalSortVisitor{V}, v::V) where {V}
     push!(visitor.vertices, v)
 end
 
-function topological_sort_by_dfs{V}(graph::AbstractGraph{V})
+function topological_sort_by_dfs(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list incidence_list vertex_map
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = TopologicalSortVisitor{V}(num_vertices(graph))
-
+    @show visitor
     for s in vertices(graph)
         if cmap[vertex_index(s, graph)] == 0
             traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)
