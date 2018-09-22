@@ -1,7 +1,7 @@
 # Tests of Incidence List
 
 using Graphs
-using Base.Test
+using Test
 
 #################################################
 #
@@ -61,8 +61,13 @@ add_edge!(gd, 4, 5)
 @test collect(out_edges(2, gd)) == [Edge(2, 2, 4), Edge(5, 2, 3)]
 @test collect(out_edges(3, gd)) == [Edge(4, 3, 4)]
 @test collect(out_edges(4, gd)) == [Edge(6, 4, 5)]
-@test collect(out_edges(5, gd)) == Array{@compat(Tuple{Int, Int})}(0)
+@test collect(out_edges(5, gd)) == Array{Tuple{Int, Int}}(undef, 0) # Array{@compat(Tuple{Int, Int})}(0)
 # @test collect(out_edges(5, gd)) == Array(@compat(Tuple{Int, Int}), 0)
+
+# import Graphs: iterate
+# iter_state = iterate(out_neighbors(1, gd))
+# iter_state = iterate(out_neighbors(1, gd), (2, 1))
+# iter_state = iterate(out_neigh
 
 @test collect(out_neighbors(1, gd)) == [2, 3]
 @test collect(out_neighbors(2, gd)) == [4, 3]
@@ -85,7 +90,7 @@ target_it = out_neighbors(1, gd)
 #
 #################################################
 
-gu = simple_inclist(5, is_directed=false)
+global gu = simple_inclist(5, is_directed=false)
 
 # graph without edges
 
@@ -132,10 +137,11 @@ add_edge!(gu, 4, 5)
 #   normal list
 #
 #################################################
-let
+global g
+g = let g = g
     for g in [inclist(KeyVertex{String}), inclist(String)]  # Compat.ASCIIString, Compat.ASCIIString
 
-        vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
+        global vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
 
         @test num_vertices(g) == 3
 
@@ -155,15 +161,15 @@ let
         @test out_edges(vs[1], g) == [Edge(1, vs[1], vs[2]), Edge(2, vs[1], vs[3])]
         @test out_edges(vs[2], g) == [Edge(3, vs[2], vs[3])]
         @test isempty(out_edges(vs[3], g))
-        end
+    end
 end
 
 let
-    g = inclist(ExVertex, ExEdge{ExVertex}; is_directed=false)
+    global g = inclist(ExVertex, ExEdge{ExVertex}; is_directed=false)
 
-    vs = [ add_vertex!(g, ExVertex(1,"a")),
-           add_vertex!(g, ExVertex(2,"b")),
-           add_vertex!(g, ExVertex(3,"c")) ]
+    global vs = [ add_vertex!(g, ExVertex(1,"a")),
+                  add_vertex!(g, ExVertex(2,"b")),
+                  add_vertex!(g, ExVertex(3,"c")) ]
 
     @test num_vertices(g) == 3
 

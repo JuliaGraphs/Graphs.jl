@@ -1,5 +1,5 @@
 using Graphs
-using Base.Test
+using Test
 
 function setofsets(array_of_arrays)
     Set(map(Set, array_of_arrays))

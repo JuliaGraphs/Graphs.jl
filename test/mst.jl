@@ -1,7 +1,7 @@
 # Test of minimum spanning tree algorithms
 
 using Graphs
-using Base.Test
+using Test
 
 g = simple_inclist(7, is_directed=false)
 

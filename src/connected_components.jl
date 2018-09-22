@@ -6,18 +6,18 @@
 #
 ##########################################################
 
-function connected_components{V}(graph::AbstractGraph{V})
+function connected_components(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     !is_directed(graph) || error("graph must be undirected.")
 
     cmap = zeros(Int, num_vertices(graph))
-    components = Array{Vector{V}}(0)
+    components = Array{Vector{V}}(undef, 0)
 
-    for v in vertices(graph)
-        if cmap[vertex_index(v, graph)] == 0
+    for vv in vertices(graph)
+        if cmap[vertex_index(vv, graph)] == 0
             visitor = VertexListVisitor{V}(0)
-            traverse_graph(graph, BreadthFirst(), v, visitor, colormap=cmap)
+            traverse_graph(graph, BreadthFirst(), vv, visitor, colormap=cmap)
             push!(components, visitor.vertices)
         end
     end
@@ -38,7 +38,7 @@ end
 # http://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm
 # on April 29, 2013.
 #
-function strongly_connected_components_recursive{V}(graph::AbstractGraph{V})
+function strongly_connected_components_recursive(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     is_directed(graph) || error("graph must be directed.")
@@ -97,7 +97,7 @@ mutable struct TarjanVisitor{G<:AbstractGraph,V} <: AbstractGraphVisitor
     components::Vector{Vector{V}}
 end
 
-TarjanVisitor{V}(graph::AbstractGraph{V}) = TarjanVisitor{typeof(graph),V}(graph,
+TarjanVisitor(graph::AbstractGraph{V}) where {V} = TarjanVisitor{typeof(graph),V}(graph,
         V[], Int[], zeros(Int, num_vertices(graph)), Vector{V}[])
 
 function discover_vertex!(vis::TarjanVisitor, v)
@@ -133,16 +133,16 @@ end
 # http://code.activestate.com/recipes/578507-strongly-connected-components-of-a-directed-graph/
 # on April 30, 2013.
 #
-function strongly_connected_components{V}(graph::AbstractGraph{V})
+function strongly_connected_components(graph::AbstractGraph{V}) where {V}
     @graph_requires graph vertex_list vertex_map adjacency_list
 
     cmap = zeros(Int, num_vertices(graph))
-    components = Array{Vector{V}}(0)
+    components = Array{Vector{V}}(undef, 0)
 
-    for v in vertices(graph)
-        if cmap[vertex_index(v, graph)] == 0 # 0 means not visited yet
+    for vv in vertices(graph)
+        if cmap[vertex_index(vv, graph)] == 0 # 0 means not visited yet
             visitor = TarjanVisitor(graph)
-            traverse_graph(graph, DepthFirst(), v, visitor, vertexcolormap=cmap)
+            traverse_graph(graph, DepthFirst(), vv, visitor, vertexcolormap=cmap)
             for component in visitor.components
                 push!(components, component)
             end

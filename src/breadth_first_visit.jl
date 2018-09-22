@@ -6,7 +6,7 @@
 #
 #################################################
 
-type BreadthFirst <: AbstractGraphVisitAlgorithm
+mutable struct BreadthFirst <: AbstractGraphVisitAlgorithm
 end
 
 function breadth_first_visit_impl!(
@@ -40,15 +40,15 @@ function breadth_first_visit_impl!(
     nothing
 end
 
-initialize_colormap{V,E}(graph::AbstractGraph{V,E},visitor) =
+initialize_colormap(graph::AbstractGraph{V,E},visitor) where {V,E} =
     zeros(Int, num_vertices(graph))
 
-function traverse_graph{V,E}(
+function traverse_graph(
     graph::AbstractGraph{V,E},
     alg::BreadthFirst,
     s::V,
     visitor::AbstractGraphVisitor;
-    colormap = nothing)
+    colormap = nothing) where {V,E}
 
     if colormap === nothing
         colormap = initialize_colormap(graph, visitor)
@@ -56,7 +56,7 @@ function traverse_graph{V,E}(
 
     @graph_requires graph adjacency_list vertex_map
 
-    que = Queue(V)
+    que = Queue{V}()
 
     colormap[vertex_index(s, graph)] = 1
     if !discover_vertex!(visitor, s)
@@ -68,12 +68,12 @@ function traverse_graph{V,E}(
 end
 
 
-function traverse_graph{V,E}(
+function traverse_graph(
     graph::AbstractGraph{V,E},
     alg::BreadthFirst,
     sources::AbstractVector{V},
     visitor::AbstractGraphVisitor;
-    colormap = nothing)
+    colormap = nothing) where {V,E}
 
     if colormap === nothing
         colormap = initialize_colormap(graph, visitor)
@@ -81,7 +81,7 @@ function traverse_graph{V,E}(
 
     @graph_requires graph adjacency_list vertex_map
 
-    que = Queue(V)
+    que = Queue{V}()
 
     for s in sources
         colormap[vertex_index(s, graph)] = 1
@@ -112,7 +112,7 @@ end
 
 # GDistanceVisitor{G<:AbstractGraph,DMap}(g::G, dists::DMap) = GDistanceVisitor{G,DMap}(g, dists)
 
-function initialize_colormap{V,E,G,DMap<:Dict}(graph::AbstractGraph{V,E},dmap::GDistanceVisitor{G,DMap})
+function initialize_colormap(graph::AbstractGraph{V,E},dmap::GDistanceVisitor{G,DMap}) where {V,E,G,DMap<:Dict}
     colormap = similar(dmap)
     for k in keys(dmap)
         colormap[k] = 0
@@ -128,14 +128,14 @@ function examine_neighbor!(visitor::GDistanceVisitor, u, v, vcolor::Int, ecolor:
     end
 end
 
-function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, s::V, dists::DMap)
+function gdistances!(graph::AbstractGraph{V,E}, s::V, dists::DMap) where {V,E,DMap}
     visitor = GDistanceVisitor(graph, dists)
     dists[vertex_index(s, graph)] = 0
     traverse_graph(graph, BreadthFirst(), s, visitor)
     dists
 end
 
-function gdistances!{V,E,DMap}(graph::AbstractGraph{V,E}, sources::AbstractVector{V}, dists::DMap)
+function gdistances!(graph::AbstractGraph{V,E}, sources::AbstractVector{V}, dists::DMap) where {V,E,DMap}
     visitor = GDistanceVisitor(graph, dists)
     for s in sources
         dists[vertex_index(s, graph)] = 0

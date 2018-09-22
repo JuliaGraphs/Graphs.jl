@@ -1,18 +1,18 @@
 # Test of connected components
 
 using Graphs
-using Base.Test
+using Test
 
-g = simple_adjlist(8, is_directed=false)
+global g = simple_adjlist(8, is_directed=false)
 
-eds = [(1, 2), (1, 3), (2, 4), (3, 4), (5, 6), (6, 7), (7, 5)]
+global eds = [(1, 2), (1, 3), (2, 4), (3, 4), (5, 6), (6, 7), (7, 5)]
 
 for i = 1 : length(eds)
-    e = eds[i]
-    add_edge!(g, e[1], e[2])
+    ee = eds[i]
+    add_edge!(g, ee[1], ee[2])
 end
 
-ccs = connected_components(g)
+global ccs = connected_components(g)
 
 @test length(ccs) == 3
 
@@ -27,11 +27,11 @@ ccs = connected_components(g)
 ##########################################################
 
 # test 1
-eds = [(1, 2), (2, 3), (3, 1), (4, 1)]
-g = simple_graph(4)
+global eds = [(1, 2), (2, 3), (3, 1), (4, 1)]
+global g = simple_graph(4)
 
-for (u, v) in eds
-    add_edge!(g, u, v)
+for (u, vv) in eds
+    add_edge!(g, u, vv)
 end
 
 scc = strongly_connected_components(g)

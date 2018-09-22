@@ -1,7 +1,7 @@
 # Floyd Warshall algorithm to find shortest paths between all pairs of vertices
 
 
-function floyd_warshall!{W}(dists::AbstractMatrix{W}) # dists: minimum distance matrix (initialized to edge distances)
+function floyd_warshall!(dists::AbstractMatrix{W}) where {W} # dists: minimum distance matrix (initialized to edge distances)
 
     # argument checking
 
@@ -29,9 +29,9 @@ function floyd_warshall!{W}(dists::AbstractMatrix{W}) # dists: minimum distance 
 end
 
 
-function floyd_warshall!{W}(
-    dists::AbstractMatrix{W},       # minimum distance matrix (initialized to edge distances)
-    nexts::AbstractMatrix{Int})     # nexts(i,j) = the next hop from i when traveling from i to j via shortest path
+function floyd_warshall!(
+    dists::AbstractMatrix{W},                # minimum distance matrix (initialized to edge distances)
+    nexts::AbstractMatrix{Int})  where {W}   # nexts(i,j) = the next hop from i when traveling from i to j via shortest path
 
     # argument checking
 

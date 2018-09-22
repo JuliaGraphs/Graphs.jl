@@ -1,7 +1,7 @@
 # Test of breadth-first-search
 
 using Graphs
-using Base.Test
+using Test
 
 g = simple_adjlist(6)
 

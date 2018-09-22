@@ -1,12 +1,12 @@
 # test edge lists
 
 using Graphs
-using Base.Test
+using Test
 
 ## simple edge list
 
-pairs = [(1,2), (1,3), (2,3), (2,4), (3,5), (4,5), (2,5)]
-eds = Edge{Int}[Edge(i,p[1],p[2]) for (i,p) in enumerate(pairs)]
+edge_pairs = [(1,2), (1,3), (2,3), (2,4), (3,5), (4,5), (2,5)]
+eds = Edge{Int}[Edge(i,p[1],p[2]) for (i,p) in enumerate(edge_pairs)]
 
 gd = simple_edgelist(5, eds)
 gu = simple_edgelist(5, eds; is_directed=false)

@@ -26,18 +26,18 @@ end
 simple_inclist(nv::Integer; is_directed::Bool=true) =
     SimpleIncidenceList(is_directed, intrange(nv), 0, multivecs(IEdge, nv))
 
-inclist{V,E}(vs::Vector{V}, ::Type{E}; is_directed::Bool = true) =
+inclist(vs::Vector{V}, ::Type{E}; is_directed::Bool = true) where {V,E} =
     IncidenceList{V,E}(is_directed, vs, 0, multivecs(E, length(vs)))
 
-inclist{V,E}(::Type{V}, ::Type{E}; is_directed::Bool = true) = inclist(V[], E; is_directed=is_directed)
-inclist{V}(vs::Vector{V}; is_directed::Bool = true) = inclist(vs, Edge{V}; is_directed=is_directed)
-inclist{V}(::Type{V}; is_directed::Bool = true) = inclist(V[], Edge{V}; is_directed=is_directed)
+inclist(::Type{V}, ::Type{E}; is_directed::Bool = true) where {V,E} = inclist(V[], E; is_directed=is_directed)
+inclist(vs::Vector{V}; is_directed::Bool = true) where {V} = inclist(vs, Edge{V}; is_directed=is_directed)
+inclist(::Type{V}; is_directed::Bool = true) where {V} = inclist(V[], Edge{V}; is_directed=is_directed)
 
 # First constructors on Dict Inc List version (reusing GenericIncidenceList container and functions, few dispatch changes required)
 @compat const IncidenceDict{V,E} = GenericIncidenceList{V, E, Dict{Int,V}, Dict{Int,Vector{E}}}
-incdict{V,E}(vs::Dict{Int,V}, ::Type{E}; is_directed::Bool = true) =
+incdict(vs::Dict{Int,V}, ::Type{E}; is_directed::Bool = true) where {V,E} =
     IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int, E}())
-incdict{V}(::Type{V}; is_directed::Bool = true) = incdict(Dict{Int,V}(), Edge{V}; is_directed=is_directed)
+incdict(::Type{V}; is_directed::Bool = true) where {V} = incdict(Dict{Int,V}(), Edge{V}; is_directed=is_directed)
 
 
 # required interfaces
@@ -49,40 +49,40 @@ num_vertices(g::GenericIncidenceList) = length(g.vertices)
 
 # dictionary enables version
 vertices_specific(a::UnitRange{Int}) = a
-vertices_specific{V}(a::Vector{V}) = a
-vertices_specific{V}(d::Dict{Int,V}) = collect(values(d))
+vertices_specific(a::Vector{V}) where {V} = a
+vertices_specific(d::Dict{Int,V}) where {V} = collect(values(d))
 vertices(g::GenericIncidenceList) = vertices_specific(g.vertices)
 
 num_edges(g::GenericIncidenceList) = g.nedges
 
-edge_index{V,E}(e::E, g::GenericIncidenceList{V,E}) = edge_index(e)
+edge_index(e::E, g::GenericIncidenceList{V,E}) where {V,E} = edge_index(e)
 
-out_edges{V}(v::V, g::GenericIncidenceList{V}) = g.inclist[vertex_index(v, g)]
-out_degree{V}(v::V, g::GenericIncidenceList{V}) = length(out_edges(v, g))
-out_neighbors{V}(v::V, g::GenericIncidenceList{V}) = TargetIterator(g, g.inclist[vertex_index(v, g)])
+out_edges(v::V, g::GenericIncidenceList{V}) where {V} = g.inclist[vertex_index(v, g)]
+out_degree(v::V, g::GenericIncidenceList{V}) where {V} = length(out_edges(v, g))
+out_neighbors(v::V, g::GenericIncidenceList{V}) where {V} = TargetIterator(g, g.inclist[vertex_index(v, g)])
 
 # mutation
 
-function add_vertex!{V,E}(vertices::Vector{V}, inclist::Vector{E}, v::V)
+function add_vertex!(vertices::Vector{V}, inclist::Vector{E}, v::V) where {V,E}
     push!(vertices, v)
-    push!(inclist, Array{E}(0))
+    push!(inclist, Array{E}(undef, 0))
     v
 end
-function add_vertex!{V,E}(vertices::Dict{Int, V}, inclist::Dict{Int,E}, v::V)
+function add_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int,E}, v::V) where {V,E}
   if haskey(vertices, v.index)
     error("Already have index $(v.index) in g")
   end
   vertices[v.index] = v
-  inclist[v.index] = Array{E}(0)
+  inclist[v.index] = Array{E}(undef, 0)
   v
 end
-function add_vertex!{V,E}(g::GenericIncidenceList{V,E}, v::V)
+function add_vertex!(g::GenericIncidenceList{V,E}, v::V) where {V,E}
   add_vertex!(g.vertices, g.inclist, v)
 end
 
 add_vertex!(g::GenericIncidenceList, x) = add_vertex!(g, make_vertex(g, x))
 
-function add_edge!{V,E}(g::GenericIncidenceList{V,E}, u::V, v::V, e::E)
+function add_edge!(g::GenericIncidenceList{V,E}, u::V, v::V, e::E) where {V,E}
     # add an edge between (u, v)
     ui::Int = vertex_index(u, g)
     push!(g.inclist[ui], e)
@@ -94,5 +94,5 @@ function add_edge!{V,E}(g::GenericIncidenceList{V,E}, u::V, v::V, e::E)
     end
 end
 
-add_edge!{V,E}(g::GenericIncidenceList{V,E}, e::E) = add_edge!(g, source(e, g), target(e, g), e)
-add_edge!{V,E}(g::GenericIncidenceList{V, E}, u::V, v::V) = add_edge!(g, u, v, make_edge(g, u, v))
+add_edge!(g::GenericIncidenceList{V,E}, e::E) where {V,E} = add_edge!(g, source(e, g), target(e, g), e)
+add_edge!(g::GenericIncidenceList{V, E}, u::V, v::V) where {V,E} = add_edge!(g, u, v, make_edge(g, u, v))

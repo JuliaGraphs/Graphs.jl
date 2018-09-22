@@ -1,12 +1,12 @@
 # Test of Bellman Ford algorithm for shortest paths
 
 using Graphs
-using Base.Test
+using Test
 
 # g1: the example in CLRS (2nd Ed.)
-g1 = simple_inclist(5)
+global g1 = simple_inclist(5)
 
-g1_wedges = [
+global g1_wedges = [
     (1, 2, 10.),
     (1, 3, 5.),
     (2, 3, 2.),
@@ -18,8 +18,8 @@ g1_wedges = [
     (5, 1, 7.),
     (3, 4, 9.) ]
 
-ne = length(g1_wedges)
-eweights1 = zeros(ne)
+global ne = length(g1_wedges)
+global eweights1 = zeros(ne)
 for i = 1 : ne
     we = g1_wedges[i]
     add_edge!(g1, we[1], we[2])
@@ -31,13 +31,13 @@ end
 
 # Single Source
 
-s1 = bellman_ford_shortest_paths(g1, eweights1, [1])
+global s1 = bellman_ford_shortest_paths(g1, eweights1, [1])
 
 @test s1.parents == [1, 3, 1, 2, 3]
 @test s1.dists == [0., 8., 5., 9., 7.]
 
 ## all destinations
-sps = enumerate_paths(vertices(g1), s1.parent_indices)
+global sps = enumerate_paths(vertices(g1), s1.parent_indices)
 @test length(sps) == 5
 @test sps[1] == [1]
 @test sps[2] == [1,3,2]
@@ -46,23 +46,23 @@ sps = enumerate_paths(vertices(g1), s1.parent_indices)
 @test sps[5] == [1,3,5]
 
 ## multiple destinations
-sps = enumerate_paths(vertices(g1), s1.parent_indices, [2,4])
+global sps = enumerate_paths(vertices(g1), s1.parent_indices, [2,4])
 @test length(sps) == 2
 @test sps[1] == [1,3,2]
 @test sps[2] == [1,3,2,4]
 
 ## single destination
-sps = enumerate_paths(vertices(g1), s1.parent_indices, 2)
+global sps = enumerate_paths(vertices(g1), s1.parent_indices, 2)
 @test sps == [1,3,2]
 @test sps == enumerate_paths(vertices(g1), s1.parent_indices, [2])[1]
 
 # Multiple Sources
 
-s1 = bellman_ford_shortest_paths(g1, eweights1, [1, 2])
+global s1 = bellman_ford_shortest_paths(g1, eweights1, [1, 2])
 @test s1.parents == [1, 2, 2, 2, 3]
 @test s1.dists == [0., 0., 2., 1., 4.]
 
-sps = enumerate_paths(vertices(g1), s1.parent_indices)
+global sps = enumerate_paths(vertices(g1), s1.parent_indices)
 @test sps[1] == [1]
 @test sps[2] == [2]
 @test sps[3] == [2,3]
@@ -77,10 +77,10 @@ struct MyEdge{V}
     target::V
     dist::Float64
 end
-Graphs.target{V}(e::MyEdge{V}, g::AbstractGraph{V}) = e.target
-Graphs.source{V}(e::MyEdge{V}, g::AbstractGraph{V}) = e.source
+Graphs.target(e::MyEdge{V}, g::AbstractGraph{V}) where {V} = e.target
+Graphs.source(e::MyEdge{V}, g::AbstractGraph{V}) where {V} = e.source
 Graphs.edge_index(e::MyEdge) = e.index
-g2 = inclist([i for i=1:10], MyEdge{Int})
+global g2 = inclist([i for i=1:10], MyEdge{Int})
 
 for i = 2:10
     for j = 1:(i - 1)
@@ -93,9 +93,9 @@ end
 
 mutable struct MyEdgePropertyInspector{T} <: AbstractEdgePropertyInspector{T} end
 
-Graphs.edge_property{T,V}(inspector::MyEdgePropertyInspector{T}, e::MyEdge, g::AbstractGraph{V}) = e.dist
-insp =  MyEdgePropertyInspector{Float64}()
-s2 = bellman_ford_shortest_paths(g2, insp, [1])
+Graphs.edge_property(inspector::MyEdgePropertyInspector{T}, e::MyEdge, g::AbstractGraph{V}) where {T,V} = e.dist
+global insp =  MyEdgePropertyInspector{Float64}()
+global s2 = bellman_ford_shortest_paths(g2, insp, [1])
 @test s2.dists == [i * 1.0 for i=0:9]
 @test s2.parents == [i ==0 ? 1 : i for i = 0:9]
 @test !has_negative_edge_cycle(g2, insp)
@@ -104,9 +104,9 @@ add_edge!(g2, MyEdge{Int}(46, 10, 1, -10.0))
 @test_throws NegativeCycleError bellman_ford_shortest_paths(g2, insp, [1])
 
 # g1: the example in CLR[~S] (1st Ed. Figure 25.7)
-g3 = simple_inclist(5)
+global g3 = simple_inclist(5)
 
-g3_wedges = [
+global g3_wedges = [
     (1, 2,  5.),
     (1, 3, -4.),
     (1, 4,  8.),
@@ -118,8 +118,8 @@ g3_wedges = [
     (5, 4,  7.),
     (5, 1,  6.)]
 
-ne3 = length(g3_wedges)
-eweights3 = zeros(ne3)
+global ne3 = length(g3_wedges)
+global eweights3 = zeros(ne3)
 for i = 1 : ne3
     we = g3_wedges[i]
     add_edge!(g3, we[1], we[2])
@@ -130,7 +130,7 @@ end
 @assert num_edges(g3) == 10
 
 
-s3 = bellman_ford_shortest_paths(g3, eweights3, [5])
+global s3 = bellman_ford_shortest_paths(g3, eweights3, [5])
 
 @test s3.parents == [2, 4, 1, 5, 5]
 @test s3.dists == [2.0, 4.0, -2.0, 7.0, 0.0]

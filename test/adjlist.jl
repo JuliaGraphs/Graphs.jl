@@ -1,7 +1,7 @@
 # Tests of Adjacency List types
 
 using Graphs
-using Base.Test
+using Test
 
 gd = simple_adjlist(3)
 gu = simple_adjlist(3; is_directed=false)

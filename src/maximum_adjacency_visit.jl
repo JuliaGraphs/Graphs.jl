@@ -18,11 +18,11 @@ end
 #   import Base.Collections.PriorityQueue
 # end
 
-function maximum_adjacency_visit_impl!{V,E,W}(
+function maximum_adjacency_visit_impl!(
   graph::AbstractGraph{V,E},	                      # the graph
   pq::PriorityQueue{V,W},                           # priority queue
   visitor::AbstractMASVisitor,                      # the visitor
-  colormap::Vector{Int})                            # traversal status
+  colormap::Vector{Int}) where {V,E,W}              # traversal status
 
   while !isempty(pq)
     u = DataStructures.dequeue!(pq)
@@ -41,13 +41,13 @@ function maximum_adjacency_visit_impl!{V,E,W}(
 
 end
 
-function traverse_graph{V,E,W}(
+function traverse_graph(
   graph::AbstractGraph{V,E},
   alg::MaximumAdjacency,
   s::V,
   visitor::AbstractMASVisitor,
   colormap::Vector{Int},
-  ::Type{W})
+  ::Type{W}) where {V,E,W}
 
   # @show Base.Order.Reverse
   # @show Base.Order.ReverseOrdering
@@ -100,7 +100,7 @@ mutable struct MinCutVisitor{G<:AbstractGraph,V,W} <: AbstractMASVisitor
   vertices::Vector{V}
 end
 
-function MinCutVisitor{V,E,W}(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W})
+function MinCutVisitor(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}) where {V,E,W}
   n = num_vertices(graph)
   parities = falses(n)
   MinCutVisitor{typeof(graph),V,W}(graph, parities, zeros(n), Inf, 0, 0, edge_weights, V[])
@@ -174,9 +174,9 @@ end
 #
 #################################################
 
-function min_cut{V,E,W}(
+function min_cut(
   graph::AbstractGraph{V,E},
-  edge_weights::AbstractEdgePropertyInspector{W})
+  edge_weights::AbstractEdgePropertyInspector{W}) where {V,E,W}
 
   @graph_requires graph incidence_list vertex_list
   visitor = MinCutVisitor(graph, edge_weights)
@@ -187,9 +187,9 @@ function min_cut{V,E,W}(
   return( visitor.parities, visitor.bestweight)
 end
 
-function min_cut{V,E,W}(
+function min_cut(
   graph::AbstractGraph{V,E},
-  edge_weight_vec::Vector{W})
+  edge_weight_vec::Vector{W}) where {V,E,W}
 
   @graph_requires graph incidence_list vertex_list
 
@@ -202,25 +202,25 @@ function min_cut{V,E,W}(
   return( visitor.parities, visitor.bestweight)
 end
 
-function min_cut{V,E}(graph::AbstractGraph{V,E})
+function min_cut(graph::AbstractGraph{V,E}) where {V,E}
   m = num_edges(graph)
   min_cut(graph,ones(m))
 end
 
-function maximum_adjacency_visit{V,E,W}(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}; log::Bool=false, io::IO=STDOUT)
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}; log::Bool=false, io::IO=stdout) where {V,E,W}
   visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
 
-function maximum_adjacency_visit{V,E,W}(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=STDOUT)
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=stdout) where {V,E,W}
   edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
   visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
 
-function maximum_adjacency_visit{V,E}(graph::AbstractGraph{V,E}; log::Bool=false, io::IO=STDOUT)
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}; log::Bool=false, io::IO=stdout) where {V,E}
   m = num_edges(graph)
   maximum_adjacency_visit(graph,ones(m); log=log, io=io)
 end

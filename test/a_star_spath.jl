@@ -1,12 +1,12 @@
 # Test of the A* algorithm for finding the shortest path between two vertices
 
 using Graphs
-using Base.Test
+using Test
 
 # The "touring Romania" example from Russell and Norvig
-g1 = simple_inclist(20, is_directed=false)
+global g1 = simple_inclist(20, is_directed=false)
 
-g1_wedges = [
+global g1_wedges = [
     (1, 20, 75.),
     (1, 16, 140.), #2, Arad -- Sibiu
     (1, 17, 118.),
@@ -31,18 +31,18 @@ g1_wedges = [
     (19, 9, 92.),
     (9, 12, 87.) ]
 
-g1_heuristics = [
+global g1_heuristics = [
     366, 0, 160, 242, 161, 176, 77, 151, 226, 244, 241, 234, 380, 100, 193,
     253, 329, 80, 199, 374 ]
 
-ne = length(g1_wedges)
-eweights1 = zeros(ne)
+global ne = length(g1_wedges)
+global eweights1 = zeros(ne)
 for i = 1 : ne
     we = g1_wedges[i]
     add_edge!(g1, we[1], we[2])
     eweights1[i] = we[3]
 end
 
-sp = shortest_path(g1, eweights1, 1, 2, n -> g1_heuristics[n])
-edge_numbers = map(e -> edge_index(e, g1), sp)
+global sp = shortest_path(g1, eweights1, 1, 2, n -> g1_heuristics[n])
+global edge_numbers = map(e -> edge_index(e, g1), sp)
 @test edge_numbers == [2, 7, 15, 16]

@@ -1,6 +1,6 @@
 
 # Generate a random graph with n vertices where each edge is included with probability p.
-function erdos_renyi_graph{GT<:AbstractGraph}(g::GT, n::Integer, p::Real; has_self_loops=false)
+function erdos_renyi_graph(g::GT, n::Integer, p::Real; has_self_loops=false) where {GT<:AbstractGraph}
     for i=1:n
         start_ind = is_directed(g) ? 1 : i
         for j=start_ind:n
@@ -23,7 +23,7 @@ end
 # The resulting graph has n vertices,
 #   Each vertex has a base degree of k  (n > k, k >= 2, k must be even.)
 #   There is a beta chance of each edge being 'rewired'
-function watts_strogatz_graph{GT<:AbstractGraph}(g::GT, n::Integer, k::Integer, beta::Real)
+function watts_strogatz_graph(g::GT, n::Integer, k::Integer, beta::Real) where {GT<:AbstractGraph}
     # When attributes are restored, we can enable placing the vertices around a circle.
     # This is nice for explicit visualization of the model.
     #space = linspace(0,2*pi,n+1)

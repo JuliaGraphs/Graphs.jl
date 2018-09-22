@@ -1,13 +1,13 @@
 # Test of Min-Cut and maximum adjacency visit
 
 using Graphs
-using Base.Test
+using Test
 
-g = simple_inclist(8, is_directed=false)
+global g = simple_inclist(8, is_directed=false)
 
 # Original example by Stoer
 
-wedges = [
+global wedges = [
     (1, 2, 2.),
     (1, 5, 3.),
     (2, 3, 3.),
@@ -22,8 +22,8 @@ wedges = [
     (7, 8, 3.) ]
 
 
-m = length(wedges)
-eweights = zeros(m)
+global m = length(wedges)
+global eweights = zeros(m)
 
 for i = 1 : m
     we = wedges[i]
@@ -36,18 +36,18 @@ end
 @assert num_vertices(g) == 8
 @assert num_edges(g) == m
 
-parity, bestcut = min_cut(g, eweights)
+global (parity, bestcut) = min_cut(g, eweights)
 
 @test length(parity) == 8
 @test parity == Bool[ true, true, false, false, true, true, false, false ]
 @test bestcut == 4.0
 
-parity, bestcut = min_cut(g)
+global (parity, bestcut) = min_cut(g)
 
 @test length(parity) == 8
 @test parity == Bool[ true, false, false, false, false, false, false, false ]
 @test bestcut == 2.0
 
-vertices = maximum_adjacency_visit(g)
+global vertices_n = maximum_adjacency_visit(g)
 
-@test vertices == Int[1, 2, 5, 6, 3, 7, 4, 8]
+@test vertices_n == Int[1, 2, 5, 6, 3, 7, 4, 8]

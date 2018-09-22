@@ -26,8 +26,8 @@ end
 
 simple_adjlist(nv::Int; is_directed::Bool=true) = SimpleAdjacencyList(is_directed, 1:nv, 0, multivecs(Int, nv))
 
-adjlist{V}(vs::Vector{V}; is_directed::Bool=true) = AdjacencyList{V}(is_directed, vs, 0, multivecs(V,length(vs)))
-adjlist{V}(::Type{V}; is_directed::Bool=true) = adjlist(V[]; is_directed=is_directed)
+adjlist(vs::Vector{V}; is_directed::Bool=true) where {V} = AdjacencyList{V}(is_directed, vs, 0, multivecs(V,length(vs)))
+adjlist(::Type{V}; is_directed::Bool=true) where {V} = adjlist(V[]; is_directed=is_directed)
 
 ## required interfaces
 
@@ -38,20 +38,20 @@ vertices(g::GenericAdjacencyList) = g.vertices
 
 num_edges(g::GenericAdjacencyList) = g.nedges
 
-out_degree{V}(v::V, g::GenericAdjacencyList{V}) = length(g.adjlist[vertex_index(v,g)])
-out_neighbors{V}(v::V, g::GenericAdjacencyList{V}) = g.adjlist[vertex_index(v,g)]
+out_degree(v::V, g::GenericAdjacencyList{V}) where {V} = length(g.adjlist[vertex_index(v,g)])
+out_neighbors(v::V, g::GenericAdjacencyList{V}) where {V} = g.adjlist[vertex_index(v,g)]
 
 
 ## mutation
 
-function add_vertex!{V}(g::GenericAdjacencyList{V}, v::V)
+function add_vertex!(g::GenericAdjacencyList{V}, v::V) where {V}
     push!(g.vertices, v)
-    push!(g.adjlist, Array{V}(0))
+    push!(g.adjlist, Array{V}(undef, 0))
     v
 end
 add_vertex!(g::GenericAdjacencyList, x) = add_vertex!(g, make_vertex(g, x))
 
-function add_edge!{V}(g::GenericAdjacencyList{V}, u::V, v::V)
+function add_edge!(g::GenericAdjacencyList{V}, u::V, v::V) where {V}
     nv::Int = num_vertices(g)
     iu = vertex_index(u, g)::Int
     push!(g.adjlist[iu], v)
@@ -65,7 +65,7 @@ end
 
 ## constructing from matrices
 
-function simple_adjlist{T<:Number}(A::AbstractMatrix{T}; is_directed::Bool=true)
+function simple_adjlist(A::AbstractMatrix{T}; is_directed::Bool=true) where {T<:Number}
     n = size(A, 1)
     size(A, 2) == n || error("A must be square")
     alist = multivecs(Int, n)

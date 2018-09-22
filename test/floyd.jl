@@ -1,7 +1,7 @@
 # Test of Floyd-Warshall's algorithm
 
 using Graphs
-using Base.Test
+using Test
 
 eweights = [  0.  1.  5. Inf;
             Inf   0.  3.  8.;

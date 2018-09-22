@@ -1,5 +1,5 @@
 using Compat
-import Compat.String
+# import Compat.String
 
 tests = [
     "edgelist",

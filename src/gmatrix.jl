@@ -63,9 +63,9 @@ function sparse_matrix_from_adjpairs(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array{Int}(ne)
-    J = Array{Int}(ne)
-    vals = Array{eltype(gen)}(ne)
+    I = Array{Int}(undef, ne)
+    J = Array{Int}(undef, ne)
+    vals = Array{eltype(gen)}(undef, ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -173,9 +173,9 @@ function sparse_matrix_from_edges(g::AbstractGraph, gen)
     n = num_vertices(g)
     m = num_edges(g)
     ne = is_directed(g) ? m : 2m
-    I = Array{Int}(ne)
-    J = Array{Int}(ne)
-    vals = Array{eltype(gen)}(ne)
+    I = Array{Int}(undef, ne)
+    J = Array{Int}(undef, ne)
+    vals = Array{eltype(gen)}(undef, ne)
     idx = 0
 
     if implements_edge_list(g)
@@ -244,13 +244,13 @@ end
 
 mutable struct _GenUnit{T} end
 
-Base.get{T,V}(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) = one(T)
-Base.eltype{T}(::_GenUnit{T}) = T
+Base.get(::_GenUnit{T}, g::AbstractGraph{V}, u::V, v::V) where {T,V} = one(T)
+Base.eltype(::_GenUnit{T}) where {T} = T
 
-adjacency_matrix{T<:Number}(g::AbstractGraph, ::Type{T}; returnpermutation::Bool=false) = matrix_from_adjpairs(g, _GenUnit{T}(), returnpermutation=returnpermutation)
+adjacency_matrix(g::AbstractGraph, ::Type{T}; returnpermutation::Bool=false) where {T<:Number} = matrix_from_adjpairs(g, _GenUnit{T}(), returnpermutation=returnpermutation)
 adjacency_matrix(g::AbstractGraph; returnpermutation::Bool=false) = adjacency_matrix(g, Bool, returnpermutation=returnpermutation)
 
-adjacency_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T}) = sparse_matrix_from_adjpairs(g, _GenUnit{T}())
+adjacency_matrix_sparse(g::AbstractGraph, ::Type{T}) where {T<:Number} = sparse_matrix_from_adjpairs(g, _GenUnit{T}())
 adjacency_matrix_sparse(g::AbstractGraph) = adjacency_matrix_sparse(g, Bool)
 
 ### weight matrix
@@ -261,7 +261,7 @@ end
 
 _GenEdgeWeight(weights::AbstractVector) = _GenEdgeWeight{typeof(weights)}(weights)
 
-Base.get{V,E}(gen::_GenEdgeWeight, g::AbstractGraph{V,E}, e::E) = gen.weights[edge_index(e, g)]
+Base.get(gen::_GenEdgeWeight, g::AbstractGraph{V,E}, e::E) where {V,E} = gen.weights[edge_index(e, g)]
 Base.eltype(gen::_GenEdgeWeight) = eltype(gen.weights)
 
 weight_matrix(g::AbstractGraph, weights::AbstractVector) = matrix_from_edges(g, _GenEdgeWeight(weights))
@@ -269,7 +269,7 @@ weight_matrix_sparse(g::AbstractGraph, weights::AbstractVector) = sparse_matrix_
 
 ### distance matrix
 
-function init_distancemat{T<:Number}(n::Int, dinf::T)
+function init_distancemat(n::Int, dinf::T) where {T<:Number}
     a = fill(dinf, n, n)
     @inbounds for i = 1:n
         a[i,i] = zero(T)
@@ -280,7 +280,7 @@ end
 distance_matrix(g::AbstractGraph, dists::AbstractVector, dinf) =
     (n = num_vertices(g); matrix_from_edges!(init_distancemat(n, dinf), g, _GenEdgeWeight(dists)))
 
-distance_matrix{T<:Real}(g::AbstractGraph, dists::AbstractVector{T}) =
+distance_matrix(g::AbstractGraph, dists::AbstractVector{T}) where {T<:Real} =
     distance_matrix(g, dists, typemax(T))
 
 
@@ -292,7 +292,7 @@ distance_matrix{T<:Real}(g::AbstractGraph, dists::AbstractVector{T}) =
 
 laplacian_matrix(g::AbstractGraph) = laplacian_matrix(g, Float64)
 
-function laplacian_matrix{T<:Number}(g::AbstractGraph, ::Type{T})
+function laplacian_matrix(g::AbstractGraph, ::Type{T}) where {T<:Number}
     @graph_requires g vertex_list vertex_map
     !is_directed(g) || error("g must be undirected.")
 
@@ -331,7 +331,7 @@ function laplacian_matrix{T<:Number}(g::AbstractGraph, ::Type{T})
     return a
 end
 
-function laplacian_matrix{T<:Number}(g::AbstractGraph, eweights::AbstractVector{T})
+function laplacian_matrix(g::AbstractGraph, eweights::AbstractVector{T}) where {T<:Number}
     @graph_requires g vertex_list vertex_map edge_map
     !is_directed(g) || error("g must be undirected.")
 
@@ -374,16 +374,16 @@ end
 
 laplacian_matrix_sparse(g::AbstractGraph) = laplacian_matrix_sparse(g, Float64)
 
-function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
+function laplacian_matrix_sparse(g::AbstractGraph, ::Type{T}) where {T<:Number}
     @graph_requires g vertex_list vertex_map
     !is_directed(g) || error("g must be undirected.")
 
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array{Int}(nnz)
-    J = Array{Int}(nnz)
-    vals = Array{T}(nnz)
+    I = Array{Int}(undef, nnz)
+    J = Array{Int}(undef, nnz)
+    vals = Array{T}(undef, nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -453,16 +453,16 @@ function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, ::Type{T})
 end
 
 
-function laplacian_matrix_sparse{T<:Number}(g::AbstractGraph, eweights::AbstractVector{T})
+function laplacian_matrix_sparse(g::AbstractGraph, eweights::AbstractVector{T}) where {T<:Number}
     @graph_requires g vertex_list vertex_map edge_map
     !is_directed(g) || error("g must be undirected.")
 
     n = num_vertices(g)
 
     nnz = num_edges(g) * 2 + n
-    I = Array{Int}(nnz)
-    J = Array{Int}(nnz)
-    vals = Array{T}(nnz)
+    I = Array{Int}(undef, nnz)
+    J = Array{Int}(undef, nnz)
+    vals = Array{T}(undef, nnz)
     idx = 0
 
     degs = zeros(T, n)
@@ -541,11 +541,11 @@ end
 #
 ###########################################################
 
-function sparse2adjacencylist{Tv,Ti<:Integer}(A::SparseMatrixCSC{Tv,Ti})
+function sparse2adjacencylist(A::SparseMatrixCSC{Tv,Ti}) where {Tv,Ti<:Integer}
     colptr = A.colptr
     rowval = A.rowval
     n = size(A, 1)
-    adjlist = Array{Array{Ti,1}}(n)
+    adjlist = Array{Array{Ti,1}}(undef, n)
     s = 0
     for j in 1:n
         adjj = Ti[]

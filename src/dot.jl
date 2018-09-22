@@ -18,9 +18,9 @@ function to_dot(graph::AbstractGraph, attrs::AttributeDict=AttributeDict())
 end
 
 # Write the dot representation of a graph to a stream.
-function to_dot{G<:AbstractGraph}(graph::G, stream::IO,attrs::AttributeDict=AttributeDict())
-    has_vertex_attrs = method_exists(attributes, (vertex_type(graph), G))
-    has_edge_attrs = method_exists(attributes, (edge_type(graph), G))
+function to_dot(graph::G, stream::IO,attrs::AttributeDict=AttributeDict()) where {G<:AbstractGraph}
+    has_vertex_attrs = hasmethod(attributes, (vertex_type(graph), G))
+    has_edge_attrs = hasmethod(attributes, (edge_type(graph), G))
 
     write(stream, "$(graph_type_string(graph)) graphname {\n")
     write(stream, "$(to_dot_graph(attrs))")

@@ -5,6 +5,7 @@
 
 [![Graphs](http://pkg.julialang.org/badges/Graphs_0.6.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.6)
 [![Graphs](http://pkg.julialang.org/badges/Graphs_0.7.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=0.7)
+[![Graphs](http://pkg.julialang.org/badges/Graphs_1.0.svg)](http://pkg.julialang.org/?pkg=Graphs&ver=1.0)
 
 Graphs.jl is a Julia package that provides graph types and algorithms. The design of this package is inspired by the [Boost Graph Library](http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html) (*e.g.* using standardized generic interfaces), while taking advantage of Julia's language features (*e.g.* multiple dispatch). This library allows storing of own information in the graph structure -- useful in many cases.
 

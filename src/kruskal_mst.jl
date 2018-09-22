@@ -2,16 +2,16 @@
 
 
 # select edges from a sorted list of weighted edges
-function kruskal_select{V,E,W}(
+function kruskal_select(
     graph::AbstractGraph{V,E},
     sorted_wedges::AbstractVector{WeightedEdge{E,W}},
-    K::Integer)
+    K::Integer) where {V,E,W}
 
     @graph_requires graph vertex_map
 
     n = num_vertices(graph)
-    re = Array{E}(0)
-    rw = Array{W}(0)
+    re = Array{E}(undef, 0)
+    rw = Array{W}(undef, 0)
 
     if n > 1
         dsets = IntDisjointSets(n)

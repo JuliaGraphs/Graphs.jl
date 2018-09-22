@@ -1,7 +1,7 @@
 # issue related tests
 
 using Graphs
-using Base.Test
+using Test
 
 
 

@@ -1,5 +1,5 @@
 using Graphs
-using Base.Test
+using Test
 
 # Test the random graph generation
 # We're just running the functions, no testing that the graphs
