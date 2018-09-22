@@ -207,20 +207,20 @@ function min_cut(graph::AbstractGraph{V,E}) where {V,E}
   min_cut(graph,ones(m))
 end
 
-function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}; log::Bool=false, io::IO=STDOUT) where {V,E,W}
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weights::AbstractEdgePropertyInspector{W}; log::Bool=false, io::IO=stdout) where {V,E,W}
   visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
 
-function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=STDOUT) where {V,E,W}
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}, edge_weight_vec::Vector{W}; log::Bool=false, io::IO=stdout) where {V,E,W}
   edge_weights = VectorEdgePropertyInspector(edge_weight_vec)
   visitor = MASVisitor(io, V[],edge_weights,log)
   traverse_graph(graph, MaximumAdjacency(), first(vertices(graph)), visitor, zeros(Int, num_vertices(graph)), W)
   visitor.vertices
 end
 
-function maximum_adjacency_visit(graph::AbstractGraph{V,E}; log::Bool=false, io::IO=STDOUT) where {V,E}
+function maximum_adjacency_visit(graph::AbstractGraph{V,E}; log::Bool=false, io::IO=stdout) where {V,E}
   m = num_edges(graph)
   maximum_adjacency_visit(graph,ones(m); log=log, io=io)
 end

@@ -1,6 +1,6 @@
 # Test of Depth-first visit
 
-using Graphs
+using Graphs, SparseArrays
 using Test
 
 mutable struct GraphTest
@@ -43,8 +43,8 @@ for tset in testsets
 
         global gEx = graph(ExVertex[], ExEdge{ExVertex}[], is_directed = is_dir)
         map((x) -> add_vertex!(gEx, "edge:" * string(x)), 1:6)
-        global V = vertices(gEx)
-        map((edg) -> add_edge!(gEx, V[edg[1]], V[edg[2]]), gtest.graph_edges)
+        global VV = vertices(gEx)
+        map((edg) -> add_edge!(gEx, VV[edg[1]], VV[edg[2]]), gtest.graph_edges)
 
 
         # DFS traversal
@@ -52,7 +52,7 @@ for tset in testsets
             global vs1 = visited_vertices(g, DepthFirst(), 1)
             @assert vs1 == gtest.dfs_path
 
-            global vs2 = visited_vertices(gEx, DepthFirst(), V[1])
+            global vs2 = visited_vertices(gEx, DepthFirst(), VV[1])
             @assert vs2 == collect(map((x) -> gEx.vertices[x], gtest.dfs_path))
         end
 
@@ -67,7 +67,6 @@ for tset in testsets
 
         elseif !isempty(gtest.topo_sort)
             ts = topological_sort_by_dfs(g)
-            @show ts
             @assert ts == gtest.topo_sort
 
             ts = topological_sort_by_dfs(gEx)

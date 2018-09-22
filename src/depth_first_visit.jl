@@ -149,7 +149,6 @@ function topological_sort_by_dfs(graph::AbstractGraph{V}) where {V}
 
     cmap = zeros(Int, num_vertices(graph))
     visitor = TopologicalSortVisitor{V}(num_vertices(graph))
-    @show visitor
     for s in vertices(graph)
         if cmap[vertex_index(s, graph)] == 0
             traverse_graph(graph, DepthFirst(), s, visitor, vertexcolormap=cmap)

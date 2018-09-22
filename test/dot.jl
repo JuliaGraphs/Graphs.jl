@@ -29,20 +29,20 @@ let g=inclist(ExVertex, is_directed=false)
     @test to_dot(attrs) in ["[\"foo\"=\"bar\",\"baz\"=\"qux\"]",
                             "[\"baz\"=\"qux\",\"foo\"=\"bar\"]"]
 
-    sp = split(to_dot(g), "\n")
+    global sp = split(to_dot(g), "\n")
     @test ("1 [\"foo\"=\"bar\",\"baz\"=\"qux\"]" in sp) ||
           ("1 [\"baz\"=\"qux\",\"foo\"=\"bar\"]" in sp)
 end
 
 # Edge attributes get layed out correctly
 let
-    g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
+    global g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
     add_vertex!(g, ExVertex(1, "label1"))
     add_vertex!(g, ExVertex(2, "label2"))
 
     add_edge!(g, vertices(g)[1], vertices(g)[2])
 
-    e = out_edges(vertices(g)[2], g)[1]
+    global e = out_edges(vertices(g)[2], g)[1]
 
     attrs = attributes(e, g)
     attrs["foo"] = "bar"
@@ -50,27 +50,27 @@ let
 
     attrs["baz"] = "qux"
 
-    sp = split(to_dot(g), "\n")
+    global sp = split(to_dot(g), "\n")
     @test ("1 -- 2 [\"foo\"=\"bar\",\"baz\"=\"qux\"]" in sp) ||
           ("1 -- 2 [\"baz\"=\"qux\",\"foo\"=\"bar\"]" in sp)
 end
 
 # Graph attributes get layed out correctly
 let
-    g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
+    global g = inclist(ExVertex, ExEdge{ExVertex}, is_directed=false)
     add_vertex!(g, ExVertex(1, "label1"))
     add_vertex!(g, ExVertex(2, "label2"))
     add_edge!(g, vertices(g)[1], vertices(g)[2])
-    e = out_edges(vertices(g)[2], g)[1]
+    global e = out_edges(vertices(g)[2], g)[1]
     graph_attrs = AttributeDict()
 
     graph_attrs["foo"]="bar"
-    sp = split(to_dot(g, graph_attrs), "\n")
+    global sp = split(to_dot(g, graph_attrs), "\n")
     @test ("\"foo\"=\"bar\";" in sp)
     @test !("\"baz\"=\"qux\";" in sp)
 
     graph_attrs["baz"]="qux"
-    sp = split(to_dot(g, graph_attrs), "\n")
+    global sp = split(to_dot(g, graph_attrs), "\n")
     @test ("\"foo\"=\"bar\";" in sp)
     @test ("\"baz\"=\"qux\";" in sp)
 end

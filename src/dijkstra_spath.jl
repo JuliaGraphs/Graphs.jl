@@ -26,7 +26,7 @@ end
 
 function create_dijkstra_states(g::AbstractGraph{V}, ::Type{D}) where {V,D<:Number}
     n = num_vertices(g)
-    parents = Array{V}(n)
+    parents = Array{V}(undef, n)
     parent_indices = zeros(Int, n)
     dists = fill(typemax(D), n)
     colormap = zeros(Int, n)
