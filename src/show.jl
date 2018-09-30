@@ -8,7 +8,7 @@ function show(io::IO, v::ExVertex)
     end
 end
 
-function show(io::IO, e::@compat(Union{Edge, ExEdge}))
+function show(io::IO, e::Union{Edge, ExEdge})
     print(io, "edge [$(e.index)]: $(e.source) -- $(e.target)")
 end
 

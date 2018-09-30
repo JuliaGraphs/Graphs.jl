@@ -5,7 +5,7 @@
 #################################################
 
 ### the root type of all graphs
-@compat abstract type AbstractGraph{V, E} end
+abstract type AbstractGraph{V, E} end
 
 vertex_type(g::AbstractGraph{V,E}) where {V,E} = V
 edge_type(g::AbstractGraph{V,E}) where {V,E} = E

@@ -169,7 +169,7 @@ end
 
 @testset "Extended and General directed graph" begin
 
-for T in [ExVertex, String]  #Compat.ASCIIString
+for T in [ExVertex, String]
 
 #################################################
 #

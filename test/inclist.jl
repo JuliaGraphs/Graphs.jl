@@ -61,8 +61,7 @@ add_edge!(gd, 4, 5)
 @test collect(out_edges(2, gd)) == [Edge(2, 2, 4), Edge(5, 2, 3)]
 @test collect(out_edges(3, gd)) == [Edge(4, 3, 4)]
 @test collect(out_edges(4, gd)) == [Edge(6, 4, 5)]
-@test collect(out_edges(5, gd)) == Array{Tuple{Int, Int}}(undef, 0) # Array{@compat(Tuple{Int, Int})}(0)
-# @test collect(out_edges(5, gd)) == Array(@compat(Tuple{Int, Int}), 0)
+@test collect(out_edges(5, gd)) == Array{Tuple{Int, Int}}(undef, 0)
 
 # import Graphs: iterate
 # iter_state = iterate(out_neighbors(1, gd))
@@ -139,7 +138,7 @@ add_edge!(gu, 4, 5)
 #################################################
 global g
 g = let g = g
-    for g in [inclist(KeyVertex{String}), inclist(String)]  # Compat.ASCIIString, Compat.ASCIIString
+    for g in [inclist(KeyVertex{String}), inclist(String)]
 
         global vs = [ add_vertex!(g, "a"), add_vertex!(g, "b"), add_vertex!(g, "c") ]
 

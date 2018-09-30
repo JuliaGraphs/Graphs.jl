@@ -10,10 +10,9 @@ notifications:
     email: false
 matrix:
   allow_failures:
-    - julia: 1.0
     - julia: nightly
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("Graphs"); Pkg.test("Graphs"; coverage=true)'
+  - julia --check-bounds=yes -e 'using Pkg; Pkg.clone(pwd()); Pkg.build("Graphs"); Pkg.test("Graphs"; coverage=true)'
 after_success:
-    - julia -e 'cd(Pkg.dir("Graphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
+    - julia -e 'using Pkg; cd(Pkg.dir("Graphs")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder()); Codecov.submit(process_folder())'
