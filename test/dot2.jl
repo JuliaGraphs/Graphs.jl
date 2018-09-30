@@ -23,7 +23,6 @@
 # NOTE: if to_dot is modified to emit lines with .dot comments, these tests
 #       mail fail erroneously....
 
-using Compat
 
 comRX = Base.compile(r"^[^\[]+\[([^\[]+)\]\h*$"x)
 function   rewriteAttrs(a::AbstractString)
@@ -89,7 +88,7 @@ end # module testDOT1
 
 module testDOT2
 
-using Graphs, Compat
+using Graphs
 using Test
 
 ###########

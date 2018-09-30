@@ -13,8 +13,6 @@ module AStar
 # code in its own module.
 
 using Graphs
-# using Base. # in DataStructures? Julia 0.7.0
-using Compat
 using DataStructures
 
 export shortest_path
@@ -63,8 +61,8 @@ function shortest_path(
     t::V,                       # the end vertex
     heuristic::Function = n -> 0) where {V,E,D} # heuristic (under)estimating distance to target
     #
-    frontier = DataStructures.PriorityQueue{@compat(Tuple{D,Array{E,1},V}),D}()
-    # frontier = DataStructures.PriorityQueue(@compat(Tuple{D,Array{E,1},V}),D)
+    frontier = DataStructures.PriorityQueue{Tuple{D,Array{E,1},V},D}()
+    # frontier = DataStructures.PriorityQueue(Tuple{D,Array{E,1},V},D)
     frontier[(zero(D), E[], s)] = zero(D)
     colormap = zeros(Int, num_vertices(graph))
     sindx = mkindx(s)

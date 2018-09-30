@@ -45,7 +45,7 @@ end
 #
 ###################################################################
 
-@compat abstract type AbstractPrimVisitor end
+abstract type AbstractPrimVisitor end
 
 # invoked when a new vertex is first encountered
 discover_vertex!(visitor::AbstractPrimVisitor, v, e, w) = nothing

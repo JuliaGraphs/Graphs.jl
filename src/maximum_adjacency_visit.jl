@@ -10,7 +10,7 @@
 mutable struct MaximumAdjacency <: AbstractGraphVisitAlgorithm
 end
 
-@compat abstract type AbstractMASVisitor <: AbstractGraphVisitor end
+abstract type AbstractMASVisitor <: AbstractGraphVisitor end
 # @static if VERSION > v"0.6-"
 #   abstract type AbstractMASVisitor <: AbstractGraphVisitor end
 # else

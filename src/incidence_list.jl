@@ -16,8 +16,8 @@ mutable struct GenericIncidenceList{V, E, VList, IncList} <: AbstractGraph{V, E}
     inclist::IncList
 end
 
-@compat const SimpleIncidenceList = GenericIncidenceList{Int, IEdge, UnitRange{Int}, Vector{Vector{IEdge}}}
-@compat const IncidenceList{V,E} = GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
+const SimpleIncidenceList = GenericIncidenceList{Int, IEdge, UnitRange{Int}, Vector{Vector{IEdge}}}
+const IncidenceList{V,E} = GenericIncidenceList{V, E, Vector{V}, Vector{Vector{E}}}
 
 @graph_implements GenericIncidenceList vertex_list vertex_map edge_map adjacency_list incidence_list
 
@@ -34,7 +34,7 @@ inclist(vs::Vector{V}; is_directed::Bool = true) where {V} = inclist(vs, Edge{V}
 inclist(::Type{V}; is_directed::Bool = true) where {V} = inclist(V[], Edge{V}; is_directed=is_directed)
 
 # First constructors on Dict Inc List version (reusing GenericIncidenceList container and functions, few dispatch changes required)
-@compat const IncidenceDict{V,E} = GenericIncidenceList{V, E, Dict{Int,V}, Dict{Int,Vector{E}}}
+const IncidenceDict{V,E} = GenericIncidenceList{V, E, Dict{Int,V}, Dict{Int,Vector{E}}}
 incdict(vs::Dict{Int,V}, ::Type{E}; is_directed::Bool = true) where {V,E} =
     IncidenceDict{V,E}(is_directed, vs, 0, Dict{Int, E}())
 incdict(::Type{V}; is_directed::Bool = true) where {V} = incdict(Dict{Int,V}(), Edge{V}; is_directed=is_directed)

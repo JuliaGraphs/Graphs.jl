@@ -1,8 +1,6 @@
 using Graphs
 using Test
 
-import Compat: xor
-
 function has_match(regex, str)
     match(regex, str) !== nothing
 end

@@ -17,8 +17,8 @@ mutable struct GenericAdjacencyList{V, VList, AdjList} <: AbstractGraph{V, Edge{
     adjlist::AdjList
 end
 
-@compat const SimpleAdjacencyList = GenericAdjacencyList{Int, UnitRange{Int}, Vector{Vector{Int}}}
-@compat const AdjacencyList{V} = GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
+const SimpleAdjacencyList = GenericAdjacencyList{Int, UnitRange{Int}, Vector{Vector{Int}}}
+const AdjacencyList{V} = GenericAdjacencyList{V, Vector{V}, Vector{Vector{V}}}
 
 @graph_implements GenericAdjacencyList vertex_list vertex_map adjacency_list
 
