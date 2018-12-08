@@ -77,7 +77,7 @@ function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Vector{V}}) 
   end
   return inlist
 end
-function in_neighbors(vert::V, gr::Graphs.GenericIncidenceList{V, Edge{V}, Dict{Int, V}}) where {V}
+function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Dict{Int, V}}) where {V}
   inclist = gr.inclist
   targid = vert.index
   inlist = T[]
