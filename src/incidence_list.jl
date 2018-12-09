@@ -67,7 +67,7 @@ Find neighbors connected by directed edge towards `vert`.
 function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Vector{V}}) where {V}
   inclist = gr.inclist
   targid = vert.index
-  inlist = T[]
+  inlist = V[]
   for edgelist in inclist
     for ed in edgelist
       if ed.target.index == targid
@@ -80,7 +80,7 @@ end
 function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Dict{Int, V}}) where {V}
   inclist = gr.inclist
   targid = vert.index
-  inlist = T[]
+  inlist = V[]
   for (key,edgelist) in inclist
     for ed in edgelist
       if ed.target.index == targid
