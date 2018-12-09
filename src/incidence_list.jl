@@ -61,6 +61,36 @@ out_edges(v::V, g::GenericIncidenceList{V}) where {V} = g.inclist[vertex_index(v
 out_degree(v::V, g::GenericIncidenceList{V}) where {V} = length(out_edges(v, g))
 out_neighbors(v::V, g::GenericIncidenceList{V}) where {V} = TargetIterator(g, g.inclist[vertex_index(v, g)])
 
+"""
+Find neighbors connected by directed edge towards `vert`.
+"""
+function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Vector{V}}) where {V}
+  inclist = gr.inclist
+  targid = vert.index
+  inlist = V[]
+  for edgelist in inclist
+    for ed in edgelist
+      if ed.target.index == targid
+        push!(inlist, ed.source)
+      end
+    end
+  end
+  return inlist
+end
+function in_neighbors(vert::V, gr::GenericIncidenceList{V, Edge{V}, Dict{Int, V}}) where {V}
+  inclist = gr.inclist
+  targid = vert.index
+  inlist = V[]
+  for (key,edgelist) in inclist
+    for ed in edgelist
+      if ed.target.index == targid
+        push!(inlist, ed.source)
+      end
+    end
+  end
+  return inlist
+end
+
 # mutation
 
 function add_vertex!(vertices::Vector{V}, inclist::Vector{E}, v::V) where {V,E}
