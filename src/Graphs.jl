@@ -4,7 +4,7 @@ module Graphs
 using DataStructures
 using SparseArrays
 
-import Base: start, done, next, show, ==, <
+import Base: show, ==, <
 import Base: length, isempty, size, getindex, isless
 
 export
