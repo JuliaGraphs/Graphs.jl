@@ -35,6 +35,7 @@ export
     collect_edges, collect_weighted_edges,
 
     add_edge!, add_vertex!,
+    delete_vertex!,
 
     AbstractEdgePropertyInspector, VectorEdgePropertyInspector,
     ConstantEdgePropertyInspector, AttributeEdgePropertyInspector,

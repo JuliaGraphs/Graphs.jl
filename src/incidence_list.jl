@@ -110,6 +110,41 @@ function add_vertex!(g::GenericIncidenceList{V,E}, v::V) where {V,E}
   add_vertex!(g.vertices, g.inclist, v)
 end
 
+function delete_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int, E}, v::V, outnei) where {V,E}
+  nedges = 0
+  # delete all connected edges
+  for vid in union(map(x->x.index, outnei), v.index)
+    count = 0
+    for ed in inclist[vid]
+      count += 1
+      if ed.source.index == v.index || ed.target.index == v.index
+        # delete this edge
+        # @show count, inclist[vid]
+        deleteat!(inclist[vid], count)
+        count -= 1
+        nedges += 1
+      end
+    end
+    delete!(inclist, vid)
+  end
+
+  delete!(vertices, v.index)
+  return nedges
+end
+
+function delete_vertex!(g::GenericIncidenceList{V,E}, v::V) where {V,E}
+  # find list of vertices that may have edges to v
+  possv = collect(out_neighbors(v, g))
+
+  # delete the vertex
+  ned = delete_vertex!(g.vertices, g.inclist, v, possv)
+
+  g.nedges -= ned
+
+  return nothing
+end
+
+
 add_vertex!(g::GenericIncidenceList, x) = add_vertex!(g, make_vertex(g, x))
 
 function add_edge!(g::GenericIncidenceList{V,E}, u::V, v::V, e::E) where {V,E}
