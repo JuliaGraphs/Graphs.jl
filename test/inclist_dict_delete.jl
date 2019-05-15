@@ -2,7 +2,7 @@ using Test
 using Graphs
 
 
-@testset "Incidence Dictionaries" do
+@testset "Incidence Dictionaries" begin
 
 g = Graphs.incdict(Graphs.ExVertex,is_directed=false)
 variables = [ExVertex(1, "x1"), ExVertex(2, "x2"), ExVertex(3, "x3"), ExVertex(4, "x4")]
