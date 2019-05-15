@@ -128,7 +128,6 @@ function delete_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int, E}, v::V, out
     end
     inclist[vid] = keeplist
   end
-  # delete if nobody is home
   delete!(inclist, v.index)
   delete!(vertices, v.index)
   return nedges
@@ -141,7 +140,7 @@ function delete_vertex!(v::V, g::GenericIncidenceList{V,E}) where {V,E}
   # delete the vertex
   ned = delete_vertex!(g.vertices, g.inclist, v, possv)
 
-  g.nedges -= ned
+  g.nedges -= (is_directed(g) ? ned : round(Int,ned/2))
 
   return nothing
 end
