@@ -115,17 +115,22 @@ function delete_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int, E}, v::V, out
   # delete all connected edges
   for vid in union(map(x->x.index, outnei), v.index)
     count = 0
+    keeplist = E()
     for ed in inclist[vid]
       count += 1
+      # want to delete any source or dest edge pointing to v (not whole inclist)
       if ed.source.index == v.index || ed.target.index == v.index
-        # delete this edge
-        # @show count, inclist[vid]
-        deleteat!(inclist[vid], count)
-        count -= 1
+        # this edge must be deleted from Array
         nedges += 1
+      else
+        push!(keeplist, ed)
       end
     end
-    delete!(inclist, vid)
+    inclist[vid] = keeplist
+    # delete if nobody is home
+    if length(keeplist) == 0
+      delete!(inclist, vid)
+    end
   end
 
   delete!(vertices, v.index)

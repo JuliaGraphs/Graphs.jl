@@ -39,18 +39,9 @@ edge = Graphs.make_edge(g, factors[3], variables[4]); Graphs.add_edge!(g, edge)
 @test collect(in_neighbors(variables[4], g)) == [factors[3]]
 
 # Delete testing
-delete_vertex!(g, variables[4])
+delete_vertex!(variables[4], g)
 @test num_vertices(g) == 6
 @test_throws Exception out_degree(variables[4], g)
 @test out_degree(factors[3], g) == 1 # Should be just x3 now
-
-# Discuss here - why is this failing?
-
-v = factors[3]
-vertex_index(v, g)
-
-g.inclist
-
-g.inclist[vertex_index(v, g)]
 
 end
