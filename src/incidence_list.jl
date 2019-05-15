@@ -127,12 +127,9 @@ function delete_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int, E}, v::V, out
       end
     end
     inclist[vid] = keeplist
-    # delete if nobody is home
-    if length(keeplist) == 0
-      delete!(inclist, vid)
-    end
   end
-
+  # delete if nobody is home
+  delete!(inclist, v.index)
   delete!(vertices, v.index)
   return nedges
 end
