@@ -20,7 +20,8 @@ tests = [
     "random",
     "generators",
     "maximum_adjacency_visit",
-    "issue_related_tests" ]
+    "issue_related_tests",
+    "inclist_dict_delete" ]
 
 
 for t in tests
