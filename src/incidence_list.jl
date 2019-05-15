@@ -132,7 +132,7 @@ function delete_vertex!(vertices::Dict{Int, V}, inclist::Dict{Int, E}, v::V, out
   return nedges
 end
 
-function delete_vertex!(g::GenericIncidenceList{V,E}, v::V) where {V,E}
+function delete_vertex!(v::V, g::GenericIncidenceList{V,E}) where {V,E}
   # find list of vertices that may have edges to v
   possv = collect(out_neighbors(v, g))
 
