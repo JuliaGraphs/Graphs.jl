@@ -2,7 +2,7 @@ name = "Graphs"
 uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
 keywords = ["Graphs"]
 desc = "Traditional graphing library for a variety of graph types."
-version = "0.10.2"
+version = "0.10.3"
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
