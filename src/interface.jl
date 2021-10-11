@@ -1,4 +1,4 @@
-# This file contains the common interface for LightGraphs.
+# This file contains the common interface for Graphs.
 
 """
     NotImplementedError{M}(m)
@@ -52,7 +52,7 @@ Return the source vertex of edge `e`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -71,7 +71,7 @@ Return the destination vertex of edge `e`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -93,7 +93,7 @@ Create a new edge from `e` with source and destination vertices reversed.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleDiGraph(2);
 
@@ -132,7 +132,7 @@ Return the number of vertices in `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> nv(SimpleGraph(3))
 3
@@ -147,7 +147,7 @@ Return the number of edges in `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(3);
 
@@ -168,7 +168,7 @@ is invalidated by changes to `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> collect(vertices(SimpleGraph(4)))
 4-element Array{Int64,1}:
@@ -194,12 +194,12 @@ is invalidated by changes to `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(3);
 
 julia> collect(edges(g))
-2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 2 => 3
 ```
@@ -214,7 +214,7 @@ New graph types must implement `is_directed(::Type{<:G})`.
 The method can also be called with `is_directed(g::G)`
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> is_directed(SimpleGraph(2))
 false
@@ -236,7 +236,7 @@ Return true if `v` is a vertex of `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> has_vertex(SimpleGraph(2), 1)
 true
@@ -260,7 +260,7 @@ calls to `has_edge`, c.f. [`edges`](@ref).
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleDiGraph(2);
 

@@ -55,14 +55,14 @@ Time complexity is ``\\mathcal{O}(|E||V|)``.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 
 julia> collect(edges(barbell))
-13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+13-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -78,7 +78,7 @@ julia> collect(edges(barbell))
  Edge 6 => 5
 
 julia> collect(edges(transitiveclosure(barbell)))
-21-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+21-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -121,14 +121,14 @@ Time complexity is ``\\mathcal{O}(|V||E|)``.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 
 julia> add_edge!(barbell, 1, 4);
 
 julia> collect(edges(barbell))
-13-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+13-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -144,7 +144,7 @@ julia> collect(edges(barbell))
  Edge 6 => 5
 
 julia> collect(edges(transitivereduction(barbell)))
-7-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+7-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 2 => 3

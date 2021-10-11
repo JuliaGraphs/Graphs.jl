@@ -16,10 +16,10 @@ end
 
 Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
 on a graph, computing shortest distances between `srcs` and all other vertices.
-Return a [`LightGraphs.DijkstraState`](@ref) that contains various traversal information.
+Return a [`Graphs.DijkstraState`](@ref) that contains various traversal information.
 
 ### Optional Arguments
-- `allpaths=false`: If true, returns a [`LightGraphs.DijkstraState`](@ref) that keeps track of all
+- `allpaths=false`: If true, returns a [`Graphs.DijkstraState`](@ref) that keeps track of all
 predecessors of a given vertex.
 
 ### Performance
@@ -33,7 +33,7 @@ when multiple calls to `dijkstra_shortest_paths` with the distance matrix are pl
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
 

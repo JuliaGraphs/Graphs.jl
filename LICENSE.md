@@ -1,4 +1,4 @@
-The LightGraphs.jl package is licensed under the Simplified "2-clause" BSD
+The Graphs.jl (formerly called LightGraphs.jl) package is licensed under the Simplified "2-clause" BSD
 License:
 > Copyright (c) 2015: Seth Bromberger and other contributors.
 >
@@ -24,7 +24,7 @@ License:
 > (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 > OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-LightGraphs uses code derived from and/or inspired by the following packages:
+Graphs uses code derived from and/or inspired by the following packages:
 
 NetworkX:
 > Copyright (C) 2004-2012, NetworkX Developers

@@ -1,20 +1,20 @@
 using Documenter
-#include("../src/LightGraphs.jl")
-using LightGraphs
+#include("../src/Graphs.jl")
+using Graphs
 
 # same for contributing and license
 cp(normpath(@__FILE__, "../../CONTRIBUTING.md"), normpath(@__FILE__, "../src/contributing.md"); force=true)
 cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.md"); force=true)
 
 makedocs(
-    modules     = [LightGraphs],
+    modules     = [Graphs],
     format      = Documenter.HTML(), 
-    sitename    = "LightGraphs",
+    sitename    = "Graphs",
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
         "Choosing A Graph Type"             => "graphtypes.md",
-        "LightGraphs Types"                 => "types.md",
+        "Graphs Types"                      => "types.md",
         "Accessing Properties"              => "basicproperties.md",
         "Making and Modifying Graphs"       => "generators.md",
         "Reading / Writing Graphs"          => "persistence.md",
@@ -35,12 +35,12 @@ makedocs(
         "Contributing"                      => "contributing.md",
         "Developer Notes"                   => "developing.md",
         "License Information"               => "license.md",
-        "Citing LightGraphs"                => "citing.md"
+        "Citing Graphs"                     => "citing.md"
     ]
 )
 
 deploydocs(
-    repo        = "github.com/JuliaGraphs/LightGraphs.jl.git",
+    repo        = "github.com/JuliaGraphs/Graphs.jl.git",
     target      = "build",
 )
 

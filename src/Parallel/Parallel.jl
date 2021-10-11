@@ -1,7 +1,7 @@
 module Parallel
 
-using LightGraphs
-using LightGraphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
+using Graphs
+using Graphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
 using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata

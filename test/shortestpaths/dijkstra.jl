@@ -38,7 +38,7 @@
     spath(target, dijkstraStruct, source) = target == source ? target : [spath(dijkstraStruct.parents[target], dijkstraStruct, source) target]
     spaths(ds, targets, source) = [spath(i, ds, source) for i in targets]
 
-    G = LightGraphs.Graph()
+    G = Graphs.Graph()
     add_vertices!(G, 4)
     add_edge!(G, 2, 1)
     add_edge!(G, 2, 3)

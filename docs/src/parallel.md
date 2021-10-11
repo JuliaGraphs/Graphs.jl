@@ -1,11 +1,11 @@
 # Parallel Graph Algorithms
 
-LightGraphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the
+Graphs.Parallel is a module for graph algorithms that are parallelized. Their names should be consistent with the
 serial versions in the main module. In order to use parallel versions of the algorithms you can write:
 
 ```julia
-using LightGraphs
-import LightGraphs.Parallel
+using Graphs
+import Graphs.Parallel
 
 g = path_graph(10)
 bc = Parallel.betweenness_centrality(g)
@@ -21,14 +21,14 @@ but since the parallel version is slower when given only a single source, it wil
 ```julia
 g = Graph(10)
 # these work
-LightGraphs.dijkstra_shortest_paths(g,1)
-LightGraphs.dijkstra_shortest_paths(g, [1,2])
+Graphs.dijkstra_shortest_paths(g,1)
+Graphs.dijkstra_shortest_paths(g, [1,2])
 Parallel.dijkstra_shortest_paths(g, [1,2])
 # this doesn't
 Parallel.dijkstra_shortest_paths(g,1)
 ```
 
-Note that after `import`ing or `using` `LightGraphs.Parallel`, you must fully qualify the version of the function you wish to use (using, _e.g._, `LightGraphs.betweenness_centrality(g)` for the sequential version and
+Note that after `import`ing or `using` `Graphs.Parallel`, you must fully qualify the version of the function you wish to use (using, _e.g._, `Graphs.betweenness_centrality(g)` for the sequential version and
 `Parallel.betweenness_centrality(g)` for the parallel version.)
 
 The following is a current list of parallel algorithms:

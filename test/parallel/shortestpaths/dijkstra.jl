@@ -12,7 +12,7 @@
         @test all(isapprox(z.dists, zp.dists))
 
         for i in 1:5
-            state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i; allpaths=true);
             for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
@@ -25,7 +25,7 @@
         @test all(isapprox(z.dists, zp.dists))
 
         for i in 1:5
-            state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i; allpaths=true);
             for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
@@ -38,7 +38,7 @@
         @test all(isapprox(z.dists[1:2, :], zp.dists))
 
         for i in 1:2
-            state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i; allpaths=true);
             for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
@@ -58,7 +58,7 @@
         @test all(isapprox(z.dists, zp.dists))
 
         for i in 1:5
-            state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i; allpaths=true);
             for j in 1:5
                 if z.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
@@ -71,7 +71,7 @@
         @test all(isapprox(z.dists, zp.dists))
 
         for i in 1:5
-            state = LightGraphs.dijkstra_shortest_paths(g, i; allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i; allpaths=true);
             for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]
@@ -84,7 +84,7 @@
         @test all(isapprox(z.dists[1:2, :], zp.dists))
 
         for i in 1:2
-            state = LightGraphs.dijkstra_shortest_paths(g, i;allpaths=true);
+            state = Graphs.dijkstra_shortest_paths(g, i;allpaths=true);
             for j in 1:5
                 if zp.parents[i, j] != 0
                     @test zp.parents[i, j] in state.predecessors[j]

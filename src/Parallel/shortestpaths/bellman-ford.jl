@@ -20,7 +20,7 @@ function bellman_ford_shortest_paths(
         isempty(active) && break
     end
 
-    isempty(active) || throw(LightGraphs.NegativeCycleError())
+    isempty(active) || throw(Graphs.NegativeCycleError())
     return BellmanFordState(parents, dists)
 end
 
@@ -64,7 +64,7 @@ function has_negative_edge_cycle(
     try
         Parallel.bellman_ford_shortest_paths(g, vertices(g), distmx)
     catch e
-        isa(e, LightGraphs.NegativeCycleError) && return true
+        isa(e, Graphs.NegativeCycleError) && return true
     end
     return false
 end

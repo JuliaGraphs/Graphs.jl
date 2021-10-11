@@ -20,7 +20,7 @@ function diffusion(g::AbstractGraph{T},
                     p::Real,
                     n::Integer;
                     watch::AbstractVector=Vector{Int}(),
-                    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
+                    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
                     normalize::Bool=false
                     ) where T
 
@@ -86,7 +86,7 @@ in `watch`, if specified.
 """
 diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
 diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
-    initial_infections::AbstractVector=LightGraphs.sample(vertices(g), 1),
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
     watch::AbstractVector=Vector{Int}(),
     normalize::Bool=false
     ) = diffusion_rate(diffusion(g, p, n,

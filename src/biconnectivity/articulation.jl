@@ -6,7 +6,7 @@ of a connected graph `g` and return an array containing all cut vertices.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> articulation(star_graph(5))
 1-element Array{Int64,1}:

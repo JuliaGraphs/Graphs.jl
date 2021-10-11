@@ -1,13 +1,13 @@
-using LightGraphs.SimpleGraphs
+using Graphs.SimpleGraphs
 
-import LightGraphs.SimpleGraphs: fadj, badj, adj
-import LightGraphs.edgetype, LightGraphs.has_edge
+import Graphs.SimpleGraphs: fadj, badj, adj
+import Graphs.edgetype, Graphs.has_edge
 using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
 struct DummySimpleEdge <: AbstractSimpleEdge{Int} end
 DummySimpleEdge(x...) = DummySimpleEdge()
-LightGraphs.edgetype(g::DummySimpleGraph) = DummySimpleEdge
+Graphs.edgetype(g::DummySimpleGraph) = DummySimpleEdge
 has_edge(::DummySimpleGraph, ::DummySimpleEdge) = true
 
 # function to check if the invariants for SimpleGraph and SimpleDiGraph holds
@@ -36,7 +36,7 @@ function isvalid_simplegraph(g::SimpleGraph{T}) where {T <: Integer}
     for u in one(T):n
         listu = g.fadjlist[u]
         for v in listu
-            LightGraphs.insorted(u, g.fadjlist[v]) || return false
+            Graphs.insorted(u, g.fadjlist[v]) || return false
         end
     end
     return true
@@ -72,7 +72,7 @@ function isvalid_simplegraph(g::SimpleDiGraph{T}) where {T <: Integer}
     for u in one(T):n
         listu = g.fadjlist[u]
         for v in listu
-            LightGraphs.insorted(u, g.badjlist[v]) || return false
+            Graphs.insorted(u, g.badjlist[v]) || return false
         end
     end
     return true
@@ -90,7 +90,7 @@ const simple_tests = [
     "generators/euclideangraphs"
 ]
 
-@testset "LightGraphs.SimpleGraphs" begin
+@testset "Graphs.SimpleGraphs" begin
     for t in simple_tests
         tp = joinpath(simplegraphtestdir, "$(t).jl")
         include(tp)

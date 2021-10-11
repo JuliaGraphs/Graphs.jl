@@ -24,14 +24,14 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
     nvg = nv(g)
     type_distmx = typeof(distmx)
     #Change when parallel implementation of Bellman Ford available
-    wt_transform = LightGraphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
+    wt_transform = Graphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
     
-    if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
+    if !type_distmx.mutable && type_distmx !=  Graphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
     end
 
     #Weight transform not needed if all weights are positive.
-    if type_distmx !=  LightGraphs.DefaultDistance
+    if type_distmx !=  Graphs.DefaultDistance
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
         end

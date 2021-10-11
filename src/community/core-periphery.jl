@@ -9,7 +9,7 @@ References:
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> core_periphery_deg(star_graph(5))
 5-element Array{Int64,1}:

@@ -68,5 +68,5 @@ function dominating_set(
         end
     end
     
-    return LightGraphs.findall!(in_dom_set, Vector{T}(undef, length_ds))
+    return Graphs.findall!(in_dom_set, Vector{T}(undef, length_ds))
 end

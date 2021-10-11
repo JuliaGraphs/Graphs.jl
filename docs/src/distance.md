@@ -1,5 +1,5 @@
 # Distance
-*LightGraphs.jl* includes the following distance measurements:
+*Graphs.jl* includes the following distance measurements:
 
 ```@index
 Order = [:type, :function]
@@ -9,7 +9,7 @@ Pages   = ["distance.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = [
     "distance.jl",
     "transitivity.jl"

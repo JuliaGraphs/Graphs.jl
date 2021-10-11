@@ -6,7 +6,7 @@ function pagerank(
     ) where U <: Integer
     
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
-    partitions = LightGraphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
+    partitions = Graphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
     α_div_outdegree = Vector{Float64}(undef,nv(g))
     dangling_nodes = Vector{U}()

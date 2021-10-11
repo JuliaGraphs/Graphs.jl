@@ -13,11 +13,11 @@ end
 
 Compute shortest paths between a source `src` and all
 other nodes in graph `g` using the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
-Return a [`LightGraphs.DEsopoPapeState`](@ref) with relevant traversal information.
+Return a [`Graphs.DEsopoPapeState`](@ref) with relevant traversal information.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> ds = desopo_pape_shortest_paths(cycle_graph(5), 2);
 

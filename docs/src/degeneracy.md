@@ -1,6 +1,6 @@
 # Graph Decomposition
 
-*LightGraphs.jl* provides the following graph degeneracy functions:
+*Graphs.jl* provides the following graph degeneracy functions:
 
 ```@index
 Order = [:type, :function]
@@ -10,7 +10,7 @@ Pages   = ["degeneracy.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = ["degeneracy.jl"]
 Private = false
 ```

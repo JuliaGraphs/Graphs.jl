@@ -2,13 +2,13 @@
 
 This section is designed to guide developers who wish to write their own graph structures.
 
-All LightGraphs functions rely on a standard API to function. As long as your graph structure is a subtype of
+All Graphs functions rely on a standard API to function. As long as your graph structure is a subtype of
 [`AbstractGraph`](@ref) and implements the following API functions with the given return values, all functions
-within the LightGraphs package should just work:
+within the Graphs package should just work:
 
 - [`edges`](@ref)
 - [Base.eltype](https://docs.julialang.org/en/latest/base/collections/#Base.eltype)
-- [`edgetype`](@ref) (example: `edgetype(g::CustomGraph) = LightGraphs.SimpleEdge{eltype(g)})`)
+- [`edgetype`](@ref) (example: `edgetype(g::CustomGraph) = Graphs.SimpleEdge{eltype(g)})`)
 - [`has_edge`](@ref)
 - [`has_vertex`](@ref)
 - [`inneighbors`](@ref)
@@ -16,7 +16,7 @@ within the LightGraphs package should just work:
 - [`nv`](@ref)
 - [`outneighbors`](@ref)
 - [`vertices`](@ref)
-- [`is_directed`](@ref): Note that since LightGraphs uses traits to determine directedness, `is_directed` for a `CustomGraph` type
+- [`is_directed`](@ref): Note that since Graphs uses traits to determine directedness, `is_directed` for a `CustomGraph` type
   should be implemented with **both** of the following signatures:
   - `is_directed(::Type{CustomGraph})::Bool` (example: `is_directed(::Type{<:CustomGraph}) = false`)
   - `is_directed(g::CustomGraph)::Bool`

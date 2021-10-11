@@ -27,7 +27,7 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> betweenness_centrality(star_graph(3))
 3-element Array{Float64,1}:

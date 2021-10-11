@@ -6,7 +6,7 @@ function eccentricity(g::AbstractGraph,
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
     @sync @distributed for i = 1:vlen
-        eccs[i] = maximum(LightGraphs.dijkstra_shortest_paths(g, vs[i], distmx).dists)
+        eccs[i] = maximum(Graphs.dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
     maximum(d) == typemax(T) && @warn("Infinite path length detected")
@@ -20,10 +20,10 @@ diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     maximum(eccentricity(g, distmx))
 
 periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    LightGraphs.periphery(eccentricity(g, distmx))
+    Graphs.periphery(eccentricity(g, distmx))
 
 radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
     minimum(eccentricity(g, distmx))
 
 center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    LightGraphs.center(eccentricity(g, distmx))
+    Graphs.center(eccentricity(g, distmx))

@@ -5,9 +5,9 @@ const P = Pair{Int,Int}
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 
 function fille(n)
-    t = Array{LightGraphs.Edge,1}(n)
+    t = Array{Graphs.Edge,1}(n)
     for i in 1:n
-        t[i] = LightGraphs.Edge(i, i + 1)
+        t[i] = Graphs.Edge(i, i + 1)
     end
     return t
 end

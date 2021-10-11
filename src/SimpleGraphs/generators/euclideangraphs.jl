@@ -13,7 +13,7 @@ julia> g
 {5, 4} undirected simple Int64 graph
 
 julia> dists
-Dict{LightGraphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
+Dict{Graphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
   Edge 1 => 5 => 0.205756
   Edge 2 => 5 => 0.271359
   Edge 2 => 4 => 0.247703
@@ -22,7 +22,7 @@ Dict{LightGraphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
 """
 function euclidean_graph(N::Int, d::Int;
     L=1., seed = -1, kws...)
-    rng = LightGraphs.getRNG(seed)
+    rng = Graphs.getRNG(seed)
     points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
@@ -80,7 +80,7 @@ function euclidean_graph(points::Matrix;
             end
         end
     end
-    g = LightGraphs.SimpleGraphs._SimpleGraphFromIterator(keys(weights), Int)
+    g = Graphs.SimpleGraphs._SimpleGraphFromIterator(keys(weights), Int)
     if nv(g) < N
         add_vertices!(g, N - nv(g))
     end

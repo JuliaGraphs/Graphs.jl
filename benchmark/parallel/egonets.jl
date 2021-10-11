@@ -1,4 +1,4 @@
-using LightGraphs
+using Graphs
 using BenchmarkTools
 @show Threads.nthreads()
 

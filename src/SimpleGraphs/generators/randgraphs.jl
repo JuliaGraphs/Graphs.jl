@@ -2,7 +2,7 @@ using Random:
     AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
 using Statistics: mean
 
-using LightGraphs:
+using Graphs:
     getRNG, sample!
 
 """
@@ -534,7 +534,7 @@ julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1])
 {4, 5} undirected simple Int64 graph
 
 julia> edges(g) |> collect
-5-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+5-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -584,7 +584,7 @@ julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; see
 {4, 6} directed simple Int64 graph
 
 julia> edges(g) |> collect
-6-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+6-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4

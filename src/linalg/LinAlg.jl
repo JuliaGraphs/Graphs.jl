@@ -8,7 +8,7 @@ import SparseArrays: blockdiag, sparse
 using LinearAlgebra: I, Symmetric, diagm, dot, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
-using ..LightGraphs
+using ..Graphs
 
 
 import Base: convert, size, eltype, ndims, ==, *, length

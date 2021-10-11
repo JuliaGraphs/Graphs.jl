@@ -11,7 +11,7 @@ from node `n`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> closeness_centrality(star_graph(5))
 5-element Array{Float64,1}:

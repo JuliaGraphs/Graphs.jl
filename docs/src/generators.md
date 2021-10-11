@@ -1,6 +1,6 @@
 # Making and Modifying Graphs
 
-*LightGraphs.jl* provides a number of methods for creating a graph object,
+*Graphs.jl* provides a number of methods for creating a graph object,
 including tools for building and modifying graph objects, a wide array of graph
 generator functions, and the ability to read and write graphs from files
 (using [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl)).
@@ -8,7 +8,7 @@ generator functions, and the ability to read and write graphs from files
 
 ## Modifying graphs
 
-*LightGraphs.jl* offers a range of tools for modifying graphs, including:
+*Graphs.jl* offers a range of tools for modifying graphs, including:
 
 ```@docs
 SimpleGraph
@@ -28,10 +28,10 @@ In addition to these core functions, more advanced operators can be found in [Op
 
 ## Graph Generators
 
-*LightGraphs.jl* implements numerous graph generators, including random graph generators, constructors for classic graphs, numerous small graphs with familiar topologies, and random and static graphs embedded in Euclidean space.
+*Graphs.jl* implements numerous graph generators, including random graph generators, constructors for classic graphs, numerous small graphs with familiar topologies, and random and static graphs embedded in Euclidean space.
 
 ```@index
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = ["generators.md"]
 ```
 
@@ -42,7 +42,7 @@ Other notorious graphs and integration with the `MatrixDepot.jl` package are ava
 ### All Generators
 
 ```@autodocs
-Modules = [LightGraphs.SimpleGraphs]
+Modules = [Graphs.SimpleGraphs]
 Pages   = [
     "generators/randgraphs.jl",
     "generators/staticgraphs.jl",

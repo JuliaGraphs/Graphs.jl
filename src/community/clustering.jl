@@ -8,7 +8,7 @@ of coefficients for each node in the list.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(4);
 
@@ -101,7 +101,7 @@ of triangles for each node in the graph.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(4);
 
@@ -131,7 +131,7 @@ of graph `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> global_clustering_coefficient(star_graph(4))
 0.0

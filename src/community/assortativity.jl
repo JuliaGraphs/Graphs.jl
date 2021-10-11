@@ -12,7 +12,7 @@ and the in-degree of destination vertices.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> assortativity(star_graph(4))
 -1.0

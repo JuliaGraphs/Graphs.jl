@@ -1,7 +1,7 @@
-using LightGraphs.Experimental, LightGraphs.Experimental.ShortestPaths
+using Graphs.Experimental, Graphs.Experimental.ShortestPaths
 using SparseArrays
 
-using LightGraphs.Experimental.Traversals: NOOPSort
+using Graphs.Experimental.Traversals: NOOPSort
 import Base.==
 function ==(a::ShortestPaths.AStarResult, b::ShortestPaths.AStarResult)
    return a.path == b.path && a.dist == b.dist

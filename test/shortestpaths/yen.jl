@@ -36,7 +36,7 @@
     end
 
 
-    G = LightGraphs.Graph()
+    G = Graphs.Graph()
     add_vertices!(G, 4)
     add_edge!(G, 2, 1)
     add_edge!(G, 2, 3)
@@ -78,7 +78,7 @@
     end
 
     # Testing with the example in https://en.wikipedia.org/wiki/Yen%27s_algorithm
-    G = LightGraphs.DiGraph()
+    G = Graphs.DiGraph()
     add_vertices!(G, 6)
     add_edge!(G, 1, 2)
     add_edge!(G, 1, 3)

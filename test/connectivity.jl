@@ -12,9 +12,9 @@
         @test @inferred(!is_connected(g))
         cc = @inferred(connected_components(g))
         label = zeros(eltype(g), nv(g))
-        @inferred(LightGraphs.connected_components!(label, g))
+        @inferred(Graphs.connected_components!(label, g))
         @test label[1:10] == [1, 1, 1, 1, 5, 5, 5, 8, 8, 8]
-        import LightGraphs: components, components_dict
+        import Graphs: components, components_dict
         cclab = @inferred(components_dict(label))
         @test cclab[1] == [1, 2, 3, 4]
         @test cclab[5] == [5, 6, 7]

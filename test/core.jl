@@ -50,7 +50,7 @@
 
     @testset "weights" begin
         @testset "$g" for g in testgraphs(g5w, g5wd)
-            @test @inferred(weights(g)) == LightGraphs.DefaultDistance(nv(g))
+            @test @inferred(weights(g)) == Graphs.DefaultDistance(nv(g))
         end
     end
 

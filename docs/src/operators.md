@@ -1,6 +1,6 @@
 # Operators
 
-*LightGraphs.jl* implements the following graph operators. In general,
+*Graphs.jl* implements the following graph operators. In general,
 functions with two graph arguments will require them to be of the same type
 (either both `SimpleGraph` or both `SimpleDiGraph`).
 
@@ -12,7 +12,7 @@ Pages   = ["operators.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = ["operators.jl"]
 Private = false
 ```

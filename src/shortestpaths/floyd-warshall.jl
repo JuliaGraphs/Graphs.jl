@@ -15,7 +15,7 @@ end
 
 Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`. Return a [`LightGraphs.FloydWarshallState`](@ref) with relevant
+optional distance matrix `distmx`. Return a [`Graphs.FloydWarshallState`](@ref) with relevant
 traversal information.
 
 ### Performance

@@ -28,7 +28,7 @@ function dijkstra_shortest_paths(g::AbstractGraph{U},
     parents = SharedMatrix{U}(Int(r_v), Int(n_v))
 
     @sync @distributed for i in 1:r_v
-        state = LightGraphs.dijkstra_shortest_paths(g, sources[i], distmx)
+        state = Graphs.dijkstra_shortest_paths(g, sources[i], distmx)
         dists[i, :] = state.dists
         parents[i, :] = state.parents
     end

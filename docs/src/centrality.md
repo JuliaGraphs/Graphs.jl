@@ -2,7 +2,7 @@
 
 [Centrality measures](https://en.wikipedia.org/wiki/Centrality) describe the
 importance of a vertex to the rest of the graph using some set of criteria.
-Centrality measures implemented in *LightGraphs.jl* include the following:
+Centrality measures implemented in *Graphs.jl* include the following:
 
 
 ```@index
@@ -12,7 +12,7 @@ Pages   = ["centrality.md"]
 ## Full docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = [
     "centrality/betweenness.jl",
     "centrality/closeness.jl",

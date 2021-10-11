@@ -41,7 +41,7 @@ where:
 
 # Examples 
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> barbell = blockdiag(complete_graph(3), complete_graph(3));
 

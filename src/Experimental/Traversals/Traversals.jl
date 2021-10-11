@@ -4,7 +4,7 @@ module Traversals
 # likelihood of name conflicts, and because the functions here should be used only by developers
 # to create new graph algorithms that rely on breadth-first or depth-first search traversals.
 
-using LightGraphs
+using Graphs
 using SimpleTraits
 """
     abstract type TraversalAlgorithm

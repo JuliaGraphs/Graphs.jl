@@ -25,7 +25,7 @@ julia> d = [1 -3 1; -3 1 1; 1 1 1];
 
 julia> spfa_shortest_paths(g, 1, d)
 
-ERROR: LightGraphs.NegativeCycleError()
+ERROR: Graphs.NegativeCycleError()
 
 julia> g = complete_graph(4);
 

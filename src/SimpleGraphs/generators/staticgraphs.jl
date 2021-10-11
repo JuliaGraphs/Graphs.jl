@@ -492,7 +492,7 @@ julia> binary_tree(Int8(5))
 function binary_tree(k::T) where {T <: Integer}
     k <= 0 && return SimpleGraph(0)
     k == 1 && return SimpleGraph(1)
-    if LightGraphs.isbounded(k) && BigInt(2) ^ k - 1 > typemax(k)
+    if Graphs.isbounded(k) && BigInt(2) ^ k - 1 > typemax(k)
         throw(DomainError(k, "2^k - 1 not representable by type $T"))
     end
     n = T(2^k - 1)

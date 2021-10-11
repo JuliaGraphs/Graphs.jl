@@ -1,4 +1,4 @@
-module LightGraphs
+module Graphs
 
 using SimpleTraits
 
@@ -163,7 +163,7 @@ independent_set,
 vertex_cover
 
 """
-    LightGraphs
+    Graphs
 
 An optimized graphs package.
 
@@ -180,11 +180,11 @@ explicit design decision that any data not required for graph manipulation
 outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
 
-[Full documentation](http://codecov.io/github/JuliaGraphs/LightGraphs.jl) is available,
+[Full documentation](http://codecov.io/github/JuliaGraphs/Graphs.jl) is available,
 and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
-LightGraphs
+Graphs
 include("interface.jl")
 include("utils.jl")
 include("deprecations.jl")
@@ -197,20 +197,20 @@ using .SimpleGraphs
 
 A datastruture representing an undirected graph.
 """
-const Graph = LightGraphs.SimpleGraphs.SimpleGraph
+const Graph = Graphs.SimpleGraphs.SimpleGraph
 """
     DiGraph
 
 A datastruture representing a directed graph.
 """
-const DiGraph = LightGraphs.SimpleGraphs.SimpleDiGraph
+const DiGraph = Graphs.SimpleGraphs.SimpleDiGraph
 """
     Edge
 
 A datastruture representing an edge between two vertices in
 a `Graph` or `DiGraph`.
 """
-const Edge = LightGraphs.SimpleGraphs.SimpleEdge
+const Edge = Graphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")

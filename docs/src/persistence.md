@@ -4,9 +4,9 @@
 Pages   = ["persistence.md"]
 ```
 
-## Saving using *LightGraphs.jl* `lg` format.
+## Saving using *Graphs.jl* `lg` format.
 
-Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *LightGraphs.jl* format `LG`.
+Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *Graphs.jl* format `LG`.
 
 ### Example
 
@@ -43,7 +43,7 @@ reloaded_g1 = loadgraph("mygraph_dict.lg", "g1")
 ## Full docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = ["persistence/common.jl"]
 Private = false
 ```

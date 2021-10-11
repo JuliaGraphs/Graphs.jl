@@ -1,12 +1,12 @@
 module ShortestPaths
 using SparseArrays: sparse
-using LightGraphs
-using LightGraphs.Experimental.Traversals
-using LightGraphs: AbstractGraph, AbstractEdge
-using LightGraphs.SimpleGraphs: AbstractSimpleGraph
+using Graphs
+using Graphs.Experimental.Traversals
+using Graphs: AbstractGraph, AbstractEdge
+using Graphs.SimpleGraphs: AbstractSimpleGraph
 using DataStructures:PriorityQueue, enqueue!, dequeue!
 
-import LightGraphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
+import Graphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
 
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment

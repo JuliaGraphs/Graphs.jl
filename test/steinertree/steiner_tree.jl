@@ -16,7 +16,7 @@
         @test ne(g_st) == 2 # [Edge(2, 1), Edge(1, 5)]
 
         g_copy = SimpleGraph(g)
-        LightGraphs.filter_non_term_leaves!(g_copy, [2, 5])
+        Graphs.filter_non_term_leaves!(g_copy, [2, 5])
         @test ne(g_copy) == 2 # [Edge(2, 1), Edge(1, 5)]
     end
 
@@ -26,7 +26,7 @@
         @test ne(g_st) == 4
 
         g_copy = SimpleGraph(g)
-        LightGraphs.filter_non_term_leaves!(g_copy, [4, 8])
+        Graphs.filter_non_term_leaves!(g_copy, [4, 8])
         @test ne(g_copy) == 4
     end
 

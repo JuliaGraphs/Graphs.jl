@@ -1,6 +1,6 @@
 # Path and Traversal
 
-*LightGraphs.jl* provides several traversal and shortest-path algorithms, along with
+*Graphs.jl* provides several traversal and shortest-path algorithms, along with
 various utility functions. Where appropriate, edge distances may be passed in as a
 matrix of real number values.
 
@@ -11,7 +11,7 @@ Note that also for undirected graphs `distmx[4,2]` has to be set.
 
 Default edge distances may be passed in via the
 ```@docs
-LightGraphs.DefaultDistance
+Graphs.DefaultDistance
 ```
 structure.
 
@@ -44,7 +44,7 @@ mincut
 
 ## Random walks
 
-*LightGraphs* includes uniform random walks and self avoiding walks:
+*Graphs* includes uniform random walks and self avoiding walks:
 
 ```@docs
 randomwalk
@@ -133,7 +133,7 @@ enumerate_paths
 
 All path states derive from
 ```@docs
-LightGraphs.AbstractPathState
+Graphs.AbstractPathState
 ```
 
 The `dijkstra_shortest_paths`, `floyd_warshall_shortest_paths`,
@@ -142,11 +142,11 @@ return states that contain various  information about the graph
 learned during traversal.
 
 ```@docs
-LightGraphs.DijkstraState
-LightGraphs.DEsopoPapeState
-LightGraphs.BellmanFordState
-LightGraphs.FloydWarshallState
-LightGraphs.YenState
+Graphs.DijkstraState
+Graphs.DEsopoPapeState
+Graphs.BellmanFordState
+Graphs.FloydWarshallState
+Graphs.YenState
 ```
 The above state types (with the exception of `YenState`) have the following common
 information, accessible via the type:

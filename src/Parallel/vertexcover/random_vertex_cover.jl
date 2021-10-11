@@ -1,7 +1,7 @@
 """
     vertex_cover(g, reps, RandomVertexCover(); parallel=:threads)
 
-Perform [`LightGraphs.vertex_cover(g, RandomVertexCover())`](@ref) `reps` times in parallel 
+Perform [`Graphs.vertex_cover(g, RandomVertexCover())`](@ref) `reps` times in parallel 
 and return the solution with the fewest vertices.
 
 ### Optional Arguements
@@ -9,5 +9,5 @@ and return the solution with the fewest vertices.
 used. This implementation is more efficient if `reps` is large.
 """
 vertex_cover(g::AbstractGraph{T}, reps::Integer, alg::RandomVertexCover; parallel=:threads) where T <: Integer = 
-LightGraphs.Parallel.generate_reduce(g, (g::AbstractGraph{T})->LightGraphs.vertex_cover(g, alg), 
+Graphs.Parallel.generate_reduce(g, (g::AbstractGraph{T})->Graphs.vertex_cover(g, alg), 
 (x::Vector{T}, y::Vector{T})->length(x)<length(y), reps; parallel=parallel)

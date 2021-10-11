@@ -1,5 +1,5 @@
 # Core Functions
-*LightGraphs.jl* includes the following core functions:
+*Graphs.jl* includes the following core functions:
 
 ```@index
 Order = [:type, :function]
@@ -9,7 +9,7 @@ Pages   = ["core.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = [ "core.jl"]
 Private = false
 ```

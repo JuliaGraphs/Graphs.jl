@@ -7,7 +7,7 @@ one pass over the edges, and is invalidated by changes to the graph.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(3);
 

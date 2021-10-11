@@ -1,4 +1,4 @@
-using LightGraphs.LinAlg
+using Graphs.LinAlg
 using Random
 using SparseArrays
 using LinearAlgebra
@@ -10,7 +10,7 @@ tests = [
 ]
 
 
-@testset "LightGraphs.LinAlg" begin
+@testset "Graphs.LinAlg" begin
     for t in tests
         tp = joinpath(linalgtestdir, "$(t).jl")
         include(tp)

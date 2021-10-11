@@ -1,6 +1,6 @@
 # Community Structures
 
-*LightGraphs.jl* contains many algorithm to detect and analyze community structures
+*Graphs.jl* contains many algorithm to detect and analyze community structures
 in graphs. These include:
 
 ```@index
@@ -11,7 +11,7 @@ Pages   = ["community.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [LightGraphs]
+Modules = [Graphs]
 Pages   = [
     "community/cliques.jl",
     "community/clustering.jl",

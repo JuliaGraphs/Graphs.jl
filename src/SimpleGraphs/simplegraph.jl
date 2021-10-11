@@ -328,7 +328,7 @@ be of `type <: SimpleEdge`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(3);
 
@@ -339,7 +339,7 @@ julia> add_edge!(g, 2, 3);
 julia> h = SimpleGraphFromIterator(edges(g));
 
 julia> collect(edges(h))
-2-element Array{LightGraphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
  Edge 1 => 2
  Edge 2 => 3
 ```
@@ -431,7 +431,7 @@ otherwise return `false`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -472,7 +472,7 @@ there are multiple points where the function can exit with `false`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -511,7 +511,7 @@ Add a new vertex to the graph `g`. Return `true` if addition was successful.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(Int8(typemax(Int8) - 1))
 {126, 0} undirected simple Int8 graph
@@ -539,11 +539,11 @@ If `keep_order` is `true`, the vertices in the modified graph appear in the same
 order as they did in the unmodified graph. This might be slower.
 
 ### Implementation Notes
-This function is not part of the official LightGraphs API and is subject to change/removal between major versions.
+This function is not part of the official Graphs API and is subject to change/removal between major versions.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = complete_graph{5}
 {5, 10} undirected simple Int64 graph

@@ -16,7 +16,7 @@ Use the [Johnson algorithm](https://en.wikipedia.org/wiki/Johnson%27s_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
 optional distance matrix `distmx`.
 
-Return a [`LightGraphs.JohnsonState`](@ref) with relevant
+Return a [`Graphs.JohnsonState`](@ref) with relevant
 traversal information.
 
 ### Performance
@@ -30,12 +30,12 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     #Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
     
-    if !type_distmx.mutable && type_distmx !=  LightGraphs.DefaultDistance
+    if !type_distmx.mutable && type_distmx !=  Graphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
     end
 
     #Weight transform not needed if all weights are positive.
-    if type_distmx !=  LightGraphs.DefaultDistance
+    if type_distmx !=  Graphs.DefaultDistance
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
         end

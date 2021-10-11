@@ -39,7 +39,7 @@ function a_star_impl!(g, # the graph
 
         closed_set[current] = true
 
-        for neighbor in LightGraphs.outneighbors(g, current)
+        for neighbor in Graphs.outneighbors(g, current)
             closed_set[neighbor] && continue
 
             tentative_g_score = g_score[current] + distmx[current, neighbor]
@@ -61,7 +61,7 @@ end
 Return a vector of edges comprising the shortest path between vertices `s` and `t`
 using the [A* search algorithm](http://en.wikipedia.org/wiki/A%2A_search_algorithm).
 An optional heuristic function and edge distance matrix may be supplied. If missing,
-the distance matrix is set to [`LightGraphs.DefaultDistance`](@ref) and the heuristic is set to
+the distance matrix is set to [`Graphs.DefaultDistance`](@ref) and the heuristic is set to
 `n -> 0`.
 """
 function a_star(g::AbstractGraph{U},  # the g

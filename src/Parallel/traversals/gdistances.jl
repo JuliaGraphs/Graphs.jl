@@ -1,7 +1,7 @@
 """
     partition_sources!(queue_list, sources)
 
-Partition `sources` using [`LightGraphs.unweighted_contiguous_partition`](@ref) and place
+Partition `sources` using [`Graphs.unweighted_contiguous_partition`](@ref) and place
 the i^{th} partition  into `queue_list[i]` and set to empty_list[i] to true if the 
 i^{th} partition is empty.
 """
@@ -11,7 +11,7 @@ function partition_sources!(
     empty_list::Vector{Bool}
     ) where T<:Integer
     
-    partitions = LightGraphs.unweighted_contiguous_partition(length(sources), length(queue_list))
+    partitions = Graphs.unweighted_contiguous_partition(length(sources), length(queue_list))
     for (i, p) in enumerate(partitions)
         append!(queue_list[i], sources[p])
         empty_list[i] = isempty(p)
@@ -22,7 +22,7 @@ end
     gdistances!(g, sources, vert_level; queue_segment_size=20)
     gdistances!(g, source, vert_level; queue_segment_size=20)
 
-Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
+Parallel implementation of [`Graphs.gdistances!`](@ref) with dynamic load balancing.
 
 ### Optional Arguments
 - `queue_segment_size = 20`: It is the number of vertices a thread can claim from a queue
@@ -122,7 +122,7 @@ gdistances!(g, [source,], vert_level; queue_segment_size=20)
     gdistances(g, sources; queue_segment_size=20)
     gdistances(g, source; queue_segment_size=20)
 
-Parallel implementation of [`LightGraphs.gdistances!`](@ref) with dynamic load balancing.
+Parallel implementation of [`Graphs.gdistances!`](@ref) with dynamic load balancing.
 
 ### Optional Arguments
 - `queue_segment_size = 20`: It is the number of vertices a thread can claim from a queue at a time.

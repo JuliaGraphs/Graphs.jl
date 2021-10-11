@@ -1,10 +1,10 @@
 # Plotting Graphs
 
-*LightGraphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
+*Graphs.jl* integrates with several other Julia packages for plotting. Here are a few examples.
 
 ## [GraphLayout.jl](https://github.com/IainNZ/GraphLayout.jl)
 
-This excellent graph visualization package can be used with *LightGraphs.jl*
+This excellent graph visualization package can be used with *Graphs.jl*
 as follows:
 
 ```julia
@@ -47,13 +47,13 @@ julia> draw(PNG("/tmp/wheel10.png", 16cm, 16cm), gplot(g))
 
 
 ## [NetworkViz.jl](https://github.com/abhijithanilkumar/NetworkViz.jl)
-NetworkViz.jl is tightly coupled with *LightGraphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
+NetworkViz.jl is tightly coupled with *Graphs.jl*. Graphs can be visualized in 2D as well as 3D using [ThreeJS.jl](https://github.com/rohitvarkey/ThreeJS.jl) and [Escher.jl](https://github.com/shashi/Escher.jl).
 
 ```julia
 #Run this code in Escher
 
 using NetworkViz
-using LightGraphs
+using Graphs
 
 main(window) = begin
   push!(window.assets, "widgets")

@@ -29,7 +29,7 @@
         @test brd == ans
     end
     for level in 1:6
-        btree = LightGraphs.binary_tree(level)
+        btree = Graphs.binary_tree(level)
         for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
             brd = @inferred(bridges(tree))
             ans = collect(edges(tree))

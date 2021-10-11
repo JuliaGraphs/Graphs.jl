@@ -3,7 +3,7 @@
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
     for g in testdigraphs(gint)
 
-        z  = LightGraphs.stress_centrality(g)
+        z  = Graphs.stress_centrality(g)
         zd = @inferred(Parallel.stress_centrality(g; parallel=:distributed))
         @test z == zd == c
         zt = @inferred(Parallel.stress_centrality(g; parallel=:threads))

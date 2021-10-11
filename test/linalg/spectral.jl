@@ -2,7 +2,7 @@ import Base: Matrix
 import Base: size
 using ArnoldiMethod
 
-#using LightGraphs.LinAlg: eigs
+#using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 @testset "Spectral" begin

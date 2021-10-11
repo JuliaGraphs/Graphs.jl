@@ -28,7 +28,7 @@ of graph `g`. Return a vector representing the centrality calculated for each no
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> degree_centrality(star_graph(4))
 4-element Array{Float64,1}:

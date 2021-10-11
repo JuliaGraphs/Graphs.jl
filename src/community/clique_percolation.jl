@@ -10,7 +10,7 @@ The parameter `k` defines the size of the clique to use in percolation.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> clique_percolation(clique_graph(3, 2))
 2-element Array{BitSet,1}:

@@ -11,7 +11,7 @@ An empty graph will return an empty vector but is bipartite.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(3);
 
@@ -71,7 +71,7 @@ Return `true` if graph `g` is [bipartite](https://en.wikipedia.org/wiki/Bipartit
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(3);
 

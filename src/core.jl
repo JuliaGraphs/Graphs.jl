@@ -13,7 +13,7 @@ the destination vertex.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(2);
 
@@ -33,7 +33,7 @@ Return the number of vertices that were added successfully.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph()
 {0, 0} undirected simple Int64 graph
@@ -52,7 +52,7 @@ graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(3);
 
@@ -78,7 +78,7 @@ graph `g`. If `v` is specified, only return degrees for vertices in `v`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(3);
 
@@ -106,7 +106,7 @@ For undirected graphs, it equals the connected edges.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(3);
 
@@ -219,7 +219,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(3);
 
@@ -255,7 +255,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = DiGraph(3);
 
@@ -296,7 +296,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(4);
 
@@ -330,7 +330,7 @@ Return true if `g` has any self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -354,7 +354,7 @@ Return the number of self loops in `g`.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 
@@ -405,7 +405,7 @@ end
     weights(g)
 
 Return the weights of the edges of a graph `g` as a matrix. Defaults
-to [`LightGraphs.DefaultDistance`](@ref).
+to [`Graphs.DefaultDistance`](@ref).
 
 ### Implementation Notes
 In general, referencing the weight of a nonexistent edge is undefined behavior. Do not rely on the `weights` matrix

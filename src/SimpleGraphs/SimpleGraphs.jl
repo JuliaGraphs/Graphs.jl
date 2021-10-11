@@ -2,13 +2,13 @@ module SimpleGraphs
 
 using SparseArrays
 using LinearAlgebra
-using LightGraphs
+using Graphs
 using SimpleTraits
 
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
 
-import LightGraphs:
+import Graphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, deepcopy_adjlist,
@@ -140,7 +140,7 @@ vertices in `g` will be indexed by ``1:|V|-1``.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = SimpleGraph(2);
 

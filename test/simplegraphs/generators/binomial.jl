@@ -2,13 +2,13 @@
 # DO NOT INCORPORATE INTO runtests.jl.
 
 using Distributions
-using LightGraphs
+using Graphs
 using StatsBase
 using Test
 import Random
 
 import Base: -
-import LightGraphs: randbn
+import Graphs: randbn
 import StatsBase: SummaryStats
 
 function -(s::SummaryStats, t::SummaryStats)

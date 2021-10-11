@@ -1,5 +1,5 @@
 import Base: Pair, Tuple, show, ==, hash
-import LightGraphs: AbstractEdge, src, dst, reverse
+import Graphs: AbstractEdge, src, dst, reverse
 
 abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
 

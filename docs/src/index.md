@@ -1,8 +1,8 @@
-# LightGraphs
+# Graphs
 
-The goal of *LightGraphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, LightGraphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
+The goal of *Graphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, Graphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
 
-As such, *LightGraphs.jl* is the central package of the JuliaGraphs ecosystem. Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization related functions can be found in the following packages:
+As such, *Graphs.jl* is the central package of the JuliaGraphs ecosystem. Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization related functions can be found in the following packages:
   * [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): extra functions for graph analysis.
   * [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl): graphs with associated meta-data.
   * [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): weighted graphs.
@@ -12,7 +12,7 @@ As such, *LightGraphs.jl* is the central package of the JuliaGraphs ecosystem. A
 
 ## Basic library examples
 
-The *LightGraphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `path_graph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+The *Graphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `path_graph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia
 julia> g = path_graph(6)

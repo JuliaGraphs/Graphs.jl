@@ -1,6 +1,6 @@
 @testset "Persistence" begin
     @testset "Errors" begin
-        @test_throws LightGraphs.NotImplementedError LightGraphs._NI("Not implemented")
+        @test_throws Graphs.NotImplementedError Graphs._NI("Not implemented")
     end
 
     pdict = loadgraphs(joinpath(testdir, "testdata", "tutte-pathdigraph.jgz"))
@@ -18,7 +18,7 @@
         @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1; compress=true)
         @test savegraph(f, p1) == 1
         @test_deprecated r"Saving compressed graphs is no longer supported" savegraph(f, p1, LGFormat(); compress=true)
-        @test_logs (:info,r"Note: the `compress` keyword is no longer supported in LightGraphs") savegraph(f, p1; compress=false)
+        @test_logs (:info,r"Note: the `compress` keyword is no longer supported in Graphs") savegraph(f, p1; compress=false)
         @test savegraph(f, p1, LGFormat()) == 1
         @test savegraph(f, p2) == 1
     end

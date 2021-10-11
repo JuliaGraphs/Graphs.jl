@@ -1,7 +1,7 @@
 {
     "description": "LightGraphs: An Optimized Graphs Package for the Julia Programming Language",
     "license": "BSD-2-Clause",
-    "title": "JuliaGraphs/LightGraphs.jl",
+    "title": "JuliaGraphs/Graphs.jl",
     "upload_type": "software",
     "publication_date": "2017-09-16",
     "creators": [
@@ -15,7 +15,7 @@
     "related_identifiers": [
         {
             "scheme": "url",
-            "identifier": "https://github.com/JuliaGraphs/LightGraphs.jl/tree/v0.10.5",
+            "identifier": "https://github.com/JuliaGraphs/Graphs.jl/tree/lg-v0.10.5",
             "relation": "isSupplementTo"
         },
         {

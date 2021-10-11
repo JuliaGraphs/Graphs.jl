@@ -8,7 +8,7 @@ import Random
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ArgumentError SimpleGraph(adjmx2)
 
-    @test_throws LightGraphs.NotImplementedError badj(DummySimpleGraph())
+    @test_throws Graphs.NotImplementedError badj(DummySimpleGraph())
 
     @test @inferred(ne(SimpleGraph(path_digraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))
@@ -467,9 +467,9 @@ import Random
             @test sort(vmap_f) == vmap_t
             @test length(vmap_f) == nv(g) - length(a_converted)
             @test vmap_t == setdiff(collect(vertices(g)), a_converted)
-            @test LightGraphs.Experimental.has_isomorph(gt, gf)
+            @test Graphs.Experimental.has_isomorph(gt, gf)
             gi = g[setdiff(collect(vertices(g)), a_converted)]
-            @test LightGraphs.Experimental.has_isomorph(gf, gi)
+            @test Graphs.Experimental.has_isomorph(gf, gi)
             @test isvalid_simplegraph(gt)
             @test isvalid_simplegraph(gf)
         end

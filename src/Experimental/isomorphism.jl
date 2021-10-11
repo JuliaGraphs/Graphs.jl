@@ -21,12 +21,12 @@ but if the result is `true` this is not guaranteed.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
-julia> LightGraphs.Experimental.could_have_isomorph(path_graph(3), star_graph(4))
+julia> Graphs.Experimental.could_have_isomorph(path_graph(3), star_graph(4))
 false
 
-julia> LightGraphs.Experimental.could_have_isomorph(path_graph(3), star_graph(3))
+julia> Graphs.Experimental.could_have_isomorph(path_graph(3), star_graph(3))
 true
 ```
 """
@@ -39,7 +39,7 @@ function could_have_isomorph(g1::AbstractGraph, g2::AbstractGraph)
     sort!(indegs2)
     indegs1 == indegs2 || return false
 
-    if LightGraphs.is_directed(g1) || LightGraphs.is_directed(g2)
+    if Graphs.is_directed(g1) || Graphs.is_directed(g2)
         outdegs1 = outdegree(g1)
         outdegs2 = outdegree(g2)
         sort!(outdegs1)

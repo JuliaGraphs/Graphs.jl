@@ -6,7 +6,7 @@
 #
 ###################################################################
 
-using LightGraphs: nv, weights, outneighbors
+using Graphs: nv, weights, outneighbors
 
 """
     struct SPFA <: ShortestPathAlgorithm

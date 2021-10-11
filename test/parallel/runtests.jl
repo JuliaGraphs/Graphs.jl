@@ -1,5 +1,5 @@
-using LightGraphs
-using LightGraphs.Parallel
+using Graphs
+using Graphs.Parallel
 using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 
@@ -23,7 +23,7 @@ tests = [
     "utils"
 ]
 
-@testset "LightGraphs.Parallel" begin
+@testset "Graphs.Parallel" begin
     for t in tests
         tp = joinpath(testdir, "parallel", "$(t).jl")
         include(tp)

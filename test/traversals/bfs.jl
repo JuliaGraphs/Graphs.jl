@@ -1,4 +1,4 @@
-import LightGraphs: tree
+import Graphs: tree
 @testset "BFS" begin
 
     g5 = SimpleDiGraph(4)
@@ -71,7 +71,7 @@ import LightGraphs: tree
         end 
     end
     
-    # import LightGraphs: TreeBFSVisitorVector, bfs_tree!, tree
+    # import Graphs: TreeBFSVisitorVector, bfs_tree!, tree
 
     function istree(parents::Vector{T}, maxdepth, n::T) where T<:Integer
         flag = true

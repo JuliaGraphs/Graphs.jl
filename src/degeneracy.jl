@@ -17,7 +17,7 @@ Not implemented for graphs with self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(5);
 
@@ -129,7 +129,7 @@ Not implemented for graphs with self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(5);
 
@@ -184,7 +184,7 @@ Not implemented for graphs with parallel edges or self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(5);
 
@@ -238,7 +238,7 @@ Not implemented for graphs with self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(5);
 
@@ -293,7 +293,7 @@ Not implemented for graphs with parallel edges or self loops.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> g = path_graph(5);
 

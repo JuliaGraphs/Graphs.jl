@@ -93,7 +93,7 @@ eccentricities, return the maximum eccentricity of the graph.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> diameter(star_graph(5))
 2
@@ -117,7 +117,7 @@ largest eccentricity).
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> periphery(star_graph(5))
 4-element Array{Int64,1}:
@@ -149,7 +149,7 @@ eccentricities, return the minimum eccentricity of the graph.
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> radius(star_graph(5))
 1
@@ -172,7 +172,7 @@ to the graph's radius (that is, the set of vertices with the smallest eccentrici
 
 # Examples
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 
 julia> center(star_graph(5))
 1-element Array{Int64,1}:

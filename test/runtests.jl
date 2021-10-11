@@ -1,6 +1,6 @@
-using LightGraphs
-using LightGraphs.SimpleGraphs
-using LightGraphs.Experimental
+using Graphs
+using Graphs.SimpleGraphs
+using Graphs.Experimental
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -88,7 +88,7 @@ tests = [
     "experimental/experimental"
 ]
 
-@testset "LightGraphs" begin
+@testset "Graphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
         include(tp)

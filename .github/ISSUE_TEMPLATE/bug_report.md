@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug with LightGraphs
+about: Report a bug with Graphs
 title: "[BUG]"
 labels: bug
 assignees: ''
@@ -29,7 +29,7 @@ If applicable, provide a minimal working example of the bug.
 
 **Version information**
  - output from `versioninfo()` surrounded by backticks (``)
- - output from `] status LightGraphs` surrounded by backticks (``)
+ - output from `] status Graphs` surrounded by backticks (``)
 
 
 **Additional context**

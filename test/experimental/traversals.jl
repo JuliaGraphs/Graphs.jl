@@ -1,5 +1,5 @@
-using LightGraphs.Experimental.Traversals
-const LET = LightGraphs.Experimental.Traversals
+using Graphs.Experimental.Traversals
+const LET = Graphs.Experimental.Traversals
 struct DummyTraversalState <: LET.AbstractTraversalState end
 
 @testset "Traversals" begin
