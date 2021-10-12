@@ -2,5 +2,3 @@ We encourage you to cite our work if you have used our libraries, tools or datas
 
 The latest citation information may be found in the [CITATION.bib](https://raw.githubusercontent.com/JuliaGraphs/Graphs.jl/master/CITATION.bib) file
 within the Graphs repository.
-
-For previous versions, [please reference the zenodo site](https://zenodo.org/record/889971).
