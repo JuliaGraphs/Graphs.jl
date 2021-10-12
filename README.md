@@ -3,7 +3,6 @@
 [![Build Status](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/Graphs.jl/latest)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.889971.svg)](https://doi.org/10.5281/zenodo.889971)
 
 **Project Status:** The Graphs project is a fork of the now-archived LightGraphs
 package, which remains available on GitHub at
@@ -11,7 +10,7 @@ package, which remains available on GitHub at
 you don't need any new features developed since the fork, you can continue to
 use older versions of LightGraphs indefinitely. New versions will be released
 here using the name Graphs instead of LightGraphs. There was an older package
-also called Graphs, whose source history and versions are still available in
+also called Graphs, of which the source history and versions are still available in
 this repository, but the current code base is unrelated to the old Graphs code
 and is derived purely from LightGraphs.
 
