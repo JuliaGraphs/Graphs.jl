@@ -10,9 +10,10 @@ package, which remains available on GitHub at
 you don't need any new features developed since the fork, you can continue to
 use older versions of LightGraphs indefinitely. New versions will be released
 here using the name Graphs instead of LightGraphs. There was an older package
-also called Graphs, of which the source history and versions are still available in
+also called Graphs. The source history and versions are still available in
 this repository, but the current code base is unrelated to the old Graphs code
-and is derived purely from LightGraphs.
+and is derived purely from LightGraphs. To access the history of the old Graphs code,
+you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
 
 Graphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for
