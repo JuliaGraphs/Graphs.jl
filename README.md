@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
-[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/Graphs.jl/latest)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
 
 **Project Status:** The Graphs project is a reboot of the now-archived LightGraphs
 package, which remains available on GitHub at
@@ -21,9 +21,7 @@ the development of more sophisticated graph implementations under the `AbstractG
 type.
 
 The project goal is to mirror the functionality of robust network and graph
-analysis libraries such as [NetworkX](http://networkx.github.io) while being
-simpler to use and more efficient than existing Julian graph libraries such as
-[Graphs.jl](https://github.com/JuliaLang/Graphs.jl). It is an explicit design
+analysis libraries such as [NetworkX](http://networkx.github.io). It is an explicit design
 decision that any data not required for graph manipulation (attributes and
 other information, for example) is expected to be stored outside of the graph
 structure itself. Such data lends itself to storage in more traditional and
@@ -41,7 +39,7 @@ Additional functionality may be found in a number of companion packages, includi
   Pajek NET, and more.
 
 ## Documentation
-Full documentation is available at [GitHub Pages](https://juliagraphs.github.io/Graphs.jl/latest).
+Full documentation is available at [GitHub Pages](https://juliagraphs.org/Graphs.jl/dev/).
 Documentation for methods is also available via the Julia REPL help system.
 Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 
