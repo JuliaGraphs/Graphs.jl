@@ -4,7 +4,7 @@
 [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.github.io/Graphs.jl/latest)
 
-**Project Status:** The Graphs project is a fork of the now-archived LightGraphs
+**Project Status:** The Graphs project is a reboot of the now-archived LightGraphs
 package, which remains available on GitHub at
 [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If
 you don't need any new features developed since the fork, you can continue to
@@ -56,16 +56,14 @@ Installation is straightforward: enter Pkg mode by hitting `]`, and then
 * The project was previously developed under the name LightGraphs and older versions of LightGraphs (≤ v1.3.5) must still be used with that name.
 * There was also an older package also called Graphs (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of LightGraphs v1.3.5.
 * All older LightGraphs versions are tagged using the naming scheme `lg-vX.Y.Z` rather than plain `vX.Y.Z` which is used for old Graphs versions (≤ v0.10) and newer versions derived from LightGraphs but released with the Graphs name (≥ v1.4).
-* Julia 0.3: LightGraphs v0.3.7 (`lg-v0.3.7`) is the last version guaranteed to work with Julia 0.3.
-* Julia 0.4: LightGraphs versions in the 0.6 series (`lg-v0.6.*`) are designed to work with Julia 0.4.
-* Julia 0.5: LightGraphs versions in the 0.7 series (`lg-v0.7.*`) are designed to work with Julia 0.5.
-* Julia 0.6: LightGraphs versions in the 0.8 through 0.12 (`lg-v0.{8-12}.*`) series are designed to work with Julia 0.6.
-* Julia 0.7 / 1.0: LightGraphs versions in the 1.x series (`lg-v1.*`) are designed to work with Julia 0.7 and Julia 1.0.
+* If you are using a version of Julia prior to 1.x, then you should use LightGraphs.jl at `lg-v.12.*` or Graphs.jl at `v0.10.3`
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/Graphs.jl/blob/master/CONTRIBUTING.md)
 for guidance on development and bug reporting.
+
+JuliaGraphs development subscribes to the [Julia Community Standards](https://julialang.org/community/standards/).
 
 # Citing
 
