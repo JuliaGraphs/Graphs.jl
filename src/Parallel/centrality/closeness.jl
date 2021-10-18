@@ -8,6 +8,7 @@ function distr_closeness_centrality(g::AbstractGraph,
 
     n_v = Int(nv(g))
     closeness = SharedVector{Float64}(n_v)
+    fill!(closeness, 0.0)
 
     @sync @distributed for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
@@ -34,7 +35,7 @@ function threaded_closeness_centrality(g::AbstractGraph,
     normalize=true)::Vector{Float64}
 
     n_v = Int(nv(g))
-    closeness = Vector{Float64}(undef, n_v)
+    closeness = zeros(Float64, n_v)
 
     Base.Threads.@threads for u in vertices(g)
         if degree(g, u) == 0     # no need to do Dijkstra here
