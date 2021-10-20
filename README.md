@@ -4,17 +4,6 @@
 [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
 
-**Project Status:** The Graphs project is a reboot of the now-archived LightGraphs
-package, which remains available on GitHub at
-[sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If
-you don't need any new features developed since the fork, you can continue to
-use older versions of LightGraphs indefinitely. New versions will be released
-here using the name Graphs instead of LightGraphs. There was an older package
-also called Graphs. The source history and versions are still available in
-this repository, but the current code base is unrelated to the old Graphs code
-and is derived purely from LightGraphs. To access the history of the old Graphs code,
-you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
-
 Graphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for
 the development of more sophisticated graph implementations under the `AbstractGraph`
@@ -67,3 +56,16 @@ JuliaGraphs development subscribes to the [Julia Community Standards](https://ju
 
 We encourage you to cite our work if you have used our libraries, tools or datasets, refer to `CITATION.bib`.
 Starring the repository on GitHub is also appreciated.
+
+# Project History
+
+The Graphs project is a reboot of the now-archived LightGraphs
+package, which remains available on GitHub at
+[sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If
+you don't need any new features developed since the fork, you can continue to
+use older versions of LightGraphs indefinitely. New versions will be released
+here using the name Graphs instead of LightGraphs. There was an older package
+also called Graphs. The source history and versions are still available in
+this repository, but the current code base is unrelated to the old Graphs code
+and is derived purely from LightGraphs. To access the history of the old Graphs code,
+you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
