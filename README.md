@@ -4,7 +4,9 @@
 [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
 
-**Project Status:** The Graphs project is a reboot of the now-archived LightGraphs
+## Current Project Status
+
+The Graphs project is a reboot of the now-archived LightGraphs
 package, which remains available on GitHub at
 [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If
 you don't need any new features developed since the fork, you can continue to
@@ -14,6 +16,18 @@ also called Graphs. The source history and versions are still available in
 this repository, but the current code base is unrelated to the old Graphs code
 and is derived purely from LightGraphs. To access the history of the old Graphs code,
 you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
+
+**Transition from LightGraphs to Graphs:**
+
+LightGraphs and Graphs are functionally identical, still there are some steps involved making the change:
+
+* Change LG to Graphs in your Project.toml
+* Update your using/imports
+* Update your type constraints
+* Increment your version number (Following SEMVER we suggest a patch release when no graph related functionality is made available through the API, otherwise a major release)
+* Tag a release
+
+## Overview 
 
 Graphs offers both (a) a set of simple, concrete graph implementations -- `Graph`
 (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for
