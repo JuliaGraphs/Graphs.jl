@@ -21,7 +21,7 @@ you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/com
 
 LightGraphs and Graphs are functionally identical, still there are some steps involved making the change:
 
-* Change LG to Graphs in your Project.toml
+* Change `LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"` to `Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"` in your Project.toml. 
 * Update your using/imports
 * Update your type constraints
 * Increment your version number (Following SEMVER we suggest a patch release when no graph related functionality is made available through the API, otherwise a major release)
