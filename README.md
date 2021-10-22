@@ -22,10 +22,10 @@ you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/com
 LightGraphs and Graphs are functionally identical, still there are some steps involved making the change:
 
 * Change `LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"` to `Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"` in your Project.toml. 
-* Update your using/imports
-* Update your type constraints
-* Increment your version number. Following semantic versioning, we suggest a patch release when no graphs or other `Graphs.jl`-objects can be passed through the API of your package by those depending on it, otherwise a major release. "Passed through" entails created outside and consumed inside your package and vice versa.
-* Tag a release
+* Update your `using` and `import` statements.
+* Update your type constraints and other references to `LightGraphs` to `Graphs`.
+* Increment your version number. Following semantic versioning, we suggest a patch release when no graphs or other `Graphs.jl`-objects can be passed through the API of your package by those depending on it, otherwise consider it a breaking release. "Passed through" entails created outside and consumed inside your package and vice versa.
+* Tag a release.
 
 ## Overview 
 
