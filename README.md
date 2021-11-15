@@ -77,8 +77,6 @@ LightGraphs and Graphs are functionally identical, still there are some steps in
 * Increment your version number. Following semantic versioning, we suggest a patch release when no graphs or other `Graphs.jl`-objects can be passed through the API of your package by those depending on it, otherwise consider it a breaking release. "Passed through" entails created outside and consumed inside your package and vice versa.
 * Tag a release.
 
-
-
 # Citing
 
 We encourage you to cite our work if you have used our libraries, tools or datasets, refer to `CITATION.bib`.
