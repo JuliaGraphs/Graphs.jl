@@ -47,13 +47,13 @@ end
 SimpleGraph(n::T) where T <: Integer = SimpleGraph{T}(n)
 
 # SimpleGraph()
-SimpleGraph() = SimpleGraph{Int}()
+SimpleGraph() = SimpleGraph{UInt32}()
 
 # SimpleGraph(UInt8)
 """
     SimpleGraph(::Type{T})
 
-Construct an empty `SimpleGraph{T}` with 0 vertices and 0 edges.
+Construct an empty `SimpleGraph{T}` with 0 vertices and 0 edges. If you need larger than 4-billion large graph use: SimpleGraph(UInt64)
 
 ## Examples
 ```jldoctest
@@ -78,8 +78,8 @@ julia> SimpleGraph(A1)
 {2, 1} undirected simple Int64 graph
 
 julia> A2 = [2 7; 7 0]
-julia> SimpleGraph{Int16}(A2)
-{2, 2} undirected simple Int16 graph
+julia> SimpleGraph{UInt16}(A2)
+{2, 2} undirected simple UInt16 graph
 ```
 """
 SimpleGraph(adjmx::AbstractMatrix) = SimpleGraph{Int}(adjmx)
@@ -132,9 +132,9 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
-julia> g = path_digraph(Int8(5))
+julia> g = path_digraph(UInt8(5))
 julia> SimpleGraph(g)
-{5, 4} undirected simple Int8 graph
+{5, 4} undirected simple UInt8 graph
 ```
 """
 function SimpleGraph(g::SimpleDiGraph)
@@ -368,7 +368,7 @@ edgetype(::SimpleGraph{T}) where T <: Integer = SimpleGraphEdge{T}
 Return the backwards adjacency list of a graph. If `v` is specified,
 return only the adjacency list for that vertex.
 
-###Implementation Notes
+### Implementation Notes
 Returns a reference to the current graph's internal structures, not a copy. 
 Do not modify result. If the graph is modified, the behavior is undefined: 
 the array behind this reference may be modified too, but this is not guaranteed.
