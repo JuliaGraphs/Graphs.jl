@@ -11,8 +11,6 @@ to each vertex. The component value is the smallest vertex ID in the component.
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    nvg = nv(g)
-
     for u in vertices(g)
         label[u] != zero(T) && continue
         label[u] = u
