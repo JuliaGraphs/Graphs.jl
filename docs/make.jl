@@ -8,8 +8,8 @@ cp(normpath(@__FILE__, "../../LICENSE.md"), normpath(@__FILE__, "../src/license.
 
 makedocs(
     modules     = [Graphs],
-    format      = Documenter.HTML(), 
-    sitename    = "Graphs",
+    format      = Documenter.HTML(),
+    sitename    = "Graphs.jl",
     doctest     = false,
     pages       = Any[
         "Getting Started"                   => "index.md",
