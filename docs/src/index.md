@@ -1,4 +1,4 @@
-# Graphs
+# Graphs.jl
 
 The goal of *Graphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, Graphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
 
