@@ -111,7 +111,7 @@ by vertex. Default values for `T` are the same as those in
 Converts the matrix to dense with ``nv^2`` memory usage.
 
 ### Implementation Notes
-Use `eigs(laplacian_matrix(g);  kwargs...)` to compute some of the
+Use `eigvals(Matrix(laplacian_matrix(g, args...)))` to compute some of the
 eigenvalues/eigenvectors.
 """
 laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
@@ -130,7 +130,7 @@ by vertex. Default values for `T` are the same as those in
 Converts the matrix to dense with ``nv^2`` memory usage.
 
 ### Implementation Notes
-Use `eigs(adjacency_matrix(g);  kwargs...)` to compute some of the
+Use `eigvals(Matrix(adjacency_matrix(g, args...)))` to compute some of the
 eigenvalues/eigenvectors.
 """
 function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
