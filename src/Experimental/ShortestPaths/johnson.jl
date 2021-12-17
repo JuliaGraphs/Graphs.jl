@@ -26,7 +26,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
     #Change when parallel implementation of Bellman Ford available
     wt_transform = Graphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
 
-    if !ismutable(type_distmx) && type_distmx !=  Graphs.DefaultDistance
+    if !ismutable(distmx) && type_distmx !=  Graphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
     end
 
@@ -51,7 +51,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
         dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
     end
 
-    if ismutable(type_distmx)
+    if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end

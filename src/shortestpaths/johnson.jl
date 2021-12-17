@@ -30,7 +30,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     #Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
 
-    if !ismutable(type_distmx) && type_distmx !=  Graphs.DefaultDistance
+    if !ismutable(distmx) && type_distmx !=  Graphs.DefaultDistance
         distmx = sparse(distmx) #Change reference, not value
     end
 
@@ -55,7 +55,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
         dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
     end
 
-    if ismutable(type_distmx)
+    if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end
