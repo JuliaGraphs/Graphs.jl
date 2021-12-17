@@ -150,12 +150,13 @@ julia> k_core(g, 2)
  2
  3
  4
- 5    
+ 5
 ```
 """
 function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
     if (k == -1)
-        k = maximum(corenum) # max core
+		# type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum) # max core
     end
 
     return findall(x -> x >= k, corenum)
@@ -210,7 +211,8 @@ julia> k_shell(g, 2)
 """
 function k_shell(g::AbstractGraph, k=-1; corenum=core_number(g))
     if k == -1
-        k = maximum(corenum)
+		# type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum)
     end
     return findall(x -> x == k, corenum)
 end
@@ -218,7 +220,7 @@ end
 """
     k_crust(g[, k]; corenum=core_number(g))
 
-Return a vector of vertices in the k-crust of `g`. 
+Return a vector of vertices in the k-crust of `g`.
 If `k` is not specified, return the crust of the core with
 the largest degree.
 
@@ -267,7 +269,8 @@ julia> k_crust(g, 2)
 """
 function k_crust(g, k=-1; corenum=core_number(g))
     if k == -1
-        k = maximum(corenum) - 1
+		# type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum) - 1
     end
     return findall(x -> x <= k, corenum)
 end
@@ -275,7 +278,7 @@ end
 """
     k_corona(g, k; corenum=core_number(g))
 
-Return a vector of vertices in the k-corona of `g`. 
+Return a vector of vertices in the k-corona of `g`.
 
 The k-corona is the subgraph of vertices in the [`k-core`](@ref k_core) which
 have exactly `k` neighbors in the k-core.
