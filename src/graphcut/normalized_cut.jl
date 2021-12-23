@@ -134,8 +134,9 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 12
-        λ, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
-        ret = real(Q[:,2])
+        _, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
+        (size(Q, 2) <= 1) && return collect(1:m) # no 2nd eigenvector
+        ret = convert(Vector, real(view(Q, :, 2)))
     else
         ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
     end
