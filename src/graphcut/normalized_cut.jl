@@ -140,12 +140,13 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     else
         ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
     end
-    v = invDroot * ret
+    v = real(invDroot * ret)
 
     #perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
-    for t in range(minimum(v), stop=maximum(v), length=num_cuts)
+    vmin, vmax = extrema(v)
+    for t in range(vmin, stop=vmax, length=num_cuts)
         cut = v .> t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost
