@@ -114,9 +114,8 @@ end
 
 function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m, n = size(W)
+    (m <= 1) && return ones(Int, m) # trivial
     D = Diagonal(vec(sum(W, dims=2)))
-
-    m == 1 && return [1]
 
     #get eigenvector corresponding to second smallest eigenvalue
     # v = eigs(D-W, D, nev=2, which=SR())[2][:,2]
