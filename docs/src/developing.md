@@ -27,4 +27,6 @@ Note that the output does not necessarily have to be a dense matrix, but it must
 
 #### Note on inheriting from AbstractSimpleGraph
 
-Every subtype of AbstractSimpleGraph must return neighbors in ascending order.
+Every subtype of `AbstractSimpleGraph` must have vertices forming a `UnitRange` starting from 1 and return `neighbors` in ascending order. 
+The extend to which code for graph types other than subtypes of `AbstractSimpleGraph` does not rely on `AbstractSimpleGraph` assumptions 
+needs to be carefully checked, though in principle the requirement is only part of the `AbstractSimpleGraph` API.
