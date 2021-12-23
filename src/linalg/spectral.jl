@@ -59,7 +59,7 @@ function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, 
                 nz -= 1
             end
         end
-        dsts = sort(neighborfn(g, j)) # TODO for most graphs it might not be necessary to sort
+        dsts = sort!(collect(neighborfn(g, j))) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
         append!(rowval, dsts)
     end
