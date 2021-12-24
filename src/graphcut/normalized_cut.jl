@@ -117,7 +117,19 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     (m <= 1) && return ones(Int, m) # trivial
     D = Diagonal(vec(sum(W, dims=2)))
 
-    #get eigenvector corresponding to second smallest eigenvalue
+    # check that the diagonal is not degenerated as otherwise invDroot errors
+    dnz = abs.(diag(D)) .>= 1E-16
+    if !all(dnz)
+        # vertices with incident edges summing to almost zero
+        # are not connected to the rest of the subnetwork,
+        # put them to separate modules and cut the remaining submatrix
+        nzlabels = _recursive_normalized_cut(W[dnz, dnz], thres, num_cuts)
+        nzix = 0
+        zix = maximum(nzlabels)
+        return Int[nz ? nzlabels[nzix += 1] : (zix += 1) for nz in dnz]
+    end
+
+    # get eigenvector corresponding to the second smallest generalized eigenvalue:
     # v = eigs(D-W, D, nev=2, which=SR())[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
