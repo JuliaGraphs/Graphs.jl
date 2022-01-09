@@ -844,7 +844,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
 
 
     # Drop excess vertices
-    g.fadjlist = g.fadjlist[begin:(end - length(vs)+1)]
+    g.fadjlist = g.fadjlist[firstindex(g.fadjlist):(end - length(vs)+1)]
 
     # Correct edge counts
     g.ne = sum(degree(g, i) for i in vertices(g)) / 2
