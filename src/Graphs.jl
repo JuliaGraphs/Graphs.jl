@@ -6,6 +6,9 @@ using SimpleTraits
 using ArnoldiMethod
 using Statistics: mean
 
+# Currently used to support the ismutable function that is not available in Julia < v1.7
+using Compat
+
 using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root!
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
