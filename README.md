@@ -46,6 +46,7 @@ Installation is straightforward: enter Pkg mode by hitting `]`, and then
 * There was also an older package also called Graphs (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of LightGraphs v1.3.5.
 * All older LightGraphs versions are tagged using the naming scheme `lg-vX.Y.Z` rather than plain `vX.Y.Z` which is used for old Graphs versions (≤ v0.10) and newer versions derived from LightGraphs but released with the Graphs name (≥ v1.4).
 * If you are using a version of Julia prior to 1.x, then you should use LightGraphs.jl at `lg-v.12.*` or Graphs.jl at `v0.10.3`
+* If you are using a version of Julia prior to 1.6, then you should use Graphs.jl at `v1.5.1`
 * Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 
 # Contributing and Reporting Bugs
