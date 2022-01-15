@@ -91,9 +91,4 @@
         end
 
     end
-    @testset "squash" begin
-        @testset "$g" for g in testgraphs(g5w, g5wd)
-            @test eltype(squash(g)) == UInt8
-        end
-    end 
 end

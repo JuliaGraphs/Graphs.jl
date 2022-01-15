@@ -389,10 +389,22 @@ ne(g) / (nv(g) * (nv(g) - 1))
 """
     squash(g)
 
-Return a copy of a graph with the smallest practical type that
+Return a copy of a graph with the smallest practical eltype that
 can accommodate all vertices.
+
+May also return the original graph if the eltype does not change.
 """
 function squash(g::AbstractGraph)
+
+    # TODO this version check can be removed when we increase the required Julia version
+    deprecation_msg = "squash(::AbstractGraph) is deprecated in favor of methods that specialize on the graph type."
+    if VERSION >= v"1.5.2"
+        Base.depwarn(deprecation_msg, :squash; force=true)
+    else
+        Base.depwarn(deprecation_msg, :squash)
+    end
+
+
     gtype = is_directed(g) ? DiGraph : Graph
     validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]
     nvg = nv(g)
