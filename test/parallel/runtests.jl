@@ -15,7 +15,6 @@ tests = [
     "shortestpaths/floyd-warshall",
     "shortestpaths/johnson",
     "traversals/bfs",
-    "traversals/gdistances",
     "traversals/greedy_color",
     "dominatingset/minimal_dom_set",
     "independentset/maximal_ind_set",
