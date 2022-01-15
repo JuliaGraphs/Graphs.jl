@@ -1,3 +1,8 @@
+
+# TODO the algorithms in this file probably relay on incorrect assumptions
+# about the memory handling of Julia.
+# See: https://github.com/JuliaGraphs/Graphs.jl/issues/10
+
 """
     partition_sources!(queue_list, sources)
 
@@ -40,6 +45,8 @@ function gdistances!(
     queue_segment_size::Integer=20
     ) where T <:Integer
  
+    @warn "Graphs.Experimental.Parallel.gdistances is very likely broken at the moment and can return unreliable results."
+
     nvg = nv(g)
     n_t = nthreads()
     segment_size = convert(T, queue_segment_size) # Type stability
