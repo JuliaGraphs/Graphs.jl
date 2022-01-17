@@ -4,6 +4,7 @@ using Graphs.Experimental
 using Test
 using SparseArrays
 using LinearAlgebra
+using Compat
 using DelimitedFiles
 using Base64
 using Random

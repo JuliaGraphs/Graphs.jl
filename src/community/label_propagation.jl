@@ -9,7 +9,10 @@ the second is the convergence history for each node. Will return after
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph{T}, maxiter=1000; rng::AbstractRNG=GLOBAL_RNG) where T
+function label_propagation(g::AbstractGraph{T}, maxiter=1000; rng::Union{Nothing, AbstractRNG} = nothing, seed::Union{Nothing, Integer} = nothing) where T
+
+    rng = rng_from_rng_or_seed(rng, seed)
+
     n = nv(g)
     n == 0 && return (T[], Int[])
 
