@@ -1,6 +1,6 @@
 
 """
-    squash(g::Union{SimpleGraph. SimpleDiGraph}; alwayscopy=true)
+    squash(g::Union{SimpleGraph, SimpleDiGraph}; alwayscopy=true)
 
 Specialised version of `Graphs::Squash` for `SimpleGraph` and `SimpleDiGraph`.
 If `alwayscopy` is `true`, the resulting graph will always be a copy, otherwise
