@@ -1,11 +1,12 @@
 
 @testset "Diffusion Simulation" begin
 
+rng = MersenneTwister(1234)
 gx = complete_graph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Most basic
-    @test @inferred(diffusion_rate(g, 1.0, 4)) == [1, 5, 5, 5]
+    @test @inferred(diffusion_rate(g, 1.0, 4; rng=rng)) == [1, 5, 5, 5]
 end
 
 for i in 1:5
@@ -24,24 +25,28 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Basic test. Watch connected vertices
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
-                                   initial_infections=[2]
+                                   initial_infections=[2],
+                                   rng=rng
                                    )) == [1, 5, 5, 5]
 
     # Watching unconnected vertices
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(6:10),
-                                   initial_infections=[2]
+                                   initial_infections=[2],
+                                   rng=rng
                                    )) == [0, 0, 0, 0]
 
     # Watch subset
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:2),
-                                   initial_infections=[2]
+                                   initial_infections=[2],
+                                   rng=rng
                                    )) == [1, 2, 2, 2]
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
-                                   initial_infections=[10]
+                                   initial_infections=[10],
+                                   rng=rng
                                    )) == [0, 0, 0, 0]
 
 end
@@ -56,12 +61,14 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
-                                   initial_infections=[1]
+                                   initial_infections=[1],
+                                   rng=rng
                                    )) == [1, 2, 3, 4]
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
-                                   initial_infections=[3]
+                                   initial_infections=[3],
+                                   rng=rng
                                    )) == [1, 3, 5, 5]
 end
 
@@ -72,14 +79,16 @@ for g in testgraphs(gx)
                                   1.0,
                                   6,
                                   initial_infections=[15],
-                                  normalize=false
+                                  normalize=false,
+                                  rng=rng
                                   )) == [1, 3, 5, 7, 9, 11]
 
 
     @test @inferred(diffusion_rate(g, 2.0, 6,
                                    initial_infections=[15],
-                                   normalize=true)
-                                   ) == [1, 3, 5, 7, 9, 11]
+                                   normalize=true,
+                                   rng=rng
+                                   )) == [1, 3, 5, 7, 9, 11]
 
     # Test probability accurate
     # In a Path network,
