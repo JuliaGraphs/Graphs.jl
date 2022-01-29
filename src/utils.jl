@@ -45,6 +45,27 @@ sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a)
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
+    rng_from_rng_or_seed(rng, seed)
+
+Helper function for randomized functions that can take a random generator as well as a seed argument.
+
+Currently most randomized functions in this package take a seed integer as an argument.
+As modern randomized Julia functions tend to take a random generator instead of a seed,
+this function helps with the transition by taking `rng` and `seed` as an argument and
+always returning a random number generator.
+At least one of these arguments must be `nothing`.
+"""
+function rng_from_rng_or_seed(rng::Union{Nothing, AbstractRNG}, seed::Union{Nothing, Integer})
+
+    # TODO at some point we might emit a deprecation warning if a seed is specified
+
+    !(isnothing(seed) || isnothing(rng)) && throw(ArgumentError("Cannot specify both, seed and rng"))
+    !isnothing(seed)                     && return getRNG(seed)
+    isnothing(rng)                       && return GLOBAL_RNG
+    return rng
+end
+
+"""
     insorted(item, collection)
 
 Return true if `item` is in sorted collection `collection`.

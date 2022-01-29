@@ -1,4 +1,7 @@
 @testset "Label propagation" begin
+
+    rng = MersenneTwister(1234)
+
     n = 10
     g10 = complete_graph(n)
     for g in testgraphs(g10)
@@ -6,7 +9,7 @@
         for k = 2:5
             z = blockdiag(z, g)
             add_edge!(z, (k - 1) * n, k * n)
-            c, ch = @inferred(label_propagation(z))
+            c, ch = @inferred(label_propagation(z; rng=rng))
             a = collect(n:n:(k * n))
             a = Int[div(i - 1, n) + 1 for i = 1:(k * n)]
           # check the number of communities
