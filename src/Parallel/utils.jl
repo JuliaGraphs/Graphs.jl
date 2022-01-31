@@ -13,7 +13,7 @@ parallel == :threads ? threaded_generate_reduce(g, gen_func, comp, reps) : distr
 """
     distr_generate_min_set(g, gen_func, comp, reps)
 
-Distributed implementation of [`Graphs.generate_reduce`](@ref).
+Distributed implementation of [`generate_reduce`](@ref).
 """
 function distr_generate_reduce(
     g::AbstractGraph{T},
@@ -31,7 +31,7 @@ end
 """
     threaded_generate_reduce(g, gen_func, comp reps)
 
-Multi-threaded implementation of [`Graphs.generate_reduce`](@ref).
+Multi-threaded implementation of [`generate_reduce`](@ref).
 """
 function threaded_generate_reduce(
     g::AbstractGraph{T},

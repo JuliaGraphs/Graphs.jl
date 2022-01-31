@@ -17,7 +17,10 @@ cp(
 makedocs(;
     modules=[Graphs],
     format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true", assets=String[], collapselevel=1
+        prettyurls=get(ENV, "CI", "false") == "true",
+        assets=String[],
+        collapselevel=1,
+        canonical="https://gdalle.github.io/Graphs.jl",
     ),
     sitename="Graphs.jl",
     doctest=false,
@@ -81,7 +84,7 @@ makedocs(;
 
 # deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
 
-deploydocs(; repo="github.com/gdalle/Graphs.jl.git", target="build")
+deploydocs(; repo="github.com/gdalle/Graphs.jl", target="build", devbranch="master")
 
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))

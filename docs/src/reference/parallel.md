@@ -11,7 +11,7 @@ Pages = ["parallel.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [Graphs.Parallel]
+Modules = [Graphs, Graphs.Parallel]
 Pages = [
     "Parallel/Parallel.jl",
     "Parallel/utils.jl",
@@ -31,5 +31,4 @@ Pages = [
     "Parallel/traversals/greedy_color.jl",
     "Parallel/vertexcover/random_vertex_cover.jl",
 ]
-
 ```

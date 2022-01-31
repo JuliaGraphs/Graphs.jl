@@ -9,15 +9,31 @@ Code in this module is unstable and subject to change. Do not use any code in th
 ## Index
 
 ```@index
-Pages = ["community.md"]
+Pages = ["experimental.md"]
 ```
 
-## Partial Docs
+## Full Docs
 
 ```@autodocs
-Modules = [Graphs]
+Modules = [Graphs.Experimental, Graphs.Experimental.Traversals, Graphs.Experimental.ShortestPaths, Graphs.Parallel]
 Pages = [
+    "Experimental/Experimental.jl",
     "Experimental/isomorphism.jl",
+    "Experimental/vf2.jl",
+    "Experimental/Parallel/traversals/gdistances.jl",
+    "Experimental/Parallel/Parallel.jl",
+    "Experimental/ShortestPaths/astar.jl",
+    "Experimental/ShortestPaths/bellman-ford.jl",
+    "Experimental/ShortestPaths/bfs.jl",
+    "Experimental/ShortestPaths/desopo-pape.jl",
+    "Experimental/ShortestPaths/dijkstra.jl",
+    "Experimental/ShortestPaths/floyd-warshall.jl",
+    "Experimental/ShortestPaths/johnson.jl",
+    "Experimental/ShortestPaths/ShortestPaths.jl",
+    "Experimental/ShortestPaths/spfa.jl",
+    "Experimental/Traversals/bfs.jl",
+    "Experimental/Traversals/dfs.jl",
+    "Experimental/Traversals/Traversals.jl",
 ]
 
 ```
