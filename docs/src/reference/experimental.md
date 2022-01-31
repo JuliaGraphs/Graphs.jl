@@ -15,7 +15,7 @@ Pages = ["experimental.md"]
 ## Full Docs
 
 ```@autodocs
-Modules = [Graphs.Experimental, Graphs.Experimental.Traversals, Graphs.Experimental.ShortestPaths, Graphs.Parallel]
+Modules = [Graphs.Experimental, Graphs.Experimental.Traversals, Graphs.Experimental.ShortestPaths, Graphs.Experimental.Parallel]
 Pages = [
     "Experimental/Experimental.jl",
     "Experimental/isomorphism.jl",
