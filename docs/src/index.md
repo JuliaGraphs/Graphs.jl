@@ -1,18 +1,18 @@
-# Graphs.jl
+# Package overview
 
-The goal of *Graphs.jl* is to offer a performant platform for network and graph analysis in Julia. To this end, Graphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
+The goal of _Graphs.jl_ is to offer a performant platform for network and graph analysis in Julia. To this end, Graphs offers both (a) a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
 
-As such, *Graphs.jl* is the central package of the JuliaGraphs ecosystem. Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization related functions can be found in the following packages:
-  * [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): extra functions for graph analysis.
-  * [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl): graphs with associated meta-data.
-  * [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): weighted graphs.
-  * [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
-  * [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for converting edgelists stored in DataFrames into graphs (`MetaGraphs`, `MetaDiGraphs`).
+## Installation
 
+Installation is straightforward. First, enter Pkg mode by hitting `]`, and then run the following command:
 
-## Basic library examples
+```julia-repl
+pkg> add Graphs
+```
 
-The *Graphs.jl* libraries includes numerous convenience functions for generating functions detailed in [Making and Modifying Graphs](@ref), such as `path_graph`, which makes a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+## Basic use
+
+_Graphs.jl_ includes numerous convenience functions for generating functions, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia
 julia> g = path_graph(6)
@@ -27,4 +27,17 @@ julia> ne(g)
 julia> add_edge!(g, 1, 6)
 ```
 
-For an overview of basic functions for interacting with graphs, check out [Accessing Graph Properties](@ref) and [Making and Modifying Graphs](@ref). Detailed tutorials may be found in the [JuliaGraphs Tutorial Notebooks](https://github.com/JuliaGraphs/JuliaGraphsTutorials) repository.
+To see an overview of elementary functions for interacting with graphs, check out [Graph access](@ref) and [Graph construction](@ref).
+Detailed tutorials may be found in the [JuliaGraphs Tutorial Notebooks](https://github.com/JuliaGraphs/JuliaGraphsTutorials) repository.
+
+## Ecosystem
+
+_Graphs.jl_ is the central package of the JuliaGraphs ecosystem. Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization-related functions can be found in the following packages:
+
+- [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) and [MetaGraphsNext.jl](https://github.com/JuliaGraphs/MetaGraphsNext.jl): Graphs with associated meta-data.
+- [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): Weighted graphs.
+- [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): Tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
+- [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for converting edgelists stored in DataFrames into MetaGraphs.
+- [GraphsMatching.jl](https://github.com/JuliaGraphs/GraphsMatching.jl): Matching algorithms.
+- [GraphsFlows.jl](https://github.com/JuliaGraphs/GraphsFlows.jl): Flow algorithms.
+- [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): Various extra functions for graph analysis.

@@ -1,12 +1,8 @@
-# Reading and writing Graphs
+# Reading and writing graphs
 
-```@index
-Pages   = ["persistence.md"]
-```
+## Saving using custom `LG` format.
 
-## Saving using *Graphs.jl* `lg` format.
-
-Graphs may be written to I/O streams and files using the `savegraph` function and read with the `loadgraph` function. The default graph format is a bespoke compressed *Graphs.jl* format `LG`.
+Graphs may be written to I/O streams and files using the [`savegraph`](@ref) function, and they can be read with the [`loadgraph`](@ref) function. The default graph format is a bespoke compressed format called `LG`, defined by *Graphs.jl*.
 
 ### Example
 
@@ -40,14 +36,6 @@ savegraph("mygraph_dict.lg", graph_dict)
 reloaded_g1 = loadgraph("mygraph_dict.lg", "g1")
 ```
 
-## Full docs
-
-```@autodocs
-Modules = [Graphs]
-Pages   = ["persistence/common.jl"]
-Private = false
-```
-
-## Reading and Writing using other formats using GraphIO
+## GraphIO for other formats
 
 The [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl) library provides tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.

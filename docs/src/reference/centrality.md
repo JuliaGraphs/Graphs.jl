@@ -1,9 +1,8 @@
 # Centrality Measures
 
-[Centrality measures](https://en.wikipedia.org/wiki/Centrality) describe the
-importance of a vertex to the rest of the graph using some set of criteria.
-Centrality measures implemented in *Graphs.jl* include the following:
+*Graphs.jl* implements various [centrality measures](https://en.wikipedia.org/wiki/Centrality), which describe the importance of a vertex to the rest of the graph.
 
+## Index
 
 ```@index
 Pages   = ["centrality.md"]
@@ -20,8 +19,8 @@ Pages   = [
     "centrality/eigenvector.jl",
     "centrality/katz.jl",
     "centrality/pagerank.jl",
+    "centrality/radiality.jl",
     "centrality/stress.jl",
-    "centrality/radiality.jl"
 ]
-Private = false
+
 ```
