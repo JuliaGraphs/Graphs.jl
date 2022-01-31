@@ -79,7 +79,8 @@ makedocs(;
     ],
 )
 
-deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
+# deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
+deploydocs(; repo="github.com/gdalle/Graphs.jl.git", target="build")
 
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))
