@@ -12,7 +12,7 @@ for a usage example.
 """
 abstract type IncrementalCycleTracker{I} <: AbstractGraph{I} end
 
-function (::Type{IncrementalCycleTracker})(s::AbstractGraph{I}; dir::Symbol=nothing) where {I}
+function (::Type{IncrementalCycleTracker})(s::AbstractGraph{I}; dir::Union{Symbol,Nothing}=nothing) where {I}
     # TODO: Once we have more algorithms, the poly-algorithm decision goes here.
     # For now, we only have Algorithm N.
     return DenseGraphICT_BFGT_N{something(dir, :out)}(s)
