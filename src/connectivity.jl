@@ -271,7 +271,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
     dfs_stack = Vector{T}()
     largev_iterstate_stack = Vector{Tuple{T, S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
-    # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into thise last stack.
+    # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into this last stack.
 
     @inbounds for s in vertices(g)
         if is_unvisited(rindex, s)
@@ -293,8 +293,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                 while next !== nothing
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
-                        break
-                        #GOTO A: push v_neighbor onto DFS stack and continue DFS
+                        break #GOTO A: push v_neighbor onto DFS stack and continue DFS.
                         # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
                         # as we save the iteration state in largev_iterstate_stack for large vertices.
                         # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
@@ -304,7 +303,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                     end
                     next = iterate(outn, state)
                 end
-                if isnothing(next) # Natural loop end.
+                if isnothing(next) # While loop above ended naturally.
                     # All out neighbors already visited or no out neighbors
                     # we have fully explored the DFS tree from v.
                     # time to start popping.
