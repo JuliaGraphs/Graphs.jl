@@ -6,7 +6,7 @@
     for Gtemplate in (Gempty, Gsomedges)
         for dir in (:out, :in)
             G = copy(Gtemplate)
-            ict = IncrementalCycleTracker(G; dir)
+            ict = IncrementalCycleTracker(G; dir=dir)
             @test_nowarn repr(ict)
             @test add_edge_checked!(ict, 1, 2)
             @test add_edge_checked!(ict, 2, 3)
