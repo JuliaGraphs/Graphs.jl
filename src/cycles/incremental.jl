@@ -22,8 +22,8 @@ end
 """
     add_edge_checked!([f!,], ict::IncrementalCycleTracker, v, w)
 
-Using the incremental cycle tracker, ict, check whether adding the edge `v=>w`.
-Would introduce a cycle in the underlying graph. If so, return false and leave
+Using the incremental cycle tracker, ict, check whether adding the edge `v=>w`
+would introduce a cycle in the underlying graph. If so, return false and leave
 the ict intact. If not, update the underlying graph and return true.
 
 # Optional `f!` Argument
