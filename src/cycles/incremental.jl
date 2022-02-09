@@ -124,6 +124,7 @@ function weak_topological_levels(g::AbstractGraph{I}) where {I}
     worklist = Vector{Int}()
     all_verts_max_level = 0
     for v in vertices(g)
+        levels[v] != -1 && continue
         push!(worklist, v)
         while !isempty(worklist)
             v = last(worklist)
