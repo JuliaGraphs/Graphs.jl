@@ -13,14 +13,14 @@ import Graphs:
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
     deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
-    num_self_loops, insorted
+    num_self_loops, insorted, squash
 
 using Random: GLOBAL_RNG, AbstractRNG
 
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
     SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
-    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!,
+    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!, squash,
     # randgraphs
     erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
     random_regular_digraph, random_configuration_model, random_tournament_digraph,
@@ -214,6 +214,7 @@ include("./simpleedge.jl")
 include("./simpledigraph.jl")
 include("./simplegraph.jl")
 include("./simpleedgeiter.jl")
+include("./specializations.jl")
 include("./generators/deprecations.jl")
 include("./generators/staticgraphs.jl")
 include("./generators/randgraphs.jl")

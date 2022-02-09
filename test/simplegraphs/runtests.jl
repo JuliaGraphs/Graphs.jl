@@ -84,6 +84,7 @@ const simple_tests = [
     "simplegraphs",
     "simpleedge",
     "simpleedgeiter",
+    "specializations",
     "generators/randgraphs",
     "generators/staticgraphs",
     "generators/smallgraphs",

@@ -1,5 +1,5 @@
 """
-    label_propagation(g, maxiter=1000)
+    label_propagation(g, maxiter=1000; rng=GLOBAL_RNG)
 
 Community detection using the label propagation algorithm.
 Return two vectors: the first is the label number assigned to each node, and
@@ -9,7 +9,10 @@ the second is the convergence history for each node. Will return after
 ### References
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
-function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
+function label_propagation(g::AbstractGraph{T}, maxiter=1000; rng::Union{Nothing, AbstractRNG} = nothing, seed::Union{Nothing, Integer} = nothing) where T
+
+    rng = rng_from_rng_or_seed(rng, seed)
+
     n = nv(g)
     n == 0 && return (T[], Int[])
 
@@ -28,11 +31,11 @@ function label_propagation(g::AbstractGraph{T}, maxiter=1000) where T
         for (j, node) in enumerate(active_vs)
             random_order[j] = node
         end
-        range_shuffle!(1:num_active, random_order)
+        range_shuffle!(rng, 1:num_active, random_order)
         @inbounds for j = 1:num_active
             u = random_order[j]
             old_comm = label[u]
-            label[u] = vote!(g, label, c, u)
+            label[u] = vote!(rng, g, label, c, u)
             if old_comm != label[u]
                 for v in outneighbors(g, u)
                     push!(active_vs, v)
@@ -59,13 +62,11 @@ mutable struct NeighComm{T<:Integer}
 end
 
 """
-    range_shuffle!(r, a; seed=-1)
+    range_shuffle!(rng, r, a)
 
 Fast shuffle Array `a` in UnitRange `r`.
-Uses `seed` to initialize the random number generator, defaulting to `Random.GLOBAL_RNG` for `seed=-1`.
 """
-function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
-    rng = getRNG(seed)
+function range_shuffle!(rng::AbstractRNG, r::UnitRange, a::AbstractVector)
     (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
     @inbounds for i = length(r):-1:2
         j = rand(rng, 1:i)
@@ -76,11 +77,11 @@ function range_shuffle!(r::UnitRange, a::AbstractVector; seed::Int=-1)
 end
 
 """
-    vote!(g, m, c, u)
+    vote!(rng, g, m, c, u)
 
 Return the label with greatest frequency.
 """
-function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
+function vote!(rng::AbstractRNG, g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
     @inbounds for i = 1:c.neigh_last - 1
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
@@ -102,7 +103,7 @@ function vote!(g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
         end
     end
     # ties breaking randomly
-    range_shuffle!(1:c.neigh_last - 1, c.neigh_pos)
+    range_shuffle!(rng, 1:c.neigh_last - 1, c.neigh_pos)
 
     result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos

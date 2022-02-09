@@ -4,6 +4,7 @@ using Graphs.Experimental
 using Test
 using SparseArrays
 using LinearAlgebra
+using Compat
 using DelimitedFiles
 using Base64
 using Random
@@ -35,6 +36,7 @@ tests = [
     "cycles/karp",
     "cycles/basis",
     "cycles/limited_length",
+    "cycles/incremental",
     "edit_distance",
     "connectivity",
     "persistence/persistence",

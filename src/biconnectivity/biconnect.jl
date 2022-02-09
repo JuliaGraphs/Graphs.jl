@@ -38,9 +38,9 @@ function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Intege
             visit!(g, state, v, w)
             state.low[v] = min(state.low[v], state.low[w])
 
-            #Checking the root, and then the non-roots if they are articulation points
+            # Checking the root, and then the non-roots if they are articulation points
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = E(0, 0)  #Invalid Edge, used for comparison only
+                e = E(0, 0) # Invalid Edge, used for comparison only
                 st = Vector{E}()
                 while e != E(min(v, w), max(v, w))
                     e = pop!(state.stack)
@@ -49,9 +49,13 @@ function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Intege
                 push!(state.biconnected_comps, st)
             end
 
-        elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, E(min(v, w), max(v, w)))
-            state.low[v] = state.depth[w]
+        elseif w != u
+            if state.depth[v] > state.depth[w]
+                push!(state.stack, E(min(v, w), max(v, w)))
+            end
+            if state.low[v] > state.depth[w]
+                state.low[v] = state.depth[w]
+            end
         end
     end
 end
