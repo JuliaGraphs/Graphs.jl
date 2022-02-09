@@ -5,6 +5,7 @@ module Traversals
 # to create new graph algorithms that rely on breadth-first or depth-first search traversals.
 
 using Graphs
+import ..Graphs: topological_sort
 using SimpleTraits
 """
     abstract type TraversalAlgorithm
@@ -141,7 +142,7 @@ mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
 end
 
-@inline function newvisitfn!(s::ParentState, u, v) 
+@inline function newvisitfn!(s::ParentState, u, v)
     s.parents[v] = u
     return true
 end
