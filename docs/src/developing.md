@@ -20,7 +20,6 @@ within the Graphs package should just work:
   should be implemented with **both** of the following signatures:
   - `is_directed(::Type{CustomGraph})::Bool` (example: `is_directed(::Type{<:CustomGraph}) = false`)
   - `is_directed(g::CustomGraph)::Bool`
-- [`zero`](@ref)
 
 If the graph structure is designed to represent weights on edges, the [`weights`](@ref) function should also be defined.
 Note that the output does not necessarily have to be a dense matrix, but it must be a subtype of `AbstractMatrix{<:Real}` and indexable via `[u, v]`.
