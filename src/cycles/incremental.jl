@@ -216,7 +216,7 @@ add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:in}, vs, w::Integer) =
 #    single source/dest batching is easy to add is that we know that either the
 #    source or the destination vertex is guaranteed to be a part of any cycle
 #    that we may have added. Thus we're guaranteed to encounter one of the two
-#    verticies in our cycle validation and the rest of the algorithm goes through
+#    vertices in our cycle validation and the rest of the algorithm goes through
 #    as usual.
 # 2. We opportunistically traverse each edge when we see it and only add it
 #    to the worklist if we know that traversal will recurse further.
