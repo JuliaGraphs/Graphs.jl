@@ -31,7 +31,7 @@ the ict intact. If not, update the underlying graph and return true.
 By default the `add_edge!` function is used to update the underlying graph.
 However, for more complicated graphs, users may wish to manually specify the
 graph update operation. This may be accomplished by passing the optional `f!`
-callback arhgument. This callback is called on the underlying graph when no
+callback argument. This callback is called on the underlying graph when no
 cycle is detected and is required to modify the underlying graph in order to
 effectuate the proposed edge addition.
 
