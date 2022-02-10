@@ -41,3 +41,9 @@ _Graphs.jl_ is the central package of the JuliaGraphs ecosystem. Additional func
 - [GraphsMatching.jl](https://github.com/JuliaGraphs/GraphsMatching.jl): Matching algorithms.
 - [GraphsFlows.jl](https://github.com/JuliaGraphs/GraphsFlows.jl): Flow algorithms.
 - [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): Various extra functions for graph analysis.
+
+## Citing
+
+We encourage you to cite our work if you have used our libraries, tools or datasets. Starring the _Graphs.jl_ repository on GitHub is also appreciated.
+
+The latest citation information may be found in the [CITATION.bib](https://raw.githubusercontent.com/JuliaGraphs/Graphs.jl/master/CITATION.bib) file within the repository.
