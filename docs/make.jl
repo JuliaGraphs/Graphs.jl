@@ -1,6 +1,9 @@
 using Documenter
 #include("../src/Graphs.jl")
 using Graphs
+using MetaGraphs
+using MetaGraphsNext
+using SimpleWeightedGraphs
 
 # same for contributing and license
 cp(
@@ -15,7 +18,7 @@ cp(
 )
 
 makedocs(;
-    modules=[Graphs],
+    modules=[Graphs, MetaGraphs, MetaGraphsNext, SimpleWeightedGraphs],
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         assets=String[],
@@ -69,6 +72,11 @@ makedocs(;
             "Traversals" => "algorithms/traversals.md",
             "Utilities" => "algorithms/utils.md",
             "Vertex cover" => "algorithms/vertexcover.md",
+        ],
+        "Ecosystem docs" => [
+            "MetaGraphs.jl" => "ecosystem/metagraphs.md",
+            "MetaGraphsNext.jl" => "ecosystem/metagraphsnext.md",
+            "SimpleWeightedGraphs.jl" => "ecosystem/simpleweightedgraphs.md",
         ],
         "For advanced users" => [
             "Error handling" => "advanced/errorhandling.md",
