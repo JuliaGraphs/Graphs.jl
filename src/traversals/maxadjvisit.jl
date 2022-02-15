@@ -13,8 +13,9 @@
 
 Return a tuple `(parity, bestcut)`, where `parity` is a vector of integer
 values that determines the partition in `g` (1 or 2) and `bestcut` is the
-weight of the cut that makes this partition. An optional `distmx` matrix may
-be specified; if omitted, edge distances are assumed to be 1.
+weight of the cut that makes this partition. An optional `distmx` matrix
+of non-negative weights may be specified; if omitted, edge distances are
+assumed to be 1.
 """
 function mincut(g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real
@@ -33,8 +34,12 @@ function mincut(g::AbstractGraph,
     # and we need it clean (0 for non edges)
     w = zeros(T, nvg, nvg)
     @inbounds for e in edges(g)
-        w[src(e), dst(e)] = distmx[src(e), dst(e)]
-        w[dst(e), src(e)] = distmx[dst(e), src(e)]
+        d = distmx[src(e), dst(e)]
+        (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
+        w[src(e), dst(e)] = d
+        d = distmx[dst(e), src(e)]
+        (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
+        w[dst(e), src(e)] = d
     end
     # we also need to mutate neighbors when merging vertices
     fadjlist = [collect(outneighbors(g, v)) for v in vertices(g)]
