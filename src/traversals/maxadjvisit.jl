@@ -80,7 +80,7 @@ function mincut(g::AbstractGraph,
         end
 
         # check if we improved the mincut
-        if cutweight <= bestweight
+        if cutweight < bestweight
             bestweight = cutweight
             for v in vertices(g)
                 parities[v] = (find_root!(merged_vertices, v) == u)
