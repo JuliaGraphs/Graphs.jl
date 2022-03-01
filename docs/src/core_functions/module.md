@@ -8,7 +8,7 @@
 Pages = ["module.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

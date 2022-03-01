@@ -1,4 +1,4 @@
-# Linear Algebra
+# Linear algebra
 
 _Graphs.jl_ provides numerous matrix operations on both directed and undirected graphs, as part of the `LinAlg` submodule.
 
@@ -8,7 +8,7 @@ _Graphs.jl_ provides numerous matrix operations on both directed and undirected 
 Pages   = ["linalg.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs.LinAlg]

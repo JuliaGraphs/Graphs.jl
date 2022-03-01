@@ -1,4 +1,4 @@
-# AbstractGraph Interface
+# AbstractGraph interface
 
 *Graphs.jl* defines the `AbstractGraph` interface for compatibility with external graph formats.
 
@@ -8,7 +8,7 @@
 Pages   = ["interface.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

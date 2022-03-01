@@ -1,4 +1,4 @@
-# Steiner Tree
+# Steiner tree
 
 _Graphs.jl_ provides some functionalities related to [Steiner Trees](https://en.wikipedia.org/wiki/Steiner_tree_problem#Approximating_the_Steiner_tree).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ provides some functionalities related to [Steiner Trees](https://en.
 Pages = ["steinertree.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

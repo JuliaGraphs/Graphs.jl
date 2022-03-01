@@ -1,4 +1,4 @@
-# Biconnected Graphs
+# Biconnected graphs
 
 _Graphs.jl_ contains several algorithms to study [biconnectivity](https://en.wikipedia.org/wiki/Biconnected_graph).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ contains several algorithms to study [biconnectivity](https://en.wik
 Pages = ["biconnectivity.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

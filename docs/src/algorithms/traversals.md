@@ -1,4 +1,4 @@
-# Traversals and Coloring
+# Traversals and coloring
 
 _Graphs.jl_ includes various routines for exploring graphs.
 
@@ -8,7 +8,7 @@ _Graphs.jl_ includes various routines for exploring graphs.
 Pages = ["traversals.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

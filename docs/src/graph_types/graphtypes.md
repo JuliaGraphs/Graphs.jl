@@ -14,7 +14,7 @@ Note that graphs in which the number of vertices equals or approaches the `typem
 
 ## Available in the wider ecosystem
 
-In addition to providing `SimpleGraph` and `SimpleDiGraph` implementations, _Graphs.jl_ also serves as an interface for custom graph types (see [AbstractGraph Interface](@ref)).
+In addition to providing `SimpleGraph` and `SimpleDiGraph` implementations, _Graphs.jl_ also serves as an interface for custom graph types (see [AbstractGraph interface](@ref)).
 
 Currently, several other packages implement alternative graph types:
 

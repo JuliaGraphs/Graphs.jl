@@ -1,4 +1,4 @@
-# Dominating Sets
+# Dominating sets
 
 _Graphs.jl_ implements functions for [dominating sets](https://en.wikipedia.org/wiki/Dominating_set).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ implements functions for [dominating sets](https://en.wikipedia.org/
 Pages = ["dominatingset.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

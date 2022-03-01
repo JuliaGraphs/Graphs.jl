@@ -1,4 +1,4 @@
-# SimpleGraphs
+# SimpleGraphs formats
 
 *Graphs.jl* provides two basic graph formats based on adjacency lists, along with many other functions defined in the `Graphs.SimpleGraphs` submodule..
 
@@ -8,7 +8,7 @@
 Pages = ["simplegraphs.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs.SimpleGraphs]

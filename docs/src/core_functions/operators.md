@@ -8,7 +8,7 @@ _Graphs.jl_ implements the following graph operators. In general, functions with
 Pages = ["operators.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

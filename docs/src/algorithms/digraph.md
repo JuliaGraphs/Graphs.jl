@@ -1,4 +1,4 @@
-# Directed Graphs
+# Directed graphs
 
 *Graphs.jl* includes some algorithms that are specific to directed graphs.
 
@@ -8,7 +8,7 @@
 Pages = ["digraph.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

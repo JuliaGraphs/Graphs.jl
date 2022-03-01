@@ -1,4 +1,4 @@
-# Generators for Common Graphs
+# Generators for common graphs
 
 *Graphs.jl* defines generators for various families of deterministic and random graphs.
 
@@ -8,7 +8,7 @@
 Pages = ["simplegraphs_generators.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs.SimpleGraphs]

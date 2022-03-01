@@ -1,4 +1,4 @@
-# Vertex Cover
+# Vertex cover
 
 *Graphs.jl* provides some algorithms to find [vertex covers](https://en.wikipedia.org/wiki/Vertex_cover).
 
@@ -8,7 +8,7 @@
 Pages = ["vertexcover.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

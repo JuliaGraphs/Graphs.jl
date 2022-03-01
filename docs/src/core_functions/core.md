@@ -1,4 +1,4 @@
-# Core Functions
+# Core functions
 
 _Graphs.jl_ includes the following core functions.
 
@@ -8,7 +8,7 @@ _Graphs.jl_ includes the following core functions.
 Pages = ["core.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

@@ -1,54 +1,79 @@
-# Graphs
+# Graphs.jl
 
 [![Build Status](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml?query=branch%3Amaster) [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master) [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
 
 ## Overview
 
-Graphs offers both (a) a set of simple, concrete graph implementations -- `Graph` (for undirected graphs) and `DiGraph` (for directed graphs), and (b) an API for the development of more sophisticated graph implementations under the `AbstractGraph` type.
+The goal of _Graphs.jl_ is to offer a performant platform for network and graph analysis in Julia, following the example of libraries such as [NetworkX](http://networkx.github.io) in Python. To this end, Graphs offers:
 
-The project goal is to mirror the functionality of robust network and graph analysis libraries such as [NetworkX](http://networkx.github.io). It is an explicit design decision that any data not required for graph manipulation (attributes and other information, for example) is expected to be stored outside of the graph structure itself. Such data lends itself to storage in more traditional and better-optimized mechanisms.
+- a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs)
+- an API for the development of more sophisticated graph implementations under the `AbstractGraph` type
+- a large collection of graph algorithms with the same requirements as this API.
 
-Additional functionality may be found in a number of companion packages, including:
+## Installation
 
-- [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): extra functions for graph analysis.
-- [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl): graphs with associated meta-data.
-- [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): weighted graphs.
-- [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
+Installation is straightforward. First, enter Pkg mode by hitting `]`, and then run the following command:
+
+```julia-repl
+pkg> add Graphs
+```
+
+## Basic use
+
+_Graphs.jl_ includes numerous convenience functions for generating functions, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+
+```julia
+julia> g = path_graph(6)
+
+# Number of vertices
+julia> nv(g)
+
+# Number of edges
+julia> ne(g)
+
+# Add an edge to make the path a loop
+julia> add_edge!(g, 1, 6)
+```
+
+To see an overview of elementary functions for interacting with graphs, check out [Graph access](@ref) and [Graph construction](@ref).
 
 ## Documentation
 
 Full documentation is available at [GitHub Pages](https://juliagraphs.org/Graphs.jl/dev/). Documentation for methods is also available via the Julia REPL help system. Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 
-## Installation
+## Citing
 
-Installation is straightforward: enter Pkg mode by hitting `]`, and then
+We encourage you to cite our work if you have used our libraries, tools or datasets. Starring the _Graphs.jl_ repository on GitHub is also appreciated.
 
-```julia-repl
-(v1.0) pkg> add Graphs
-```
+The latest citation information may be found in the [CITATION.bib](https://raw.githubusercontent.com/JuliaGraphs/Graphs.jl/master/CITATION.bib) file within the repository.
 
-## Supported Versions
-
-- Graphs master is generally designed to work with the latest stable version of Julia (except during Julia version increments as we transition to the new version).
-- The project was previously developed under the name LightGraphs and older versions of LightGraphs (≤ v1.3.5) must still be used with that name.
-- There was also an older package also called Graphs (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of LightGraphs v1.3.5.
-- All older LightGraphs versions are tagged using the naming scheme `lg-vX.Y.Z` rather than plain `vX.Y.Z` which is used for old Graphs versions (≤ v0.10) and newer versions derived from LightGraphs but released with the Graphs name (≥ v1.4).
-- If you are using a version of Julia prior to 1.x, then you should use LightGraphs.jl at `lg-v.12.*` or Graphs.jl at `v0.10.3`
-- Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
-
-# Contributing and Reporting Bugs
+## Contributing
 
 We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/Graphs.jl/blob/master/CONTRIBUTING.md) for guidance on development and bug reporting.
 
 JuliaGraphs development subscribes to the [Julia Community Standards](https://julialang.org/community/standards/).
 
+## Related packages
+
+It is an explicit design decision that any data not required for graph manipulation (attributes and other information, for example) is expected to be stored outside of the graph structure itself.
+
+Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization-related functions can be found in the following packages:
+
+- [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) and [MetaGraphsNext.jl](https://github.com/JuliaGraphs/MetaGraphsNext.jl): Graphs with associated meta-data.
+- [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): Weighted graphs.
+- [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): Tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
+- [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for converting edgelists stored in DataFrames into MetaGraphs.
+- [GraphsMatching.jl](https://github.com/JuliaGraphs/GraphsMatching.jl): Matching algorithms.
+- [GraphsFlows.jl](https://github.com/JuliaGraphs/GraphsFlows.jl): Flow algorithms.
+- [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): Various extra functions for graph analysis.
+
 ## Project Status
 
-The Graphs project is a reboot of the LightGraphs package (archived in October 2021), which remains available on GitHub at [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If you don't need any new features developed since the fork, you can continue to use older versions of LightGraphs indefinitely. New versions will be released here using the name Graphs instead of LightGraphs. There was an older package also called Graphs. The source history and versions are still available in this repository, but the current code base is unrelated to the old Graphs code and is derived purely from LightGraphs. To access the history of the old Graphs code, you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
+The _Graphs.jl_ project is a reboot of the _LightGraphs.jl_ package (archived in October 2021), which remains available on GitHub at [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If you don't need any new features developed since the fork, you can continue to use older versions of _LightGraphs.jl_ indefinitely. New versions will be released here using the name _Graphs.jl_ instead of _LightGraphs.jl_. There was an older package also called _Graphs.jl_. The source history and versions are still available in this repository, but the current code base is unrelated to the old _Graphs.jl_ code and is derived purely from _LightGraphs.jl_. To access the history of the old _Graphs.jl_ code, you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
 
-**Transition from LightGraphs to Graphs:**
+### Transition from LightGraphs to Graphs
 
-LightGraphs and Graphs are functionally identical, still there are some steps involved making the change:
+_LightGraphs.jl_ and _Graphs.jl_ are functionally identical, still there are some steps involved making the change:
 
 - Change `LightGraphs = "093fc24a-ae57-5d10-9952-331d41423f4d"` to `Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"` in your Project.toml.
 - Update your `using` and `import` statements.
@@ -56,6 +81,11 @@ LightGraphs and Graphs are functionally identical, still there are some steps in
 - Increment your version number. Following semantic versioning, we suggest a patch release when no graphs or other `Graphs.jl`-objects can be passed through the API of your package by those depending on it, otherwise consider it a breaking release. "Passed through" entails created outside and consumed inside your package and vice versa.
 - Tag a release.
 
-# Citing
+### About versions
 
-We encourage you to cite our work if you have used our libraries, tools or datasets, refer to `CITATION.bib`. Starring the repository on GitHub is also appreciated.
+- The master branch of _Graphs.jl_ is generally designed to work with the latest stable version of Julia (except during Julia version increments as we transition to the new version).
+- Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
+- The project was previously developed under the name _LightGraphs.jl_ and older versions of _LightGraphs.jl_ (≤ v1.3.5) must still be used with that name.
+- There was also an older package also called _Graphs.jl_ (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of _LightGraphs.jl_ v1.3.5.
+- All older _LightGraphs.jl_ versions are tagged using the naming scheme `lg-vX.Y.Z` rather than plain `vX.Y.Z`, which is used for old _Graphs.jl_ versions (≤ v0.10) and newer versions derived from _LightGraphs.jl_ but released with the _Graphs.jl_ name (≥ v1.4).
+- If you are using a version of Julia prior to 1.x, then you should use _LightGraphs.jl_ at `lg-v.12.*` or _Graphs.jl_ at `v0.10.3`

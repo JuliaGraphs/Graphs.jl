@@ -1,4 +1,4 @@
-# Centrality Measures
+# Centrality measures
 
 *Graphs.jl* implements various [centrality measures](https://en.wikipedia.org/wiki/Centrality), which describe the importance of a vertex to the rest of the graph.
 

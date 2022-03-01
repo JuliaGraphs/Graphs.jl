@@ -8,7 +8,7 @@ _Graphs.jl_ contains numerous algorithms related to [cycles](https://en.wikipedi
 Pages = ["cycles.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

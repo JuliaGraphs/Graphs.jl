@@ -1,8 +1,14 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+GraphDataFrameBridge = "3c71623a-a715-5176-9801-629b201a4880"
+GraphIO = "aa1b3936-2fda-51b9-ab35-c553d3a640a2"
+GraphViz = "f526b714-d49f-11e8-06ff-31ed36ee7ee0"
+GraphsFlows = "06909019-6f44-4949-96fc-b9d9aaa02889"
 MetaGraphs = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
 MetaGraphsNext = "fa8bd995-216d-47f1-8a91-f3b68fbeb377"
+NetworkLayout = "46757867-2c16-5918-afeb-47bfcb05e46a"
 SimpleWeightedGraphs = "47aef6b3-ad0c-573a-a1e2-d07658019622"
+StaticGraphs = "4c8beaf5-199b-59a0-a7f2-21d17de635b6"
 
 [compat]
 Documenter = "~0.26.2"

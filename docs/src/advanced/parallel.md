@@ -1,4 +1,4 @@
-# Parallel graph algorithms
+# Parallel algorithms
 
 `Graphs.Parallel` is a module for graph algorithms that are parallelized. Their names should be consistent with the serial versions in the main module. In order to use parallel versions of the algorithms you can write:
 
@@ -64,7 +64,7 @@ Also note that in some cases, the arguments for the parallel versions may differ
 Pages = ["parallel.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs, Graphs.Parallel]

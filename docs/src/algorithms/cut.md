@@ -8,7 +8,7 @@
 Pages = ["cut.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

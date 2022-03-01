@@ -8,7 +8,7 @@
 Pages = ["degeneracy.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

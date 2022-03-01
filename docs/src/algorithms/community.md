@@ -1,4 +1,4 @@
-# Community Structures
+# Community structures
 
 _Graphs.jl_ contains several algorithms to detect and analyze [community structures](https://en.wikipedia.org/wiki/Community_structure).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ contains several algorithms to detect and analyze [community structu
 Pages = ["community.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

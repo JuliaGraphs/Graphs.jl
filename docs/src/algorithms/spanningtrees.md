@@ -1,4 +1,4 @@
-# Spanning Trees
+# Spanning trees
 
 _Graphs.jl_ contains a few algorithms to compute [minimum spanning trees](https://en.wikipedia.org/wiki/Minimum_spanning_tree).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ contains a few algorithms to compute [minimum spanning trees](https:
 Pages = ["spanningtrees.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

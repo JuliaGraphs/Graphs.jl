@@ -7,7 +7,7 @@ _Graphs.jl_ provides a number of methods for creating a graph. These include too
 ### Standard generators
 
 _Graphs.jl_ implements numerous graph generators, including random graph generators, constructors for classic graphs, numerous small graphs with familiar topologies, and random and static graphs embedded in Euclidean space.
-See [Generators for Common Graphs](@ref) for a complete list of available templates.
+See [Generators for common graphs](@ref) for a complete list of available templates.
 
 ### Datasets
 

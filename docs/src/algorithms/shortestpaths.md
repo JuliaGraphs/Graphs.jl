@@ -1,4 +1,4 @@
-# Shortest Paths
+# Shortest paths
 
 *Graphs.jl* includes standard algorithms for [shortest paths](https://en.wikipedia.org/wiki/Shortest_path_problem).
 
@@ -8,7 +8,7 @@
 Pages = ["shortestpaths.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

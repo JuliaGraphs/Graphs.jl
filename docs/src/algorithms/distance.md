@@ -8,7 +8,7 @@ _Graphs.jl_ includes several distance measurements.
 Pages = ["distance.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]

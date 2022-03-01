@@ -1,4 +1,4 @@
-# Independent Sets
+# Independent sets
 
 _Graphs.jl_ contains functions related to [independent sets](https://en.wikipedia.org/wiki/Independent_set_(graph_theory)).
 
@@ -8,7 +8,7 @@ _Graphs.jl_ contains functions related to [independent sets](https://en.wikipedi
 Pages = ["independentset.md"]
 ```
 
-## Full Docs
+## Full docs
 
 ```@autodocs
 Modules = [Graphs]
