@@ -1,16 +1,6 @@
 using Documenter
 using Graphs
 
-using GraphDataFrameBridge
-using GraphIO
-using GraphsFlows
-using GraphViz
-using MetaGraphs
-using MetaGraphsNext
-using NetworkLayout
-using SimpleWeightedGraphs
-using StaticGraphs
-
 # same for contributing and license
 cp(
     normpath(@__FILE__, "../../CONTRIBUTING.md"),
@@ -80,21 +70,10 @@ pages_files = [
         "algorithms/utils.md",
         "algorithms/vertexcover.md",
     ],
-    "Ecosystem docs" => [
-        "ecosystem/graphdataframebridge.md",
-        "ecosystem/graphio.md",
-        "ecosystem/graphsflows.md",
-        "ecosystem/graphviz.md",
-        "ecosystem/metagraphs.md",
-        "ecosystem/metagraphsnext.md",
-        "ecosystem/simpleweightedgraphs.md",
-        "ecosystem/staticgraphs.md",
-    ],
     "For advanced users" => [
         "advanced/errorhandling.md",
         "advanced/experimental.md",
         "advanced/parallel.md",
-        "advanced/integration.md",
         "contributing.md",
         "license.md",
     ],
@@ -108,7 +87,7 @@ pages=[
 ]
 
 makedocs(;
-    modules=[Graphs, MetaGraphs, MetaGraphsNext, SimpleWeightedGraphs],
+    modules=[Graphs],
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
         assets=String[],

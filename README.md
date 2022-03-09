@@ -4,7 +4,7 @@
 
 ## Overview
 
-The goal of _Graphs.jl_ is to offer a performant platform for network and graph analysis in Julia, following the example of libraries such as [NetworkX](http://networkx.github.io) in Python. To this end, Graphs offers:
+The goal of _Graphs.jl_ is to offer a performant platform for network and graph analysis in Julia, following the example of libraries such as [NetworkX](http://networkx.github.io) in Python. To this end, _Graphs.jl_ offers:
 
 - a set of simple, concrete graph implementations -- `SimpleGraph` (for undirected graphs) and `SimpleDiGraph` (for directed graphs)
 - an API for the development of more sophisticated graph implementations under the `AbstractGraph` type
@@ -22,24 +22,26 @@ pkg> add Graphs
 
 _Graphs.jl_ includes numerous convenience functions for generating functions, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
-```julia
+```julia-repl
 julia> g = path_graph(6)
+{6, 5} undirected simple Int64 graph
 
 # Number of vertices
 julia> nv(g)
+6
 
 # Number of edges
 julia> ne(g)
+5
 
 # Add an edge to make the path a loop
-julia> add_edge!(g, 1, 6)
+julia> add_edge!(g, 1, 6);
 ```
-
-To see an overview of elementary functions for interacting with graphs, check out [Graph access](@ref) and [Graph construction](@ref).
 
 ## Documentation
 
-Full documentation is available at [GitHub Pages](https://juliagraphs.org/Graphs.jl/dev/). Documentation for methods is also available via the Julia REPL help system. Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
+The full documentation is available at [GitHub Pages](https://juliagraphs.org/Graphs.jl/dev/). Documentation for methods is also available via the Julia REPL help system.
+Additional tutorials can be found at [JuliaGraphsTutorials](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 
 ## Citing
 
@@ -49,7 +51,8 @@ The latest citation information may be found in the [CITATION.bib](https://raw.g
 
 ## Contributing
 
-We welcome contributions and bug reports! Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/Graphs.jl/blob/master/CONTRIBUTING.md) for guidance on development and bug reporting.
+We welcome contributions and bug reports!
+Please see [CONTRIBUTING.md](https://github.com/JuliaGraphs/Graphs.jl/blob/master/CONTRIBUTING.md) for guidance on development and bug reporting.
 
 JuliaGraphs development subscribes to the [Julia Community Standards](https://julialang.org/community/standards/).
 
@@ -57,17 +60,9 @@ JuliaGraphs development subscribes to the [Julia Community Standards](https://ju
 
 It is an explicit design decision that any data not required for graph manipulation (attributes and other information, for example) is expected to be stored outside of the graph structure itself.
 
-Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization-related functions can be found in the following packages:
+Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization-related functions can be found in the packages of the [JuliaGraphs organization](https://juliagraphs.org/).
 
-- [MetaGraphs.jl](https://github.com/JuliaGraphs/MetaGraphs.jl) and [MetaGraphsNext.jl](https://github.com/JuliaGraphs/MetaGraphsNext.jl): Graphs with associated meta-data.
-- [SimpleWeightedGraphs.jl](https://github.com/JuliaGraphs/SimpleWeightedGraphs.jl): Weighted graphs.
-- [GraphIO.jl](https://github.com/JuliaGraphs/GraphIO.jl): Tools for importing and exporting graph objects using common file types like edgelists, GraphML, Pajek NET, and more.
-- [GraphDataFrameBridge.jl](https://github.com/JuliaGraphs/GraphDataFrameBridge.jl): Tools for converting edgelists stored in DataFrames into MetaGraphs.
-- [GraphsMatching.jl](https://github.com/JuliaGraphs/GraphsMatching.jl): Matching algorithms.
-- [GraphsFlows.jl](https://github.com/JuliaGraphs/GraphsFlows.jl): Flow algorithms.
-- [LightGraphsExtras.jl](https://github.com/JuliaGraphs/LightGraphsExtras.jl): Various extra functions for graph analysis.
-
-## Project Status
+## Project status
 
 The _Graphs.jl_ project is a reboot of the _LightGraphs.jl_ package (archived in October 2021), which remains available on GitHub at [sbromberger/LightGraphs.jl](https://github.com/sbromberger/LightGraphs.jl). If you don't need any new features developed since the fork, you can continue to use older versions of _LightGraphs.jl_ indefinitely. New versions will be released here using the name _Graphs.jl_ instead of _LightGraphs.jl_. There was an older package also called _Graphs.jl_. The source history and versions are still available in this repository, but the current code base is unrelated to the old _Graphs.jl_ code and is derived purely from _LightGraphs.jl_. To access the history of the old _Graphs.jl_ code, you can start from [commit 9a25019](https://github.com/JuliaGraphs/Graphs.jl/commit/9a2501948053f60c630caf9d4fb257e689629041).
 
