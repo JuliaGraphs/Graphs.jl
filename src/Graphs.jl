@@ -86,6 +86,9 @@ simplecycles_hawick_james, maxsimplecycles, simplecycles, simplecycles_iter,
 simplecyclescount, simplecycleslength, karp_minimum_cycle_mean, cycle_basis,
 simplecycles_limited_length,
 
+# incremental cycles
+IncrementalCycleTracker, add_edge_checked!, topological_sort,
+
 # maximum_adjacency_visit
 mincut, maximum_adjacency_visit,
 
@@ -222,6 +225,7 @@ include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("cycles/limited_length.jl")
+include("cycles/incremental.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")

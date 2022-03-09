@@ -15,6 +15,7 @@ Modules = [Graphs]
 Pages = [
     "cycles/basis.jl",
     "cycles/hawick-james.jl",
+    "cycles/incremental.jl",
     "cycles/johnson.jl",
     "cycles/karp.jl",
     "cycles/limited_length.jl",
