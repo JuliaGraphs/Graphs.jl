@@ -8,10 +8,9 @@ function reconstruct_path!(total_path, # a vector to be filled with the shortest
     end_idx, # the end vertex
     g) # the graph
 
-    E = edgetype(g)
     curr_idx = end_idx
     while came_from[curr_idx] != curr_idx
-        pushfirst!(total_path, E(came_from[curr_idx], curr_idx))
+        pushfirst!(total_path, (came_from[curr_idx], curr_idx))
         curr_idx = came_from[curr_idx]
     end
 end
@@ -26,8 +25,8 @@ function a_star_impl!(g, # the graph
     distmx,
     heuristic)
 
-    E = edgetype(g)
-    total_path = Vector{E}()
+    V = eltype(g)
+    total_path = Vector{Tuple{V,V}}()
 
     @inbounds while !isempty(open_set)
         current = dequeue!(open_set)
