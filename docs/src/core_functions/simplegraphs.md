@@ -1,6 +1,6 @@
 # SimpleGraphs formats
 
-*Graphs.jl* provides two basic graph formats based on adjacency lists, along with many other functions defined in the `Graphs.SimpleGraphs` submodule..
+*Graphs.jl* provides two basic graph formats based on adjacency lists, along with many other functions defined in the `Graphs.SimpleGraphs` submodule.
 
 ## Index
 
