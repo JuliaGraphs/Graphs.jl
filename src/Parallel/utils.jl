@@ -1,23 +1,23 @@
 """
     generate_reduce(g, gen_func, comp, reps; parallel=:threads)
 
-Compute `gen_func(g)` `reps` times and return the instance `best` for which 
+Compute `gen_func(g)` `reps` times and return the instance `best` for which
 `comp(best, v)` is true where `v` is all the other instances of `gen_func(g)`.
 
 For example, `comp(x, y) = length(x) < length(y) ? x : y` then instance with the smallest
 length will be returned.
 """
-generate_reduce(g::AbstractGraph{T}, gen_func::Function, comp::Comp, reps::Integer; parallel=:threads) where {T<:Integer,Comp} =  
+generate_reduce(g::AbstractGraph{T}, gen_func::Function, comp::Comp, reps::Integer; parallel=:threads) where {T<:Integer,Comp} =
 parallel == :threads ? threaded_generate_reduce(g, gen_func, comp, reps) : distr_generate_reduce(g, gen_func, comp, reps)
 
 """
     distr_generate_min_set(g, gen_func, comp, reps)
 
-Distributed implementation of [`Graphs.generate_reduce`](@ref).
+Distributed implementation of [`generate_reduce`](@ref).
 """
 function distr_generate_reduce(
-    g::AbstractGraph{T}, 
-    gen_func::Function, 
+    g::AbstractGraph{T},
+    gen_func::Function,
     comp::Comp,
     reps::Integer
     ) where {T<:Integer,Comp}
@@ -31,11 +31,11 @@ end
 """
     threaded_generate_reduce(g, gen_func, comp reps)
 
-Multi-threaded implementation of [`Graphs.generate_reduce`](@ref).
+Multi-threaded implementation of [`generate_reduce`](@ref).
 """
 function threaded_generate_reduce(
-    g::AbstractGraph{T}, 
-    gen_func::Function, 
+    g::AbstractGraph{T},
+    gen_func::Function,
     comp::Comp,
     reps::Integer
     ) where {T<:Integer,Comp}
