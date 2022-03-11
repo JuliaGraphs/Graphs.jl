@@ -78,7 +78,7 @@ _LightGraphs.jl_ and _Graphs.jl_ are functionally identical, still there are som
 
 ### About versions
 
-- The master branch of _Graphs.jl_ is generally designed to work with versions of Julia starting from the the [LTS release](https://julialang.org/downloads/#long_term_support_release) all the way to the [current stable release](https://julialang.org/downloads/#current_stable_release), except during Julia version increments as we transition to the new version.
+- The master branch of _Graphs.jl_ is generally designed to work with versions of Julia starting from the [LTS release](https://julialang.org/downloads/#long_term_support_release) all the way to the [current stable release](https://julialang.org/downloads/#current_stable_release), except during Julia version increments as we transition to the new version.
 - Later versions: Some functionality might not work with prerelease / unstable / nightly versions of Julia. If you run into a problem, please file an issue.
 - The project was previously developed under the name _LightGraphs.jl_ and older versions of _LightGraphs.jl_ (≤ v1.3.5) must still be used with that name.
 - There was also an older package also called _Graphs.jl_ (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of _LightGraphs.jl_ v1.3.5.
