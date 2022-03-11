@@ -26,7 +26,7 @@ function get_title(markdown_file_path::AbstractString)
 end
 
 pages_files = [
-    "First Steps" => [
+    "First steps" => [
         "index.md",
         "first_steps/theory.md",
         "first_steps/construction.md",
@@ -35,12 +35,11 @@ pages_files = [
         "first_steps/plotting.md",
         "first_steps/persistence.md",
     ],
-    "Graph types" => [
-        "graph_types/graphtypes.md",
-        "graph_types/interface.md",
-        "graph_types/creating.md",
+    "Ecosystem" => [
+        "ecosystem/graphtypes.md",
+        "ecosystem/interface.md",
     ],
-    "Core functions" => [
+    "Core API" => [
         "core_functions/core.md",
         "core_functions/interface.md",
         "core_functions/module.md",
@@ -49,7 +48,7 @@ pages_files = [
         "core_functions/simplegraphs_generators.md",
         "core_functions/simplegraphs.md",
     ],
-    "Algorithms" => [
+    "Algorithms API" => [
         "algorithms/biconnectivity.md",
         "algorithms/centrality.md",
         "algorithms/community.md",
@@ -60,7 +59,7 @@ pages_files = [
         "algorithms/digraph.md",
         "algorithms/distance.md",
         "algorithms/dominatingset.md",
-        "algorithms/edit_distance.md",
+        "algorithms/editdist.md",
         "algorithms/independentset.md",
         "algorithms/linalg.md",
         "algorithms/shortestpaths.md",

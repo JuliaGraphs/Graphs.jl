@@ -5,12 +5,12 @@ _Graphs.jl_ allows computation of the [graph edit distance](https://en.wikipedia
 ## Index
 
 ```@index
-Pages = ["edit_distance.md"]
+Pages = ["editdist.md"]
 ```
 
 ## Full docs
 
 ```@autodocs
 Modules = [Graphs]
-Pages = ["edit_distance.jl"]
+Pages = ["editdist.jl"]
 ```
