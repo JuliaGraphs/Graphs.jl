@@ -18,9 +18,20 @@ Perform [Dijkstra's algorithm](http://en.wikipedia.org/wiki/Dijkstra%27s_algorit
 on a graph, computing shortest distances between `srcs` and all other vertices.
 Return a [`Graphs.DijkstraState`](@ref) that contains various traversal information.
 
+
 ### Optional Arguments
-- `allpaths=false`: If true, returns a [`Graphs.DijkstraState`](@ref) that keeps track of all
-predecessors of a given vertex.
+* `allpaths=false`: If true, 
+
+`state.predecessors` holds a vector, indexed by vertex,
+of all the predecessors discovered during shortest-path calculations.
+This keeps track of all parents when there are multiple shortest paths available from the source.
+
+`state.pathcounts` holds a vector, indexed by vertex, of the number of shortest paths from the source to that vertex. 
+The path count of a source vertex is always `1.0`. The path count of an unreached vertex is always `0.0`.
+
+* `trackvertices=false`: If true, 
+
+`state.closest_vertices` holds a vector of all vertices in the graph ordered from closest to farthest.
 
 ### Performance
 If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
