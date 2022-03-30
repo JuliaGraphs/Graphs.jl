@@ -31,7 +31,7 @@ The package also includes uniform random walks and self avoiding walks with the 
 The following properties always hold for shortest path algorithms implemented here:
 
 - The distance from a vertex to itself is always `0`.
-- The distance between two vertices with no connecting edge is always `Inf` or `typemax(Int64)`.
+- The distance between two vertices with no connecting edge is always `Inf` or `typemax(eltype(distmx))`.
 
 The `dijkstra_shortest_paths`, `desopo_pape_shortest_paths`, `floyd_warshall_shortest_paths`, `bellman_ford_shortest_paths`, and `yen_shortest_paths` functions return path states (subtypes of `Graphs.AbstractPathState`) that contain various information about the graph learned during traversal.
 
