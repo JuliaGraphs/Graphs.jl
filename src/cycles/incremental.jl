@@ -7,7 +7,7 @@ using Base.Iterators: repeated
 
 The supertype for incremental cycle detection problems. The abstract type
 constructor IncrementalCycleTracker(G) may be used to automatically select
-a specific incremental cycle detection algorithm. See [`add_edge_checked!`](dfsdfsdfsdfref)
+a specific incremental cycle detection algorithm. See [`add_edge_checked!`](@ref)
 for a usage example.
 """
 abstract type IncrementalCycleTracker{I} <: AbstractGraph{I} end
@@ -155,7 +155,7 @@ end
 const bibliography = """
 ## References
 
-[BFGT15] Michael A. Bender, Jeremy T. Fineman, Seth Gilbert, and Robert E. Tarjan. 2015
+BFGT15: Michael A. Bender, Jeremy T. Fineman, Seth Gilbert, and Robert E. Tarjan. 2015
     A New Approach to Incremental Cycle Detection and Related Problems.
     ACM Trans. Algorithms 12, 2, Article 14 (December 2015), 22 pages.
     DOI: http://dx.doi.org/10.1145/2756553
@@ -167,7 +167,7 @@ const bibliography = """
     struct DenseGraphICT_BFGT_N
 
 Implements the "Naive" (Algorithm N) Bender-Fineman-Gilbert-Tarjan one-way line search incremental cycle detector
-for dense graphs from [BFGT15] (Section 3).
+for dense graphs from BFGT15 (Section 3).
 
 $bibliography
 """
