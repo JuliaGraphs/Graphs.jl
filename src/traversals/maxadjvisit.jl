@@ -17,7 +17,7 @@ weight of the cut that makes this partition. An optional `distmx` matrix
 of non-negative weights may be specified; if omitted, edge distances are
 assumed to be 1.
 """
-function mincut(g::AbstractGraph,
+function mincut(g::AbstractGraph::(!IsDirected),
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real
 
     nvg = nv(g)
