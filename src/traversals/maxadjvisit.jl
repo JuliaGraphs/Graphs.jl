@@ -37,14 +37,12 @@ function mincut(g::AbstractGraph,
         d = distmx[src(e), dst(e)]
         (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
         w[src(e), dst(e)] = d
-        if !is_directed(g)
-            (d != distmx[dst(e), src(e)]) && throw(ArgumentError("Adjacency / distance matrices must be symmetric for undirected graph"))
-            w[dst(e), src(e)] = d
-        end
+        d = distmx[dst(e), src(e)]
+        (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
+        w[dst(e), src(e)] = d
     end
     # we also need to mutate neighbors when merging vertices
     fadjlist = [collect(outneighbors(g, v)) for v in vertices(g)]
-    badjlist = [collect(inneighbors(g, v)) for v in vertices(g)]
     parities = falses(nvg)
     bestweight = typemax(T)
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
@@ -58,22 +56,26 @@ function mincut(g::AbstractGraph,
             is_merged[v] && continue
             pq[v] = zero(T)
         end
-
         # Minimum cut phase
         while true
             last_vertex = u
             u = dequeue!(pq)
             isempty(pq) && break
-            # update the cutweight
             for v in fadjlist[u]
-                (is_merged[v] || u == v || is_processed[v]) && continue
-                cutweight += w[u, v]
-                pq[v] += w[u, v]
+                (is_merged[v] || u == v) && continue
+                # if the target of e is already marked then decrease cutweight
+                # otherwise, increase it
+                ew = w[u, v]
+                if is_processed[v]
+                    cutweight -= ew
+                else
+                    cutweight += ew
+                end
+                if haskey(pq, v)
+                    pq[v] += w[u, v]
+                end
             end
-            for v in badjlist[u]
-                (is_merged[v] || u == v || !is_processed[v]) && continue
-                cutweight -= w[u, v]
-            end
+
             is_processed[u] = true
         end
 
@@ -86,17 +88,17 @@ function mincut(g::AbstractGraph,
         end
 
         # merge u and last_vertex
-        root = _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, u, last_vertex)
+        root = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
         graph_size -= 1
         # optimization : we directly merge edges with weight bigger than curent mincut. It
         # saves a whole minimum cut phase for each merge.
         neighboroods_to_check = [root]
         while !isempty(neighboroods_to_check)
             v = pop!(neighboroods_to_check)
-            for v2 in Base.Iterators.flatten((fadjlist[v], badjlist[v]))
+            for v2 in fadjlist[v]
                 ( is_merged[v2] || (v == v2) ) && continue
-                if min(w[v, v2], w[v2, v]) >= bestweight
-                    root = _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, v, v2)
+                if w[v, v2] >= bestweight
+                    root = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, v, v2)
                     graph_size -= 1
                     if root ∉ neighboroods_to_check
                         push!(neighboroods_to_check, root)
@@ -104,19 +106,18 @@ function mincut(g::AbstractGraph,
                 end
             end
         end
+        u = root # we are sure this vertex was not merged, so the next phase start from it
     end
     return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
-function _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, u, v)
+function _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, v)
     root = union!(merged_vertices, u, v)
     non_root = (root == u) ? v : u
     is_merged[non_root] = true
     # update weights
     for v2 in fadjlist[non_root]
         w[root, v2] += w[non_root, v2]
-    end
-    for v2 in badjlist[non_root]
         w[v2, root] += w[v2, non_root]
     end
     # update neighbors
@@ -124,12 +125,6 @@ function _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, u, v)
     for v in fadjlist[non_root]
         if root ∉ fadjlist[v]
             push!(fadjlist[v], root)
-        end
-    end
-    badjlist[root] = union(badjlist[root], badjlist[non_root])
-    for v in badjlist[non_root]
-        if root ∉ badjlist[v]
-            push!(badjlist[v], root)
         end
     end
     return root
@@ -162,6 +157,7 @@ function maximum_adjacency_visit(g::AbstractGraph{U},
     for v in vertices(g)
         pq[v] = zero(T)
     end
+
 
     # Give start vertex maximum priority
     pq[s] = one(T)
