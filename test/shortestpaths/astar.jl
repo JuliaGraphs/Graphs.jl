@@ -15,4 +15,11 @@
     g = complete_graph(4)
     w = float([1 1 1 4; 1 1 1 1; 1 1 1 1; 4 1 1 1])
     @test length(a_star(g, 1, 4, w)) == 2
+
+    # test for #120
+    struct MyFavoriteEdgeType <: AbstractEdge{Int}
+        s::Int
+        d::Int
+    end
+    @test eltype(a_star(g, 1, 4, w, n -> 0, MyFavoriteEdgeType)) == MyFavoriteEdgeType
 end

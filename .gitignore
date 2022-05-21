@@ -7,4 +7,4 @@ docs/site/
 benchmark/.results/*
 benchmark/.tune.jld
 *.cov
-Manifest.toml
+/Manifest.toml
