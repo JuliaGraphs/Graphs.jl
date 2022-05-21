@@ -69,7 +69,7 @@ function a_star(g::AbstractGraph{U},  # the g
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
 
-    open_set = PriorityQueue{Integer, T}()
+    open_set = PriorityQueue{U, T}()
     enqueue!(open_set, s, 0)
 
     g_score = fill(Inf, nv(g))
