@@ -18,6 +18,7 @@ end
 function a_star_impl!(g, # the graph
     goal, # the end vertex
     open_set, # an initialized heap containing the active vertices
+    closed_set, # an (initialized) color-map to indicate status of vertices
     g_score, # a vector holding g scores for each node
     came_from, # a vector holding the parent of each node in the A* exploration
     distmx,
@@ -33,7 +34,11 @@ function a_star_impl!(g, # the graph
             return total_path
         end
 
+        closed_set[current] = true
+
         for neighbor in Graphs.outneighbors(g, current)
+            closed_set[neighbor] && continue
+
             tentative_g_score = g_score[current] + distmx[current, neighbor]
 
             if tentative_g_score < g_score[neighbor]
@@ -57,20 +62,22 @@ Compute a shortest path using the [A* search algorithm](http://en.wikipedia.org/
 - `s::Integer`: the source vertex
 - `t::Integer`: the target vertex
 - `distmx::AbstractMatrix`: an optional (possibly sparse) `n × n` matrix of edge weights. It is set to `weights(g)` by default (which itself falls back on [`Graphs.DefaultDistance`](@ref)).
-- `heuristic`: an optional callable mapping each vertex to a lower estimate of the remaining distance from `v` to `t`. It is set to `v -> 0` by default (which corresponds to Dijkstra's algorithm)
+- `heuristic::Function`: an optional function mapping each vertex to a lower estimate of the remaining distance from `v` to `t`. It is set to `v -> 0` by default (which corresponds to Dijkstra's algorithm)
 - `edgetype_to_return::Type{E}`: the eltype `E<:AbstractEdge` of the vector of edges returned. It is set to `edgetype(g)` by default. Note that the two-argument constructor `E(u, v)` must be defined, even for weighted edges: if it isn't, consider using `E = Graphs.SimpleEdge`.
 """
 function a_star(g::AbstractGraph{U},  # the g
     s::Integer,                       # the start vertex
     t::Integer,                       # the end vertex
     distmx::AbstractMatrix{T}=weights(g),
-    heuristic=n -> zero(T),
+    heuristic::Function=n -> zero(T),
     edgetype_to_return::Type{E}=edgetype(g)) where {T, U, E<:AbstractEdge}
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
 
     open_set = PriorityQueue{U, T}()
     enqueue!(open_set, s, 0)
+
+    closed_set = zeros(Bool, nv(g))
 
     g_score = fill(Inf, nv(g))
     g_score[s] = 0
@@ -79,6 +86,14 @@ function a_star(g::AbstractGraph{U},  # the g
     came_from[s] = s
 
     a_star_impl!(
-        g, t, open_set, g_score, came_from, distmx, heuristic, edgetype_to_return
+        g,
+        t,
+        open_set,
+        closed_set,
+        g_score,
+        came_from,
+        distmx,
+        heuristic,
+        edgetype_to_return
     )
 end
