@@ -4,6 +4,7 @@ using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
 using JuliaFormatter
+using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
