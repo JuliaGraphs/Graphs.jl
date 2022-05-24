@@ -166,7 +166,6 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
         dequeue!(OPEN)
 
         if is_complete_path(λ, G₁, G₂)
-            println("nodes : $c")
             return cost, λ
         else
             u1, _ = λ[end]
@@ -174,6 +173,7 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
             vs = setdiff(1:nv(G₂), [v for (u, v) in λ])
 
             if u1 <= nv(G₁) # there are still vertices to process in G₁?
+                # we try every possible assignment of v1
                 for v1 in vs
                     λ⁺ = [λ; (u1, v1)]
                     new_cost = cost + vertex_subst_cost(u1, v1) + h(λ⁺) - h(λ)
@@ -184,21 +184,24 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
 
                     enqueue!(OPEN, λ⁺, new_cost)
                 end
+                # we try deleting v1
                 λ⁺ = [λ; (u1, 0)]
                 new_cost = cost + vertex_delete_cost(u1) + h(λ⁺) - h(λ)
                 for u2 in outneighbors(G₁, u1)
-                    u2 > u1 && continue # these edges will be deleted later
+                    # edges deleted later when assigning v2
+                    u2 > u1 && continue
                     new_cost += edge_delete_cost(Edge(u1, u2))
                 end
                 if isdirected
                     for u2 in inneighbors(G₁, u1)
-                        u2 >= u1 && continue # edges deleted later, and we should not count a self loop twice
+                        # edges deleted later when assigning v2, and we should not count a self loop twice
+                        u2 >= u1 && continue
                         new_cost += edge_delete_cost(Edge(u2, u1))
                     end
                 end
                 enqueue!(OPEN, λ⁺, new_cost)
             else
-                # add remaining vertices of G₂ to the path
+                # add remaining vertices of G₂ to the path by deleting them
                 λ⁺ = [λ; [(0, v) for v in vs]]
                 new_cost = cost + sum(vertex_insert_cost, vs)
                 for v1 in vs
