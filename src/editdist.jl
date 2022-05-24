@@ -38,7 +38,7 @@ search in case the default heuristic is not satisfactory.
 - Given two graphs ``|G₁| < |G₂|``, `edit_distance(G₁, G₂)` is faster to
 compute than `edit_distance(G₂, G₁)`. Consider swapping the arguments
 if involved costs are equivalent.
-- The use of simple Minkowski costs can improve performance considerably.
+- The use of a heuristic can improve performance considerably.
 - Exploit vertex attributes when designing operation costs.
 
 ### References
@@ -106,14 +106,14 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
                         heuristic)
 end
 
-function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
+function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
                         vertex_insert_cost::Function,
                         vertex_delete_cost::Function,
                         vertex_subst_cost::Function,
                         edge_insert_cost::Function,
                         edge_delete_cost::Function,
                         edge_subst_cost::Function,
-                        heuristic::Function)
+                        heuristic::Function) where {T <: Integer, U <: Integer}
 
     isdirected = is_directed(G₁) || is_directed(G₂)
 
@@ -153,10 +153,10 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
 
     # initialize open set
     OPEN = PriorityQueue{Vector{Tuple},Float64}()
-    for v in 1:nv(G₂)
-        enqueue!(OPEN, [(1, v)], vertex_subst_cost(1, v) + h([(1, v)]))
+    for v in vertices(G₂)
+        enqueue!(OPEN, [(T(1), v)], vertex_subst_cost(1, v) + h([(T(1), v)]))
     end
-    enqueue!(OPEN, [(1, 0)], vertex_delete_cost(1) + h([(1, 0)]))
+    enqueue!(OPEN, [(T(1), U(0))], vertex_delete_cost(1) + h([(T(1), U(0))]))
 
     c = 0
     while true
@@ -169,8 +169,8 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
             return cost, λ
         else
             u1, _ = λ[end]
-            u1 += 1
-            vs = setdiff(1:nv(G₂), [v for (u, v) in λ])
+            u1 += T(1)
+            vs = setdiff(vertices(G₂), [v for (u, v) in λ])
 
             if u1 <= nv(G₁) # there are still vertices to process in G₁?
                 # we try every possible assignment of v1
@@ -185,7 +185,7 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
                     enqueue!(OPEN, λ⁺, new_cost)
                 end
                 # we try deleting v1
-                λ⁺ = [λ; (u1, 0)]
+                λ⁺ = [λ; (u1, U(0))]
                 new_cost = cost + vertex_delete_cost(u1) + h(λ⁺) - h(λ)
                 for u2 in outneighbors(G₁, u1)
                     # edges deleted later when assigning v2
@@ -202,7 +202,7 @@ function _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
                 enqueue!(OPEN, λ⁺, new_cost)
             else
                 # add remaining vertices of G₂ to the path by deleting them
-                λ⁺ = [λ; [(0, v) for v in vs]]
+                λ⁺ = [λ; [(T(0), v) for v in vs]]
                 new_cost = cost + sum(vertex_insert_cost, vs)
                 for v1 in vs
                     for v2 in outneighbors(G₂, v1)
