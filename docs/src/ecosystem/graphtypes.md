@@ -2,7 +2,7 @@
 
 ## Defined by Graphs.jl
 
-_Graphs.jl_ provides two concrete graph types: [`SimpleGraph`](@ref) is an undirected graph, and [`SimpleDiGraph`](@ref) is its directed counterpart. Both of these types can be parameterized to specifying how vertices are identified (by default, `SimpleGraph` and `SimpleDiGraph` use the system default integer type, usually `Int64`).
+_Graphs.jl_ provides two concrete graph types: [`SimpleGraph`](@ref) is an undirected graph, and [`SimpleDiGraph`](@ref) is its directed counterpart. Both of these types can be parameterized to specify how vertices are identified (by default, `SimpleGraph` and `SimpleDiGraph` use the system default integer type, usually `Int64`).
 
 A graph _G_ is described by a set of vertices _V_ and edges _E_: _G = {V, E}_. _V_ is an integer range `1:n`; _E_ is represented using forward (and, for directed graphs, backward) adjacency lists indexed by vertices. Edges may also be accessed via an iterator that yields `Edge` types containing `(src<:Integer, dst<:Integer)` values. Both vertices and edges may be integers of any type, and the smallest type that fits the data is recommended in order to save memory.
 

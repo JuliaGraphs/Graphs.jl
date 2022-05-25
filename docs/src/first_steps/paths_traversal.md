@@ -31,16 +31,13 @@ The package also includes uniform random walks and self avoiding walks with the 
 The following properties always hold for shortest path algorithms implemented here:
 
 - The distance from a vertex to itself is always `0`.
-- The distance between two vertices with no connecting edge is always `Inf`.
+- The distance between two vertices with no connecting edge is always `Inf` or `typemax(eltype(distmx))`.
 
-The `dijkstra_shortest_paths`, `desopo_pape_shortest_paths`, `floyd_warshall_shortest_paths`, `bellman_ford_shortest_paths`, and `yen_shortest_paths` functions return path states (subtypes of `Graphs.AbstractPathState`) that contain various information about the graph learned during traversal.
+The [`dijkstra_shortest_paths`](@ref), [`desopo_pape_shortest_paths`](@ref), [`floyd_warshall_shortest_paths`](@ref), [`bellman_ford_shortest_paths`](@ref), and [`yen_k_shortest_paths`](@ref) functions return path states (subtypes of `Graphs.AbstractPathState`) that contain various information about the graph learned during traversal.
 
 The corresponding state types (with the exception of `YenState`) have the following common fields:
 
 - `state.dists` holds a vector with the distances computed, indexed by source vertex.
 - `state.parents` holds a vector of parents of each vertex on the shortest paths (the parent of a source vertex is always `0`). `YenState` substitutes `.paths` for `.parents`.
 
-In addition, the following information may be populated with the appropriate arguments to `dijkstra_shortest_paths`:
-
-- `state.predecessors` holds a vector, indexed by vertex, of all the predecessors discovered during shortest-path calculations. This keeps track of all parents when there are multiple shortest paths available from the source.
-- `state.pathcounts` holds a vector, indexed by vertex, of the path counts discovered during traversal. This equals the length of each subvector in the `state.predecessors` output above.
+In addition, with the appropriate optional arguments, [`dijkstra_shortest_paths`](@ref) will return information on all possible shortest paths available from the source.
