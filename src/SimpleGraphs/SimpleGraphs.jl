@@ -50,7 +50,7 @@ An abstract type representing a simple graph structure.
 """
 abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
 
-function show(io::IO, g::AbstractSimpleGraph{T}) where T
+function show(io::IO, ::MIME"text/plain", g::AbstractSimpleGraph{T}) where T
     dir = is_directed(g) ? "directed" : "undirected"
     print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
 end
