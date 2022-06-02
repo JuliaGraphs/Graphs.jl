@@ -75,27 +75,13 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
             isnothing(heuristic)
         heuristic = default_edit_heuristic
     end
-    if isnothing(vertex_insert_cost)
-        vertex_insert_cost = v -> 0.
-    end
-    if isnothing(vertex_delete_cost)
-        vertex_delete_cost = v -> 0.
-    end
-    if isnothing(vertex_subst_cost)
-        vertex_subst_cost = (u, v) -> 0.
-    end
-    if isnothing(edge_insert_cost)
-        edge_insert_cost = e -> 1.
-    end
-    if isnothing(edge_delete_cost)
-        edge_delete_cost = e -> 1.
-    end
-    if isnothing(edge_subst_cost)
-        edge_subst_cost = (e1, e2) -> 0.
-    end
-    if isnothing(heuristic)
-        heuristic = (λ, G₁, G₂) -> 0.
-    end
+    vertex_insert_cost = something(vertex_insert_cost, v -> 0.)
+    vertex_delete_cost = something(vertex_delete_cost, v -> 0.)
+    vertex_subst_cost = something(vertex_subst_cost, (u, v) -> 0.)
+    edge_insert_cost = something(edge_insert_cost, e -> 1.)
+    edge_delete_cost = something(edge_delete_cost, e -> 1.)
+    edge_subst_cost = something(edge_subst_cost, (e1, e2) -> 0.)
+    heuristic = something(heuristic, (λ, G₁, G₂) -> 0.)
     return _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
                         vertex_insert_cost,
                         vertex_delete_cost,
@@ -120,7 +106,7 @@ function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
     # compute the cost on edges due to associate u1 to v1 and u2 to v2
     # u2 and v2 can eventually be 0
     function association_cost(u1, u2, v1, v2)
-        cost = 0
+        cost = 0.
         if has_edge(G₁, u1, u2)
             if has_edge(G₂, v1, v2)
                 cost += edge_subst_cost(Edge(u1, u2), Edge(v1, v2))
