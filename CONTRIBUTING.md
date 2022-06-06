@@ -15,7 +15,7 @@ Please include version numbers of all relevant libraries and Julia itself.
 - Correctness is a necessary requirement; efficiency is desirable. Once you have a correct implementation, make a Pull Request (PR) so we can help improve performance.
 - PRs should contain one logical enhancement to the codebase.
 - Squash commits in a PR.
-- If you want to introduce a new feature, open an issue can to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
+- If you want to introduce a new feature, open an issue to discuss a feature before you start coding (this maximizes the likelihood of patch acceptance).
 - Minimize dependencies on external packages, and avoid introducing new dependencies that would increase the compilation time by a lot.
 - Put type assertions on all function arguments where conflict may arise (use abstract types, `Union`, or `Any` if necessary).
 - If the algorithm was presented in a paper, include a reference to the paper (_e.g._, a proper academic citation along with an eprint link).
