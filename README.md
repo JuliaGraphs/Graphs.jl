@@ -20,7 +20,7 @@ pkg> add Graphs
 
 ## Basic use
 
-_Graphs.jl_ includes numerous convenience functions for generating functions, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+_Graphs.jl_ includes numerous convenience functions for generating graphs, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia-repl
 julia> g = path_graph(6)
