@@ -18,13 +18,13 @@ Color graph `g` according to an order specified by `seq` using a greedy heuristi
 """
 function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T <: Integer}
     nvg::T = nv(g)
-    cols = Vector{T}(undef, nvg)  
+    cols = Vector{T}(undef, nvg)
     seen = zeros(Bool, nvg + 1)
 
+    has_self_loops(g) && throw(ArgumentError("graph must not have self loops"))
+    
     for v in seq
-        seen[v] = true
         colors_used = zeros(Bool, nvg)
-
         for w in neighbors(g, v)
             if seen[w]
                 colors_used[cols[w]] = true
@@ -37,6 +37,8 @@ function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T <: Integer
                 break;
             end
         end
+
+        seen[v] = true
     end
 
     return Coloring{T}(maximum(cols), cols)
@@ -47,8 +49,8 @@ end
 
 Color graph `g` iteratively in the descending order of the degree of the vertices.
 """
-function degree_greedy_color(g::AbstractGraph{T}) where {T <: Integer} 
-    seq = convert(Vector{T}, sortperm(degree(g), rev=true)) 
+function degree_greedy_color(g::AbstractGraph{T}) where {T <: Integer}
+    seq = convert(Vector{T}, sortperm(degree(g), rev=true))
     return perm_greedy_color(g, seq)
 end
 
@@ -59,7 +61,7 @@ end
 Color the graph `g` iteratively in a random order using a greedy heuristic
 and choose the best coloring out of `reps` such random colorings.
 """
-function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where {T <: Integer} 
+function random_greedy_color(g::AbstractGraph{T}, reps::Integer) where {T <: Integer}
 
     seq = shuffle(vertices(g))
     best = perm_greedy_color(g, seq)
@@ -76,7 +78,7 @@ end
 
 Color graph `g` based on [Greedy Coloring Heuristics](https://en.wikipedia.org/wiki/Greedy_coloring)
 
-The heuristics can be described as choosing a permutation of the vertices and assigning the 
+The heuristics can be described as choosing a permutation of the vertices and assigning the
 lowest color index available iteratively in that order.
 
 If `sort_degree` is true then the permutation is chosen in reverse sorted order of the degree of the vertices.

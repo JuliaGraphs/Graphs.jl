@@ -30,16 +30,18 @@ import Random
     gx = SimpleGraph()
     for g in testgraphs(gx)
         T = eltype(g)
-        @test sprint(show, g) == "{0, 0} undirected simple $T graph"
+        @test repr("text/plain", g) == "{0, 0} undirected simple $T graph"
         @test @inferred(add_vertices!(g, 5) == 5)
-        @test sprint(show, g) == "{5, 0} undirected simple $T graph"
+        @test repr("text/plain", g) == "{5, 0} undirected simple $T graph"
+        @test eval(Meta.parse(repr(g))) == g
     end
     gx = SimpleDiGraph()
     for g in testdigraphs(gx)
         T = eltype(g)
-        @test sprint(show, g) == "{0, 0} directed simple $T graph"
+        @test repr("text/plain", g) == "{0, 0} directed simple $T graph"
         @test @inferred(add_vertices!(g, 5) == 5)
-        @test sprint(show, g) == "{5, 0} directed simple $T graph"
+        @test repr("text/plain", g) == "{5, 0} directed simple $T graph"
+        @test eval(Meta.parse(repr(g))) == g
     end
 
     gx = path_graph(4)
