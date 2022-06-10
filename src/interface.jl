@@ -119,11 +119,11 @@ Return the type of graph `g`'s edge
 edgetype(g::AbstractGraph) = _NI("edgetype")
 
 """
-    eltype(g)
+    eltype(G)
 
-Return the type of the graph's vertices (must be <: Integer)
+Return the type of the graph type's vertices (must be <: Integer)
 """
-eltype(g::AbstractGraph) = _NI("eltype")
+eltype(::Type{AbstractGraph}) = _NI("eltype")
 
 """
     nv(g)
