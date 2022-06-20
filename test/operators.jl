@@ -308,6 +308,7 @@
         @test sort(vm) == [1:5;]
     end
 
+
     gs = star_graph(10)
     distgs = fill(4.0, 10, 10)
     @testset "Egonet: $g" for g in testgraphs(gs)
@@ -316,6 +317,14 @@
         @test @inferred(egonet(g, 1, 3, distgs)) == Graph{T}(1)
         @test @inferred(egonet(g, 1, 1)) == g
         @test @inferred(ndims(g)) == 2
+    end
+
+    g10 = complete_graph(10)
+    @testset "Induced bipartite Subgraphs: $g" for g in testgraphs(g10)
+        sg = @inferred(induced_bipartite_subgraph(g, [2,3],[4,5]))
+        @test nv(sg) == 4
+        @test ne(sg) == 4
+        @test is_bipartite(sg)
     end
 
     gx = SimpleGraph(100)

@@ -708,6 +708,40 @@ egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=we
     g[neighborhood(g, v, d, distmx, dir=dir)]
 
 
+"""
+    induced_bipartite_subgraph(G,X,Y)
+
+Return the bipartite subgraph of `g` induced by the disjoint subsets of vertices X and Y.
+
+"""
+function induced_bipartite_subgraph(g::T,X::AbstractVector{U},Y::AbstractVector{U})  where T <: AbstractGraph where U <: Integer
+    
+    X ∩ Y != [] && throw("X and Y sould not intersect!")
+    !(X ⊆ 1:nv(G) && Y ⊆ 1:nv(g)) && throw("X and Y sould be subsets of the vertices")
+    
+    unique!(X)
+    unique!(Y)
+
+    n = length(X) + length(Y)
+    G = T(n)
+    
+    newIndex = Dict(reverse.(collect(enumerate([X;Y]))))
+    
+    for x in X
+        for y in neighbors(g,x) ∩ Y
+            add_edge!(G,newIndex[x],newIndex[y])
+        end
+    end
+    
+    for y in Y
+        for x in neighbors(g,y) ∩ X
+            add_edge!(G,newIndex[y],newIndex[x])
+        end
+    end
+    G
+end
+
+
 
 """
     compute_shifts(n::Int, x::AbstractArray)
