@@ -728,13 +728,13 @@ function induced_bipartite_subgraph(g::T,X::AbstractVector{U},Y::AbstractVector{
     newIndex = Dict(reverse.(collect(enumerate([X;Y]))))
     
     for x in X
-        for y in neighbors(g,x) ∩ Y
+        for y in outneighbors(g,x) ∩ Y
             add_edge!(G,newIndex[x],newIndex[y])
         end
     end
     
     for y in Y
-        for x in neighbors(g,y) ∩ X
+        for x in outneighbors(g,y) ∩ X
             add_edge!(G,newIndex[y],newIndex[x])
         end
     end
