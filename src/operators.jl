@@ -717,7 +717,7 @@ Return the bipartite subgraph of `g` induced by the disjoint subsets of vertices
 function induced_bipartite_subgraph(g::T,X::AbstractVector{U},Y::AbstractVector{U})  where T <: AbstractGraph where U <: Integer
     
     X ∩ Y != [] && throw("X and Y sould not intersect!")
-    !(X ⊆ 1:nv(G) && Y ⊆ 1:nv(g)) && throw("X and Y sould be subsets of the vertices")
+    !(X ⊆ 1:nv(g) && Y ⊆ 1:nv(g)) && throw("X and Y sould be subsets of the vertices")
     
     unique!(X)
     unique!(Y)
