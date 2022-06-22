@@ -23,7 +23,7 @@ function SimpleGraph(
     return SimpleGraph{T}(ne, fadjlist)
 end
 
-eltype(x::SimpleGraph{T}) where T = T
+eltype(::Type{SimpleGraph{T}}) where T = T
 
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
