@@ -160,13 +160,28 @@ function erdos_renyi(
     seed::Union{Nothing,Integer}=nothing,
 )
     p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
-    m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
-    ne = randbn(m, p; rng=rng, seed=seed)
-    return if is_directed
-        SimpleDiGraph(n, ne; rng=rng, seed=seed)
-    else
-        SimpleGraph(n, ne; rng=rng, seed=seed)
+    rng = getRNG(seed)
+    m = 0
+    fadj = [Int[] for u in 1:n]
+    if is_directed
+        badj = [Int[] for u in 1:n]
     end
+    for u in 1:n
+        start = is_directed ? 1 : u+1
+        for v in start:n
+            v == u && continue
+            if rand(rng) < p
+                m += 1
+                push!(fadj[u], v)
+                if is_directed
+                    push!(badj[v], u)
+                else
+                    push!(fadj[v], u)
+                end
+            end
+        end
+    end
+    return is_directed ? SimpleDiGraph(m, fadj, badj) : SimpleGraph(m, fadj)
 end
 
 """
@@ -289,7 +304,7 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k` 
+small world random graph with `n` vertices, each with expected degree `k`
 (or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
