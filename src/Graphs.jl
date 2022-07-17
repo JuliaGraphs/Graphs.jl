@@ -53,9 +53,10 @@ MinkowskiCost, BoundedMinkowskiCost,
 
 # operators
 complement, reverse, reverse!, blockdiag, union, intersect,
-difference, symmetric_difference,
-join, tensor_product, cartesian_product, crosspath,
-induced_subgraph, egonet, merge_vertices!, merge_vertices,
+difference, symmetric_difference, join,
+tensor_product, cartesian_product, strong_product, disjunctive_product,
+lexicographic_product, homomorphic_product,
+crosspath, induced_subgraph, egonet, merge_vertices!, merge_vertices,
 
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
