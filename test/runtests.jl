@@ -128,6 +128,7 @@ tests = [
     "traversals/eulerian",
     "community/cliques",
     "community/core-periphery",
+    "community/independent_sets",
     "community/label_propagation",
     "community/modularity",
     "community/clustering",
