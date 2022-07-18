@@ -10,7 +10,7 @@ Return `true` if graph `g` contains a cycle.
 Uses DFS.
 """
 function is_cyclic end
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
+@traitfn is_cyclic(g::::(!IsDirected)) = (ne(g)-(nv(g)-1)) > 0
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
