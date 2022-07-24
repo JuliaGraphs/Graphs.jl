@@ -281,6 +281,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("Test/Test.jl")
 
 using .LinAlg
 end # module
