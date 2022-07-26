@@ -52,4 +52,7 @@
     for g in testgraphs(h)
       @test test_cliques(h, Array[[7, 4, 5], [2, 6], [3, 5], [3, 6], [3, 1]])
     end
+
+    @test clique_number(cycle_graph(11)) == 2
+    @test independence_number(cycle_graph(11)) == 5
 end

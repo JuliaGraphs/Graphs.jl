@@ -120,7 +120,9 @@ barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtse
 #community
 modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
-label_propagation, maximal_cliques, clique_percolation, assortativity,rich_club,
+maximal_cliques, maximum_clique, clique_number,
+maximal_independent_sets, maximum_independent_set, independence_number,
+label_propagation, clique_percolation, assortativity,rich_club,
 
 #generators
 complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
