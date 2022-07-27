@@ -154,7 +154,7 @@ julia> collect(edges(transitivereduction(barbell)))
  Edge 6 => 4
 ```
 """
-function transitivereducion end
+function transitivereduction end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
