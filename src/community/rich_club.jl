@@ -5,7 +5,7 @@ Return the non-normalised [rich-club coefficient](https://en.wikipedia.org/wiki/
 with degree cut-off `k`.
 
 ```jldoctest
-julia> using LightGraphs
+julia> using Graphs
 julia> g = star_graph(5)
 julia> rich_club(g, 1)
 0.4
