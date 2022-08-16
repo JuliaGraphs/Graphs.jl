@@ -179,11 +179,11 @@ export
     is_bipartite,
     bipartite_map,
 
-    # dfs
-    is_cyclic,
-    topological_sort_by_dfs,
-    dfs_tree,
-    dfs_parents,
+# dfs
+is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
+
+# iterators
+DFS, BFS, iterate,
 
     # random
     randomwalk,
@@ -489,6 +489,7 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("traversals/iterators.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
