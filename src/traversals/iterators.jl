@@ -1,22 +1,22 @@
 """
-    abstract type IteratorAlgorithm
+    abstract type TraversalAlgorithm
 
-`IteratorAlgorithm` is an abstract type which specifies using depth-first traversal [`DFSIterator`](@ref) or breadth-first traversal [`BFSIterator`](@ref).
+`TraversalAlgorithm` is an abstract type which specifies using depth-first traversal [`DFS`](@ref) or breadth-first traversal [`BFS`](@ref).
 """
-abstract type IteratorAlgorithm end
+abstract type TraversalAlgorithm end
 
 
 """
-    struct DFSIterator <: IteratorAlgorithm
+    struct DFS <: TraversalAlgorithm
 
-`DFSIterator` is a struct which specifies using depth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `DFSIterator(g::AbstractGraph, source::Int)`.
-    
+`DFS` is a struct which specifies using depth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `DFS(g::AbstractGraph, source::Int)`.
+
 # Examples
 ```julia-repl
 julia> g = smallgraph(:house)
 {5, 6} undirected simple Int64 graph
 
-julia> for node in DFSIterator(g, 1)
+julia> for node in DFS(g, 1)
            display(node)
        end
 1
@@ -26,23 +26,23 @@ julia> for node in DFSIterator(g, 1)
 5
 ```
 """
-struct DFSIterator <: IteratorAlgorithm
+struct DFS <: TraversalAlgorithm
     graph::AbstractGraph
     source::Int
 end
 
 
 """
-    struct BFSIterator <: IteratorAlgorithm
+    struct BFS <: TraversalAlgorithm
 
-`BFSIterator` is a struct which specifies using breadth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `BFSIterator(g::AbstractGraph, source::Int)`.
-        
+`BFS` is a struct which specifies using breadth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `BFS(g::AbstractGraph, source::Int)`.
+
 # Examples
 ```julia-repl
 julia> g = smallgraph(:house)
 {5, 6} undirected simple Int64 graph
 
-julia> for node in BFSIterator(g, 1)
+julia> for node in BFS(g, 1)
            display(node)
        end
 1
@@ -52,7 +52,7 @@ julia> for node in BFSIterator(g, 1)
 5
 ```
 """
-struct BFSIterator <: IteratorAlgorithm
+struct BFS <: TraversalAlgorithm
     graph::AbstractGraph
     source::Int
 end
@@ -70,11 +70,11 @@ end
 
 
 """
-    Base.iterate(t::IteratorAlgorithm)
+    Base.iterate(t::TraversalAlgorithm)
 
 First iteration to visit each node.
 """
-function Base.iterate(t::IteratorAlgorithm)
+function Base.iterate(t::TraversalAlgorithm)
     visited = falses(nv(t.graph))
     visited[t.source] = true
     state = GraphIteratorState(visited, [t.source])
@@ -83,11 +83,11 @@ end
 
 
 """
-    Base.iterate(t::DFSIterator, state::GraphIteratorState)
+    Base.iterate(t::DFS, state::GraphIteratorState)
 
 Iterator to visit each node in a depth-first manner.
 """
-function Base.iterate(t::DFSIterator, state::GraphIteratorState)
+function Base.iterate(t::DFS, state::GraphIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[end])
             if !state.visited[node]
@@ -102,11 +102,11 @@ function Base.iterate(t::DFSIterator, state::GraphIteratorState)
 end
 
 """
-    Base.iterate(t::BFSIterator, state::GraphIteratorState)
+    Base.iterate(t::BFS, state::GraphIteratorState)
 
 Iterator to visit each node in a breadth-first manner.
 """
-function Base.iterate(t::BFSIterator, state::GraphIteratorState)
+function Base.iterate(t::BFS, state::GraphIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[1])
             if !state.visited[node]
@@ -119,4 +119,3 @@ function Base.iterate(t::BFSIterator, state::GraphIteratorState)
     end
     return nothing
 end
-

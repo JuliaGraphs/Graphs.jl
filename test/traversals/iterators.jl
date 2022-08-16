@@ -4,10 +4,10 @@
     add_edge!(g,3,1)
     add_edge!(g,4,7)
 
-    @testset "DFSIterator" begin
+    @testset "DFS" begin
         for g in testgraphs(g)
             nodes_visited = fill(0, nv(g))
-            for (i, node) in enumerate(DFSIterator(g, 6))
+            for (i, node) in enumerate(DFS(g, 6))
                 nodes_visited[i] = node
             end
             @test nodes_visited[1:2] == [6, 3]
@@ -30,10 +30,10 @@
         end
     end
 
-    @testset "BFSIterator" begin
+    @testset "BFS" begin
         for g in testgraphs(g)
             nodes_visited = fill(0, nv(g))
-            for (i, node) in enumerate(BFSIterator(g, 6))
+            for (i, node) in enumerate(BFS(g, 6))
                 nodes_visited[i] = node
             end
             @test nodes_visited[1] == 6
@@ -55,5 +55,3 @@
             end
         end
     end
-
-end
