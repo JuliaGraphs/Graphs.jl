@@ -52,7 +52,12 @@ function auto_decompress(io::IO)
     end
     reset(io)
     if format == :gzip
-        io = InflateGzipStream(io)
+        # TODO we should use InflateGzipStream here instead of inflate_gzip
+        # so that we can read the file as a stream, but due to a bug
+        # that only appears # from Julia v1.8 on, InflateGzipStream reads incorrect
+        # data from some files.
+        # See: https://github.com/GunnarFarneback/Inflate.jl/issues/10
+        io = IOBuffer(inflate_gzip(read(io)))
     end
     return io
 end
