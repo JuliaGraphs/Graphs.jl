@@ -1,7 +1,7 @@
 """
     abstract type IteratorAlgorithm
 
-`IteratorAlgorithm` is an abstract type which specifies using depth-first traversal [`DFSIterator`](@ref) or breadth-first traversal [`BFSIterator`](@ref).
+`IteratorAlgorithm` is an abstract type which specifies a particular algorithm to use when iterating through a graph.
 """
 abstract type IteratorAlgorithm end
 
@@ -61,35 +61,43 @@ end
 
 
 """
-    mutable struct GraphIteratorState
+    abstract type AbstractGraphIteratorState
 
-`GraphIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function.
+`BasicGraphIteratorState` is an abstract type to hold the current state of iteration which is need for Julia's Base.iterate() function.
 """
-mutable struct GraphIteratorState
+abstract type AbstractGraphIteratorState end
+
+
+"""
+    mutable struct BasicGraphIteratorState
+
+`BasicGraphIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators.
+"""
+mutable struct BasicGraphIteratorState <: AbstractGraphIteratorState
     visited::BitArray
     queue::Vector{Int}
 end
 
 
 """
-    Base.iterate(t::IteratorAlgorithm)
+    Base.iterate(t::Union{BFSIterator, DFSIterator})
 
-First iteration to visit each node.
+First iteration to visit each node for depth-first or breadth-first type iterators.
 """
-function Base.iterate(t::IteratorAlgorithm)
+function Base.iterate(t::Union{BFSIterator, DFSIterator})
     visited = falses(nv(t.graph))
     visited[t.source] = true
-    state = GraphIteratorState(visited, [t.source])
+    state = BasicGraphIteratorState(visited, [t.source])
     return (t.source, state)
 end
 
 
 """
-    Base.iterate(t::DFSIterator, state::GraphIteratorState)
+    Base.iterate(t::DFSIterator, state::BasicGraphIteratorState)
 
 Iterator to visit each node in a depth-first manner.
 """
-function Base.iterate(t::DFSIterator, state::GraphIteratorState)
+function Base.iterate(t::DFSIterator, state::BasicGraphIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[end])
             if !state.visited[node]
@@ -104,11 +112,11 @@ function Base.iterate(t::DFSIterator, state::GraphIteratorState)
 end
 
 """
-    Base.iterate(t::BFSIterator, state::GraphIteratorState)
+    Base.iterate(t::BFSIterator, state::BasicGraphIteratorState)
 
 Iterator to visit each node in a breadth-first manner.
 """
-function Base.iterate(t::BFSIterator, state::GraphIteratorState)
+function Base.iterate(t::BFSIterator, state::BasicGraphIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[1])
             if !state.visited[node]
