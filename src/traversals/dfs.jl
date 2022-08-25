@@ -5,12 +5,23 @@
     is_cyclic(g)
 
 Return `true` if graph `g` contains a cycle.
-
+  
 ### Implementation Notes
-Uses DFS.
+Undirect graph: for each connected component of the graph, the algorithm counts how many edges are in surplussurplus to a tree with the same number of nodes.
+Directed graph: uses DFS.
 """
 function is_cyclic end
-@traitfn is_cyclic(g::::(!IsDirected)) = (ne(g)-(nv(g)-1)) > 0
+@traitfn function is_cyclic(g::::(!IsDirected))
+    b=false
+    for vcomponent in connected_components(g)
+        sg, _ = induced_subgraph(g,vcomponent)
+        if (ne(sg)-(nv(sg)-1)) > 0
+            b = true
+            break
+        end
+    end
+    return b
+end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
