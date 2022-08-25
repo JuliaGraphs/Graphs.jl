@@ -4,7 +4,7 @@ import Base:sort!
 struct NOOPSortAlg <: Base.Sort.Algorithm end
 const NOOPSort = NOOPSortAlg()
 
-sort!(x, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
+sort!(x::AbstractVector, ::Integer, ::Integer, ::NOOPSortAlg, ::Base.Sort.Ordering) = x
 
 struct BFS{T<:Base.Sort.Algorithm} <: TraversalAlgorithm
     sort_alg::T
