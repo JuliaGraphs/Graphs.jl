@@ -239,7 +239,7 @@ where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
    connected to some vertex `d`, chosen uniformly at random from the entire
    graph, excluding `s` and its neighbors. (Note that `t` is a valid candidate.)
 
-For `β = 1`, the graph will remain a 1-lattice, and for `β = 0`, all edges will
+For `β = 0`, the graph will remain a 1-lattice, and for `β = 1`, all edges will
 be rewired randomly.
 
 ### Optional Arguments
