@@ -13,7 +13,7 @@ using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root!
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
-using Random: AbstractRNG, GLOBAL_RNG, GLOBAL_SEED, randperm, randsubseq!, seed!, shuffle, shuffle!
+using Random: AbstractRNG, randperm, randsubseq!, seed!, shuffle, shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
 using StableRNGs

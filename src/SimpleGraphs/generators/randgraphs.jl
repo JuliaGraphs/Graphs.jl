@@ -880,7 +880,7 @@ related functions.
 function stochastic_block_model(c::Matrix{T}, n::Vector{U}; seed::Int=-1) where T <: Real where U <: Integer
     size(c, 1) == size(c, 2) == length(n) || throw(ArgumentError("matrix-vector size mismatch"))
 
-    # init dsfmt generator without altering GLOBAL_RNG
+    # init dsfmt generator with a fixed seed
     rng = getRNG(seed)
     N = sum(n)
     K = length(n)

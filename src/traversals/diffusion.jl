@@ -15,7 +15,7 @@ during the simulation. If left empty, all vertices will be watched.
 each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of spread
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
-- `rng=GLOBAL_RNG`: A random generator to sample from
+- `rng=Union{Nothing, AbstractRNG}`: A random generator to sample from
 """
 function diffusion(g::AbstractGraph{T},
                     p::Real,
