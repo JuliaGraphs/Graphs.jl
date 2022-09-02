@@ -44,7 +44,7 @@ sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a)
 
 function getRNG(seed::Integer=-1)
     seed >= 0 && seed!(RNG, seed)
-    RNG
+    return RNG
 end
 
 """
