@@ -15,8 +15,6 @@ import Graphs:
     deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
     num_self_loops, insorted, squash
 
-using Random: GLOBAL_RNG, AbstractRNG
-
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
     SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,

@@ -42,7 +42,10 @@ Unlike [`sample!`](@ref), does not produce side effects.
 """
 sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
 
-getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
+function getRNG(seed::Integer=-1)
+    seed >= 0 && seed!(RNG, seed)
+    RNG
+end
 
 """
     rng_from_rng_or_seed(rng, seed)
@@ -61,7 +64,7 @@ function rng_from_rng_or_seed(rng::Union{Nothing, AbstractRNG}, seed::Union{Noth
 
     !(isnothing(seed) || isnothing(rng)) && throw(ArgumentError("Cannot specify both, seed and rng"))
     !isnothing(seed)                     && return getRNG(seed)
-    isnothing(rng)                       && return GLOBAL_RNG
+    isnothing(rng)                       && return RNG
     return rng
 end
 

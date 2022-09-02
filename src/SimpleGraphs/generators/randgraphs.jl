@@ -1,5 +1,4 @@
-using Random:
-    AbstractRNG, MersenneTwister, randperm, seed!, shuffle!
+using Random: AbstractRNG, randperm, seed!, shuffle!
 using Statistics: mean
 
 using Graphs:
@@ -1045,7 +1044,7 @@ end
 Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
-function make_edgestream(sbm::StochasticBlockModel, rng::AbstractRNG = GLOBAL_RNG)
+function make_edgestream(sbm::StochasticBlockModel, rng::AbstractRNG = getRNG())
     pairs = Channel(random_pair(rng, sbm.n), ctype=SimpleEdge, csize=32)
     edges(ch) = begin
         for e in pairs
