@@ -16,20 +16,20 @@ function is_cyclic end
     fill!(vertex_state,unvisited)
     parent = zeros(nv(g))
     for v in vertices(g)
-        S = Vector{T}([v])
-        while !isempty(S)
-            v = pop!(S)
-            if vertex_state[v] != visited
-                vertex_state[v] = visited
-                for u in neighbors(g, v)
-                    parent[u] = v
-                    push!(S,u)
-                end
-            else
-                if length(S) != 0
-                    if v != parent[S[end]]  
-                        return true
+        if vertex_state[v] == unvisited
+            S = Vector{T}([v])
+            while !isempty(S)
+                w = pop!(S)
+                if vertex_state[w] == unvisited
+                    vertex_state[w] = visited
+                    for u in neighbors(g, w)
+                        if parent[w] != u
+                            push!(S,u)
+                            parent[u] = w
+                        end
                     end
+                else
+                    return true
                 end
             end
         end
