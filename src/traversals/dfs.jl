@@ -13,7 +13,7 @@ function is_cyclic end
 @traitfn function is_cyclic(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     vertex_state = Vector{Vertex_state}(undef, nv(g)) 
     fill!(vertex_state,unvisited)
-    parent = zeros(nv(g))
+    parent = zeros(T, nv(g))
     for v in vertices(g)
         if vertex_state[v] == unvisited
             S = T[v]
