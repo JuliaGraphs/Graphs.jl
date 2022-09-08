@@ -27,7 +27,7 @@
 
   @testset "is_cyclic" begin
     for g in testgraphs(path_graph(2))
-      @test @inferred(!is_cyclic(g)) 
+      @test !@inferred(is_cyclic(g))
       @test @inferred(!is_cyclic(zero(g)))
     end
     @test @inferred(is_cyclic((gcyclic)))
