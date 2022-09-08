@@ -16,7 +16,7 @@ function is_cyclic end
     parent = zeros(nv(g))
     for v in vertices(g)
         if vertex_state[v] == unvisited
-            S = Vector{T}([v])
+            S = T[v]
             while !isempty(S)
                 w = pop!(S)
                 if vertex_state[w] == unvisited
