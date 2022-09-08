@@ -23,7 +23,7 @@ function is_cyclic end
                     vertex_state[w] = visited
                     for u in neighbors(g, w)
                         if parent[w] != u
-                            push!(S,u)
+                            push!(S, u)
                             parent[u] = w
                         end
                     end
