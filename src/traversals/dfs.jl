@@ -11,8 +11,7 @@ The algorithm uses a DFS.
 function is_cyclic end
 @enum Vertex_state unvisited visited
 @traitfn function is_cyclic(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
-    vertex_state = Vector{Vertex_state}(undef, nv(g)) 
-    fill!(vertex_state,unvisited)
+    vertex_state = fill(unvisited, nv(g))
     parent = zeros(T, nv(g))
     for v in vertices(g)
         if vertex_state[v] == unvisited
