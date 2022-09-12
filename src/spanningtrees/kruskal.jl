@@ -14,7 +14,7 @@ function kruskal_mst end
 
     connected_vs = IntDisjointSets(nv(g))
 
-    mst = Vector{edgetype(g)}()
+    mst = Vector{Edge{U}}()
     sizehint!(mst, nv(g) - 1)
 
     weights = Vector{T}()
@@ -27,7 +27,7 @@ function kruskal_mst end
     for e in edge_list[sortperm(weights; rev=!minimize)]
         if !in_same_set(connected_vs, src(e), dst(e))
             union!(connected_vs, src(e), dst(e))
-            push!(mst, e)
+            push!(mst, Edge(src(e), dst(e)))
             (length(mst) >= nv(g) - 1) && break
         end
     end
