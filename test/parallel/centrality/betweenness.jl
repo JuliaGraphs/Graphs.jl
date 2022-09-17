@@ -18,10 +18,9 @@
         yd = Parallel.betweenness_centrality(g, endpoints=true, normalize=false, parallel=:distributed)
         @test all(isapprox(y, yd))
 
-
-        xt = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:threads))
+        xt = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:threads, rng=RNG))
         @test length(xt) == 50
-        xd = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:distributed))
+        xd = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:distributed, rng=RNG))
         @test length(xd) == 50
 
         xt2 = @inferred(Parallel.betweenness_centrality(g, collect(1:20); parallel=:threads))

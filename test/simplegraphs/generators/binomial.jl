@@ -36,7 +36,7 @@ function binomial_test(n, p, s)
 
     @test abs(dσ - lσ) / dσ < .10
 end
-seed!(1234)
+Random.seed!(RNG, 1234)
 n = 10000
 p = 0.3
 s = 100000

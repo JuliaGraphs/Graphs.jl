@@ -9,9 +9,9 @@
         zt = @inferred(Parallel.stress_centrality(g; parallel=:threads))
         @test z == zt == c 
 
-        xd = Parallel.stress_centrality(g, 3; parallel=:distributed)
+        xd = Parallel.stress_centrality(g, 3; parallel=:distributed, rng=RNG)
         @test length(xd) == 50
-        xt = Parallel.stress_centrality(g, 3; parallel=:threasd)
+        xt = Parallel.stress_centrality(g, 3; parallel=:threads, rng=RNG)
         @test length(xt) == 50
         
         xd2 = Parallel.stress_centrality(g, collect(1:20); parallel=:distributed)

@@ -23,15 +23,16 @@ Approximation Factor: maximum(degree(g))+1
 function independent_set(
     g::AbstractGraph{T},
     alg::MaximalIndependentSet;
-    seed::Int=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
     ) where T <: Integer 
   
+    rng = rng_from_rng_or_seed(rng, seed)
     nvg = nv(g)
     ind_set = Vector{T}()
     sizehint!(ind_set, nvg)  
     deleted = falses(nvg)
 
-    for v in randperm(getRNG(seed), nvg)
+    for v in randperm(rng, nvg)
         (deleted[v] || has_edge(g, v, v)) && continue
 
         deleted[v] = true

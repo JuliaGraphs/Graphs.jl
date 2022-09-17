@@ -178,7 +178,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
     # spectral distance checks
     for n = 3:10
-        polygon = random_regular_graph(n, 2)
+        polygon = random_regular_graph(n, 2, rng=RNG)
         for g in testgraphs(polygon)
             @test spectral_distance(g, g) ≈ 0 atol = 1e-8
             @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8

@@ -4,6 +4,7 @@ using SparseArrays
 using LinearAlgebra
 using Graphs
 using SimpleTraits
+using Random: GLOBAL_RNG, AbstractRNG
 
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
@@ -13,7 +14,7 @@ import Graphs:
     src, dst, edgetype, nv, ne, vertices, edges, is_directed,
     has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
     deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
-    num_self_loops, insorted, squash
+    num_self_loops, insorted, squash, rng_from_rng_or_seed
 
 export AbstractSimpleGraph, AbstractSimpleEdge,
     SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,

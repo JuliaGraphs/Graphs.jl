@@ -45,6 +45,6 @@
         ]
     end
 
-    dir = SimpleDiGraph(10, 10)
+    dir = SimpleDiGraph(10, 10, rng=RNG)
     @test_throws MethodError bridges(dir)
 end

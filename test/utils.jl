@@ -1,17 +1,17 @@
 @testset "Utils" begin
-    s = @inferred(Graphs.sample!([1:10;], 3))
+    s = @inferred(Graphs.sample!(RNG, [1:10;], 3))
     @test length(s) == 3
     for e in s
         @test 1 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample!([1:10;], 6, exclude=[1, 2]))
+    s = @inferred(Graphs.sample!(RNG, [1:10;], 6, exclude=[1, 2]))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2]))
+    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2], rng=RNG))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
@@ -34,20 +34,17 @@
     end
 
     @testset "rng_from_rng_or_seed" begin
-        @test Graphs.rng_from_rng_or_seed(nothing, nothing) === Graphs.RNG
-        @test Graphs.rng_from_rng_or_seed(nothing, -10) === Graphs.RNG
+        @test Graphs.rng_from_rng_or_seed(nothing, nothing) === Random.GLOBAL_RNG
+        @test Graphs.rng_from_rng_or_seed(nothing, -10) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, 456) == Graphs.getRNG(456)
-        rng = Random.MersenneTwister(789)
+        rng = StableRNG(789)
         @test Graphs.rng_from_rng_or_seed(rng, nothing) === rng
-        @test_throws ArgumentError Graphs.rng_from_rng_or_seed(rng, -1)
+        @test Graphs.rng_from_rng_or_seed(rng, 123) == rng
     end
 
     A = [false, true, false, false, true, true]
     @test findall(A) == Graphs.findall!(A, Vector{Int16}(undef, 6))[1:3]
 end
-
-
-
 
 @testset "Unweighted Contiguous Partition" begin
 

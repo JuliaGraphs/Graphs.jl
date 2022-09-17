@@ -20,9 +20,11 @@ Dict{Graphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
   Edge 4 => 5 => 0.168372
 ```
 """
-function euclidean_graph(N::Int, d::Int;
-    L=1., seed = -1, kws...)
-    rng = Graphs.getRNG(seed)
+function euclidean_graph(
+    N::Int, d::Int;
+    L=1., rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1, kws...
+)
+    rng = rng_from_rng_or_seed(rng, seed)
     points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
@@ -55,8 +57,10 @@ julia> g
 {10, 45} undirected simple Int64 graph
 ```
 """
-function euclidean_graph(points::Matrix;
-    L=1., p=2., cutoff=-1., bc=:open)
+function euclidean_graph(
+    points::Matrix;
+    L=1., p=2., cutoff=-1., bc=:open
+)
     d, N = size(points)
     weights = Dict{SimpleEdge{Int},Float64}()
     cutoff < 0. && (cutoff = typemax(Float64))

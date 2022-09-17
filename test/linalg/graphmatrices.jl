@@ -5,7 +5,8 @@ using ArnoldiMethod
 
     # TODO fixing the random number generator is not ideal, but currently
     # the tests here fail a bit too often when running them in ci/cd.
-    rng = MersenneTwister(1234)
+
+    Random.seed!(RNG, 1234)
 
     function converttest(T::Type, var)
         @test typeof(T(var)) == T
@@ -181,13 +182,13 @@ using ArnoldiMethod
 
     n = 10
 
-    mat = Float64.(sprand(rng, Bool, n, n, 0.3))
+    mat = Float64.(sprand(RNG, Bool, n, n, 0.3))
 
     test_adjacency(mat)
     test_laplacian(mat)
     test_accessors(mat, n)
 
-    mat = symmetrize(Float64.(sprand(rng, Bool, n, n, 0.3)))
+    mat = symmetrize(Float64.(sprand(RNG, Bool, n, n, 0.3)))
     test_arithmetic(mat, n)
     test_other(mat, n)
     test_symmetry(mat, n)
@@ -217,7 +218,7 @@ using ArnoldiMethod
     # Random walk demo
     n = 100
     p = 16 / n
-    M = sprand(rng, n, n, p)
+    M = sprand(RNG, n, n, p)
     M.nzval[:] .= 1.0
     A = CombinatorialAdjacency(M)
     sd = stationarydistribution(A; mindim=10)

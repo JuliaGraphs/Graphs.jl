@@ -6,7 +6,7 @@
         z  = @inferred(stress_centrality(g))
         @test z == c
 
-        x  = @inferred(stress_centrality(g, 3))
+        x  = @inferred(stress_centrality(g, 3, rng=RNG))
         x2  = @inferred(stress_centrality(g, collect(1:20)))
         @test length(x) == 50
         @test length(x2) == 50

@@ -1,12 +1,13 @@
 
 @testset "Diffusion Simulation" begin
 
-rng = MersenneTwister(1234)
+Random.seed!(RNG, 1234)
+
 gx = complete_graph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
     # Most basic
-    @test @inferred(diffusion_rate(g, 1.0, 4; rng=rng)) == [1, 5, 5, 5]
+    @test @inferred(diffusion_rate(g, 1.0, 4; rng=RNG)) == [1, 5, 5, 5]
 end
 
 for i in 1:5
@@ -26,27 +27,27 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
                                    initial_infections=[2],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [1, 5, 5, 5]
 
     # Watching unconnected vertices
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(6:10),
                                    initial_infections=[2],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [0, 0, 0, 0]
 
     # Watch subset
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:2),
                                    initial_infections=[2],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [1, 2, 2, 2]
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
                                    initial_infections=[10],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [0, 0, 0, 0]
 
 end
@@ -62,13 +63,13 @@ for g in testgraphs(gx)  # this makes graphs of different eltypes
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
                                    initial_infections=[1],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [1, 2, 3, 4]
 
     @test @inferred(diffusion_rate(g, 1.0, 4,
                                    watch=collect(1:5),
                                    initial_infections=[3],
-                                   rng=rng
+                                   rng=RNG
                                    )) == [1, 3, 5, 5]
 end
 
@@ -80,14 +81,14 @@ for g in testgraphs(gx)
                                   6,
                                   initial_infections=[15],
                                   normalize=false,
-                                  rng=rng
+                                  rng=RNG
                                   )) == [1, 3, 5, 7, 9, 11]
 
 
     @test @inferred(diffusion_rate(g, 2.0, 6,
                                    initial_infections=[15],
                                    normalize=true,
-                                   rng=rng
+                                   rng=RNG
                                    )) == [1, 3, 5, 7, 9, 11]
 
     # Test probability accurate
@@ -107,7 +108,7 @@ for g in testgraphs(gx)
 
         for i in 1:20
             result = @inferred(diffusion_rate(g, p, 5,
-                                     initial_infections=[1]))
+                                     initial_infections=[1], rng=RNG))
             final_value += result[5]
         end
 
@@ -132,11 +133,11 @@ for g in testdigraphs(gx)
     ######
 
     @test @inferred(diffusion_rate(g, 1.0, 9,
-                                  initial_infections=[1]
+                                  initial_infections=[1], rng=RNG
                                   )) == collect(1:9)
 
     @test @inferred(diffusion_rate(g, 1.0, 9,
-                                  initial_infections=[10]
+                                  initial_infections=[10], rng=RNG
                                   )) == ones(Int, 9)
 
     # Check probabilities.
@@ -151,7 +152,7 @@ for g in testdigraphs(gx)
 
         for i in 1:20
             result = @inferred(diffusion_rate(g, p, 11,
-                                     initial_infections=[1]))
+                                     initial_infections=[1], rng=RNG))
             final_value += result[11]
 
         end

@@ -27,7 +27,10 @@ function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
     res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), a, k; exclude=exclude)
+sample!(
+    a::AbstractVector, k::Integer;
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+) = sample!(rng_from_rng_or_seed(rng, seed), a, k; exclude=exclude)
 
 """
     sample([rng,] r, k)
@@ -40,11 +43,14 @@ Sample `k` element from unit range `r` without repetition and eventually excludi
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+sample(
+    a::AbstractVector, k::Integer;
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+) = sample!(rng_from_rng_or_seed(rng, seed), collect(a), k; exclude=exclude)
 
 function getRNG(seed::Integer=-1)
-    seed >= 0 && seed!(RNG, seed)
-    return RNG
+    seed >= 0 && seed!(GLOBAL_RNG, seed)
+    return GLOBAL_RNG
 end
 
 """
@@ -59,13 +65,13 @@ always returning a random number generator.
 At least one of these arguments must be `nothing`.
 """
 function rng_from_rng_or_seed(rng::Union{Nothing, AbstractRNG}, seed::Union{Nothing, Integer})
-
     # TODO at some point we might emit a deprecation warning if a seed is specified
-
-    !(isnothing(seed) || isnothing(rng)) && throw(ArgumentError("Cannot specify both, seed and rng"))
-    !isnothing(seed)                     && return getRNG(seed)
-    isnothing(rng)                       && return RNG
-    return rng
+    if isnothing(rng)
+        return isnothing(seed) ? GLOBAL_RNG : getRNG(seed)
+    else
+        (!isnothing(seed) && seed >= 0) && seed!(rng, seed)
+        return rng
+    end
 end
 
 """

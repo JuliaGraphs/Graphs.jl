@@ -23,15 +23,16 @@ Approximation Factor: 2
 function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
-    seed::Int=-1
-    ) where T <: Integer 
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+) where T <: Integer 
 
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error
     nvg = nv(g)  
     in_cover = falses(nvg)
     length_cover = 0
 
-    @inbounds for e in shuffle(getRNG(seed), collect(edges(g)))
+    rng = rng_from_rng_or_seed(rng, seed)
+    @inbounds for e in shuffle(rng, collect(edges(g)))
         u = src(e)
         v = dst(e)
         if !(in_cover[u] || in_cover[v])

@@ -13,16 +13,13 @@ using Inflate: InflateGzipStream
 using DataStructures: IntDisjointSets, PriorityQueue, dequeue!, dequeue_pair!, enqueue!, heappop!, heappush!, in_same_set, peek, union!, find_root!
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
-using Random: AbstractRNG, randperm, randsubseq!, seed!, shuffle, shuffle!
+using Random: AbstractRNG, GLOBAL_RNG, randperm, randsubseq!, seed!, shuffle, shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
-using StableRNGs
 import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, intersect,
             reverse, reverse!, isassigned, getindex, setindex!, show,
             print, copy, in, sum, size, eltype, length, ndims, transpose,
             join, iterate, eltype, get, Pair, Tuple, zero
-
-const RNG = StableRNG(123)
 
 export
 # Interface
