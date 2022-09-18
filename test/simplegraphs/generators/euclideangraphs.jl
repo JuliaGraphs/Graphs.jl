@@ -1,7 +1,8 @@
 @testset "Euclidean graphs" begin
+    rng = StableRNG(1)
     N = 10
     d = 2
-    g, weights, points = @inferred(euclidean_graph(N, d, rng=RNG))
+    g, weights, points = @inferred(euclidean_graph(N, d, rng=rng))
     @test nv(g) == N
     @test ne(g) == N * (N - 1) ÷ 2
     @test (d, N) == size(points)
@@ -10,7 +11,7 @@
     @test maximum(points) <= 1
     @test minimum(points) >= 0.
 
-    g, weights, points = @inferred(euclidean_graph(N, d, bc=:periodic, rng=RNG))
+    g, weights, points = @inferred(euclidean_graph(N, d, bc=:periodic, rng=rng))
     @test maximum(x -> x[2], weights) <= sqrt(d / 2)
     @test minimum(x -> x[2], weights) >= 0.
     @test maximum(points) <= 1

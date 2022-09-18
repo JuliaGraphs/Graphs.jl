@@ -1,4 +1,5 @@
 @testset "D'Esopo-Pape" begin
+    rng = StableRNG(1)
 
     g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
@@ -74,7 +75,7 @@
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
             seed = Int(floor(100*rand()))
-            g = SimpleGraph(nvg, neg; rng = RNG, seed = seed)
+            g = SimpleGraph(nvg, neg; rng=rng, seed = seed)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -86,7 +87,7 @@
             nvg = Int(ceil(250*rand()))
             neg = Int(floor((nvg*(nvg-1)/2)*rand()))
             seed = Int(floor(100*rand()))
-            g = SimpleDiGraph(nvg, neg; rng = RNG, seed = seed)
+            g = SimpleDiGraph(nvg, neg; rng=rng, seed = seed)
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)

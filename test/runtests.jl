@@ -11,8 +11,6 @@ using Random
 using Statistics: mean
 using StableRNGs
 
-const RNG = StableRNG(1234)
-
 const testdir = dirname(@__FILE__)
 
 testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)]

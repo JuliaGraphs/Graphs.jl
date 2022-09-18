@@ -1,4 +1,6 @@
 @testset "Operators" begin
+    rng = StableRNG(1)
+
     g3 = path_graph(5)
     g4 = path_digraph(5)
 
@@ -258,7 +260,7 @@
         @test typeof(h) == typeof(g)
     end
 
-    gx = SimpleDiGraph(100, 200, rng=RNG)
+    gx = SimpleDiGraph(100, 200, rng=rng)
     @testset "Subgraphs: $g" for g in testdigraphs(gx)
         h = @inferred(g[5:26])
         @test nv(h) == 22

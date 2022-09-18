@@ -1,7 +1,7 @@
 import Random
 
 @testset "SimpleGraphs" begin
-    Random.seed!(RNG, 1234)
+    rng = StableRNG(1)
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     # specific concrete generators - no need for loop
@@ -212,7 +212,7 @@ import Random
 
     # Tests for constructors from iterators of edges
     @testset "Constructors from edge lists" begin
-        g_undir = erdos_renyi(200, 100; rng=RNG, seed=0)
+        g_undir = erdos_renyi(200, 100; rng=rng, seed=0)
         add_edge!(g_undir, 200, 1) # ensure that the result uses all vertices
         add_edge!(g_undir, 2, 2) # add a self-loop
 
@@ -221,8 +221,8 @@ import Random
             # We create an edge list, shuffle it and reverse half of its edges
             # using this edge list should result in the same graph
             edge_list = [e for e in edges(g)]
-            shuffle!(RNG, edge_list)
-            for i in rand(RNG, 1:length(edge_list), length(edge_list) ÷ 2)
+            shuffle!(rng, edge_list)
+            for i in rand(rng, 1:length(edge_list), length(edge_list) ÷ 2)
                 e = edge_list[i]
                 Te = typeof(e)
                 edge_list[i] = Te(dst(e), src(e))
@@ -251,14 +251,14 @@ import Random
             @test edgetype(g) == edgetype(g5)
         end
 
-        g_dir = erdos_renyi(200, 100; is_directed=true, rng=RNG, seed=0)
+        g_dir = erdos_renyi(200, 100; is_directed=true, rng=rng, seed=0)
         add_edge!(g_dir, 200, 1)
         add_edge!(g_dir, 2, 2)
 
         @testset "SimpleGraphFromIterator for edgetype $(edgetype(g))" for g in testdigraphs(g_dir)
             # We create an edge list and shuffle it
             edge_list = [e for e in edges(g)]
-            shuffle!(RNG, edge_list)
+            shuffle!(rng, edge_list)
             
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
@@ -450,8 +450,8 @@ import Random
             @test_throws ArgumentError rem_vertices!(g5, T[3, 0], keep_order=false)
         end
 
-        g_undir = erdos_renyi(10, 0.5, rng=RNG)
-        g_dir = erdos_renyi(10, 0.5, is_directed=true, rng=RNG)
+        g_undir = erdos_renyi(10, 0.5, rng=rng)
+        g_dir = erdos_renyi(10, 0.5, is_directed=true, rng=rng)
         for u = 1:2:10
             add_edge!(g_undir, u, u)
             add_edge!(g_dir, u, u)

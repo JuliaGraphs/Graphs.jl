@@ -1,17 +1,18 @@
 @testset "Utils" begin
-    s = @inferred(Graphs.sample!(RNG, [1:10;], 3))
+    rng = StableRNG(1)
+    s = @inferred(Graphs.sample!(rng, [1:10;], 3))
     @test length(s) == 3
     for e in s
         @test 1 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample!(RNG, [1:10;], 6, exclude=[1, 2]))
+    s = @inferred(Graphs.sample!(rng, [1:10;], 6, exclude=[1, 2]))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2], rng=RNG))
+    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2], rng=rng))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
