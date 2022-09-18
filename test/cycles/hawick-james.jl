@@ -1,5 +1,4 @@
 @testset "Hawick-James Cycles" begin
-    rng = StableRNG(1)
 
     # Simple graph gives expected circuits
     ex1 = SimpleDiGraph(5)
@@ -59,7 +58,7 @@
 
     # These test cases cover a bug that occurred in a previous version
     @testset "bugfix (unknown issue; PR#1007) ($seed)" for seed in [1, 2, 3], (n, k) in [(14, 18), (10, 22), (7, 16)]
-        g = erdos_renyi(n, k, is_directed=true, rng=rng, seed=seed)
+        g = erdos_renyi(n, k, is_directed=true, rng=StableRNG(seed))
         cycles1 = simplecycles(g)
         cycles2 = simplecycles_hawick_james(g)
         foreach(sort!, cycles1)

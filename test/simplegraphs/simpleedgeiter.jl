@@ -1,10 +1,10 @@
 @testset "SimpleEdgeIter" begin
     rng = StableRNG(1)
 
-    ga = @inferred(SimpleGraph(10, 20; rng=rng, seed=1))
-    gb = @inferred(SimpleGraph(10, 20; rng=rng, seed=1))
-    dga = @inferred(SimpleDiGraph(10, 20; rng=rng, seed=1))
-    dgb = @inferred(SimpleDiGraph(10, 20; rng=rng, seed=1))
+    ga = @inferred(SimpleGraph(10, 20; rng=StableRNG(1)))
+    gb = @inferred(SimpleGraph(10, 20; rng=StableRNG(1)))
+    dga = @inferred(SimpleDiGraph(10, 20; rng=StableRNG(1)))
+    dgb = @inferred(SimpleDiGraph(10, 20; rng=StableRNG(1)))
     @testset "string representation" begin
         @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
     end

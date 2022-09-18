@@ -64,13 +64,12 @@ always returning a random number generator.
 At least one of these arguments must be `nothing`.
 """
 function rng_from_rng_or_seed(rng::Union{Nothing, AbstractRNG}, seed::Union{Nothing, Integer})
+
+    !(isnothing(seed) || isnothing(rng)) && throw(ArgumentError("Cannot specify both, seed and rng"))
     # TODO at some point we might emit a deprecation warning if a seed is specified
-    if isnothing(rng)
-        return isnothing(seed) ? GLOBAL_RNG : getRNG(seed)
-    else
-        (!isnothing(seed) && seed >= 0) && seed!(rng, seed)
-        return rng
-    end
+    !isnothing(seed) && return getRNG(seed)
+    isnothing(rng) && return GLOBAL_RNG
+    return rng
 end
 
 """
