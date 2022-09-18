@@ -3,7 +3,7 @@ using Statistics: mean
 using Graphs: sample!
 
 """
-    SimpleGraph{T}(nv, ne; rng=nothing, seed=-1)
+    SimpleGraph{T}(nv, ne; rng=nothing, seed=nothing)
 
 Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled uniformly from all such graphs.
@@ -21,14 +21,14 @@ julia> SimpleGraph(5, 7)
 """
 function SimpleGraph{T}(
     nv::Integer, ne::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer
     tnv = T(nv)
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
+    rng = rng_from_rng_or_seed(rng, seed)
     ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne, rng=rng, seed=seed))
 
-    rng = rng_from_rng_or_seed(rng, seed)
     g = SimpleGraph(tnv)
 
     while g.ne < ne
@@ -41,12 +41,12 @@ end
 
 SimpleGraph(
     nv::T, ne::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer =
     SimpleGraph{T}(nv, ne; rng=rng, seed=seed)
 
 """
-    SimpleDiGraph{T}(nv, ne; rng=nothing, seed=-1)
+    SimpleDiGraph{T}(nv, ne; rng=nothing, seed=nothing)
 
 Construct a random `SimpleDiGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled uniformly from all such graphs.
@@ -64,13 +64,13 @@ julia> SimpleDiGraph(5, 7)
 """
 function SimpleDiGraph{T}(
     nv::Integer, ne::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer
     tnv = T(nv)
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne; rng=rng, seed=seed))
     rng = rng_from_rng_or_seed(rng, seed)
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne; rng=rng, seed=seed))
     g = SimpleDiGraph(tnv)
     while g.ne < ne
         source = rand(rng, one(T):tnv)
@@ -80,11 +80,14 @@ function SimpleDiGraph{T}(
     return g
 end
 
-SimpleDiGraph(nv::T, ne::Integer; kw...) where T <: Integer =
-    SimpleDiGraph{Int}(nv, ne; kw...)
-
+function SimpleDiGraph(
+    nv::T, ne::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where T <: Integer
+    SimpleDiGraph{Int}(nv, ne; rng=rng, seed=seed)
+end
 """
-    randbn(n, p; rng=nothing, seed=-1)
+    randbn(n, p; rng=nothing, seed=nothing)
 
 Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
 
@@ -92,7 +95,7 @@ Return a binomally-distribted random number with parameters `n` and `p` and opti
 - "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
 - http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
 """
-function randbn(n::Integer, p::Real; rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1)
+function randbn(n::Integer, p::Real; rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing)
     rng = rng_from_rng_or_seed(rng, seed)
     log_q = log(1.0 - p)
     x = 0
@@ -114,8 +117,8 @@ probability `p`.
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 # Examples
 ```jldoctest
@@ -126,11 +129,14 @@ julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
 {10, 49} directed simple Int64 graph
 ```
 """
-function erdos_renyi(n::Integer, p::Real; is_directed=false, kw...)
+function erdos_renyi(
+    n::Integer, p::Real;
+    is_directed=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
     p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
     m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
-    ne = randbn(m, p; kw...)
-    return is_directed ? SimpleDiGraph(n, ne; kw...) : SimpleGraph(n, ne; kw...)
+    ne = randbn(m, p; rng=rng, seed=seed)
+    return is_directed ? SimpleDiGraph(n, ne; rng=rng, seed=seed) : SimpleGraph(n, ne; rng=rng, seed=seed)
 end
 
 """
@@ -141,8 +147,8 @@ graph with `n` vertices and `ne` edges.
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 # Examples
 ```jldoctest
@@ -153,8 +159,11 @@ julia> erdos_renyi(10, 30, is_directed=true, seed=123)
 {10, 30} directed simple Int64 graph
 ```
 """
-function erdos_renyi(n::Integer, ne::Integer; is_directed=false, kw...)
-    return is_directed ? SimpleDiGraph(n, ne; kw...) : SimpleGraph(n, ne; kw...)
+function erdos_renyi(
+    n::Integer, ne::Integer;
+    is_directed=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
+    return is_directed ? SimpleDiGraph(n, ne; rng=rng, seed=seed) : SimpleGraph(n, ne; rng=rng, seed=seed)
 end
 
 """
@@ -164,8 +173,8 @@ Given a vector of expected degrees `ω` indexed by vertex, create a random undir
 connected with probability `ω[i]*ω[j]/sum(ω)`.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ### Implementation Notes
 The algorithm should work well for `maximum(ω) << sum(ω)`. As `maximum(ω)` approaches `sum(ω)`, some deviations
@@ -192,14 +201,17 @@ julia> print(degree(g))
 [1, 0, 1]
 ```
 """
-function expected_degree_graph(ω::Vector{T}; kw...) where T <: Real
+function expected_degree_graph(
+    ω::Vector{T};
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where T <: Real
     g = SimpleGraph(length(ω))
-    expected_degree_graph!(g, ω; kw...)
+    expected_degree_graph!(g, ω; rng=rng, seed=seed)
 end
 
 function expected_degree_graph!(
     g::SimpleGraph, ω::Vector{T};
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Real
     n = length(ω)
     @assert all(zero(T) .<= ω .<= n - one(T)) "Elements of ω needs to be at least 0 and at most n-1"
@@ -255,8 +267,8 @@ be rewired randomly.
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ## Examples
 ```jldoctest
@@ -273,7 +285,7 @@ julia> watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 """
 function watts_strogatz(
     n::Integer, k::Integer, β::Real;
-    is_directed=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    is_directed=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     @assert k < n
 
@@ -285,7 +297,6 @@ function watts_strogatz(
 
     g = is_directed ? SimpleDiGraph(n) : SimpleGraph(n)
 
-    rng = rng_from_rng_or_seed(rng, seed)
 
     # The ith next vertex, in clockwise order.
     # (Reduce to zero-based indexing, so the modulo works, by subtracting 1
@@ -303,6 +314,7 @@ function watts_strogatz(
     # ith next vertex, in clockwise order. With probability β, delete the edge
     # and rewire it to any (valid) target, chosen uniformly at random.
 
+    rng = rng_from_rng_or_seed(rng, seed)
     for i = 1:div(k, 2), s = 1:n
 
         # We only rewire with a probability β, and we only worry about rewiring
@@ -393,8 +405,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
 julia> barabasi_albert(50, 3)
@@ -419,8 +431,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `complete=false`: if true, use a complete graph for the initial graph.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ## Examples
 ```jldoctest
@@ -433,7 +445,7 @@ julia> barabasi_albert(100, Int8(10), 3, is_directed=true, seed=123)
 """
 function barabasi_albert(
     n::Integer, n0::Integer, k::Integer;
-    is_directed::Bool=false, complete::Bool=false, kw...
+    is_directed::Bool=false, complete::Bool=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     if complete
         g = is_directed ? complete_digraph(n0) : complete_graph(n0)
@@ -441,7 +453,7 @@ function barabasi_albert(
         g = is_directed ? SimpleDiGraph(n0) : SimpleGraph(n0)
     end
 
-    barabasi_albert!(g, n, k; kw...)
+    barabasi_albert!(g, n, k; rng=rng, seed=seed)
     return g
 end
 
@@ -454,8 +466,8 @@ graph `g`. Each new vertex is attached with `k` edges to `k` different vertices
 already present in the system by preferential attachment.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
 julia> g = cycle_graph(4)
@@ -469,7 +481,7 @@ julia> g
 """
 function barabasi_albert!(
     g::AbstractGraph, n::Integer, k::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     n0 = nv(g)
     1 <= k <= n0 <= n ||
@@ -544,8 +556,8 @@ in which the probability of the existence of ``Edge_{ij}`` is proportional
 to ``fitness_i × fitness_j``.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ### Performance
 Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
@@ -569,7 +581,7 @@ julia> edges(g) |> collect
 """
 function static_fitness_model(
     m::Integer, fitness::Vector{T};
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness)
@@ -598,8 +610,8 @@ in which the probability of the existence of ``Edge_{ij}`` is proportional with
 respect to ``i ∝ fitness\\_out`` and ``j ∝ fitness\\_in``.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ### Performance
 Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
@@ -624,7 +636,7 @@ julia> edges(g) |> collect
 """
 function static_fitness_model(
     m::Integer, fitness_out::Vector{T}, fitness_in::Vector{S};
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Real where S <: Real
     m < 0 && throw(ArgumentError("number of edges must be positive"))
     n = length(fitness_out)
@@ -650,11 +662,11 @@ function static_fitness_model(
 end
 
 function _create_static_fitness_graph!(
-    g::AbstractGraph, m::Integer, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, rng::Union{Nothing, AbstractRNG}, seed::Int
+    g::AbstractGraph, m::Integer, cum_fitness_out::Vector{T}, cum_fitness_in::Vector{S}, rng::Union{Nothing, AbstractRNG}, seed::Union{Nothing, Integer}
 ) where T <: Real where S <: Real
-    rng = rng_from_rng_or_seed(rng, seed)
     max_out = cum_fitness_out[end]
     max_in = cum_fitness_in[end]
+    rng = rng_from_rng_or_seed(rng, seed)
     while m > 0
         source = searchsortedfirst(cum_fitness_out, rand(rng) * max_out)
         target = searchsortedfirst(cum_fitness_in, rand(rng) * max_in)
@@ -673,8 +685,8 @@ Generate a random graph with `n` vertices, `m` edges and expected power-law
 degree distribution with exponent `α`.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 - `finite_size_correction=true`: determines whether to use the finite size correction
 proposed by Cho et al.
 
@@ -686,11 +698,14 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
 - Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
-function static_scale_free(n::Integer, m::Integer, α::Real; finite_size_correction::Bool=true, kw...)
+function static_scale_free(
+    n::Integer, m::Integer, α::Real;
+    finite_size_correction::Bool=true, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
     n < 0 && throw(ArgumentError("number of vertices must be positive"))
     α < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
     fitness = _construct_fitness(n, α, finite_size_correction)
-    static_fitness_model(m, fitness; kw...)
+    static_fitness_model(m, fitness; rng=rng, seed=seed)
 end
 
 """
@@ -701,8 +716,8 @@ degree distribution with exponent `α_out` for outbound edges and `α_in` for
 inbound edges.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 - `finite_size_correction=true`: determines whether to use the finite size correction
 proposed by Cho et al.
 
@@ -714,7 +729,10 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Chung F and Lu L: Connected components in a random graph with given degree sequences. Annals of Combinatorics 6, 125-145, 2002.
 - Cho YS, Kim JS, Park J, Kahng B, Kim D: Percolation transitions in scale-free networks under the Achlioptas process. Phys Rev Lett 103:135702, 2009.
 """
-function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64; finite_size_correction::Bool=true, kw...)
+function static_scale_free(
+    n::Integer, m::Integer, α_out::Real, α_in::Float64;
+    finite_size_correction::Bool=true, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
     n < 0 && throw(ArgumentError("number of vertices must be positive"))
     α_out < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
     α_in < 2 && throw(ArgumentError("out-degree exponent must be >= 2"))
@@ -723,7 +741,7 @@ function static_scale_free(n::Integer, m::Integer, α_out::Real, α_in::Float64;
     fitness_in = _construct_fitness(n, α_in, finite_size_correction)
     # eliminate correlation
     shuffle!(fitness_in)
-    static_fitness_model(m, fitness_out, fitness_in; kw...)
+    static_fitness_model(m, fitness_out, fitness_in; rng=rng, seed=seed)
 end
 
 function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
@@ -750,8 +768,8 @@ Create a random undirected
 each with degree `k`.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ### Performance
 Time complexity is approximately ``\\mathcal{O}(nk^2)``.
@@ -762,18 +780,17 @@ Allocates an array of `nk` `Int`s, and . For ``k > \\frac{n}{2}``, generates a g
 """
 function random_regular_graph(
     n::Integer, k::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     !iseven(n * k) && throw(ArgumentError("n * k must be even"))
     !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
     if k == 0
         return SimpleGraph(n)
     end
+    rng = rng_from_rng_or_seed(rng, seed)
     if (k > n / 2) && iseven(n * (n - k - 1))
         return complement(random_regular_graph(n, n - k - 1; rng=rng, seed=seed))
     end
-
-    rng = rng_from_rng_or_seed(rng, seed)
 
     edges = _try_creation(n, k, rng)
     while isempty(edges)
@@ -796,8 +813,8 @@ Create a random undirected graph according to the [configuration model]
 containing `n` vertices, with each node `i` having degree `k[i]`.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 - `check_graphical=false`: if true, ensure that `k` is a graphical sequence
 (see [`isgraphical`](@ref)).
 
@@ -808,7 +825,7 @@ Allocates an array of ``n \\bar{k}`` `Int`s.
 """
 function random_configuration_model(
     n::Integer, k::Array{T};
-    check_graphical::Bool=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    check_graphical::Bool=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer
     n != length(k) && throw(ArgumentError("a degree sequence of length n must be provided"))
     m = sum(k)
@@ -839,8 +856,8 @@ with `n` vertices, each with degree `k`.
 
 ### Optional Arguments
 - `dir=:out`: the direction of the edges for degree parameter.
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ### Implementation Notes
 Allocates an ``n × n`` sparse matrix of boolean as an adjacency matrix and
@@ -848,7 +865,7 @@ uses that to generate the directed graph.
 """
 function random_regular_digraph(
     n::Integer, k::Integer;
-    dir::Symbol=:out, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    dir::Symbol=:out, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     #TODO remove the function sample from StatsBase for one allowing the use
     # of a local rng
@@ -857,10 +874,10 @@ function random_regular_digraph(
     if k == 0
         return SimpleDiGraph(n)
     end
+    rng = rng_from_rng_or_seed(rng, seed)
     if (k > n / 2) && iseven(n * (n - k - 1))
         return complement(random_regular_digraph(n, n - k - 1; dir=dir, rng=rng, seed=seed))
     end
-    rng = rng_from_rng_or_seed(rng, seed)
     cs = collect(2:n)
     i = 1
     I = Vector{Int}(undef, n * k)
@@ -884,8 +901,8 @@ Create a random directed [tournament graph]
 with `n` vertices.
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 # Examples
 ```jldoctest
@@ -896,8 +913,7 @@ julia> random_tournament_digraph(Int8(10), seed=123)
 {10, 45} directed simple Int8 graph
 ```
 """
-function random_tournament_digraph(n::Integer; rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1)
-
+function random_tournament_digraph(n::Integer; rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing)
     rng = rng_from_rng_or_seed(rng, seed)
     g = SimpleDiGraph(n)
 
@@ -919,15 +935,15 @@ Return a Graph generated according to the Stochastic Block Model (SBM).
 `n[a]` : Number of vertices in block `a`
 
 ### Optional Arguments
-- `rng::Union{Nothing, AbstractRNG}=nothing`: set the Random Number Generator.
-- `seed=-1`: set the RNG seed.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 For a dynamic version of the SBM see the [`StochasticBlockModel`](@ref) type and
 related functions.
 """
 function stochastic_block_model(
     c::Matrix{T}, n::Vector{U};
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Real where U <: Integer
     size(c, 1) == size(c, 2) == length(n) || throw(ArgumentError("matrix-vector size mismatch"))
 
@@ -969,10 +985,13 @@ end
 Return a Graph generated according to the Stochastic Block Model (SBM), sampling
 from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
 """
-function stochastic_block_model(cint::T, cext::T, n::Vector{U}; kw...) where T <: Real where U <: Integer
+function stochastic_block_model(
+    cint::T, cext::T, n::Vector{U};
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where T <: Real where U <: Integer
     K = length(n)
     c = [ifelse(a == b, cint, cext) for a = 1:K, b = 1:K]
-    stochastic_block_model(c, n; kw...)
+    stochastic_block_model(c, n; rng=rng, seed=seed)
 end
 
 """
@@ -1090,14 +1109,14 @@ end
 
 
 """
-    make_edgestream(sbm; rng=nothing, seed=-1)
+    make_edgestream(sbm; rng=nothing, seed=nothing)
 
 Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
 """
 function make_edgestream(
     sbm::StochasticBlockModel;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     rng = rng_from_rng_or_seed(rng, seed)
     pairs = Channel(random_pair(rng, sbm.n), ctype=SimpleEdge, csize=32)
@@ -1141,7 +1160,7 @@ The element type is the type of `nv`.
 """
 function SimpleGraph(
     nvg::Integer, neg::Integer, sbm::StochasticBlockModel;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     return SimpleGraph(nvg, neg, make_edgestream(sbm; rng=rng, seed=seed))
 end
@@ -1172,7 +1191,7 @@ function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,Abstra
 end
 
 """
-    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; seed=-1)
+    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; rng=nothing, seed=nothing)
 
 Generate a directed [Kronecker graph](https://en.wikipedia.org/wiki/Kronecker_graph)
 with the default Graph500 parameters.
@@ -1183,7 +1202,7 @@ References
 """
 function kronecker(
     SCALE, edgefactor, A=0.57, B=0.19, C=0.19;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     N = 2^SCALE
     M = edgefactor * N
@@ -1239,7 +1258,7 @@ julia> dorogovtsev_mendes(11, seed=123)
 """
 function dorogovtsev_mendes(
     n::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = rng_from_rng_or_seed(rng, seed)
@@ -1287,7 +1306,7 @@ julia> random_orientation_dag(star_graph(Int8(10)), 123)
 """
 function random_orientation_dag(
     g::SimpleGraph{T};
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where {T <: Integer}
     nvg = length(g.fadjlist)
     rng = rng_from_rng_or_seed(rng, seed)

@@ -76,7 +76,7 @@ end
 
 function betweenness_centrality(
     g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g);
-    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     betweenness_centrality(g, sample(vertices(g), k, rng=rng, seed=seed), distmx; normalize=normalize, endpoints=endpoints)
 end

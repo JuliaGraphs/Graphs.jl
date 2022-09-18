@@ -47,7 +47,7 @@ end
 
 function stress_centrality(
     g::AbstractGraph, k::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     stress_centrality(g, sample(vertices(g), k, rng=rng, seed=seed))
 end

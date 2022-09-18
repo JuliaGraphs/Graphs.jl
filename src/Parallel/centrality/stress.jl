@@ -3,7 +3,7 @@ parallel == :distributed ? distr_stress_centrality(g, vs) : threaded_stress_cent
 
 function stress_centrality(
     g::AbstractGraph, k::Integer;
-    parallel=:distributed, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    parallel=:distributed, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
     samples = sample(vertices(g), k; rng=rng, seed=seed)
     parallel == :distributed ? distr_stress_centrality(g, samples) :

@@ -3,7 +3,7 @@ export RandomVertexCover
 struct RandomVertexCover end
 
 """
-    vertex_cover(g, RandomVertexCover(); seed=-1)
+    vertex_cover(g, RandomVertexCover(); rng=nothing, seed=nothing)
 
 Find a set of vertices such that every edge in `g` has some vertex in the set as 
 atleast one of its end point.
@@ -18,12 +18,13 @@ Memory: O(|E|)
 Approximation Factor: 2
 
 ### Optional Arguments
+- `rng=nothing`: set the Random Number Generator.
 - If `seed >= 0`, a random generator is seeded with this value.
 """
 function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer 
 
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error

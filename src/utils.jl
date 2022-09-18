@@ -29,23 +29,25 @@ end
 
 sample!(
     a::AbstractVector, k::Integer;
-    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) = sample!(rng_from_rng_or_seed(rng, seed), a, k; exclude=exclude)
 
 """
-    sample([rng,] r, k)
+    sample(a, k; exclude=(), rng=nothing, seed=nothing)
 
-Sample `k` element from unit range `r` without repetition and eventually excluding elements in `exclude`.
+Sample `k` element from AbstractVector `a` without repetition and eventually excluding elements in `exclude`.
 
 ### Optional Arguments
 - `exclude=()`: elements in `a` to exclude from sampling.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: seed the Random Number Generator with this value.
 
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
 sample(
     a::AbstractVector, k::Integer;
-    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=-1
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) = sample!(rng_from_rng_or_seed(rng, seed), collect(a), k; exclude=exclude)
 
 function getRNG(seed::Integer=-1)
