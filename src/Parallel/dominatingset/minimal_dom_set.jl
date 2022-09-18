@@ -1,5 +1,5 @@
 """
-    dominating_set(g, reps, MinimalDominatingSet(); parallel=:threads, kw...)
+    dominating_set(g, reps, MinimalDominatingSet(); parallel=:threads, rng=nothing, seed=nothing)
 
 Perform [`Graphs.dominating_set(g, MinimalDominatingSet())`](@ref) `reps` times in parallel 
 and return the solution with the fewest vertices.
@@ -11,11 +11,11 @@ used. This implementation is more efficient if `reps` is large.
 """
 function dominating_set(
     g::AbstractGraph{T}, reps::Integer, alg::MinimalDominatingSet;
-    parallel=:threads, kw...
+    parallel=:threads, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) where T <: Integer
     Graphs.Parallel.generate_reduce(
         g,
-        (g::AbstractGraph{T})->Graphs.dominating_set(g, alg; kw...), 
+        (g::AbstractGraph{T})->Graphs.dominating_set(g, alg; rng=rng, seed=seed), 
         (x::Vector{T}, y::Vector{T})->length(x)<length(y),
         reps;
         parallel=parallel

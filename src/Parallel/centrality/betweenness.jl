@@ -44,10 +44,10 @@ end
 
 function distr_betweenness_centrality(
     g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g);
-    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing, kw...
+    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )   
     samples = sample(vertices(g), k; rng=rng, seed=seed)
-    distr_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints, kw...)
+    distr_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints)
 end
 
 function threaded_betweenness_centrality(g::AbstractGraph,
