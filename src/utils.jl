@@ -50,10 +50,7 @@ sample(
     exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 ) = sample!(rng_from_rng_or_seed(rng, seed), collect(a), k; exclude=exclude)
 
-function getRNG(seed::Integer=-1)
-    seed >= 0 && seed!(GLOBAL_RNG, seed)
-    return GLOBAL_RNG
-end
+getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
 """
     rng_from_rng_or_seed(rng, seed)
