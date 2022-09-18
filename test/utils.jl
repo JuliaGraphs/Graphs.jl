@@ -38,9 +38,12 @@
         @test Graphs.rng_from_rng_or_seed(nothing, nothing) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, -10) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, 456) == Graphs.getRNG(456)
-        rng = StableRNG(789)
+        @compat if ismutable(Random.GLOBAL_RNG)
+            @test Graphs.rng_from_rng_or_seed(nothing, 456) !== Random.GLOBAL_RNG
+        end
+        rng = Random.MersenneTwister(789)
         @test Graphs.rng_from_rng_or_seed(rng, nothing) === rng
-        @test Graphs.rng_from_rng_or_seed(rng, 123) == rng
+        @test_throws ArgumentError Graphs.rng_from_rng_or_seed(rng, -1)
     end
 
     A = [false, true, false, false, true, true]

@@ -1,5 +1,4 @@
 @testset "Shortest_Path_Faster_Algorithm" begin
-    rng = StableRNG(1)
 
     @testset "Generic tests for graphs" begin
         g4 = path_digraph(5)
@@ -76,11 +75,11 @@
 
     @testset "Random Graphs" begin
         @testset "Simple graphs" begin
-            for i = 1:5
-                nvg = Int(ceil(250*rand()))
-                neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                seed = Int(floor(100*rand()))
-                g = SimpleGraph(nvg, neg; rng = rng, seed = seed)
+            for seed = 1:5
+                rng = StableRNG(seed)
+                nvg = Int(ceil(250*rand(rng)))
+                neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                g = SimpleGraph(nvg, neg; rng = rng)
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)
                 @test isapprox(z, y.dists)
@@ -88,11 +87,11 @@
         end
 
         @testset "Simple DiGraphs" begin
-            for i = 1:5
-                nvg = Int(ceil(250*rand()))
-                neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                seed = Int(floor(100*rand()))
-                g = SimpleDiGraph(nvg, neg; rng = rng, seed = seed)
+            for seed = 1:5
+                rng = StableRNG(seed)
+                nvg = Int(ceil(250*rand(rng)))
+                neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                g = SimpleDiGraph(nvg, neg; rng = rng)
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)
                 @test isapprox(z, y.dists)

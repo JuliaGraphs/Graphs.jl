@@ -11,13 +11,13 @@
         @test eltype(r1) == Int
         @test eltype(r2) == Int
 
-        @test SimpleGraph(10, 20, rng=rng, seed=3) == SimpleGraph(10, 20, rng=rng, seed=3)
-        @test SimpleGraph(10, 40, rng=rng, seed=3) == SimpleGraph(10, 40, rng=rng, seed=3)
-        @test SimpleDiGraph(10, 20, rng=rng, seed=3) == SimpleDiGraph(10, 20, rng=rng, seed=3)
-        @test SimpleDiGraph(10, 80, rng=rng, seed=3) == SimpleDiGraph(10, 80, rng=rng, seed=3)
-        @test SimpleGraph(10, 20, rng=rng, seed=3) == erdos_renyi(10, 20, rng=rng, seed=3)
-        @test ne(Graph(10, 40, rng=rng, seed=3)) == 40
-        @test ne(DiGraph(10, 80, rng=rng, seed=3)) == 80
+        @test SimpleGraph(10, 20, rng=StableRNG(3)) == SimpleGraph(10, 20, rng=StableRNG(3))
+        @test SimpleGraph(10, 40, rng=StableRNG(3)) == SimpleGraph(10, 40, rng=StableRNG(3))
+        @test SimpleDiGraph(10, 20, rng=StableRNG(3)) == SimpleDiGraph(10, 20, rng=StableRNG(3))
+        @test SimpleDiGraph(10, 80, rng=StableRNG(3)) == SimpleDiGraph(10, 80, rng=StableRNG(3))
+        @test SimpleGraph(10, 20, rng=StableRNG(3)) == erdos_renyi(10, 20, rng=rng=StableRNG(3))
+        @test ne(Graph(10, 40, rng=StableRNG(3))) == 40
+        @test ne(DiGraph(10, 80, rng=StableRNG(3))) == 80
     end
 
     @testset "(UInt8, Mixed) eltype" begin
@@ -39,7 +39,7 @@
         @test nv(er) == 10
         @test is_directed(er) == true
 
-        er = erdos_renyi(10, 0.5, rng=rng, seed=17)
+        er = erdos_renyi(10, 0.5, rng=StableRNG(17))
         @test nv(er) == 10
         @test is_directed(er) == false
 
@@ -50,16 +50,16 @@
     end
 
     @testset "expected degree" begin
-        cl = expected_degree_graph(zeros(10), rng=rng, seed=17)
+        cl = expected_degree_graph(zeros(10), rng=StableRNG(17))
         @test nv(cl) == 10
         @test ne(cl) == 0
         @test is_directed(cl) == false
 
-        cl = expected_degree_graph([3, 2, 1, 2], rng=rng, seed=17)
+        cl = expected_degree_graph([3, 2, 1, 2], rng=StableRNG(17))
         @test nv(cl) == 4
         @test is_directed(cl) == false
 
-        cl = expected_degree_graph(fill(99, 100), rng=rng, seed=17)
+        cl = expected_degree_graph(fill(99, 100), rng=StableRNG(17))
         @test nv(cl) == 100
         @test all(degree(cl) .> 90)
     end
@@ -173,7 +173,7 @@
         @test ne(rd) == 0
         @test is_directed(rd)
 
-        rr = random_regular_graph(10, 8, rng=rng, seed=4)
+        rr = random_regular_graph(10, 8, rng=StableRNG(4))
         @test nv(rr) == 10
         @test ne(rr) == 40
         @test is_directed(rr) == false
@@ -202,14 +202,14 @@
         indegree_rd = @inferred(indegree(rd))
         @test all(indegree_rd .== indegree_rd[1])
 
-        rd = random_regular_digraph(10, 8, dir=:out, rng=rng, seed=4)
+        rd = random_regular_digraph(10, 8, dir=:out, rng=StableRNG(4))
         @test nv(rd) == 10
         @test ne(rd) == 80
         @test is_directed(rd)
     end
 
     @testset "random configuration model" begin
-        rr = random_configuration_model(10, repeat([2,4], 5), rng=rng, seed=3)
+        rr = random_configuration_model(10, repeat([2,4], 5), rng=StableRNG(3))
         @test nv(rr) == 10
         @test ne(rr) == 15
         @test is_directed(rr) == false
