@@ -1,4 +1,4 @@
-using Random: AbstractRNG, randperm, seed!, shuffle!
+using Random: randperm, shuffle!
 using Statistics: mean
 using Graphs: sample!
 

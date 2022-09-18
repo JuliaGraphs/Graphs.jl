@@ -4,7 +4,8 @@ using SparseArrays
 using LinearAlgebra
 using Graphs
 using SimpleTraits
-using Random: GLOBAL_RNG, AbstractRNG
+
+import Random: AbstractRNG
 
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
