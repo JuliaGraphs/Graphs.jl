@@ -1,5 +1,5 @@
 @testset "Parallel.Betweenness" begin
-
+    rng = StableRNG(1)
     s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
     s1 = SimpleGraph(s2)
@@ -18,10 +18,9 @@
         yd = Parallel.betweenness_centrality(g, endpoints=true, normalize=false, parallel=:distributed)
         @test all(isapprox(y, yd))
 
-
-        xt = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:threads))
+        xt = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:threads, rng=rng))
         @test length(xt) == 50
-        xd = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:distributed))
+        xd = @inferred(Parallel.betweenness_centrality(g, 3; parallel=:distributed, rng=rng))
         @test length(xd) == 50
 
         xt2 = @inferred(Parallel.betweenness_centrality(g, collect(1:20); parallel=:threads))

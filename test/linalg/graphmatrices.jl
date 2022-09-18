@@ -5,7 +5,8 @@ using ArnoldiMethod
 
     # TODO fixing the random number generator is not ideal, but currently
     # the tests here fail a bit too often when running them in ci/cd.
-    rng = MersenneTwister(1234)
+
+    rng = StableRNG(1)
 
     function converttest(T::Type, var)
         @test typeof(T(var)) == T

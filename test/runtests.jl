@@ -9,6 +9,7 @@ using DelimitedFiles
 using Base64
 using Random
 using Statistics: mean
+using StableRNGs
 
 const testdir = dirname(@__FILE__)
 

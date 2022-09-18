@@ -2,9 +2,15 @@ betweenness_centrality(g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix=
 parallel == :distributed ? distr_betweenness_centrality(g, vs, distmx; normalize=normalize, endpoints=endpoints) : 
 threaded_betweenness_centrality(g, vs, distmx; normalize=normalize, endpoints=endpoints)
     
-betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false, parallel=:distributed) = 
-parallel == :distributed ? distr_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints) :
-threaded_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
+function betweenness_centrality(
+    g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g);
+    normalize=true, endpoints=false, parallel=:distributed,
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
+    samples = sample(vertices(g), k; rng=rng, seed=seed)
+    parallel == :distributed ? distr_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints) :
+    threaded_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints)
+end
 
 function distr_betweenness_centrality(g::AbstractGraph,
     vs=vertices(g),
@@ -36,8 +42,13 @@ function distr_betweenness_centrality(g::AbstractGraph,
     return betweenness
 end
 
-distr_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    distr_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
+function distr_betweenness_centrality(
+    g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g);
+    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)   
+    samples = sample(vertices(g), k; rng=rng, seed=seed)
+    distr_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints)
+end
 
 function threaded_betweenness_centrality(g::AbstractGraph,
     vs=vertices(g),
@@ -71,5 +82,10 @@ function threaded_betweenness_centrality(g::AbstractGraph,
     return betweenness
 end
 
-threaded_betweenness_centrality(g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g); normalize=true, endpoints=false) =
-    threaded_betweenness_centrality(g, sample(vertices(g), k), distmx; normalize=normalize, endpoints=endpoints)
+function threaded_betweenness_centrality(
+    g::AbstractGraph, k::Integer, distmx::AbstractMatrix=weights(g);
+    normalize=true, endpoints=false, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
+    samples = sample(vertices(g), k; rng=rng, seed=seed)
+    threaded_betweenness_centrality(g, samples, distmx; normalize=normalize, endpoints=endpoints)
+end

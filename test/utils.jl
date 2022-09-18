@@ -1,17 +1,18 @@
 @testset "Utils" begin
-    s = @inferred(Graphs.sample!([1:10;], 3))
+    rng = StableRNG(1)
+    s = @inferred(Graphs.sample!(rng, [1:10;], 3))
     @test length(s) == 3
     for e in s
         @test 1 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample!([1:10;], 6, exclude=[1, 2]))
+    s = @inferred(Graphs.sample!(rng, [1:10;], 6, exclude=[1, 2]))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
     end
 
-    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2]))
+    s = @inferred(Graphs.sample(1:10, 6, exclude=[1, 2], rng=rng))
     @test length(s) == 6
     for e in s
         @test 3 <= e <= 10
@@ -48,9 +49,6 @@
     A = [false, true, false, false, true, true]
     @test findall(A) == Graphs.findall!(A, Vector{Int16}(undef, 6))[1:3]
 end
-
-
-
 
 @testset "Unweighted Contiguous Partition" begin
 

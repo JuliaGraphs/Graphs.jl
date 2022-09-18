@@ -45,8 +45,12 @@ function stress_centrality(g::AbstractGraph, vs=vertices(g))
     return stress
 end
 
-stress_centrality(g::AbstractGraph, k::Integer) =
-    stress_centrality(g, sample(vertices(g), k))
+function stress_centrality(
+    g::AbstractGraph, k::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+)
+    stress_centrality(g, sample(vertices(g), k, rng=rng, seed=seed))
+end
 
 function _stress_accumulate_basic!(stress::Vector{<:Integer},
     state::DijkstraState,

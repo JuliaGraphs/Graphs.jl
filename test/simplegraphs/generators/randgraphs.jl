@@ -1,7 +1,9 @@
 @testset "Randgraphs" begin
+    rng = StableRNG(1)
+
     @testset "(Int, Int)" begin
-        r1 = SimpleGraph(10, 20)
-        r2 = SimpleDiGraph(5, 10)
+        r1 = SimpleGraph(10, 20, rng=rng)
+        r2 = SimpleDiGraph(5, 10, rng=rng)
         @test nv(r1) == 10
         @test ne(r1) == 20
         @test nv(r2) == 5
@@ -9,171 +11,169 @@
         @test eltype(r1) == Int
         @test eltype(r2) == Int
 
-        @test SimpleGraph(10, 20, seed=3) == SimpleGraph(10, 20, seed=3)
-        @test SimpleGraph(10, 40, seed=3) == SimpleGraph(10, 40, seed=3)
-        @test SimpleDiGraph(10, 20, seed=3) == SimpleDiGraph(10, 20, seed=3)
-        @test SimpleDiGraph(10, 80, seed=3) == SimpleDiGraph(10, 80, seed=3)
-        @test SimpleGraph(10, 20, seed=3) == erdos_renyi(10, 20, seed=3)
-        @test ne(Graph(10, 40, seed=3)) == 40
-        @test ne(DiGraph(10, 80, seed=3)) == 80
+        @test SimpleGraph(10, 20, rng=StableRNG(3)) == SimpleGraph(10, 20, rng=StableRNG(3))
+        @test SimpleGraph(10, 40, rng=StableRNG(3)) == SimpleGraph(10, 40, rng=StableRNG(3))
+        @test SimpleDiGraph(10, 20, rng=StableRNG(3)) == SimpleDiGraph(10, 20, rng=StableRNG(3))
+        @test SimpleDiGraph(10, 80, rng=StableRNG(3)) == SimpleDiGraph(10, 80, rng=StableRNG(3))
+        @test SimpleGraph(10, 20, rng=StableRNG(3)) == erdos_renyi(10, 20, rng=rng=StableRNG(3))
+        @test ne(Graph(10, 40, rng=StableRNG(3))) == 40
+        @test ne(DiGraph(10, 80, rng=StableRNG(3))) == 80
     end
 
     @testset "(UInt8, Mixed) eltype" begin
-        @test eltype(Graph(0x5, 0x2)) == eltype(Graph(0x5, 2)) == UInt8
+        @test eltype(Graph(0x5, 0x2, rng=rng)) == eltype(Graph(0x5, 2, rng=rng)) == UInt8
     end
 
     @testset "(Graph{$T}(Int, Int) eltype"for T in [UInt8, Int8, UInt16, Int16, UInt32, Int32, UInt, Int]
-        @test eltype(Graph{T}(5, 2)) == T
-        @test eltype(DiGraph{T}(5, 2)) == T
-        @test eltype(Graph{T}(5, 8)) == T
-        @test eltype(DiGraph{T}(5, 8)) == T
+        @test eltype(Graph{T}(5, 2, rng=rng)) == T
+        @test eltype(DiGraph{T}(5, 2, rng=rng)) == T
+        @test eltype(Graph{T}(5, 8, rng=rng)) == T
+        @test eltype(DiGraph{T}(5, 8, rng=rng)) == T
     end
 
-
     @testset "Erdös-Renyí" begin
-        er = erdos_renyi(10, 0.5)
+        er = erdos_renyi(10, 0.5, rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == false
-        er = erdos_renyi(10, 0.5, is_directed=true)
+        er = erdos_renyi(10, 0.5, is_directed=true, rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == true
 
-        er = erdos_renyi(10, 0.5, seed=17)
+        er = erdos_renyi(10, 0.5, rng=StableRNG(17))
         @test nv(er) == 10
         @test is_directed(er) == false
 
-        @test erdos_renyi(5, 1.0) == complete_graph(5)
-        @test erdos_renyi(5, 1.0, is_directed=true) == complete_digraph(5)
-        @test erdos_renyi(5, 2.1) == complete_graph(5)
-        @test erdos_renyi(5, 2.1, is_directed=true) == complete_digraph(5)
+        @test erdos_renyi(5, 1.0, rng=rng) == complete_graph(5)
+        @test erdos_renyi(5, 1.0, is_directed=true, rng=rng) == complete_digraph(5)
+        @test erdos_renyi(5, 2.1, rng=rng) == complete_graph(5)
+        @test erdos_renyi(5, 2.1, is_directed=true, rng=rng) == complete_digraph(5)
     end
 
     @testset "expected degree" begin
-        cl = expected_degree_graph(zeros(10), seed=17)
+        cl = expected_degree_graph(zeros(10), rng=StableRNG(17))
         @test nv(cl) == 10
         @test ne(cl) == 0
         @test is_directed(cl) == false
 
-        cl = expected_degree_graph([3, 2, 1, 2], seed=17)
+        cl = expected_degree_graph([3, 2, 1, 2], rng=StableRNG(17))
         @test nv(cl) == 4
         @test is_directed(cl) == false
 
-        cl = expected_degree_graph(fill(99, 100), seed=17)
+        cl = expected_degree_graph(fill(99, 100), rng=StableRNG(17))
         @test nv(cl) == 100
         @test all(degree(cl) .> 90)
-
     end
 
     @testset "Watts-Strogatz" begin
-        ws = watts_strogatz(10, 4, 0.2)
+        ws = watts_strogatz(10, 4, 0.2, rng=rng)
         @test nv(ws) == 10
         @test ne(ws) == 20
         @test is_directed(ws) == false
     
-        ws = watts_strogatz(10, 4, 0.2, is_directed=true)
+        ws = watts_strogatz(10, 4, 0.2, is_directed=true, rng=rng)
         @test nv(ws) == 10
         @test ne(ws) == 20
         @test is_directed(ws) == true
     end
     
     @testset "Barabasi-Albert" begin
-        ba = barabasi_albert(10, 2)
+        ba = barabasi_albert(10, 2, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 16
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 2, 2)
+        ba = barabasi_albert(10, 2, 2, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 16
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 4, 2)
+        ba = barabasi_albert(10, 4, 2, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 12
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 2, complete=true)
+        ba = barabasi_albert(10, 2, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 17
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 2, 2, complete=true)
+        ba = barabasi_albert(10, 2, 2, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 17
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 4, 2, complete=true)
+        ba = barabasi_albert(10, 4, 2, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 18
         @test is_directed(ba) == false
     
-        ba = barabasi_albert(10, 2, is_directed=true)
+        ba = barabasi_albert(10, 2, is_directed=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 16
         @test is_directed(ba) == true
     
-        ba = barabasi_albert(10, 2, 2, is_directed=true)
+        ba = barabasi_albert(10, 2, 2, is_directed=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 16
         @test is_directed(ba) == true
     
-        ba = barabasi_albert(10, 4, 2, is_directed=true)
+        ba = barabasi_albert(10, 4, 2, is_directed=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 12
         @test is_directed(ba) == true
     
-        ba = barabasi_albert(10, 2, is_directed=true, complete=true)
+        ba = barabasi_albert(10, 2, is_directed=true, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 18
         @test is_directed(ba) == true
     
-        ba = barabasi_albert(10, 2, 2, is_directed=true, complete=true)
+        ba = barabasi_albert(10, 2, 2, is_directed=true, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 18
         @test is_directed(ba) == true
     
-        ba = barabasi_albert(10, 4, 2, is_directed=true, complete=true)
+        ba = barabasi_albert(10, 4, 2, is_directed=true, complete=true, rng=rng)
         @test nv(ba) == 10
         @test ne(ba) == 24
         @test is_directed(ba) == true
     end
 
     @testset "static fitness" begin
-        fm = static_fitness_model(20, rand(10))
+        fm = static_fitness_model(20, rand(10), rng=rng)
         @test nv(fm) == 10
         @test ne(fm) == 20
         @test is_directed(fm) == false
     
-        fm = static_fitness_model(20, rand(10), rand(10))
+        fm = static_fitness_model(20, rand(10), rand(10), rng=rng)
         @test nv(fm) == 10
         @test ne(fm) == 20
         @test is_directed(fm) == true
     end
     
     @testset "static scale-free" begin
-        sf = static_scale_free(10, 20, 2.0)
+        sf = static_scale_free(10, 20, 2.0, rng=rng)
         @test nv(sf) == 10
         @test ne(sf) == 20
         @test is_directed(sf) == false
 
-        sf = static_scale_free(10, 20, 2.0, 2.0)
+        sf = static_scale_free(10, 20, 2.0, 2.0, rng=rng)
         @test nv(sf) == 10
         @test ne(sf) == 20
         @test is_directed(sf) == true
     end
 
     @testset "random regular" begin
-        rr = random_regular_graph(5, 0)
+        rr = random_regular_graph(5, 0, rng=rng)
         @test nv(rr) == 5
         @test ne(rr) == 0
         @test is_directed(rr) == false
 
-        rd = random_regular_digraph(10, 0)
+        rd = random_regular_digraph(10, 0, rng=rng)
         @test nv(rd) == 10
         @test ne(rd) == 0
         @test is_directed(rd)
 
-        rr = random_regular_graph(10, 8, seed=4)
+        rr = random_regular_graph(10, 8, rng=StableRNG(4))
         @test nv(rr) == 10
         @test ne(rr) == 40
         @test is_directed(rr) == false
@@ -181,35 +181,35 @@
             @test degree(rr, v) == 8
         end
 
-        rr = random_regular_graph(1000, 50)
+        rr = random_regular_graph(1000, 50, rng=rng)
         @test nv(rr) == 1000
         @test ne(rr) == 25000
         @test is_directed(rr) == false
         for v in vertices(rr)
             @test degree(rr, v) == 50
         end
-        rd = random_regular_digraph(1000, 4)
+        rd = random_regular_digraph(1000, 4, rng=rng)
         @test nv(rd) == 1000
         @test ne(rd) == 4000
         @test is_directed(rd)
         outdegree_rd = @inferred(outdegree(rd))
         @test all(outdegree_rd .== outdegree_rd[1])
 
-        rd = random_regular_digraph(1000, 4, dir=:in)
+        rd = random_regular_digraph(1000, 4, dir=:in, rng=rng)
         @test nv(rd) == 1000
         @test ne(rd) == 4000
         @test is_directed(rd)
         indegree_rd = @inferred(indegree(rd))
         @test all(indegree_rd .== indegree_rd[1])
 
-        rd = random_regular_digraph(10, 8, dir=:out, seed=4)
+        rd = random_regular_digraph(10, 8, dir=:out, rng=StableRNG(4))
         @test nv(rd) == 10
         @test ne(rd) == 80
         @test is_directed(rd)
     end
 
     @testset "random configuration model" begin
-        rr = random_configuration_model(10, repeat([2,4], 5), seed=3)
+        rr = random_configuration_model(10, repeat([2,4], 5), rng=StableRNG(3))
         @test nv(rr) == 10
         @test ne(rr) == 15
         @test is_directed(rr) == false
@@ -222,19 +222,19 @@
         @test num4 == 5
         @test num2 == 5
 
-        rr = random_configuration_model(1000, zeros(Int, 1000))
+        rr = random_configuration_model(1000, zeros(Int, 1000), rng=rng)
         @test nv(rr) == 1000
         @test ne(rr) == 0
         @test is_directed(rr) == false
 
-        rr = random_configuration_model(3, [2,2,2], check_graphical=true)
+        rr = random_configuration_model(3, [2,2,2], check_graphical=true, rng=rng)
         @test nv(rr) == 3
         @test ne(rr) == 3
         @test is_directed(rr) == false
     end
 
     @testset "random tournament" begin
-        rt = random_tournament_digraph(10)
+        rt = random_tournament_digraph(10, rng=rng)
         @test nv(rt) == 10
         @test ne(rt) == 45
         @test is_directed(rt)
@@ -249,9 +249,9 @@
     end
 
     @testset "SBM" begin
-        g = stochastic_block_model(2., 3., [100,100])
+        g = stochastic_block_model(2., 3., [100,100], rng=rng)
         @test  4.0 < mean(degree(g)) < 6.0
-        g = stochastic_block_model(3., 4., [100,100,100])
+        g = stochastic_block_model(3., 4., [100,100,100], rng=rng)
         @test  10.0 < mean(degree(g)) < 12.0
 
         function generate_nbp_sbm(numedges, sizes)
@@ -260,11 +260,10 @@
             intra = density * -0.005
             noise = density * 0.00501
             sbm = nearbipartiteSBM(sizes, between, intra, noise)
-            edgestream = make_edgestream(sbm)
+            edgestream = make_edgestream(sbm, rng=rng)
             g = SimpleGraph(sum(sizes), numedges, edgestream)
             return sbm, g
         end
-
 
         function test_sbm(sbm, bp)
             @test sum(sbm.affinities) != NaN
@@ -294,7 +293,8 @@
         numedges = internaldeg + externaldeg #+ sum(externaldeg.*sizes[2:end])
         numedges *= div(sum(sizes), 2)
         sbm = StochasticBlockModel(internalp, externalp, sizes)
-        g = SimpleGraph(sum(sizes), numedges, sbm)
+
+        g = SimpleGraph(sum(sizes), numedges, sbm, rng=rng)
         @test ne(g) >= 0.9numedges
         @test ne(g) <= numedges
         @test nv(g) == sum(sizes)
@@ -320,37 +320,37 @@
     end
 
     @testset "Kronecker" begin
-        kg = @inferred kronecker(5, 5)
+        kg = @inferred kronecker(5, 5, rng=rng)
         @test nv(kg) == 32
         @test is_directed(kg)
     end
 
     @testset "Dorogovtsev-Mendes" begin
-        g = @inferred(dorogovtsev_mendes(10))
+        g = @inferred(dorogovtsev_mendes(10, rng=rng))
         @test nv(g) == 10 && ne(g) == 17
-        g = dorogovtsev_mendes(11)
+        g = dorogovtsev_mendes(11, rng=rng)
         @test nv(g) == 11 && ne(g) == 19
         @test δ(g) == 2
-        g = dorogovtsev_mendes(3)
+        g = dorogovtsev_mendes(3, rng=rng)
         @test nv(g) == 3 && ne(g) == 3
         # testing domain errors
-        @test_throws DomainError dorogovtsev_mendes(2)
-        @test_throws DomainError dorogovtsev_mendes(-1)
+        @test_throws DomainError dorogovtsev_mendes(2, rng=rng)
+        @test_throws DomainError dorogovtsev_mendes(-1, rng=rng)
     end
 
     @testset "random orientation DAG" begin
     # testing if returned graph is acyclic and valid SimpleGraph
-        rog = random_orientation_dag(SimpleGraph(5, 10))
+        rog = random_orientation_dag(SimpleGraph(5, 10, rng=rng), rng=rng)
         @test isvalid_simplegraph(rog)
         @test !is_cyclic(rog)
 
         # testing if returned graph is acyclic and valid ComplexGraph
-        rog2 = random_orientation_dag(complete_graph(5))
+        rog2 = random_orientation_dag(complete_graph(5), rng=rng)
         @test isvalid_simplegraph(rog2)
         @test !is_cyclic(rog2)
 
         # testing with abstract RNG
-        rog3 = random_orientation_dag(SimpleGraph(10,15), 323)
+        rog3 = random_orientation_dag(SimpleGraph(10,15, rng=rng), rng=rng)
         @test isvalid_simplegraph(rog3)
         @test !is_cyclic(rog3)
     end

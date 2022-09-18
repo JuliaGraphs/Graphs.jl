@@ -3,7 +3,7 @@ export MinimalDominatingSet
 struct MinimalDominatingSet end
 
 """
-    dominating_set(g, MinimalDominatingSet(); seed=-1)
+    dominating_set(g, MinimalDominatingSet(); rng=nothing, seed=nothing)
 
 Find a set of vertices that consitute a dominating set (all vertices in `g` are either adjacent to a vertex 
 in the set or is a vertex in the set) and it is not possible to delete a vertex from the set 
@@ -19,14 +19,15 @@ Runtime: ``\\mathcal{O}(|V|+|E|)``
 Memory: ``\\mathcal{O}(|V|)``
 
 ### Optional Arguments
+- `rng=nothing`: set the Random Number Generator.
 - If `seed >= 0`, a random generator is seeded with this value.
 """    
 function dominating_set(
     g::AbstractGraph{T},
     alg::MinimalDominatingSet;
-    seed::Int=-1
-    ) where T <: Integer 
-
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where T <: Integer 
+    rng = rng_from_rng_or_seed(rng, seed)
     nvg = nv(g)  
     in_dom_set = trues(nvg) 
     length_ds = Int(nvg)
@@ -35,7 +36,7 @@ function dominating_set(
         dom_degree[v] -= (has_edge(g, v, v) ? 1 : 0)
     end
 
-    for v in randperm(getRNG(seed), nvg)
+    for v in randperm(rng, nvg)
     	(dom_degree[v] == 0) && continue #It is not adjacent to any dominating vertex
     	#Check if any vertex is depending on v to be dominated
         dependent = findfirst(u -> !in_dom_set[u] && dom_degree[u] <= 1, neighbors(g, v))

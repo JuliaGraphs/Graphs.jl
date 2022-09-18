@@ -1,12 +1,15 @@
 """
-    randomwalk(g, s, niter; seed=-1)
+    randomwalk(g, s, niter; rng=nothing, seed=nothing)
 
 Perform a random walk on graph `g` starting at vertex `s` and continuing for
 a maximum of `niter` steps. Return a vector of vertices visited in order.
 """
-function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
+function randomwalk(
+    g::AG, s::Integer, niter::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
+    rng = rng_from_rng_or_seed(rng, seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -22,7 +25,7 @@ function randomwalk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <:
 end
 
 """
-    non_backtracking_randomwalk(g, s, niter; seed=-1)
+    non_backtracking_randomwalk(g, s, niter; rng=nothing, seed=nothing)
 
 Perform a non-backtracking random walk on directed graph `g` starting at
 vertex `s` and continuing for a maximum of `niter` steps. Return a
@@ -30,9 +33,12 @@ vector of vertices visited in order.
 """
 function non_backtracking_randomwalk end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::(!IsDirected), s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(
+    g::AG::(!IsDirected), s::Integer, niter::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
+    rng = rng_from_rng_or_seed(rng, seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -63,9 +69,12 @@ function non_backtracking_randomwalk end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function non_backtracking_randomwalk(g::AG::IsDirected, s::Integer, niter::Integer; seed::Int=-1) where {T, AG<:AbstractGraph{T}}
+@traitfn function non_backtracking_randomwalk(
+    g::AG::IsDirected, s::Integer, niter::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where {T, AG<:AbstractGraph{T}}
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
+    rng = rng_from_rng_or_seed(rng, seed)
     visited = Vector{T}()
     sizehint!(visited, niter)
     currs = s
@@ -93,15 +102,18 @@ end
 end
 
 """
-    self_avoiding_walk(g, s, niter; seed=-1)
+    self_avoiding_walk(g, s, niter; rng=nothing, seed=nothing)
 
 Perform a [self-avoiding walk](https://en.wikipedia.org/wiki/Self-avoiding_walk)
 on graph `g` starting at vertex `s` and continuing for a maximum of `niter` steps.
 Return a vector of vertices visited in order.
 """
-function self_avoiding_walk(g::AG, s::Integer, niter::Integer; seed::Int=-1) where AG <: AbstractGraph{T} where T
+function self_avoiding_walk(
+    g::AG, s::Integer, niter::Integer;
+    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) where AG <: AbstractGraph{T} where T
     s in vertices(g) || throw(BoundsError())
-    rng = getRNG(seed)
+    rng = rng_from_rng_or_seed(rng, seed)
     visited = Vector{T}()
     svisited = Set{T}()
     sizehint!(visited, niter)

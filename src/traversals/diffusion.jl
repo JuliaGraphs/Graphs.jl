@@ -15,16 +15,16 @@ during the simulation. If left empty, all vertices will be watched.
 each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of spread
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
-- `rng=GLOBAL_RNG`: A random generator to sample from
+- `rng=nothing`: A random generator to sample from.
 """
 function diffusion(g::AbstractGraph{T},
                     p::Real,
                     n::Integer;
                     watch::AbstractVector=Vector{Int}(),
-                    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
                     normalize::Bool=false,
                     rng::Union{Nothing, AbstractRNG} = nothing,
-                    seed::Union{Nothing, Integer} = nothing
+                    seed::Union{Nothing, Integer} = nothing,
+                    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1, rng=rng, seed=seed),
                     ) where T
 
     # Initialize
@@ -90,11 +90,11 @@ in `watch`, if specified.
 """
 diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
 diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
-    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
     watch::AbstractVector=Vector{Int}(),
     normalize::Bool=false,
     rng::Union{Nothing, AbstractRNG} = nothing,
-    seed::Union{Nothing, Integer} = nothing
+    seed::Union{Nothing, Integer} = nothing,
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1, rng=rng, seed=seed),
     ) = diffusion_rate(diffusion(g, p, n,
             initial_infections=initial_infections,
             watch=watch, normalize=normalize, rng=rng, seed=seed))

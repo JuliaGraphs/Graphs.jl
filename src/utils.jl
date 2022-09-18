@@ -27,20 +27,28 @@ function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
     res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), a, k; exclude=exclude)
+sample!(
+    a::AbstractVector, k::Integer;
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) = sample!(rng_from_rng_or_seed(rng, seed), a, k; exclude=exclude)
 
 """
-    sample([rng,] r, k)
+    sample(a, k; exclude=(), rng=nothing, seed=nothing)
 
-Sample `k` element from unit range `r` without repetition and eventually excluding elements in `exclude`.
+Sample `k` element from AbstractVector `a` without repetition and eventually excluding elements in `exclude`.
 
 ### Optional Arguments
 - `exclude=()`: elements in `a` to exclude from sampling.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: seed the Random Number Generator with this value.
 
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+sample(
+    a::AbstractVector, k::Integer;
+    exclude=(), rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+) = sample!(rng_from_rng_or_seed(rng, seed), collect(a), k; exclude=exclude)
 
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
 
@@ -57,11 +65,10 @@ At least one of these arguments must be `nothing`.
 """
 function rng_from_rng_or_seed(rng::Union{Nothing, AbstractRNG}, seed::Union{Nothing, Integer})
 
-    # TODO at some point we might emit a deprecation warning if a seed is specified
-
     !(isnothing(seed) || isnothing(rng)) && throw(ArgumentError("Cannot specify both, seed and rng"))
-    !isnothing(seed)                     && return getRNG(seed)
-    isnothing(rng)                       && return GLOBAL_RNG
+    # TODO at some point we might emit a deprecation warning if a seed is specified
+    !isnothing(seed) && return getRNG(seed)
+    isnothing(rng) && return GLOBAL_RNG
     return rng
 end
 

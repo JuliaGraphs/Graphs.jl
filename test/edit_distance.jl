@@ -1,8 +1,8 @@
 @testset "Edit distance" begin
-
-    gtri = random_regular_graph(3, 2)
-    gquad = random_regular_graph(4, 2)
-    gpent = random_regular_graph(5, 2)
+    rng = StableRNG(1)
+    gtri = random_regular_graph(3, 2, rng=rng)
+    gquad = random_regular_graph(4, 2, rng=rng)
+    gpent = random_regular_graph(5, 2, rng=rng)
 
     @testset "edit_distance $triangle, $quadrangle, $pentagon" for triangle in testgraphs(gtri), quadrangle in testgraphs(gquad), pentagon in testgraphs(gpent)
         d, λ = @inferred(edit_distance(triangle, quadrangle, subst_cost=MinkowskiCost(1:3, 1:4)))

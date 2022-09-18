@@ -1,4 +1,5 @@
 @testset "Parallel.Stress" begin
+    rng = StableRNG(1)
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
     for g in testdigraphs(gint)
@@ -9,9 +10,9 @@
         zt = @inferred(Parallel.stress_centrality(g; parallel=:threads))
         @test z == zt == c 
 
-        xd = Parallel.stress_centrality(g, 3; parallel=:distributed)
+        xd = Parallel.stress_centrality(g, 3; parallel=:distributed, rng=rng)
         @test length(xd) == 50
-        xt = Parallel.stress_centrality(g, 3; parallel=:threasd)
+        xt = Parallel.stress_centrality(g, 3; parallel=:threads, rng=rng)
         @test length(xt) == 50
         
         xd2 = Parallel.stress_centrality(g, collect(1:20); parallel=:distributed)

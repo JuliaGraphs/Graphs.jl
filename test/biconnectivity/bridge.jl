@@ -1,4 +1,6 @@
 @testset "Bridge" begin
+    rng = StableRNG(1)
+
     gint = SimpleGraph(13)
     add_edge!(gint, 1, 7)
     add_edge!(gint, 1, 2)
@@ -45,6 +47,6 @@
         ]
     end
 
-    dir = SimpleDiGraph(10, 10)
+    dir = SimpleDiGraph(10, 10, rng=rng)
     @test_throws MethodError bridges(dir)
 end

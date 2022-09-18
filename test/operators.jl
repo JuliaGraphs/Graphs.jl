@@ -1,4 +1,6 @@
 @testset "Operators" begin
+    rng = StableRNG(1)
+
     g3 = path_graph(5)
     g4 = path_digraph(5)
 
@@ -199,8 +201,7 @@
     end
 
     nx = 20; ny = 21
-    gx = path_graph(ny)
-    @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(gx)
+    @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(path_graph(ny))
         T = eltype(g)
         hp = path_graph(nx)
         h = Graph{T}(hp)
@@ -221,8 +222,7 @@
         return g
     end
 
-    gx = complete_graph(2)
-    @testset "Cartesian Product / Tensor Product: $g" for g in testgraphs(gx)
+    @testset "Cartesian Product / Tensor Product: $g" for g in testgraphs(complete_graph(2))
         h = @inferred(cartesian_product(g, g))
         @test nv(h) == 4
         @test ne(h) == 4
@@ -236,8 +236,7 @@
         @test crosspath_slow(2, g) == crosspath(2, g)
     end
     for i in 3:4
-        gx = path_graph(i)
-        @testset "Tensor Product: $g" for g in testgraphs(gx)
+        @testset "Tensor Product: $g" for g in testgraphs(path_graph(i))
             @test length(connected_components(tensor_product(g, g))) == 2
         end
     end
@@ -261,7 +260,7 @@
         @test typeof(h) == typeof(g)
     end
 
-    gx = SimpleDiGraph(100, 200)
+    gx = SimpleDiGraph(100, 200, rng=rng)
     @testset "Subgraphs: $g" for g in testdigraphs(gx)
         h = @inferred(g[5:26])
         @test nv(h) == 22
@@ -318,8 +317,7 @@
         @test @inferred(ndims(g)) == 2
     end
 
-    gx = SimpleGraph(100)
-    @testset "Length: $g" for g in testgraphs(gx)
+    @testset "Length: $g" for g in testgraphs(SimpleGraph(100))
         @test length(g) == 10000
     end
 end

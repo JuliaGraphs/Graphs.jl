@@ -1,4 +1,5 @@
 @testset "Stress" begin
+    rng = StableRNG(1)
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
@@ -6,7 +7,7 @@
         z  = @inferred(stress_centrality(g))
         @test z == c
 
-        x  = @inferred(stress_centrality(g, 3))
+        x  = @inferred(stress_centrality(g, 3, rng=rng))
         x2  = @inferred(stress_centrality(g, collect(1:20)))
         @test length(x) == 50
         @test length(x2) == 50

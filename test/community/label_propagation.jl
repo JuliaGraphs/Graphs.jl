@@ -1,7 +1,5 @@
 @testset "Label propagation" begin
-
-    rng = MersenneTwister(1234)
-
+    rng = StableRNG(1)
     n = 10
     g10 = complete_graph(n)
     for g in testgraphs(g10)

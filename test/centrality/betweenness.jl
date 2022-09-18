@@ -1,4 +1,5 @@
 @testset "Betweenness" begin
+    rng = StableRNG(1)
     # self loops
     s2 = SimpleDiGraph(3)
     add_edge!(s2, 1, 2); add_edge!(s2, 2, 3); add_edge!(s2, 3, 3)
@@ -18,7 +19,7 @@
 
 
 
-        x  = @inferred(betweenness_centrality(g, 3))
+        x  = @inferred(betweenness_centrality(g, 3, rng=rng))
         x2  = @inferred(betweenness_centrality(g, collect(1:20)))
 
         @test length(x) == 50

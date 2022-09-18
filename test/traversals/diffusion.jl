@@ -1,7 +1,7 @@
 
 @testset "Diffusion Simulation" begin
+rng = StableRNG(1)
 
-rng = MersenneTwister(1234)
 gx = complete_graph(5)
 
 for g in testgraphs(gx)  # this makes graphs of different eltypes
@@ -107,7 +107,7 @@ for g in testgraphs(gx)
 
         for i in 1:20
             result = @inferred(diffusion_rate(g, p, 5,
-                                     initial_infections=[1]))
+                                     initial_infections=[1], rng=rng))
             final_value += result[5]
         end
 
@@ -132,11 +132,11 @@ for g in testdigraphs(gx)
     ######
 
     @test @inferred(diffusion_rate(g, 1.0, 9,
-                                  initial_infections=[1]
+                                  initial_infections=[1], rng=rng
                                   )) == collect(1:9)
 
     @test @inferred(diffusion_rate(g, 1.0, 9,
-                                  initial_infections=[10]
+                                  initial_infections=[10], rng=rng
                                   )) == ones(Int, 9)
 
     # Check probabilities.
@@ -151,7 +151,7 @@ for g in testdigraphs(gx)
 
         for i in 1:20
             result = @inferred(diffusion_rate(g, p, 11,
-                                     initial_infections=[1]))
+                                     initial_infections=[1], rng=rng))
             final_value += result[11]
 
         end

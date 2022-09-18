@@ -193,11 +193,11 @@ end
         end
 
         @testset "random simple graphs" begin
-            for i = 1:5
-                nvg = Int(ceil(250*rand()))
-                neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                seed = Int(floor(100*rand()))
-                g = SimpleGraph(nvg, neg; seed = seed)
+            for seed = 1:5
+                rng = StableRNG(seed)
+                nvg = Int(ceil(250*rand(rng)))
+                neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                g = SimpleGraph(nvg, neg; rng = rng)
                 z = shortest_paths(g, 1, DEsopoPape())
                 y = shortest_paths(g, 1, Dijkstra())
                 @test isapprox(z.dists, y.dists)
@@ -205,11 +205,11 @@ end
         end
 
         @testset "random simple digraphs" begin
-            for i = 1:5
-                nvg = Int(ceil(250*rand()))
-                neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                seed = Int(floor(100*rand()))
-                g = SimpleDiGraph(nvg, neg; seed = seed)
+            for seed = 1:5
+                rng = StableRNG(seed)
+                nvg = Int(ceil(250*rand(rng)))
+                neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                g = SimpleDiGraph(nvg, neg; rng = rng)
                 z = shortest_paths(g, 1, DEsopoPape())
                 y = shortest_paths(g, 1, Dijkstra())
                 @test isapprox(z.dists, y.dists)
@@ -534,11 +534,11 @@ end
 
         @testset "Random Graphs" begin
             @testset "Simple graphs" begin
-                for i = 1:5
-                    nvg = Int(ceil(250*rand()))
-                    neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                    seed = Int(floor(100*rand()))
-                    g = SimpleGraph(nvg, neg; seed = seed)
+                for seed = 1:5
+                    rng = StableRNG(seed)
+                    nvg = Int(ceil(250*rand(rng)))
+                    neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                    g = SimpleGraph(nvg, neg; rng = rng)
                     z = shortest_paths(g, 1, SPFA())
                     y = dijkstra_shortest_paths(g, 1)
                     @test isapprox(z.dists, y.dists)
@@ -546,11 +546,11 @@ end
             end
 
             @testset "Simple DiGraphs" begin
-                for i = 1:5
-                    nvg = Int(ceil(250*rand()))
-                    neg = Int(floor((nvg*(nvg-1)/2)*rand()))
-                    seed = Int(floor(100*rand()))
-                    g = SimpleDiGraph(nvg, neg; seed = seed)
+                for seed = 1:5
+                    rng = StableRNG(seed)
+                    nvg = Int(ceil(250*rand(rng)))
+                    neg = Int(floor((nvg*(nvg-1)/2)*rand(rng)))
+                    g = SimpleDiGraph(nvg, neg; rng = rng)
                     z = shortest_paths(g, 1, SPFA())
                     y = dijkstra_shortest_paths(g, 1)
                     @test isapprox(z.dists, y.dists)
