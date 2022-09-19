@@ -7,7 +7,7 @@
 Return `true` if graph `g` contains a cycle.
 
 ### Implementation Notes
-The algorithm uses a DFS.
+The algorithm uses a DFS. For directed graphs, self-loops are counted as cycles.
 """
 function is_cyclic end
 @enum Vertex_state unvisited visited
