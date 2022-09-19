@@ -1,8 +1,10 @@
 @testset "DFS" begin
   gnodes_directed=SimpleDiGraph(4)
   gnodes_undirected=SimpleGraph(4)
-  gself_loop=SimpleDiGraph(1)
-  add_edge!(gself_loop, 1, 1);
+  gloop_directed=SimpleDiGraph(1)
+  add_edge!(gloop_directed, 1, 1);
+  gloop_undirected=SimpleGraph(1)
+  add_edge!(gloop_undirected, 1, 1);
   g5 = SimpleDiGraph(4)
   add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
   gx = cycle_digraph(3)
@@ -48,7 +50,10 @@
     for g in testgraphs(gnodes_undirected)
       @test !@inferred(is_cyclic(g))
     end
-    for g in testgraphs(gself_loop)
+    for g in testgraphs(gloop_directed)
+      @test @inferred(is_cyclic(g))
+    end
+    for g in testgraphs(gloop_undirected)
       @test @inferred(is_cyclic(g))
     end
   end

@@ -7,7 +7,7 @@
 Return `true` if graph `g` contains a cycle.
 
 ### Implementation Notes
-The algorithm uses a DFS. For directed graphs, self-loops are counted as cycles.
+The algorithm uses a DFS. Self-loops are counted as cycles.
 """
 function is_cyclic end
 @enum Vertex_state unvisited visited
@@ -16,7 +16,7 @@ function is_cyclic end
     for v in vertices(g)
         visited[v] && continue
         visited[v] = true
-        S = [(v,v)] 
+        S = [(0,v)] 
         while !isempty(S)
             parent, w = pop!(S)
             for u in neighbors(g, w)
