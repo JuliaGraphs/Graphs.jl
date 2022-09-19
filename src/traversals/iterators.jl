@@ -1,15 +1,25 @@
 """
-    abstract type IteratorAlgorithm
+    abstract type Iterator
 
-`IteratorAlgorithm` is an abstract type which specifies a particular algorithm to use when iterating through a graph.
+`Iterator` is an abstract type which specifies a particular algorithm to use when iterating through a graph.
 """
-abstract type IteratorAlgorithm end
+abstract type Iterator end
 
 
 """
-    struct DFSIterator <: IteratorAlgorithm
+    struct VertexIterator <: Iterator
 
-`DFS` is a struct which specifies using depth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `DFS(g::AbstractGraph, source::Int)`.
+`VertexIterator` is a type used to iterate through graph vertices.
+"""
+struct VertexIterator{S} <: Iterator
+    graph::AbstractGraph
+    source::S
+    traversal_fn::Function
+end
+
+
+"""
+    DFSIterator(g::AbstractGraph, sources)
 
 `DFSIterator` is a struct which specifies using depth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `DFSIterator(g::AbstractGraph, source::Int)`.
 
@@ -18,7 +28,7 @@ abstract type IteratorAlgorithm end
 julia> g = smallgraph(:house)
 {5, 6} undirected simple Int64 graph
 
-julia> for node in DFSIterator(g, 1)
+julia> for node in DFSIterator(g, 3)
            display(node)
        end
 1
@@ -26,25 +36,45 @@ julia> for node in DFSIterator(g, 1)
 4
 3
 5
+
+julia> for node in DFSIterator(g,[1,5])
+           display(node)
+       end
+1
+2
+4
+3
+5
+5
+3
+1
+2
+4
 ```
 """
-struct DFSIterator <: IteratorAlgorithm
-    graph::AbstractGraph
-    source::Int
-end
+DFSIterator(g::AbstractGraph, sources=1) = VertexIterator(g, sources, traverse_dfs)
 
 
 """
-    struct BFSIterator <: IteratorAlgorithm
+    BFSIterator(g::AbstractGraph, sources)
 
-`BFS` is a struct which specifies using breadth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `BFS(g::AbstractGraph, source::Int)`.
+`BFSIterator` is a struct which specifies using breadth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `BFSIterator(g::AbstractGraph, source::Int)`.
 
 # Examples
 ```julia-repl
 julia> g = smallgraph(:house)
 {5, 6} undirected simple Int64 graph
 
-julia> for node in BFSIterator(g, 1)
+julia> for node in BFSIterator(g,3)
+           display(node)
+       end
+3
+1
+4
+5
+2
+
+julia> for node in BFSIterator(g,[1,3])
            display(node)
        end
 1
@@ -52,52 +82,95 @@ julia> for node in BFSIterator(g, 1)
 3
 4
 5
+3
+1
+4
+5
+2
 ```
 """
-struct BFSIterator <: IteratorAlgorithm
-    graph::AbstractGraph
-    source::Int
-end
+BFSIterator(g::AbstractGraph, sources=1) = VertexIterator(g, sources, traverse_bfs)
 
 
 """
-    abstract type AbstractGraphIteratorState
+    abstract type AbstractIteratorState
 
-`BasicGraphIteratorState` is an abstract type to hold the current state of iteration which is need for Julia's Base.iterate() function.
+`IteratorState` is an abstract type to hold the current state of iteration which is need for Julia's Base.iterate() function.
 """
-abstract type AbstractGraphIteratorState end
+abstract type AbstractIteratorState end
 
 
 """
-    mutable struct BasicGraphIteratorState
+    mutable struct SingleSourceIteratorState
 
-`BasicGraphIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators.
+`SingleSourceIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when a single source is supplied.
 """
-mutable struct BasicGraphIteratorState <: AbstractGraphIteratorState
+mutable struct SingleSourceIteratorState <: AbstractIteratorState
     visited::BitArray
     queue::Vector{Int}
 end
 
 
 """
-    Base.iterate(t::Union{BFSIterator, DFSIterator})
+    mutable struct MultiSourceIteratorState
 
-First iteration to visit each node for depth-first or breadth-first type iterators.
+`MultiSourceIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when mutltiple sources are supplied.
 """
-function Base.iterate(t::Union{BFSIterator, DFSIterator})
-    visited = falses(nv(t.graph))
-    visited[t.source] = true
-    state = BasicGraphIteratorState(visited, [t.source])
-    return (t.source, state)
+mutable struct MultiSourceIteratorState <: AbstractIteratorState
+    visited::BitArray
+    queue::Vector{Int}
+    source_id::Int
 end
 
 
 """
-    Base.iterate(t::DFSIterator, state::BasicGraphIteratorState)
+    Base.iterate(t::VertexIterator)
 
-Iterator to visit each node in a depth-first manner.
+First iteration to visit each vertex in a graph.
 """
-function Base.iterate(t::DFSIterator, state::BasicGraphIteratorState)
+function Base.iterate(t::VertexIterator)
+    visited = falses(nv(t.graph))
+    if t.source isa Number
+        visited[t.source] = true
+        return (t.source, SingleSourceIteratorState(visited, [t.source]))
+    else
+        init_source = first(t.source)
+        visited[init_source] = true
+        return (init_source, MultiSourceIteratorState(visited, [init_source], 1))
+    end
+end
+
+
+"""
+    Base.iterate(t::VertexIterator, state::SingleSourceIteratorState)
+
+Iterator to visit each vertex in a graph.
+"""
+function Base.iterate(t::VertexIterator, state::SingleSourceIteratorState)
+    t.traversal_fn(t, state)
+end
+
+
+"""
+    Base.iterate(t::VertexIterator, state::MultiSourceIteratorState)
+
+Iterator to visit each vertex in a graph.
+"""
+function Base.iterate(t::VertexIterator, state::MultiSourceIteratorState)
+    result = t.traversal_fn(t, state)
+    result !== nothing && return result
+    # reset state and begin traversal at next source
+    state.source_id += 1
+    state.source_id > length(t.source) && return nothing
+    init_source =t.source[state.source_id]
+    state.visited .= false
+    state.visited[init_source] = true
+    state.queue = [init_source]
+    return (init_source, state)
+end
+
+
+function traverse_dfs(t::VertexIterator, state::AbstractIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[end])
             if !state.visited[node]
@@ -108,15 +181,10 @@ function Base.iterate(t::DFSIterator, state::BasicGraphIteratorState)
         end
         pop!(state.queue)
     end
-    return nothing
 end
 
-"""
-    Base.iterate(t::BFSIterator, state::BasicGraphIteratorState)
 
-Iterator to visit each node in a breadth-first manner.
-"""
-function Base.iterate(t::BFSIterator, state::BasicGraphIteratorState)
+function traverse_bfs(t::VertexIterator, state::AbstractIteratorState)
     while !isempty(state.queue)
         for node in outneighbors(t.graph, state.queue[1])
             if !state.visited[node]
@@ -127,5 +195,4 @@ function Base.iterate(t::BFSIterator, state::BasicGraphIteratorState)
         end
         popfirst!(state.queue)
     end
-    return nothing
 end

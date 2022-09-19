@@ -183,7 +183,7 @@ export
 is_cyclic, topological_sort_by_dfs, dfs_tree, dfs_parents,
 
 # iterators
-DFSIterator, BFSIterator, iterate,
+VertexIterator, DFSIterator, BFSIterator, iterate,
 
     # random
     randomwalk,
