@@ -16,10 +16,11 @@ function is_cyclic end
     for v in vertices(g)
         visited[v] && continue
         visited[v] = true
-        S = [(0,v)] 
+        S = [(v,v)] 
         while !isempty(S)
             parent, w = pop!(S)
             for u in neighbors(g, w)
+                u == w && return true # self-loop
                 u == parent && continue
                 visited[u] && return true
                 visited[u] = true
