@@ -7,10 +7,29 @@
 Return `true` if graph `g` contains a cycle.
 
 ### Implementation Notes
-Uses DFS.
+The algorithm uses a DFS. Self-loops are counted as cycles.
 """
 function is_cyclic end
-@traitfn is_cyclic(g::::(!IsDirected)) = ne(g) > 0
+@enum Vertex_state unvisited visited
+@traitfn function is_cyclic(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
+    visited = falses(nv(g)) 
+    for v in vertices(g)
+        visited[v] && continue
+        visited[v] = true
+        S = [(v,v)] 
+        while !isempty(S)
+            parent, w = pop!(S)
+            for u in neighbors(g, w)
+                u == w && return true # self-loop
+                u == parent && continue
+                visited[u] && return true
+                visited[u] = true
+                push!(S, (w, u))
+            end
+        end
+    end
+    return false
+end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
