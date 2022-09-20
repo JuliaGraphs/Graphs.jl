@@ -20,6 +20,5 @@ Pages   = [
     "traversals/greedy_color.jl",
     "traversals/maxadjvisit.jl",
     "traversals/randomwalks.jl",
-    "traversals/iterators.jl",
 ]
 ```
