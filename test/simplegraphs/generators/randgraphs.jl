@@ -47,6 +47,11 @@
         @test erdos_renyi(5, 1.0, is_directed=true, rng=rng) == complete_digraph(5)
         @test erdos_renyi(5, 2.1, rng=rng) == complete_graph(5)
         @test erdos_renyi(5, 2.1, is_directed=true, rng=rng) == complete_digraph(5)
+
+        # issue #173
+        er = erdos_renyi(4, 6, seed=1)
+        @test nv(er) == 4
+        @test ne(er) == 6
     end
 
     @testset "expected degree" begin

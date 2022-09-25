@@ -27,7 +27,7 @@ function SimpleGraph{T}(
     maxe = div(Int(nv) * (nv - 1), 2)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     rng = rng_from_rng_or_seed(rng, seed)
-    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne, rng=rng, seed=seed))
+    ne > div((2 * maxe), 3)  && return complement(SimpleGraph(tnv, maxe - ne, rng=rng))
 
     g = SimpleGraph(tnv)
 
@@ -70,7 +70,7 @@ function SimpleDiGraph{T}(
     maxe = Int(nv) * (nv - 1)
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     rng = rng_from_rng_or_seed(rng, seed)
-    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne; rng=rng, seed=seed))
+    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne; rng=rng))
     g = SimpleDiGraph(tnv)
     while g.ne < ne
         source = rand(rng, one(T):tnv)
@@ -789,7 +789,7 @@ function random_regular_graph(
     end
     rng = rng_from_rng_or_seed(rng, seed)
     if (k > n / 2) && iseven(n * (n - k - 1))
-        return complement(random_regular_graph(n, n - k - 1; rng=rng, seed=seed))
+        return complement(random_regular_graph(n, n - k - 1; rng=rng))
     end
 
     edges = _try_creation(n, k, rng)
@@ -876,7 +876,7 @@ function random_regular_digraph(
     end
     rng = rng_from_rng_or_seed(rng, seed)
     if (k > n / 2) && iseven(n * (n - k - 1))
-        return complement(random_regular_digraph(n, n - k - 1; dir=dir, rng=rng, seed=seed))
+        return complement(random_regular_digraph(n, n - k - 1; dir=dir, rng=rng))
     end
     cs = collect(2:n)
     i = 1
@@ -962,7 +962,7 @@ function stochastic_block_model(
 
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
             p = a == b ? n[a] * c[a, b] / (2m) : n[a] * c[a, b] / m
-            nedg = randbn(m, p; rng=rng, seed=seed)
+            nedg = randbn(m, p; rng=rng)
             rb = (cum[b] + 1):cum[b + 1]
             i = 0
             while i < nedg
