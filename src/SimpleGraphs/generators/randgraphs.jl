@@ -257,7 +257,7 @@ where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
 1. Consider each vertex `s` in turn, along with the edge to its `i`th nearest
    neighbor `t`, in a clockwise sense.
 
-2. Generate a uniformly random number `r`. If `r < β`, then the edge `(s, t)` is
+2. Generate a uniformly random number `r`. If `r ≥ β`, then the edge `(s, t)` is
    left unaltered. Otherwise, the edge is deleted and *rewired* so that `s` is
    connected to some vertex `d`, chosen uniformly at random from the entire
    graph, excluding `s` and its neighbors. (Note that `t` is a valid candidate.)
