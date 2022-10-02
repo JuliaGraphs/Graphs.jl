@@ -369,4 +369,20 @@
     @testset "Length: $(typeof(g))" for g in test_generic_graphs(SimpleGraph(100))
         @test length(g) == 10000
     end
+
+
+    @testset "Mycielski Operator" begin
+        g = complete_graph(2)
+
+        m = mycielski(g; iterations = 8)
+        @test nv(m) == 767
+        @test ne(m) == 22196
+
+        # check that mycielski preserves triangle-freeness
+        g = complete_bipartite_graph(10, 5)
+        m = mycielski(g)
+        @test nv(m) == 2*15 + 1
+        @test ne(m) == 3*50 + 15
+        @test all(iszero, triangles(m))
+    end
 end
