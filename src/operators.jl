@@ -1116,11 +1116,11 @@ number of the graph by 1.
 The Mycielski operation can be repeated by using the `iterations` kwarg. Each time, it will
 apply the operator to the previous iterations graph.
 
-For each vertex in the original graph, that vertex and a copy of it is added to the new graph.
+For each vertex in the original graph, that vertex and a copy of it are added to the new graph.
 Then, for each edge `(x, y)` in the original graph, the edges `(x, y)`, `(x', y)`, and `(x, y')`
 are added to the new graph, where `x'` and `y'` are the "copies" of `x` and `y`, respectively.
-In otherwords, the original graph is present as a subgraph, and each vertex in the original graph
-is connected to all of it's neighbors' copies. Finally, one last vertex `w` is added to the graph
+In other words, the original graph is present as a subgraph, and each vertex in the original graph
+is connected to all of its neighbors' copies. Finally, one last vertex `w` is added to the graph
 and an edge connecting each copy vertex `x'` to `w` is added.
 
 See [Mycielskian](https://en.wikipedia.org/wiki/Mycielskian) for more information.
