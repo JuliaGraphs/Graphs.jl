@@ -1158,15 +1158,14 @@ julia> collect(edges(m))
 ```
 """
 @traitfn function mycielski(g::AbstractGraph::(!IsDirected); iterations = 1)
-    ref = g
     out = deepcopy(g)
     for _ in 1:iterations
-        N = nv(g)
+        N = nv(out)
         add_vertices!(out, N + 1)
         w = nv(out)
-        for e in collect(edges(g))
-            x, y = Tuple(e)
-            add_edge!(out, x, y)
+        for e in collect(edges(out))
+            x=e.src
+            y=e.dst
             add_edge!(out, x, y+N)
             add_edge!(out, x+N, y)
         end
@@ -1174,7 +1173,6 @@ julia> collect(edges(m))
         for v in 1:N
             add_edge!(out, v+N, w)
         end
-        g = out
     end
     return out
 end
