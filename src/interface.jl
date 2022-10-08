@@ -185,7 +185,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
 
 Return (an iterator to or collection of) the edges of a graph.
 For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
-The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+The expressions `e in edges(g)` and `e ∈ edges(g)` evaluate as
 calls to [`has_edge`](@ref).
 
 ### Implementation Notes
@@ -255,7 +255,7 @@ Return true if the graph `g` has an edge from node `s` to node `d`.
 An optional `has_edge(g, e)` can be implemented to check if an edge belongs
 to a graph, including any data other than source and destination node.
 
-`e ∈ edges(g)` or `e ∈ edges(g)` evaluate as
+`e in edges(g)` or `e ∈ edges(g)` evaluate as
 calls to `has_edge`, c.f. [`edges`](@ref).
 
 # Examples
