@@ -21,11 +21,11 @@ function yen_k_shortest_paths(g::AbstractGraph,
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
-    maxdist=Inf) where T <: Real where U <: Integer
+    maxdist::T=Inf) where T <: Real where U <: Integer
 
     source == target && return YenState{T,U}([U(0)], [[source]])
 
-    dj = dijkstra_shortest_paths(g, source, distmx)
+    dj = dijkstra_shortest_paths(g, source, distmx; maxdist)
     path = enumerate_paths(dj)[target]
     isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
 
@@ -100,4 +100,3 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     return YenState{T,U}(dists, A)
 end
-
