@@ -114,4 +114,10 @@
         ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100, maxdist=7))
         @test ds.dists == [4.0, 5.0, 7.0, 7.0]
     end
+
+    # Test that no paths are returned if every path is longer than maxdist
+    for g in testdigraphs(cycle_digraph(10))
+        ds = @inferred(yen_k_shortest_paths(g, 2, 1, weights(g), 2, maxdist=2))
+        @test isempty(ds.paths)
+    end
 end
