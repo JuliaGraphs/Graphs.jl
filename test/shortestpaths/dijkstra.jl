@@ -103,7 +103,7 @@
         m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
 
         for g in testgraphs(G)
-            ds = @inferred(shortest_paths(g, 3, m, Dijkstra(maxdist=3)))
+            ds = @inferred(dijkstra_shortest_paths(g, 3, m;maxdist=3.0))
             @test ds.dists == [2, 1, 0, Inf, Inf, 3]
         end
 end

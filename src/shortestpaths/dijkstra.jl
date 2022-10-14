@@ -74,7 +74,7 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false,
-    maxdist::T=Inf
+    maxdist::Float64=Inf
     ) where T <: Real where U <: Integer
 
     nvg = nv(g)
@@ -156,5 +156,5 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false,maxdist) =
+dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false,maxdist::Float64=Inf) =
 dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices,maxdist)
