@@ -92,7 +92,7 @@ tests = [
     "experimental/experimental"
 ]
 
-@testset verbose=true "Graphs" begin
+@testset verbose = true "Graphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
         include(tp)
