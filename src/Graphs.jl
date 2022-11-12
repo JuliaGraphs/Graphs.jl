@@ -55,6 +55,7 @@ complement, reverse, reverse!, blockdiag, union, intersect,
 difference, symmetric_difference,
 join, tensor_product, cartesian_product, crosspath,
 induced_subgraph, egonet, merge_vertices!, merge_vertices,
+mycielski,
 
 # bfs
 gdistances, gdistances!, bfs_tree, bfs_parents, has_path,
