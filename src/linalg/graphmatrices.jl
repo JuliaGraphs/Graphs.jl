@@ -3,7 +3,7 @@ const SparseMatrix{T} = SparseMatrixCSC{T,Int}
 """
     GraphMatrix{T}
 
-An abstract type to allow opertions on any type of graph matrix
+An abstract type to allow operations on any type of graph matrix
 """
 abstract type GraphMatrix{T} end
 

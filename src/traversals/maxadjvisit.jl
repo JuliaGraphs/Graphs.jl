@@ -36,7 +36,7 @@ function mincut(g::AbstractGraph,
     # in which case we'll return immediately.
     (haskey(pq, one(U)) && nv(g) > one(U)) || return (Vector{Int8}([1]), cutweight)
 
-    #Give the starting vertex high priority
+    # Give the starting vertex high priority
     pq[one(U)] = one(T)
 
     while !isempty(pq)
@@ -102,7 +102,7 @@ function maximum_adjacency_visit(g::AbstractGraph{U},
     # Give start vertex maximum priority
     pq[s] = one(T)
 
-    #start traversing the graph
+    # start traversing the graph
     while !isempty(pq)
         u = dequeue!(pq)
         has_key[u] = false
@@ -125,4 +125,3 @@ maximum_adjacency_visit(g::AbstractGraph{U}, s::U=one(U)) where {U} = maximum_ad
     false,
     stdout,
     s)
-

@@ -1,8 +1,8 @@
 """
     clique_percolation(g, k=3)
 
-Community detection using the clique percolation algorithm. Communities are potentionally overlapping.
-Return a vector of vectors `c` such that `c[i]` is the set of vertices in community `i`. 
+Community detection using the clique percolation algorithm. Communities are potentially overlapping.
+Return a vector of vectors `c` such that `c[i]` is the set of vertices in community `i`.
 The parameter `k` defines the size of the clique to use in percolation.
 
 ### References

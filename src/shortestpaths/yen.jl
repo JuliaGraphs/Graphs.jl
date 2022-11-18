@@ -66,7 +66,7 @@ function yen_k_shortest_paths(g::AbstractGraph,
                     push!(edgesremoved, (u, v))
                 end
 
-                # Evaluate distante of root path
+                # Evaluate distance of root path
                 v = rootpath[n + 1]
                 distrootpath += distmx[u, v]
             end
@@ -100,4 +100,3 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     return YenState{T,U}(dists, A)
 end
-

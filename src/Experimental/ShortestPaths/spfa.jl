@@ -2,7 +2,7 @@
 
 ###################################################################
 #
-#The type that capsulates the state of Shortest Path Faster Algorithm
+#The type that encapsulates the state of Shortest Path Faster Algorithm
 #
 ###################################################################
 
@@ -103,4 +103,3 @@ function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg
     return false
 end
 has_negative_weight_cycle(g::AbstractGraph, ::SPFA) = false
-

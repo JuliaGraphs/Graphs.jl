@@ -760,11 +760,11 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
     new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs)
     new_vertex_ids[vs] .= merged_vertex
 
-    #if v in vs then labels[v] == v0 else labels[v] == v
+    # if v in vs then labels[v] == v0 else labels[v] == v
     newg = SimpleGraph(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
-        if new_vertex_ids[u] != new_vertex_ids[w] #not a new self loop
+        if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
             add_edge!(newg, new_vertex_ids[u], new_vertex_ids[w])
         end
     end

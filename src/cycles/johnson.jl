@@ -125,7 +125,7 @@ using a DFS algorithm.
 ### Implementation Notes
 Implements Johnson's CIRCUIT function. This is a recursive version.
 Modifies the vector of cycles, when needed.
- 
+
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
@@ -211,7 +211,7 @@ Return `true` if a circuit has been found in the current exploration.
 # Arguments
 * v: the vertex considered in this iteration of the DFS
 * dg: the digraph from which cycles are computed
-* visitor: Informations needed for the cycle computation, contains:
+* visitor: information needed for the cycle computation, contains:
     * stack: the stack of parent vertices
     * blocked: tells whether a vertex has already been explored or not
     * blockedmap: mapping of the blocking / unblocking consequences

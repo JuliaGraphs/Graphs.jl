@@ -116,19 +116,19 @@ random_configuration_model, random_tournament_digraph, StochasticBlockModel, mak
 nearbipartiteSBM, blockcounts, blockfractions, stochastic_block_model, barabasi_albert,
 barabasi_albert!, static_fitness_model, static_scale_free, kronecker, dorogovtsev_mendes, random_orientation_dag,
 
-#community
+# community
 modularity, core_periphery_deg,
 local_clustering,local_clustering_coefficient, global_clustering_coefficient, triangles,
 label_propagation, maximal_cliques, clique_percolation, assortativity,rich_club,
 
-#generators
+# generators
 complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
 complete_bipartite_graph, complete_multipartite_graph, turan_graph,
 complete_digraph, star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph,
 binary_tree, double_binary_tree, roach_graph, clique_graph, ladder_graph,
 circular_ladder_graph, barbell_graph, lollipop_graph,
 
-#generator deprecations
+# generator deprecations
 BullGraph, ChvatalGraph, CubicalGraph, DesarguesGraph, DiamondGraph,
 DodecahedralGraph, FruchtGraph, HeawoodGraph, HouseGraph, HouseXGraph,
 IcosahedralGraph, KarateGraph, KrackhardtKiteGraph, MoebiusKantorGraph,
@@ -140,31 +140,31 @@ CycleGraph, CycleDiGraph, WheelGraph, WheelDiGraph, Grid, BinaryTree,
 Doublebinary_tree, RoachGraph, CliqueGraph, LadderGraph, Circularladder_graph,
 BarbellGraph, LollipopGraph,
 
-#smallgraphs
+# smallgraphs
 smallgraph,
 
 # Euclidean graphs
 euclidean_graph,
 
-#minimum_spanning_trees
+# minimum_spanning_trees
 boruvka_mst, kruskal_mst, prim_mst,
 
-#steinertree
+# steinertree
 steiner_tree,
 
-#biconnectivity and articulation points
+# biconnectivity and articulation points
 articulation, biconnected_components, bridges,
 
-#graphcut
+# graphcut
 normalized_cut, karger_min_cut, karger_cut_cost, karger_cut_edges,
 
-#dominatingset
+# dominatingset
 dominating_set,
 
-#independentset
+# independentset
 independent_set,
 
-#vertexcover
+# vertexcover
 vertex_cover
 
 """

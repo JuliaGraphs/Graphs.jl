@@ -246,14 +246,14 @@ function strongly_connected_components end
             push!(dfs_stack, s)
 
             while !isempty(dfs_stack)
-                v = dfs_stack[end] #end is the most recently added item
+                v = dfs_stack[end] # end is the most recently added item
                 u = zero_t
                 @inbounds for v_neighbor in outneighbors(g, v)
                     if index[v_neighbor] == zero_t
                         # unvisited neighbor found
                         u = v_neighbor
                         break
-                        #GOTO A push u onto DFS stack and continue DFS
+                        # GOTO A push u onto DFS stack and continue DFS
                     elseif onstack[v_neighbor]
                         # we have already seen n, but can update the lowlink of v
                         # which has the effect of possibly keeping v on the stack until n is ready to pop.
@@ -289,7 +289,7 @@ function strongly_connected_components end
                         push!(components, component)
                     end
 
-                else #LABEL A
+                else # LABEL A
                     # add unvisited neighbor to dfs
                     index[u] = count
                     lowlink[u] = count
@@ -409,7 +409,7 @@ function strongly_connected_components_kosaraju end
                push!(dfs_stack, w)
                color[w] = 1
            else
-               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
+               push!(order, u)  # Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
                color[u] = 2
                pop!(dfs_stack)
            end
@@ -684,7 +684,7 @@ function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::Abstrac
     Q = Vector{Tuple{T,U}}()
     d < zero(U) && return Q
     push!(Q, (v,zero(U),) )
-    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
+    seen = fill(false,nv(g)); seen[v] = true # Bool Vector benchmarks faster than BitArray
     for (src,currdist) in Q
         currdist >= d && continue
         for dst in neighborfn(g,src)
