@@ -89,7 +89,7 @@ end
 """
     randbn(n, p; rng=nothing, seed=nothing)
 
-Return a binomally-distribted random number with parameters `n` and `p` and optional `seed`.
+Return a binomially-distributed random number with parameters `n` and `p` and optional `seed`.
 
 ### References
 - "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
@@ -246,11 +246,11 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k` 
+small world random graph with `n` vertices, each with expected degree `k`
 (or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
-where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
+where each vertex has exactly `div(k, 2)` neighbors on each side (i.e., `k` or
 `k - 1` in total). Then the following steps are repeated for a hop length `i` of
 `1` through `div(k, 2)`.
 
@@ -525,7 +525,7 @@ function barabasi_albert!(
 
     for source in (n0 + 1):n
         # choose k targets from the existing vertices
-        # pick uniformly from weightedVs (preferential attachement)
+        # pick uniformly from weightedVs (preferential attachment)
         i = 0
         while i < k
             target = weightedVs[rand(rng, 1:offset)]
@@ -855,7 +855,7 @@ Create a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_g
 with `n` vertices, each with degree `k`.
 
 ### Optional Arguments
-- `dir=:out`: the direction of the edges for degree parameter.
+- `dir=:out`: the direction of edges for the degree parameter.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
 
@@ -930,7 +930,7 @@ end
 Return a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
-           Only the upper triangular part is considered, since the lower traingular is
+           Only the upper triangular part is considered, since the lower triangular is
            determined by ``c[b,a] = c[a,b] * \\frac{n[a]}{n[b]}``.
 `n[a]` : Number of vertices in block `a`
 
@@ -1001,7 +1001,7 @@ A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge `(i,j)`
 depends only on the block labels of vertex `i` and vertex `j`.
 
-The assignement is stored in nodemap and the block affinities a `k` by `k`
+The assignment is stored in nodemap and the block affinities a `k` by `k`
 matrix is stored in affinities.
 
 `affinities[k,l]` is the probability of an edge between any vertex in
@@ -1238,7 +1238,7 @@ Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\g
 
 The Dorogovtsev-Mendes process begins with a triangle graph and inserts `n-3` additional vertices.
 Each time a vertex is added, a random edge is selected and the new vertex is connected to the two
-endpoints of the chosen edge. This creates graphs with a many triangles and a high local clustering coefficient.
+endpoints of the chosen edge. This creates graphs with many triangles and a high local clustering coefficient.
 
 It is often useful to track the evolution of the graph as vertices are added, you can access the graph from
 the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:t]`.
