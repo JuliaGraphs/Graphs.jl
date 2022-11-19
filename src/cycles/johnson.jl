@@ -140,7 +140,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Intege
             push!(allcycles, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
+            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) # This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done
@@ -242,7 +242,7 @@ function circuit_iter end
             put!(cycle, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
+            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) # This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done

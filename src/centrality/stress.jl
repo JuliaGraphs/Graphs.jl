@@ -65,7 +65,7 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(state.closest_vertices) #Replaced sortperm with this
+    S = reverse(state.closest_vertices) # Replaced sortperm with this
     for w in S  # w is the farthest vertex from si
         for v in P[w]  # get the predecessors of w
             if v > 0

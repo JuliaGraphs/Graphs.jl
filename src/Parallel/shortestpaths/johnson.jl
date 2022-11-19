@@ -7,14 +7,14 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
     nvg = nv(g)
     type_distmx = typeof(distmx)
-#Change when parallel implementation of Bellman Ford available
+# Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
 
     @compat if !ismutable(distmx) && type_distmx !=  Graphs.DefaultDistance
-        distmx = sparse(distmx) #Change reference, not value
+        distmx = sparse(distmx) # Change reference, not value
     end
 
-#Weight transform not needed if all weights are positive.
+# Weight transform not needed if all weights are positive.
     if type_distmx !=  Graphs.DefaultDistance
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
@@ -29,7 +29,7 @@ distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
 
     broadcast!(-, dists, dists, wt_transform)
     for v in vertices(g)
-        dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+        dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
     @compat if ismutable(distmx)

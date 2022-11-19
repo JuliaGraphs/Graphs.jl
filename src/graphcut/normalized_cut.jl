@@ -1,5 +1,5 @@
 using ArnoldiMethod
-#computes normalized cut cost for partition `cut`
+# computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = zero(eltype(W))
     for j in axes(W, 2)
@@ -118,7 +118,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
 
     m == 1 && return [1]
 
-    #get eigenvector corresponding to second smallest eigenvalue
+    # get eigenvector corresponding to second smallest eigenvalue
     # v = eigs(D-W, D, nev=2, which=SR())[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
@@ -130,7 +130,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     end
     v = invDroot * ret
 
-    #perform n-cuts with different partitions of v and find best one
+    # perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
     for t in range(minimum(v), stop=maximum(v), length=num_cuts)
@@ -143,7 +143,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     end
 
     if min_cost < thres
-        #split graph, compute normalized_cut for each subgraph recursively and merge indices.
+        # split graph, compute normalized_cut for each subgraph recursively and merge indices.
         cut = v .> best_thres
         W1, W2, vmap1, vmap2 = _partition_weightmx(cut, W)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
@@ -188,4 +188,3 @@ function normalized_cut(g::AbstractGraph,
 
     return _recursive_normalized_cut(W, thres, num_cuts)
 end
-

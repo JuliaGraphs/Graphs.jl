@@ -75,7 +75,7 @@
         @test test_nbw(g, 2, len)
       end
     end
-    #test to make sure it works with self loops.
+    # test to make sure it works with self loops.
     add_edge!(gx, 1, 1)
     for g in testgraphs(gx)
       for len = 1:(3 * n)

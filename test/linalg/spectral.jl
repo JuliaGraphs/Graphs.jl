@@ -2,7 +2,7 @@ import Base: Matrix
 import Base: size
 using ArnoldiMethod
 
-#using Graphs.LinAlg: eigs
+# using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 @testset "Spectral" begin
@@ -81,18 +81,18 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test_throws ErrorException adjacency_matrix(g; dir=:purple)
     end
 
-    #that call signature works
+    # that call signature works
     for g in testdigraphs(g5)
         inmat   = adjacency_matrix(g, Int; dir=:in)
         outmat  = adjacency_matrix(g, Int; dir=:out)
         bothmat = adjacency_matrix(g, Int; dir=:both)
 
-        #relations that should be true
+        # relations that should be true
         @test inmat' == outmat
         @test all((bothmat - outmat) .>= 0)
         @test all((bothmat - inmat)  .>= 0)
 
-        #check properties of the undirected laplacian carry over.
+        # check properties of the undirected laplacian carry over.
         for dir in [:in, :out, :both]
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
@@ -157,11 +157,11 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         z = B * x
         @test norm(y - z) < 1e-8
 
-        #check that matmat works and Matrix(nbt) == B
+        # check that matmat works and Matrix(nbt) == B
 
         @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
-        #check that matmat works and Matrix(nbt) == B
+        # check that matmat works and Matrix(nbt) == B
         @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
         @test size(y) == size(x)

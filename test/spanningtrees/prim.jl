@@ -15,7 +15,7 @@
         @test mst == vec_mst
     end
 
-    #second test
+    # second test
     distmx_sec = [
         0       0       0.26    0       0.38    0       0.58    0.16
         0       0       0.36    0.29    0       0.32    0       0.19

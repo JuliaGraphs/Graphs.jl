@@ -15,8 +15,8 @@ A thread safe queue implementation for using as the queue for BFS.
 """
 struct ThreadQueue{T,N<:Integer}
     data::Vector{T}
-    head::Atomic{N} #Index of the head
-    tail::Atomic{N} #Index of the tail
+    head::Atomic{N} # Index of the head
+    tail::Atomic{N} # Index of the tail
 end
 
 function ThreadQueue(T::Type, maxlength::N) where N <: Integer
@@ -58,7 +58,7 @@ function bfskernel(
             # Atomically check and set parent value if not set yet.
             parent = atomic_cas!(parents[vertex], zero(T), src)
             if parent == 0
-                push!(next, vertex) #Push onto queue if newly found
+                push!(next, vertex) # Push onto queue if newly found
             end
         end
     end

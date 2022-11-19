@@ -272,7 +272,7 @@ function strongly_connected_components end
                         # found a cycle in a completed dfs tree.
                         component = Vector{T}()
 
-                        while !isempty(stack) #break when popped == v
+                        while !isempty(stack) # break when popped == v
                             # drain stack until we see v.
                             # everything on the stack until we see v is in the SCC rooted at v.
                             popped = pop!(stack)

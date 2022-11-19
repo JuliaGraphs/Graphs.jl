@@ -154,7 +154,7 @@ function greedy_contiguous_partition(
 
     suffix_sum = cumsum(reverse(weight))
     reverse!(suffix_sum)
-    push!(suffix_sum, 0) #Eg. [2, 3, 1] => [6, 4, 1, 0]
+    push!(suffix_sum, 0) # Eg. [2, 3, 1] => [6, 4, 1, 0]
 
     partitions = Vector{UnitRange{U}}()
     sizehint!(partitions, required_partitions)

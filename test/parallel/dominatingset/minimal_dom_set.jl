@@ -26,12 +26,12 @@
             @test (length(d)== 1 || (length(d)== 4 && minimum(d) > 1 ))
         end
     end
-  
+
     g4 = complete_graph(5)
     for parallel in [:threads, :distributed]
         for g in testgraphs(g4)
             d = @inferred(Parallel.dominating_set(g, 4, MinimalDominatingSet(); parallel=parallel, rng=StableRNG(0)))
-            @test length(d)== 1 #Exactly one vertex
+            @test length(d)== 1 # Exactly one vertex
         end
     end
 

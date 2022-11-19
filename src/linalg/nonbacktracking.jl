@@ -150,7 +150,7 @@ function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     end
 end
 
-#TODO: documentation needs work. sbromberger 20170326
+# TODO: documentation needs work. sbromberger 20170326
 """
     contract(nbt, edgespace)
 

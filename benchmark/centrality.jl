@@ -9,7 +9,7 @@
         @bench "$(name): katz" Graphs.katz_centrality($g)
       end
     end
-  end #graphs
+  end # graphs
   @benchgroup "digraphs" begin
     for (name, g) in DIGRAPHS
       @bench "$(name): degree" Graphs.degree_centrality($g)

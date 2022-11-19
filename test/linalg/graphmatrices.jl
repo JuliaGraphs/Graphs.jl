@@ -39,7 +39,7 @@ using ArnoldiMethod
     function test_laplacian(mat)
         lapl = CombinatorialLaplacian(CombinatorialAdjacency(mat))
         @test typeof(lapl) <: Laplacian
-        #constructors that work.
+        # constructors that work.
         @test adjacency(lapl).A == mat
         adj = adjacency(lapl)
         @test typeof(StochasticAdjacency(adj)) <: StochasticAdjacency
@@ -60,7 +60,7 @@ using ArnoldiMethod
         @test typeof(adjacency(normalizedlapl)) <: NormalizedAdjacency
         @test !(typeof(adjacency(normalizedlapl)) <: CombinatorialAdjacency)
 
-        #constructors that fail.
+        # constructors that fail.
         @test_throws MethodError CombinatorialAdjacency(lapl)
         @test_throws MethodError StochasticLaplacian(lapl)
         @test_throws MethodError NormalizedLaplacian(lapl)
@@ -107,7 +107,7 @@ using ArnoldiMethod
         @test eigs(lapl, which=LR())[1][1] > 2.0
         @test eigs(sparse(lapl), which=SR())[1][2] > 0.0
         @test eigs(sparse(lapl), which=SR())[1][1] < 1e-7
-        
+
         lhat = NormalizedLaplacian(adjhat)
         @test eigs(lhat, which=LR())[1][1] < 2.0 + 1e-9
     end

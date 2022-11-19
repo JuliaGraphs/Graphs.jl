@@ -867,7 +867,7 @@ function random_regular_digraph(
     n::Integer, k::Integer;
     dir::Symbol=:out, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
 )
-    #TODO remove the function sample from StatsBase for one allowing the use
+    # TODO remove the function sample from StatsBase for one allowing the use
     # of a local rng
     !(0 <= k < n) && throw(ArgumentError("the 0 <= k < n inequality must be satisfied"))
 
@@ -1069,7 +1069,7 @@ end
 
 const biclique = ones(2, 2) - Matrix{Float64}(I, 2, 2)
 
-#TODO: this documentation needs work. sbromberger 20170326
+# TODO: this documentation needs work. sbromberger 20170326
 """
     nearbipartiteaffinity(sizes, between, intra)
 
@@ -1086,7 +1086,7 @@ function nearbipartiteaffinity(sizes::AbstractVector{T}, between::Real, intra::R
     return kron(between * Matrix{Float64}(I, numblocks, numblocks), biclique) + Matrix{Float64}(I, 2 * numblocks, 2 * numblocks) * intra
 end
 
-#Return a generator for edges from a stochastic block model near-bipartite graph.
+# Return a generator for edges from a stochastic block model near-bipartite graph.
 nearbipartiteaffinity(sizes::Vector{T}, between::Real, inter::Real, noise::Real) where {T <: Integer} =
     nearbipartiteaffinity(sizes, between, inter) .+ noise
 
@@ -1165,7 +1165,7 @@ function SimpleGraph(
     return SimpleGraph(nvg, neg, make_edgestream(sbm; rng=rng, seed=seed))
 end
 
-#TODO: this documentation needs work. sbromberger 20170326
+# TODO: this documentation needs work. sbromberger 20170326
 """
     blockcounts(sbm, A)
 

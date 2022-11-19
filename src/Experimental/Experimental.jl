@@ -4,7 +4,7 @@ using Graphs
 using Graphs.SimpleGraphs
 
 export description,
-    #isomorphism
+    # isomorphism
     VF2, vf2, IsomorphismProblem, SubgraphIsomorphismProblem, InducedSubgraphIsomorphismProblem,
     could_have_isomorph, has_isomorph, all_isomorph, count_isomorph,
     has_induced_subgraphisomorph, count_induced_subgraphisomorph, all_induced_subgraphisomorph,

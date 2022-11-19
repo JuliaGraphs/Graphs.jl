@@ -26,24 +26,24 @@ julia> bridges(path_graph(5))
 function bridges end
 @traitfn function bridges(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
     s = Vector{Tuple{T, T, T}}()
-    low = zeros(T, nv(g)) #keeps track of the earliest accessible time of a vertex in DFS-stack, effect of having back-edges is considered here
-    pre = zeros(T, nv(g)) #checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
-    bridges = Edge{T}[]   #keeps record of the bridge-edges
+    low = zeros(T, nv(g)) # keeps track of the earliest accessible time of a vertex in DFS-stack, effect of having back-edges is considered here
+    pre = zeros(T, nv(g)) # checks the entry time of a vertex in the DFS-stack, pre[u] = 0 if a vertex isn't visited; non-zero, otherwise
+    bridges = Edge{T}[]   # keeps record of the bridge-edges
 
     # We iterate over all vertices, and if they have already been visited (pre != 0), we don't start a DFS from that vertex.
     # The purpose is to create a DFS forest.
     @inbounds for u in vertices(g)
         pre[u] != 0 && continue
-        v = u #currently visiting vertex
-        wi::T = zero(T) #index of children of v
-        w::T = zero(T) #children of v
+        v = u # currently visiting vertex
+        wi::T = zero(T) # index of children of v
+        w::T = zero(T) # children of v
         cnt::T = one(T) # keeps record of the time
         first_time = true
 
-        #start of DFS
+        # start of DFS
         while !isempty(s) || first_time
             first_time = false
-            if  wi < 1 #initialisation for vertex v
+            if  wi < 1 # initialisation for vertex v
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
@@ -68,7 +68,7 @@ function bridges end
                 # Pushing onto the stack is analogous to visiting the vertex and starting DFS from that vertex.
                 if pre[w] == 0
                     push!(s, (wi, u, v)) # the stack states are (index of child, currently visiting vertex, parent vertex of the child)
-                    #updates the value for stimulating DFS from top of the stack
+                    # updates the value for stimulating DFS from top of the stack
                     wi = 0
                     u = v
                     v = w

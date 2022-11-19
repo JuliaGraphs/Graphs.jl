@@ -2,7 +2,7 @@
 
 ###################################################################
 #
-#The type that encapsulates the state of Shortest Path Faster Algorithm
+# The type that encapsulates the state of Shortest Path Faster Algorithm
 #
 ###################################################################
 
