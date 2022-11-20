@@ -1,17 +1,17 @@
 @testset "Modularity" begin
-    
+
     # 1. undirected test cases 
     n = 10
     m = n * (n - 1) / 2
     c = ones(Int, n)
     gint = complete_graph(n)
     for g in testgraphs(gint)
-      @test @inferred(modularity(g, c)) == 0
+        @test @inferred(modularity(g, c)) == 0
     end
 
     gint = SimpleGraph(n)
     for g in testgraphs(gint)
-      @test @inferred(modularity(g, c)) == 0
+        @test @inferred(modularity(g, c)) == 0
     end
 
     barbell = blockdiag(complete_graph(3), complete_graph(3))
@@ -58,12 +58,14 @@
     barbell = blockdiag(triangle, triangle)
     add_edge!(barbell, 1, 4) # this edge has a weight of 5
     c = [1, 1, 1, 2, 2, 2]
-    d = [[0  1  1  5  0  0]
-         [1  0  1  0  0  0]
-         [1  1  0  0  0  0]
-         [5  0  0  0  1  1]
-         [0  0  0  1  0  1]
-         [0  0  0  1  1  0]]
+    d = [
+        [0 1 1 5 0 0]
+        [1 0 1 0 0 0]
+        [1 1 0 0 0 0]
+        [5 0 0 0 1 1]
+        [0 0 0 1 0 1]
+        [0 0 0 1 1 0]
+    ]
     for g in testgraphs(barbell)
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.045454545454545456, atol=1e-3)
@@ -78,12 +80,14 @@
     barbell = blockdiag(triangle, triangle)
     add_edge!(barbell, 1, 4) # this edge has a weight of 5
     c = [1, 1, 1, 2, 2, 2]
-    d = [[0  1  0  5  0  0]
-         [0  0  1  0  0  0]
-         [1  0  0  0  0  0]
-         [0  0  0  0  1  0]
-         [0  0  0  0  0  1]
-         [0  0  0  1  0  0]]
+    d = [
+        [0 1 0 5 0 0]
+        [0 0 1 0 0 0]
+        [1 0 0 0 0 0]
+        [0 0 0 0 1 0]
+        [0 0 0 0 0 1]
+        [0 0 0 1 0 0]
+    ]
     for g in testdigraphs(barbell)
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.1487603305785124, atol=1e-3)

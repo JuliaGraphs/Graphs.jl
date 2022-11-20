@@ -11,17 +11,17 @@ julia> rich_club(g, 1)
 0.4
 ```
 """
-function rich_club(g::AbstractGraph{T}, k::Int) where T
+function rich_club(g::AbstractGraph{T}, k::Int) where {T}
     E = zero(T)
     for e in edges(g)
-        if (outdegree(g, src(e)) >= k) && (indegree(g, dst(e)) >= k )
-            E +=1
+        if (outdegree(g, src(e)) >= k) && (indegree(g, dst(e)) >= k)
+            E += 1
         end
     end
     N = count(degree(g) .>= k)
     if is_directed(g)
-        return E / (N*(N-1))
+        return E / (N * (N - 1))
     else
-        return 2*E / (N*(N-1))
+        return 2 * E / (N * (N - 1))
     end
 end

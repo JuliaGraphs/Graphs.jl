@@ -46,17 +46,17 @@ function stress_centrality(g::AbstractGraph, vs=vertices(g))
 end
 
 function stress_centrality(
-    g::AbstractGraph, k::Integer;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
+    g::AbstractGraph,
+    k::Integer;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
 )
-    stress_centrality(g, sample(vertices(g), k, rng=rng, seed=seed))
+    return stress_centrality(g, sample(vertices(g), k; rng=rng, seed=seed))
 end
 
-function _stress_accumulate_basic!(stress::Vector{<:Integer},
-    state::DijkstraState,
-    g::AbstractGraph,
-    si::Integer)
-
+function _stress_accumulate_basic!(
+    stress::Vector{<:Integer}, state::DijkstraState, g::AbstractGraph, si::Integer
+)
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(Int, n_v)
     P = state.predecessors
@@ -69,7 +69,7 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     for w in S  # w is the farthest vertex from si
         for v in P[w]  # get the predecessors of w
             if v > 0
-                δ[v] +=  δ[w] + 1 # increment sp of pred
+                δ[v] += δ[w] + 1 # increment sp of pred
             end
         end
         δ[w] *= length(P[w]) # adjust the # of sps of vertex

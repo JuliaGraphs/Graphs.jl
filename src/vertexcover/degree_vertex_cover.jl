@@ -30,12 +30,8 @@ julia> vertex_cover(cycle_graph(3), DegreeVertexCover())
  3
 ```
 """
-function vertex_cover(
-    g::AbstractGraph{T},
-    alg::DegreeVertexCover
-    ) where T <: Integer 
-
-    nvg = nv(g)    
+function vertex_cover(g::AbstractGraph{T}, alg::DegreeVertexCover) where {T<:Integer}
+    nvg = nv(g)
     in_cover = falses(nvg)
     length_cover = 0
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g)))
@@ -46,11 +42,10 @@ function vertex_cover(
         length_cover += 1
 
         @inbounds @simd for u in neighbors(g, v)
-            if !in_cover[u] 
+            if !in_cover[u]
                 degree_queue[u] -= 1
             end
         end
     end
     return Graphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
-

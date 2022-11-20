@@ -11,12 +11,12 @@ The algorithm uses a DFS. Self-loops are counted as cycles.
 """
 function is_cyclic end
 @enum Vertex_state unvisited visited
-@traitfn function is_cyclic(g::AG::(!IsDirected)) where {T, AG<:AbstractGraph{T}}
-    visited = falses(nv(g)) 
+@traitfn function is_cyclic(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
+    visited = falses(nv(g))
     for v in vertices(g)
         visited[v] && continue
         visited[v] = true
-        S = [(v,v)] 
+        S = [(v, v)]
         while !isempty(S)
             parent, w = pop!(S)
             for u in neighbors(g, w)
@@ -31,7 +31,7 @@ function is_cyclic end
     return false
 end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     for v in vertices(g)
         vcolor[v] != 0 && continue
@@ -69,7 +69,7 @@ graph `g` as a vector of vertices in topological order.
 """
 function topological_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     for v in vertices(g)
@@ -118,10 +118,15 @@ use the corresponding edge direction (`:in` and `:out` are acceptable values).
 ### Implementation Notes
 This version of DFS is iterative.
 """
-dfs_parents(g::AbstractGraph, s::Integer; dir=:out) =
-(dir == :out) ? _dfs_parents(g, s, outneighbors) : _dfs_parents(g, s, inneighbors)
+function dfs_parents(g::AbstractGraph, s::Integer; dir=:out)
+    return if (dir == :out)
+        _dfs_parents(g, s, outneighbors)
+    else
+        _dfs_parents(g, s, inneighbors)
+    end
+end
 
-function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where T
+function _dfs_parents(g::AbstractGraph{T}, s::Integer, neighborfn::Function) where {T}
     parents = zeros(T, nv(g))
 
     seen = zeros(Bool, nv(g))

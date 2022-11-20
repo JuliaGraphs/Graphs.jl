@@ -1,10 +1,9 @@
 suite["core"] = BenchmarkGroup(["nv", "edges", "has_edge"])
 
-
 # nv
 suite["core"]["nv"] = BenchmarkGroup(["graphs", "digraphs"])
-suite["core"]["nv"]["graphs"] = @benchmarkable [nv(g) for (n,g) in $GRAPHS]
-suite["core"]["nv"]["digraphs"] = @benchmarkable [nv(g) for (n,g) in $DIGRAPHS]
+suite["core"]["nv"]["graphs"] = @benchmarkable [nv(g) for (n, g) in $GRAPHS]
+suite["core"]["nv"]["digraphs"] = @benchmarkable [nv(g) for (n, g) in $DIGRAPHS]
 
 # iterate edges
 function iter_edges(g::AbstractGraph)
@@ -16,8 +15,8 @@ function iter_edges(g::AbstractGraph)
 end
 
 suite["core"]["edges"] = BenchmarkGroup(["graphs", "digraphs"])
-suite["core"]["edges"]["graphs"] = @benchmarkable [iter_edges(g) for (n,g) in $GRAPHS]
-suite["core"]["edges"]["digraphs"] = @benchmarkable [iter_edges(g) for (n,g) in $DIGRAPHS]
+suite["core"]["edges"]["graphs"] = @benchmarkable [iter_edges(g) for (n, g) in $GRAPHS]
+suite["core"]["edges"]["digraphs"] = @benchmarkable [iter_edges(g) for (n, g) in $DIGRAPHS]
 
 # has edge
 function all_has_edge(g::AbstractGraph)
@@ -34,5 +33,5 @@ function all_has_edge(g::AbstractGraph)
 end
 
 suite["core"]["has_edge"] = BenchmarkGroup(["graphs", "digraphs"])
-suite["core"]["has_edge"]["graphs"] = @benchmark [all_has_edge(g) for (n,g) in $GRAPHS]
-suite["core"]["has_edge"]["digraphs"] = @benchmark [all_has_edge(g) for (n,g) in $DIGRAPHS]
+suite["core"]["has_edge"]["graphs"] = @benchmark [all_has_edge(g) for (n, g) in $GRAPHS]
+suite["core"]["has_edge"]["digraphs"] = @benchmark [all_has_edge(g) for (n, g) in $DIGRAPHS]

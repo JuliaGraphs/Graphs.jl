@@ -19,7 +19,7 @@ tests = [
     "dominatingset/minimal_dom_set",
     "independentset/maximal_ind_set",
     "vertexcover/random_vertex_cover",
-    "utils"
+    "utils",
 ]
 
 @testset "Graphs.Parallel" begin

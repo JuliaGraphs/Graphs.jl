@@ -9,14 +9,18 @@ and return the solution with the fewest vertices.
 used. This implementation is more efficient if `reps` is large.
 """
 function vertex_cover(
-    g::AbstractGraph{T}, reps::Integer, alg::RandomVertexCover;
-    parallel=:threads, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
-) where T <: Integer
-    Graphs.Parallel.generate_reduce(
+    g::AbstractGraph{T},
+    reps::Integer,
+    alg::RandomVertexCover;
+    parallel=:threads,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+) where {T<:Integer}
+    return Graphs.Parallel.generate_reduce(
         g,
-        (g::AbstractGraph{T})->Graphs.vertex_cover(g, alg; rng=rng, seed=seed), 
-        (x::Vector{T}, y::Vector{T})->length(x)<length(y),
+        (g::AbstractGraph{T}) -> Graphs.vertex_cover(g, alg; rng=rng, seed=seed),
+        (x::Vector{T}, y::Vector{T}) -> length(x) < length(y),
         reps;
-        parallel=parallel
+        parallel=parallel,
     )
 end

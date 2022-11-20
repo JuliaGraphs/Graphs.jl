@@ -36,15 +36,17 @@ function adjacency_matrix(g::AbstractGraph, T::DataType=Int; dir::Symbol=:out)
     end
 end
 
-@generated function _find_correct_type(g::AbstractGraph{T}) where T
+@generated function _find_correct_type(g::AbstractGraph{T}) where {T}
     TT = widen(T)
     if typemax(TT) >= typemax(Int64)
         TT = Int64
     end
     return :($TT)
- end
+end
 
-function _adjacency_matrix(g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1)
+function _adjacency_matrix(
+    g::AbstractGraph, T::DataType, neighborfn::Function, nzmult::Int=1
+)
     n_v = nv(g)
     nz = ne(g) * (is_directed(g) ? 1 : 2) * nzmult
     TT = _find_correct_type(g)
@@ -87,13 +89,15 @@ for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both gr
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`.
 """
-function laplacian_matrix(g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:unspec) where U
+function laplacian_matrix(
+    g::AbstractGraph{U}, T::DataType=Int; dir::Symbol=:unspec
+) where {U}
     if dir == :unspec
         dir = is_directed(g) ? :both : :out
     end
     A = adjacency_matrix(g, T; dir=dir)
     s = sum(A; dims=2)
-    D = convert(SparseMatrixCSC{T, U}, spdiagm(0 => s[:]))
+    D = convert(SparseMatrixCSC{T,U}, spdiagm(0 => s[:]))
     return D - A
 end
 
@@ -114,7 +118,9 @@ Converts the matrix to dense with ``nv^2`` memory usage.
 Use `eigvals(Matrix(laplacian_matrix(g, args...)))` to compute some of the
 eigenvalues/eigenvectors.
 """
-laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec) = eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
+function laplacian_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
+    return eigvals(Matrix(laplacian_matrix(g, T; dir=dir)))
+end
 
 """
     adjacency_spectrum(g[, T=Int; dir=:unspec])
@@ -135,7 +141,7 @@ eigenvalues/eigenvectors.
 """
 function adjacency_spectrum(g::AbstractGraph, T::DataType=Int; dir::Symbol=:unspec)
     if dir == :unspec
-        dir = is_directed(g) ?  :both : :out
+        dir = is_directed(g) ? :both : :out
     end
     return eigvals(Matrix(adjacency_matrix(g, T; dir=dir)))
 end
@@ -160,8 +166,7 @@ function incidence_matrix(g::AbstractGraph, T::DataType=Int; oriented=false)
     I = vcat(src.(edges(g)), dst.(edges(g)))
     J = vcat(1:n_e, 1:n_e)
     V = vcat(
-    (isdir || oriented) ? -fill(one(T), n_e) : fill(one(T), n_e),
-        fill(one(T), n_e),
+        (isdir || oriented) ? -fill(one(T), n_e) : fill(one(T), n_e), fill(one(T), n_e)
     )
     return sparse(I, J, V, nv(g), ne(g))
 end
@@ -179,18 +184,29 @@ If `k` is omitted, uses full spectrum.
 function spectral_distance end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
-@traitfn function spectral_distance(G₁::G, G₂::G, k::Integer) where {G <: AbstractGraph; !IsDirected{G}}
+@traitfn function spectral_distance(
+    G₁::G, G₂::G, k::Integer
+) where {G <: AbstractGraph; !IsDirected{G}}
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
-    λ₁ = k < nv(G₁) - 1 ? eigs(A₁, nev=k, which=LR())[1] : eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
-    λ₂ = k < nv(G₂) - 1 ? eigs(A₂, nev=k, which=LR())[1] : eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
+    λ₁ = if k < nv(G₁) - 1
+        eigs(A₁; nev=k, which=LR())[1]
+    else
+        eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
+    end
+    λ₂ = if k < nv(G₂) - 1
+        eigs(A₂; nev=k, which=LR())[1]
+    else
+        eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
+    end
 
     return sum(abs, (λ₁ - λ₂))
 end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance(G₁::G, G₂::G) where {G <: AbstractGraph; !IsDirected{G}}
-    nv(G₁) == nv(G₂) || throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
+    nv(G₁) == nv(G₂) ||
+        throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))
 end

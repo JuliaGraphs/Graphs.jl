@@ -17,15 +17,16 @@ from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
 - `rng=nothing`: A random generator to sample from.
 """
-function diffusion(g::AbstractGraph{T},
-                    p::Real,
-                    n::Integer;
-                    watch::AbstractVector=Vector{Int}(),
-                    normalize::Bool=false,
-                    rng::Union{Nothing, AbstractRNG} = nothing,
-                    seed::Union{Nothing, Integer} = nothing,
-                    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1, rng=rng, seed=seed),
-                    ) where T
+function diffusion(
+    g::AbstractGraph{T},
+    p::Real,
+    n::Integer;
+    watch::AbstractVector=Vector{Int}(),
+    normalize::Bool=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1; rng=rng, seed=seed),
+) where {T}
 
     # Initialize
     rng = rng_from_rng_or_seed(rng, seed)
@@ -88,14 +89,27 @@ diffusion as a vector representing the cumulative number of vertices
 infected at each simulation step, restricted to vertices included
 in `watch`, if specified.
 """
-diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
-diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
+diffusion_rate(x::Vector{Vector{T}}) where {T<:Integer} = cumsum(length.(x))
+function diffusion_rate(
+    g::AbstractGraph,
+    p::Real,
+    n::Integer;
     watch::AbstractVector=Vector{Int}(),
     normalize::Bool=false,
-    rng::Union{Nothing, AbstractRNG} = nothing,
-    seed::Union{Nothing, Integer} = nothing,
-    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1, rng=rng, seed=seed),
-    ) = diffusion_rate(diffusion(g, p, n,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1; rng=rng, seed=seed),
+)
+    return diffusion_rate(
+        diffusion(
+            g,
+            p,
+            n;
             initial_infections=initial_infections,
-            watch=watch, normalize=normalize, rng=rng, seed=seed))
-
+            watch=watch,
+            normalize=normalize,
+            rng=rng,
+            seed=seed,
+        ),
+    )
+end

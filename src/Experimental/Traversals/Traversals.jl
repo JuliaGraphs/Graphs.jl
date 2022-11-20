@@ -98,8 +98,12 @@ Traverse a graph `g` from source vertex `s` / vertices `ss` keeping track of `st
 traversal finished normally; `false` if one of the visit functions returned `false` (see )
 
 """
-traverse_graph!(g::AbstractGraph, s::Integer, alg, state, neighborfn) = traverse_graph!(g, [s], alg, state, neighborfn)
-traverse_graph!(g::AbstractGraph, s::Integer, alg, state) = traverse_graph!(g, [s], alg, state)
+function traverse_graph!(g::AbstractGraph, s::Integer, alg, state, neighborfn)
+    return traverse_graph!(g, [s], alg, state, neighborfn)
+end
+function traverse_graph!(g::AbstractGraph, s::Integer, alg, state)
+    return traverse_graph!(g, [s], alg, state)
+end
 
 struct VisitState{T<:Integer} <: AbstractTraversalState
     visited::Vector{T}
@@ -122,11 +126,8 @@ Return a vector representing the vertices of `g` visited in order by [`Traversal
 starting at vertex `s` (vertices `ss`).
 """
 function visited_vertices(
-    g::AbstractGraph{U},
-    ss::AbstractVector,
-    alg::TraversalAlgorithm
-    ) where U<:Integer
-
+    g::AbstractGraph{U}, ss::AbstractVector, alg::TraversalAlgorithm
+) where {U<:Integer}
     v = Vector{U}()
     sizehint!(v, nv(g))  # actually just the largest connected component, but we'll use this.
     state = VisitState(v)
@@ -135,8 +136,9 @@ function visited_vertices(
     return state.visited
 end
 
-visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm) = visited_vertices(g, [s], alg)
-
+function visited_vertices(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm)
+    return visited_vertices(g, [s], alg)
+end
 
 mutable struct ParentState{T<:Integer} <: AbstractTraversalState
     parents::Vector{T}
@@ -160,14 +162,15 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-function parents(g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn=outneighbors) where T
+function parents(
+    g::AbstractGraph{T}, s::Integer, alg::TraversalAlgorithm, neighborfn=outneighbors
+) where {T}
     parents = zeros(T, nv(g))
     state = ParentState(parents)
 
     traverse_graph!(g, s, alg, state, neighborfn)
     return state.parents
 end
-
 
 include("bfs.jl")
 include("dfs.jl")
@@ -177,7 +180,7 @@ include("dfs.jl")
 
 Return a directed acyclic graph based on a [`parents`](@ref) vector `p`.
 """
-function tree(p::AbstractVector{T}) where T <: Integer
+function tree(p::AbstractVector{T}) where {T<:Integer}
     n = T(length(p))
     t = DiGraph{T}(n)
     for (v, u) in enumerate(p)
@@ -194,7 +197,9 @@ end
 Return a directed acyclic graph based on traversal of the graph `g` starting with source vertex `s`
 using algorithm `alg` with neighbor function `neighborfn`.
 """
-function tree(g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors)
+function tree(
+    g::AbstractGraph, s::Integer, alg::TraversalAlgorithm, neighborfn::Function=outneighbors
+)
     p = parents(g, s, alg, neighborfn)
     return tree(p)
 end

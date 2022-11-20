@@ -7,7 +7,6 @@
 #
 #################################################
 
-
 """
     mincut(g, distmx=weights(g))
 
@@ -16,9 +15,7 @@ values that determines the partition in `g` (1 or 2) and `bestcut` is the
 weight of the cut that makes this partition. An optional `distmx` matrix may
 be specified; if omitted, edge distances are assumed to be 1.
 """
-function mincut(g::AbstractGraph,
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
-
+function mincut(g::AbstractGraph, distmx::AbstractMatrix{T}=weights(g)) where {T<:Real}
     U = eltype(g)
     colormap = zeros(UInt8, nv(g))   ## 0 if unseen, 1 if processing and 2 if seen and closed
     parities = falses(nv(g))
@@ -66,9 +63,8 @@ function mincut(g::AbstractGraph,
             end
         end
     end
-    return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
+    return (convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
-
 
 """
     maximum_adjacency_visit(g[, distmx][, log][, io][, s])
@@ -80,12 +76,13 @@ specified; if omitted, edge distances are assumed to be 1. If `log` (default
 `false`) is `true`, visitor events will be printed to `io`, which defaults to
 `STDOUT`; otherwise, no event information will be displayed.
 """
-function maximum_adjacency_visit(g::AbstractGraph{U},
+function maximum_adjacency_visit(
+    g::AbstractGraph{U},
     distmx::AbstractMatrix{T},
     log::Bool=false,
     io::IO=stdout,
-    s::U=one(U)) where {U, T <: Real}
-
+    s::U=one(U),
+) where {U,T<:Real}
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
@@ -97,7 +94,6 @@ function maximum_adjacency_visit(g::AbstractGraph{U},
     for v in vertices(g)
         pq[v] = zero(T)
     end
-
 
     # Give start vertex maximum priority
     pq[s] = one(T)
@@ -120,8 +116,6 @@ function maximum_adjacency_visit(g::AbstractGraph{U},
     return vertices_order
 end
 
-maximum_adjacency_visit(g::AbstractGraph{U}, s::U=one(U)) where {U} = maximum_adjacency_visit(g,
-    weights(g),
-    false,
-    stdout,
-    s)
+function maximum_adjacency_visit(g::AbstractGraph{U}, s::U=one(U)) where {U}
+    return maximum_adjacency_visit(g, weights(g), false, stdout, s)
+end

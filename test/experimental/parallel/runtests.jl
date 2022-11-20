@@ -3,7 +3,7 @@
 # using Base.Threads: @threads, Atomic
 
 tests = [
-     # "traversals/gdistances",  # TODO currently disabled as the code in gdistances seems to be broken
+# "traversals/gdistances",  # TODO currently disabled as the code in gdistances seems to be broken
 ]
 
 @testset "Graphs.Experimental.Parallel" begin

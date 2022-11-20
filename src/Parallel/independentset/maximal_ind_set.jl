@@ -9,14 +9,18 @@ and return the solution with the most vertices.
 used. This implementation is more efficient if `reps` is large.
 """
 function independent_set(
-    g::AbstractGraph{T}, reps::Integer, alg::MaximalIndependentSet;
-    parallel=:threads, rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
-) where T <: Integer
-    Graphs.Parallel.generate_reduce(
+    g::AbstractGraph{T},
+    reps::Integer,
+    alg::MaximalIndependentSet;
+    parallel=:threads,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+) where {T<:Integer}
+    return Graphs.Parallel.generate_reduce(
         g,
-        (g::AbstractGraph{T})->Graphs.independent_set(g, alg; rng=rng, seed=seed),
-        (x::Vector{T}, y::Vector{T})->length(x)>length(y),
+        (g::AbstractGraph{T}) -> Graphs.independent_set(g, alg; rng=rng, seed=seed),
+        (x::Vector{T}, y::Vector{T}) -> length(x) > length(y),
         reps;
-        parallel=parallel
+        parallel=parallel,
     )
 end

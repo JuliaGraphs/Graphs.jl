@@ -18,7 +18,7 @@ function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
     rows = rowvals(W)
     vals = nonzeros(W)
     n = size(W, 2)
-    for i = 1:n
+    for i in 1:n
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
@@ -90,10 +90,13 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
 
     rows = rowvals(W)
     vals = nonzeros(W)
-    I1 = Vector{Int}(); I2 = Vector{Int}()
-    J1 = Vector{Int}(); J2 = Vector{Int}()
-    V1 = Vector{Float64}(); V2 = Vector{Float64}()
-    for i = 1:nv
+    I1 = Vector{Int}()
+    I2 = Vector{Int}()
+    J1 = Vector{Int}()
+    J2 = Vector{Int}()
+    V1 = Vector{Float64}()
+    V2 = Vector{Float64}()
+    for i in 1:nv
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] == cut[row] == false
@@ -114,7 +117,7 @@ end
 
 function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     m, n = size(W)
-    D = Diagonal(vec(sum(W, dims=2)))
+    D = Diagonal(vec(sum(W; dims=2)))
 
     m == 1 && return [1]
 
@@ -123,17 +126,17 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 12
-        λ, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
-        ret = real(Q[:,2])
+        λ, Q = eigs(invDroot' * (D - W) * invDroot; nev=12, which=SR())
+        ret = real(Q[:, 2])
     else
-        ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
+        ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:, 2]
     end
     v = invDroot * ret
 
     # perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
-    for t in range(minimum(v), stop=maximum(v), length=num_cuts)
+    for t in range(minimum(v); stop=maximum(v), length=num_cuts)
         cut = v .> t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost
@@ -181,10 +184,11 @@ It is important to identify a good threshold for your application. A bisection s
 ### References
 "Normalized Cuts and Image Segmentation" - Jianbo Shi and Jitendra Malik
 """
-function normalized_cut(g::AbstractGraph,
+function normalized_cut(
+    g::AbstractGraph,
     thres::Real,
     W::AbstractMatrix{T}=adjacency_matrix(g),
-    num_cuts::Int=10) where T <: Real
-
+    num_cuts::Int=10,
+) where {T<:Real}
     return _recursive_normalized_cut(W, thres, num_cuts)
 end

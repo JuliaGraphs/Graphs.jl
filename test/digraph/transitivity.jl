@@ -37,7 +37,7 @@
                 @test g == @inferred(transitivereduction(g))
             end
         end
-        
+
         # transitive reduction of a path is a path again
         @testset "pathgraph reduction" begin
             pathgraph = path_digraph(10)
@@ -49,7 +49,7 @@
                 @test g == @inferred(transitivereduction(gclosure))
             end
         end
-        
+
         # Transitive reduction of a complete graph should be s simple cycle
         @testset "completegraph reduction" begin
             completegraph = complete_digraph(9)
@@ -62,30 +62,30 @@
 
         # transitive reduction a graph with no edges is the same graph again
         @testset "zero-edge reduction" begin
-        noedgegraph = SimpleDiGraph(7)
+            noedgegraph = SimpleDiGraph(7)
             @testset "$g" for g in testgraphs(noedgegraph)
                 @test g == @inferred(transitivereduction(g))
             end
         end
-         
+
         # transitve reduction should maintain a selfloop only when selflooped==true
         @testset "selfloops reduction" begin
             selfloopgraph = SimpleDiGraph(1)
             add_edge!(selfloopgraph, 1, 1)
             @testset "$g" for g in testgraphs(selfloopgraph)
-                @test g == @inferred(transitivereduction(g; selflooped=true));
-                @test g != @inferred(transitivereduction(g; selflooped=false));
+                @test g == @inferred(transitivereduction(g; selflooped=true))
+                @test g != @inferred(transitivereduction(g; selflooped=false))
             end
 
-        # transitive should not maintain selfloops for strongly connected components
-        # of size > 1
+            # transitive should not maintain selfloops for strongly connected components
+            # of size > 1
             selfloopgraph2 = SimpleDiGraph(2)
             add_edge!(selfloopgraph2, 1, 1)
             add_edge!(selfloopgraph2, 1, 2)
             add_edge!(selfloopgraph2, 2, 1)
             add_edge!(selfloopgraph2, 2, 2)
             @testset "$g" for g in testgraphs(selfloopgraph2)
-                @test g != @inferred(transitivereduction(g; selflooped=true));
+                @test g != @inferred(transitivereduction(g; selflooped=true))
             end
         end
 
@@ -102,7 +102,7 @@
                 add_edge!(barbellgraph, i, j)
                 add_edge!(barbellgraph, j, i)
             end
-            add_edge!(barbellgraph, 1, 5);
+            add_edge!(barbellgraph, 1, 5)
             @testset "$g" for g in testgraphs(barbellgraph)
                 greduced = @inferred(transitivereduction(g))
                 scc = strongly_connected_components(greduced)
