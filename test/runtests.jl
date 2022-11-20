@@ -21,7 +21,9 @@ const testdir = dirname(@__FILE__)
 end
 
 @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore=["Experimental/vf2.jl"])  # TODO: remove ignore kwarg once the file is formatted correctly
+    @test format(
+        Graphs; verbose=false, overwrite=false, ignore=[joinpath("Experimental", "vf2.jl")]
+    )  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
 @testset verbose = true "Doctests (Documenter.jl)" begin
