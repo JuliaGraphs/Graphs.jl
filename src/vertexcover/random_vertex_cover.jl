@@ -24,11 +24,11 @@ Approximation Factor: 2
 function vertex_cover(
     g::AbstractGraph{T},
     alg::RandomVertexCover;
-    rng::Union{Nothing, AbstractRNG}=nothing, seed::Union{Nothing, Integer}=nothing
-) where T <: Integer 
-
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+) where {T<:Integer}
     (ne(g) > 0) || return Vector{T}() #Shuffle raises error
-    nvg = nv(g)  
+    nvg = nv(g)
     in_cover = falses(nvg)
     length_cover = 0
 
@@ -44,4 +44,3 @@ function vertex_cover(
 
     return Graphs.findall!(in_cover, Vector{T}(undef, length_cover))
 end
-

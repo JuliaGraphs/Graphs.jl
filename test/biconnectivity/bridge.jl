@@ -22,12 +22,7 @@
 
     for g in testgraphs(gint)
         brd = @inferred(bridges(g))
-        ans = [
-            Edge(1, 2),
-            Edge(8, 9),
-            Edge(7, 8),
-            Edge(11, 12),
-        ]
+        ans = [Edge(1, 2), Edge(8, 9), Edge(7, 8), Edge(11, 12)]
         @test brd == ans
     end
     for level in 1:6
@@ -42,11 +37,9 @@
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
     for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
-        @test @inferred(bridges(h)) == [
-            Edge(5, 6),
-        ]
+        @test @inferred(bridges(h)) == [Edge(5, 6)]
     end
 
-    dir = SimpleDiGraph(10, 10, rng=rng)
+    dir = SimpleDiGraph(10, 10; rng=rng)
     @test_throws MethodError bridges(dir)
 end

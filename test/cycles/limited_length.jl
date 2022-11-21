@@ -31,10 +31,10 @@
 
     @testset "self loops" begin
         selfloopg = DiGraph([
-            0 1 0 0;
-            0 0 1 0;
-            1 0 1 0;
-            0 0 0 1;
+            0 1 0 0
+            0 0 1 0
+            1 0 1 0
+            0 0 0 1
         ])
         cycles = simplecycles_limited_length(selfloopg, nv(selfloopg))
         @test [3] in cycles
@@ -47,7 +47,7 @@
         octag = smallgraph(:octahedral)
         octadg = DiGraph(octag)
         octalengths, _ = simplecycleslength(octadg)
-        for k = 1:6
+        for k in 1:6
             @test sum(octalengths[1:k]) == length(simplecycles_limited_length(octag, k))
             @test sum(octalengths[1:k]) == length(simplecycles_limited_length(octadg, k))
         end

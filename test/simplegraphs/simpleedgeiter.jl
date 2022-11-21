@@ -33,9 +33,12 @@
         #
         # codecov for eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
         gd = SimpleDiGraph{UInt8}(10, 20; rng=rng)
-        @test @inferred(eltype(edges(gd))) == eltype(typeof(edges(gd))) == edgetype(gd) == SimpleDiGraphEdge{UInt8}
+        @test @inferred(eltype(edges(gd))) ==
+            eltype(typeof(edges(gd))) ==
+            edgetype(gd) ==
+            SimpleDiGraphEdge{UInt8}
     end
-    
+
     ga = SimpleGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
@@ -74,10 +77,8 @@
         @test collect(eit) == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
         eit = @inferred(edges(dga))
-        @test collect(eit) == [
-            SimpleEdge(3, 2), SimpleEdge(3, 10),
-            SimpleEdge(5, 10), SimpleEdge(10, 3)
-        ]
+        @test collect(eit) ==
+            [SimpleEdge(3, 2), SimpleEdge(3, 10), SimpleEdge(5, 10), SimpleEdge(10, 3)]
     end
 
     @testset "graph modifications" begin

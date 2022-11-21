@@ -2,7 +2,7 @@ import Base: Matrix
 import Base: size
 using ArnoldiMethod
 
-#using Graphs.LinAlg: eigs
+# using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices
 Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 @testset "Spectral" begin
@@ -20,8 +20,10 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test adjacency_spectrum(g)[1] ≈ -1.732050807568878
     end
 
-
-    add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
+    add_edge!(g5, 1, 2)
+    add_edge!(g5, 2, 3)
+    add_edge!(g5, 1, 3)
+    add_edge!(g5, 3, 4)
     for g in testdigraphs(g5)
         @test adjacency_matrix(g, Bool) == adjacency_matrix(g, Bool; dir=:out)
         @test laplacian_spectrum(g)[3] == laplacian_spectrum(g; dir=:both)[3] == 3.0
@@ -38,15 +40,15 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     g = copy(g5)
     add_edge!(g, 1, 1)
     @test adjacency_matrix(g)[1, 1] == 1
-    @test indegree(g) == sum(adjacency_matrix(g), dims=1)[1, :]
-    @test outdegree(g) == sum(adjacency_matrix(g), dims=2)[:, 1]
+    @test indegree(g) == sum(adjacency_matrix(g); dims=1)[1, :]
+    @test outdegree(g) == sum(adjacency_matrix(g); dims=2)[:, 1]
 
     g10 = complete_graph(10)
     for g in testgraphs(g10)
         B, em = non_backtracking_matrix(g)
         @test length(em) == 2 * ne(g)
         @test size(B) == (2 * ne(g), 2 * ne(g))
-        for i = 1:10
+        for i in 1:10
             @test sum(B[:, i]) == 8
             @test sum(B[i, :]) == 8
         end
@@ -56,8 +58,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         z = zeros(Float64, nv(g))
         n10 = Nonbacktracking(g)
         @test size(n10) == (2 * ne(g), 2 * ne(g))
-        @test size(n10,1) == n10.m
-        @test size(n10,2) == n10.m
+        @test size(n10, 1) == n10.m
+        @test size(n10, 2) == n10.m
         @test eltype(n10) == Float64
         @test !issymmetric(n10)
 
@@ -74,25 +76,25 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
     for g in testgraphs(g3)
         @test adjacency_matrix(g) ==
-            adjacency_matrix(g, dir=:out) ==
-            adjacency_matrix(g, dir=:in) ==
-            adjacency_matrix(g, dir=:both)
+            adjacency_matrix(g; dir=:out) ==
+            adjacency_matrix(g; dir=:in) ==
+            adjacency_matrix(g; dir=:both)
 
         @test_throws ErrorException adjacency_matrix(g; dir=:purple)
     end
 
-    #that call signature works
+    # that call signature works
     for g in testdigraphs(g5)
-        inmat   = adjacency_matrix(g, Int; dir=:in)
-        outmat  = adjacency_matrix(g, Int; dir=:out)
+        inmat = adjacency_matrix(g, Int; dir=:in)
+        outmat = adjacency_matrix(g, Int; dir=:out)
         bothmat = adjacency_matrix(g, Int; dir=:both)
 
-        #relations that should be true
+        # relations that should be true
         @test inmat' == outmat
         @test all((bothmat - outmat) .>= 0)
-        @test all((bothmat - inmat)  .>= 0)
+        @test all((bothmat - inmat) .>= 0)
 
-        #check properties of the undirected laplacian carry over.
+        # check properties of the undirected laplacian carry over.
         for dir in [:in, :out, :both]
             T = eltype(g)
             amat = adjacency_matrix(g, Float64; dir=dir)
@@ -103,7 +105,6 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         end
     end
 
-
     for g in testdigraphs(g4)
         # testing incidence_matrix, first directed graph
         @test size(incidence_matrix(g)) == (5, 4)
@@ -113,7 +114,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
         A = incidence_matrix(g)
         B = incidence_matrix(reverse(g))
-        @test all((A+B) .== 0)
+        @test all((A + B) .== 0)
     end
 
     for g in testgraphs(g3)
@@ -132,7 +133,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
     # Check size of incidence matrix with isolated vertices
     g6 = complete_graph(4)
-    for k = 1:3
+    for k in 1:3
         add_vertex!(g6)
     end
     for g in testgraphs(g6)
@@ -141,7 +142,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
 
     # TESTS FOR Nonbacktracking operator.
 
-    n = 10; k = 5
+    n = 10
+    k = 5
     pg = complete_graph(n)
     # ϕ1 = nonbacktrack_embedding(pg, k)'
     for g in testgraphs(pg)
@@ -149,7 +151,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         B, emap = non_backtracking_matrix(g)
         Bs = sparse(nbt)
         @test sparse(B) == Bs
-        @test eigs(nbt, which=LR(), nev=1)[1] ≈ eigs(B, which=LR(), nev=1)[1] atol = 1e-5
+        @test eigs(nbt; which=LR(), nev=1)[1] ≈ eigs(B; which=LR(), nev=1)[1] atol = 1e-5
 
         # check that matvec works
         x = ones(Float64, nbt.m)
@@ -157,11 +159,11 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         z = B * x
         @test norm(y - z) < 1e-8
 
-        #check that matmat works and Matrix(nbt) == B
+        # check that matmat works and Matrix(nbt) == B
 
         @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
-        #check that matmat works and Matrix(nbt) == B
+        # check that matmat works and Matrix(nbt) == B
         @test norm(nbt * Matrix{Float64}(I, nbt.m, nbt.m) - B) < 1e-8
 
         @test size(y) == size(x)
@@ -169,7 +171,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         B₁ = Nonbacktracking(g10)
 
         @test Matrix(B₁) == Matrix(B)
-        @test  B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
+        @test B₁ * ones(size(B₁)[2]) == B * ones(size(B)[2])
         @test size(B₁) == size(B)
         @test !issymmetric(B₁)
         @test eltype(B₁) == Float64
@@ -177,8 +179,8 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
     # END tests for Nonbacktracking
 
     # spectral distance checks
-    for n = 3:10
-        polygon = random_regular_graph(n, 2, rng=rng)
+    for n in 3:10
+        polygon = random_regular_graph(n, 2; rng=rng)
         for g in testgraphs(polygon)
             @test spectral_distance(g, g) ≈ 0 atol = 1e-8
             @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8

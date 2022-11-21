@@ -3,18 +3,17 @@
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
     for g in testdigraphs(gint)
-
-        z  = Graphs.stress_centrality(g)
+        z = Graphs.stress_centrality(g)
         zd = @inferred(Parallel.stress_centrality(g; parallel=:distributed))
         @test z == zd == c
         zt = @inferred(Parallel.stress_centrality(g; parallel=:threads))
-        @test z == zt == c 
+        @test z == zt == c
 
         xd = Parallel.stress_centrality(g, 3; parallel=:distributed, rng=rng)
         @test length(xd) == 50
         xt = Parallel.stress_centrality(g, 3; parallel=:threads, rng=rng)
         @test length(xt) == 50
-        
+
         xd2 = Parallel.stress_centrality(g, collect(1:20); parallel=:distributed)
         @test length(xd2) == 50
         xt2 = Parallel.stress_centrality(g, collect(1:20); parallel=:threads)

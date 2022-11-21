@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for D`Esopo-Pape shortest-path calculations.
 """
-struct DEsopoPapeState{T <:Real, U <: Integer} <: AbstractPathState
+struct DEsopoPapeState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -40,9 +40,9 @@ julia> ds.dists
  3
 ```
 """
-function desopo_pape_shortest_paths(g::AbstractGraph, 
-    src::Integer,
-    distmx::AbstractMatrix{T} = weights(g)) where T <: Real
+function desopo_pape_shortest_paths(
+    g::AbstractGraph, src::Integer, distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real}
     U = eltype(g)
     nvg = nv(g)
     (src in 1:nvg) || throw(DomainError(src, "src should be in between 1 and $nvg"))
@@ -52,17 +52,17 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
     state = fill(Int8(2), nvg)
     q = U[src]
     @inbounds dists[src] = 0
-    
+
     @inbounds while !isempty(q)
         u = popfirst!(q)
         state[u] = 0
-        
+
         for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
             if (dists[v] > alt)
                 dists[v] = alt
                 parents[v] = u
-                
+
                 if state[v] == 2
                     state[v] = 1
                     push!(q, v)
@@ -73,6 +73,6 @@ function desopo_pape_shortest_paths(g::AbstractGraph,
             end
         end
     end
-    
-    return DEsopoPapeState{T, U}(parents, dists)
+
+    return DEsopoPapeState{T,U}(parents, dists)
 end

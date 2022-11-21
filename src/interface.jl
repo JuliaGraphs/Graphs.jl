@@ -11,7 +11,9 @@ struct NotImplementedError{M} <: Exception
     NotImplementedError(m::M) where {M} = new{M}(m)
 end
 
-Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not implemented.")
+function Base.showerror(io::IO, ie::NotImplementedError)
+    return print(io, "method $(ie.m) not implemented.")
+end
 
 _NI(m) = throw(NotImplementedError(m))
 
@@ -36,10 +38,8 @@ An abstract type representing a graph.
 """
 abstract type AbstractGraph{T} end
 
-
 @traitdef IsDirected{G<:AbstractGraph}
-@traitimpl IsDirected{G} <- is_directed(G)
-
+@traitimpl IsDirected{G} < -is_directed(G)
 
 #
 # Interface for AbstractEdges
@@ -106,7 +106,6 @@ Edge 2 => 1
 reverse(e::AbstractEdge) = _NI("reverse")
 
 ==(e1::AbstractEdge, e2::AbstractEdge) = _NI("==")
-
 
 #
 # Interface for AbstractGraphs
@@ -227,7 +226,7 @@ true
 ```
 """
 is_directed(::G) where {G} = is_directed(G)
-is_directed(::Type{T}) where T = _NI("is_directed")
+is_directed(::Type{T}) where {T} = _NI("is_directed")
 
 """
     has_vertex(g, v)
@@ -338,4 +337,4 @@ julia> zero(g)
 """
 zero(::Type{<:AbstractGraph}) = _NI("zero")
 
-zero(g::G) where {G<: AbstractGraph} = zero(G)
+zero(g::G) where {G<:AbstractGraph} = zero(G)

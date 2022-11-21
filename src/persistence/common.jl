@@ -19,7 +19,6 @@ loadgraph(fn::AbstractString) = loadgraph(fn, "graph", LGFormat())
 loadgraph(fn::AbstractString, gname::AbstractString) = loadgraph(fn, gname, LGFormat())
 loadgraph(fn::AbstractString, format::AbstractGraphFormat) = loadgraph(fn, "graph", format)
 
-
 """
     loadgraphs(file, format=LGFormat())
 
@@ -57,7 +56,6 @@ function auto_decompress(io::IO)
     return io
 end
 
-
 """
     savegraph(file, g, gname="graph", format=LGFormat)
 
@@ -67,14 +65,23 @@ Return the number of graphs written.
 ### Implementation Notes
 The default graph name assigned to `gname` may change in the future.
 """
-function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
-        format::AbstractGraphFormat; compress=nothing
-    )
+function savegraph(
+    fn::AbstractString,
+    g::AbstractGraph,
+    gname::AbstractString,
+    format::AbstractGraphFormat;
+    compress=nothing,
+)
     if compress !== nothing
         if !compress
-            @info("Note: the `compress` keyword is no longer supported in Graphs. Saving uncompressed.")
+            @info(
+                "Note: the `compress` keyword is no longer supported in Graphs. Saving uncompressed."
+            )
         else
-            Base.depwarn("Saving compressed graphs is no longer supported in Graphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
+            Base.depwarn(
+                "Saving compressed graphs is no longer supported in Graphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.",
+                :savegraph,
+            )
         end
     end
     io = open(fn, "w")
@@ -88,11 +95,16 @@ function savegraph(fn::AbstractString, g::AbstractGraph, gname::AbstractString,
 end
 
 # without graph name
-savegraph(fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=nothing) =
-    savegraph(fn, g, "graph", format, compress=compress)
+function savegraph(
+    fn::AbstractString, g::AbstractGraph, format::AbstractGraphFormat; compress=nothing
+)
+    return savegraph(fn, g, "graph", format; compress=compress)
+end
 
 # without format - default to LGFormat()
-savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=nothing) = savegraph(fn, g, "graph", LGFormat(), compress=compress)
+function savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=nothing)
+    return savegraph(fn, g, "graph", LGFormat(); compress=compress)
+end
 
 """
     savegraph(file, g, d, format=LGFormat)
@@ -103,12 +115,15 @@ Return the number of graphs written.
 ### Implementation Notes
 Will only work if the file format supports multiple graph types.
 """
-function savegraph(fn::AbstractString, d::Dict{T,U},
-    format::AbstractGraphFormat; compress=nothing) where T <: AbstractString where U <: AbstractGraph
-    compress === nothing ||
-    Base.depwarn("Saving compressed graphs is no longer supported in Graphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.", :savegraph)
-        io = open(fn, "w")
-    
+function savegraph(
+    fn::AbstractString, d::Dict{T,U}, format::AbstractGraphFormat; compress=nothing
+) where {T<:AbstractString} where {U<:AbstractGraph}
+    compress === nothing || Base.depwarn(
+        "Saving compressed graphs is no longer supported in Graphs. Use `LGCompressedFormat()` from the `GraphIO.jl` package instead. Saving uncompressed.",
+        :savegraph,
+    )
+    io = open(fn, "w")
+
     try
         return savegraph(io, d, format)
     catch

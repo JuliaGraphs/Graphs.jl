@@ -1,11 +1,11 @@
 @testset "Clique percolation" begin
     function setofsets(array_of_arrays)
-        Set(map(BitSet, array_of_arrays))
+        return Set(map(BitSet, array_of_arrays))
     end
 
     function test_cliques(graph, expected)
         # Make test results insensitive to ordering
-        Set(clique_percolation(graph)) == setofsets(expected)
+        return Set(clique_percolation(graph)) == setofsets(expected)
     end
 
     g = Graph(5)

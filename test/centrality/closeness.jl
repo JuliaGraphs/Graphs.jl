@@ -1,6 +1,9 @@
 @testset "Closeness" begin
     g5 = SimpleDiGraph(4)
-    add_edge!(g5, 1, 2); add_edge!(g5, 2, 3); add_edge!(g5, 1, 3); add_edge!(g5, 3, 4)
+    add_edge!(g5, 1, 2)
+    add_edge!(g5, 2, 3)
+    add_edge!(g5, 1, 3)
+    add_edge!(g5, 3, 4)
 
     for g in testdigraphs(g5)
         y = @inferred(closeness_centrality(g; normalize=false))
@@ -27,7 +30,7 @@
         @test z[1] == z[2] == 0.25
         @test z[3] == z[4] == z[5] == 0.0
     end
-    
+
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     a1 = SimpleGraph(adjmx1)
     for g in testgraphs(a1)

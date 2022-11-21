@@ -11,12 +11,13 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
     @test LET.postvisitfn!(d, 1) == true
     @test LET.postlevelfn!(d) == true
 
-    x = [3,1,2]
+    x = [3, 1, 2]
     @test sort!(x, 3, 1, LET.NOOPSort, Base.Sort.ForwardOrdering()) == x
 
     @testset "BFS" begin
-        g1= smallgraph(:house)
-        dg1 = path_digraph(6); add_edge!(dg1, 2, 6)
+        g1 = smallgraph(:house)
+        dg1 = path_digraph(6)
+        add_edge!(dg1, 2, 6)
 
         b1 = LET.BFS()
         @test b1 == LET.BFS(LET.NOOPSort)
@@ -33,7 +34,7 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
                 p2 = @inferred LET.parents(g, 2, b2)
                 @test p1 == p2 == [2, 0, 1, 2, 4]
                 d1 = @inferred LET.distances(g, 1, b1)
-                d2 = @inferred LET.distances(g, 1 ,b2)
+                d2 = @inferred LET.distances(g, 1, b2)
                 d3 = @inferred LET.distances(g, [1], b1)
                 @test d1 == d2 == d3 == [0, 1, 1, 2, 2]
                 t1 = @inferred LET.tree(g, 2, b1)
@@ -41,7 +42,6 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
                 t3 = @inferred LET.tree(p1)
                 t4 = @inferred LET.tree(p2)
                 @test t1 == t2 == t3 == t4
-
             end
         end
         @testset "directed" begin
@@ -50,7 +50,9 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
                 v2 = @inferred LET.visited_vertices(dg, 1, b2)
                 v3 = @inferred LET.visited_vertices(dg, [1], b1)
                 @test v1 == v2 == v3 == [1, 2, 3, 6, 4, 5]
-                @test (@inferred LET.parents(dg, 2, b1)) == LET.parents(dg, 2, b2) == [0, 0, 2, 3, 4, 2]
+                @test (@inferred LET.parents(dg, 2, b1)) ==
+                    LET.parents(dg, 2, b2) ==
+                    [0, 0, 2, 3, 4, 2]
                 p1 = @inferred LET.parents(dg, 2, b1)
                 p2 = @inferred LET.parents(dg, 2, b2)
                 p3 = @inferred LET.parents(dg, 6, b1, inneighbors)
@@ -122,4 +124,3 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
         end
     end
 end
-

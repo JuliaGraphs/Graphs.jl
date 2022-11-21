@@ -5,19 +5,21 @@ using Distributions
 using Graphs
 using StatsBase
 using Test
-import Random
+using Random: Random
 
 import Base: -
 import Graphs: randbn
 import StatsBase: SummaryStats
 
 function -(s::SummaryStats, t::SummaryStats)
-    return SummaryStats(s.mean - t.mean,
+    return SummaryStats(
+        s.mean - t.mean,
         s.min - t.min,
         s.q25 - t.q25,
         s.median - t.median,
         s.q75 - t.q75,
-        s.max - t.max)
+        s.max - t.max,
+    )
 end
 function binomial_test(n, p, s)
     drand = rand(Binomial(n, p), s)
@@ -29,18 +31,18 @@ function binomial_test(n, p, s)
     lσ = std(lrand)
 
     summarydiff = ds - ls
-    @test abs(summarydiff.mean) / ds.mean < .10
-    @test abs(summarydiff.median) / ds.median < .10
-    @test abs(summarydiff.q25) / ds.q25 < .10
-    @test abs(summarydiff.q75) / ds.q75 < .10
+    @test abs(summarydiff.mean) / ds.mean < 0.10
+    @test abs(summarydiff.median) / ds.median < 0.10
+    @test abs(summarydiff.q25) / ds.q25 < 0.10
+    @test abs(summarydiff.q75) / ds.q75 < 0.10
 
-    @test abs(dσ - lσ) / dσ < .10
+    @test abs(dσ - lσ) / dσ < 0.10
 end
 n = 10000
 p = 0.3
 s = 100000
 
-@testset "($n, $p, $s)" for (n, p, s) in [(100, 0.3, 1000), (1000, 0.8, 1000), (10000, 0.25, 1000)]
+@testset "($n, $p, $s)" for (n, p, s) in
+                            [(100, 0.3, 1000), (1000, 0.8, 1000), (10000, 0.25, 1000)]
     binomial_test(n, p, s)
 end
-

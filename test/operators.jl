@@ -107,8 +107,8 @@
             @test nv(h2) == 5
 
             h3 = star_graph(5)
-            h3merged = merge_vertices(h3, [1,2])
-            @test neighbors(h3merged, 1) == [2,3,4]
+            h3merged = merge_vertices(h3, [1, 2])
+            @test neighbors(h3merged, 1) == [2, 3, 4]
             @test neighbors(h3merged, 2) == [1]
             @test neighbors(h3merged, 3) == [1]
             @test neighbors(h3merged, 4) == [1]
@@ -178,7 +178,7 @@
     px = path_graph(10)
     @testset "Matrix operations: $p" for p in testgraphs(px)
         x = @inferred(p * ones(10))
-        @test  x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
+        @test x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
         @test size(p) == (10, 10)
         @test size(p, 1) == size(p, 2) == 10
         @test size(p, 3) == 1
@@ -191,16 +191,20 @@
     end
 
     gx = SimpleDiGraph(4)
-    add_edge!(gx, 1, 2); add_edge!(gx, 2, 3); add_edge!(gx, 1, 3); add_edge!(gx, 3, 4)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 2, 3)
+    add_edge!(gx, 1, 3)
+    add_edge!(gx, 3, 4)
     @testset "Matrix operations: $g" for g in testdigraphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
-        @test sum(g, 1) ==  [0, 1, 2, 1]
-        @test sum(g, 2) ==  [2, 1, 1, 0]
+        @test sum(g, 1) == [0, 1, 2, 1]
+        @test sum(g, 2) == [2, 1, 1, 0]
         @test sum(g) == 4
         @test @inferred(!issymmetric(g))
     end
 
-    nx = 20; ny = 21
+    nx = 20
+    ny = 21
     @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(path_graph(ny))
         T = eltype(g)
         hp = path_graph(nx)
@@ -260,7 +264,7 @@
         @test typeof(h) == typeof(g)
     end
 
-    gx = SimpleDiGraph(100, 200, rng=rng)
+    gx = SimpleDiGraph(100, 200; rng=rng)
     @testset "Subgraphs: $g" for g in testdigraphs(gx)
         h = @inferred(g[5:26])
         @test nv(h) == 22
@@ -279,7 +283,6 @@
         @test h2 == h
         @test vm == findall(r2)
         @test h2 == g[r2]
-
     end
 
     g10 = complete_graph(10)
@@ -299,8 +302,11 @@
         @test vm[4] == 8
 
         elist = [
-          SimpleEdge(1, 2), SimpleEdge(2, 3), SimpleEdge(3, 4),
-          SimpleEdge(4, 5), SimpleEdge(5, 1)
+            SimpleEdge(1, 2),
+            SimpleEdge(2, 3),
+            SimpleEdge(3, 4),
+            SimpleEdge(4, 5),
+            SimpleEdge(5, 1),
         ]
         sg, vm = @inferred(induced_subgraph(g, elist))
         @test sg == cycle_graph(5)

@@ -1,5 +1,4 @@
 @testset "Minimal Dominating Set" begin
-
     g0 = SimpleGraph(0)
     for g in testgraphs(g0)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); rng=StableRNG(3)))
@@ -9,25 +8,25 @@
     g1 = SimpleGraph(1)
     for g in testgraphs(g1)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); rng=StableRNG(3)))
-        @test (d == [1,])
+        @test (d == [1])
     end
 
     add_edge!(g1, 1, 1)
     for g in testgraphs(g1)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); rng=StableRNG(3)))
-        @test (d == [1,])
+        @test (d == [1])
     end
 
     g3 = star_graph(5)
     for g in testgraphs(g3)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); rng=StableRNG(3)))
-        @test (length(d)== 1 || (length(d)== 4 && minimum(d) > 1 ))
+        @test (length(d) == 1 || (length(d) == 4 && minimum(d) > 1))
     end
-    
+
     g4 = complete_graph(5)
     for g in testgraphs(g4)
         d = @inferred(dominating_set(g, MinimalDominatingSet(); rng=StableRNG(3)))
-        @test length(d)== 1 #Exactly one vertex
+        @test length(d) == 1 # Exactly one vertex
     end
 
     g5 = path_graph(4)

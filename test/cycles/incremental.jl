@@ -17,11 +17,11 @@
                 @test !add_edge_checked!(ict, (2, 3), 1)
                 @test !add_edge_checked!(ict, (1, 3), 2)
             else
-                @test !add_edge_checked!(ict, 3, (1,2))
-                @test !add_edge_checked!(ict, 2, (1,3))
+                @test !add_edge_checked!(ict, 3, (1, 2))
+                @test !add_edge_checked!(ict, 2, (1, 3))
             end
             @test length(edges(G)) == 2 + length(edges(Gtemplate))
-            @test filter(in((1,2,3)), topological_sort(ict)) == [1, 2, 3]
+            @test filter(in((1, 2, 3)), topological_sort(ict)) == [1, 2, 3]
         end
     end
 

@@ -4,10 +4,8 @@
 Remove edges of `g` so that all non-isolated leaves of `g` are in the set `term_vert`
 """
 function filter_non_term_leaves!(
-    g::AbstractGraph{T},
-    term_vert::Vector{<:Integer}
-    ) where T<:Integer
-
+    g::AbstractGraph{T}, term_vert::Vector{<:Integer}
+) where {T<:Integer}
     is_term = falses(nv(g))
     is_term[term_vert] .= true
     leaves = [v for v in vertices(g) if degree(g, v) == 1 && !is_term[v]]
@@ -43,11 +41,8 @@ Approximation Factor: 2-2/t
 function steiner_tree end
 
 @traitfn function steiner_tree(
-    g::AG::(!IsDirected),
-    term_vert::Vector{<:Integer},
-    distmx::AbstractMatrix{U} = weights(g)
-    ) where {U<:Real, T, AG<:AbstractGraph{T}}
-
+    g::AG::(!IsDirected), term_vert::Vector{<:Integer}, distmx::AbstractMatrix{U}=weights(g)
+) where {U<:Real,T,AG<:AbstractGraph{T}}
     nvg = nv(g)
     term_to_actual = T.(term_vert)
     unique!(term_to_actual)
@@ -74,15 +69,15 @@ function steiner_tree end
         s = term_to_actual[i]
         t = term_to_actual[dst(e)]
         while s != t
-            t_next = parents[t, i] 
-            push!(expanded_mst, Edge(min(t_next, t), max(t_next, t))) 
+            t_next = parents[t, i]
+            push!(expanded_mst, Edge(min(t_next, t), max(t_next, t)))
             t = t_next
         end
     end
 
     # Compute the MST of the expanded graph
-    mst_mst_mc = kruskal_mst(SimpleGraph(expanded_mst), distmx)    
-        
+    mst_mst_mc = kruskal_mst(SimpleGraph(expanded_mst), distmx)
+
     # Remove non-terminal leaves
     return filter_non_term_leaves!(SimpleGraph(mst_mst_mc), term_to_actual)
 end
