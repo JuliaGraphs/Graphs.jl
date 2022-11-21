@@ -647,6 +647,9 @@ function all_subgraphisomorph(
     return ch
 end
 
+#! format: off
+# Turns off formatting from this point onwards
+
 function all_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
@@ -669,3 +672,6 @@ function all_isomorph(
     end
     return ch
 end
+
+#! format: on
+# Turns on formatting from this point onwards
