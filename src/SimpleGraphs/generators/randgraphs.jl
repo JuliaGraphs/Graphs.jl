@@ -921,7 +921,7 @@ Create a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_g
 with `n` vertices, each with degree `k`.
 
 ### Optional Arguments
-- `dir=:out`: the direction of edges for the degree parameter.
+- `dir=:out`: the direction of the edges for the degree parameter.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
 
