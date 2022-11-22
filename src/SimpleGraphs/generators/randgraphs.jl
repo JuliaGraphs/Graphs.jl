@@ -1422,3 +1422,25 @@ function random_orientation_dag(
     end
     return g2
 end
+
+"""
+    bernoulli_graph(Λ)
+
+Given the parametric symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exits with  probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
+"""
+function bernoulli_graph(
+    Λ::Matrix{Float64};
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    n = size(Λ)[1]
+    A = SimpleGraph(n)
+    for j in 1:n
+        for i in (j + 1):n
+            if Bool(randbn(1, Λ[i, j]; rng=rng, seed=seed))
+                add_edge!(A, i, j)
+            end
+        end
+    end
+    return A
+end
