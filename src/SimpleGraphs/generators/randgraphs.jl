@@ -114,7 +114,7 @@ function randbn(
     log_q = log(1.0 - p)
     x = 0
     sum = 0.0
-    while true
+    for _ in 1:n
         sum += log(rand(rng)) / (n - x)
         sum < log_q && break
         x += 1
