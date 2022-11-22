@@ -384,4 +384,15 @@
         @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1 # since the stdev of μ1 is around sv1/sqrt(N), this should rarely fail
         @test μ2 - sv2 <= 0.7 * 3 <= μ2 + sv2
     end
+
+    @testset "bernoulli graphs" begin
+        n = 50
+        Λ = rand(n, n)
+        ρ = 1.0
+        g1, g2 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
+        g1_adj = Int.(adjacency_matrix(g1))
+        g2_adj = Int.(adjacency_matrix(g2))
+        @test g1_adj == g2_adj
+        @test diag(g1_adj) == diag(g2_adj) == zeros(n)
+    end
 end
