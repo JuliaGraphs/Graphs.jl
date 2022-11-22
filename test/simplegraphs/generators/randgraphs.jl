@@ -381,7 +381,7 @@
         μ2 = mean(s2)
         sv1 = sqrt((1 / N) * sum((s1 .- μ1) .^ 2))
         sv2 = sqrt((1 / N) * sum((s2 .- μ2) .^ 2))
-        @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1
+        @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1 # since the stdev of μ1 is around sv1/sqrt(N), this should rarely fail
         @test μ2 - sv2 <= 0.7 * 3 <= μ2 + sv2
     end
 end
