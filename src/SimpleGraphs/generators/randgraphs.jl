@@ -1444,3 +1444,28 @@ function bernoulli_graph(
     end
     return A
 end
+
+"""
+rho_correlated_bernoulli_graphs(Λ,ρ)
+
+Given the parametric symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
+"""
+function rho_correlated_bernoulli_graphs(
+Λ::Matrix{Float64},
+ρ::Float64;
+rng::Union{Nothing,AbstractRNG}=nothing,
+seed::Union{Nothing,Integer}=nothing,
+)
+n = size(Λ)[1]
+B = SimpleGraph(n)
+A = bernoulli_graph(Λ; rng=rng, seed=seed)
+A_adj = Int.(adjacency_matrix(A))
+for j in 1:n
+    for i in (j + 1):n
+        if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * A_adj[i, j]; rng=rng, seed=seed))
+            add_edge!(B, i, j)
+        end
+    end
+end
+return A, B
+end
