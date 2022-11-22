@@ -1422,3 +1422,9 @@ function random_orientation_dag(
     end
     return g2
 end
+
+"""
+    random_tree(n)
+
+Generate a uniform random tree with n vertices. Each of the n^{n-2} trees have the same probability . 
+"""
