@@ -539,16 +539,17 @@ end
 """
     regular_tree(k::Integer, z::integer)
 
-Create a [k-regular tree](https://en.wikipedia.org/wiki/Bethe_lattice)
+Create a [k-regular tree](https://en.wikipedia.org/wiki/Bethe_lattice), 
+also known as Bethe Lattice or Cayley Tree,
 of depth `k` and degree `z`.
 
 # Examples
 ```jldoctest
-julia> binary_tree(4)
-{15, 14} undirected simple Int64 graph
+julia> regular_tree(4, 3)
+{40, 39} undirected simple Int64 graph
 
-julia> binary_tree(Int8(5))
-{31, 30} undirected simple Int8 graph
+julia> regular_tree(5, 2) == binary_tree(5)
+true
 ```
 """
 function regular_tree(k::T, z::T) where {T<:Integer}
@@ -581,21 +582,6 @@ function regular_tree(k::T, z::T) where {T<:Integer}
         fadjlist[j] = T[ceil(Int, (j - x) / z) + w]
     end
     return SimpleGraph(ne, fadjlist)
-
-    # n = T(2^k - 1)
-    # ne = Int(n - 1)
-    # fadjlist = Vector{Vector{T}}(undef, n)
-    # @inbounds fadjlist[1] = T[2, 3]
-    # @inbounds for i in 1:(k - 2)
-    #     @simd for j in (2^i):(2^(i + 1) - 1)
-    #         fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]
-    #     end
-    # end
-    # i = k - 1
-    # @inbounds @simd for j in (2^i):(2^(i + 1) - 1)
-    #     fadjlist[j] = T[j ÷ 2]
-    # end
-    # return SimpleGraph(ne, fadjlist)
 end
 
 """
