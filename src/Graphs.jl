@@ -278,6 +278,7 @@ export
     erdos_renyi,
     expected_degree_graph,
     watts_strogatz,
+    newman_watts_strogatz,
     random_regular_graph,
     random_regular_digraph,
     random_configuration_model,
