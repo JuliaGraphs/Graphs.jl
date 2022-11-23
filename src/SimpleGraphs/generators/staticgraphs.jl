@@ -539,7 +539,7 @@ end
 """
     regular_tree(k::Integer, z::integer)
 
-Create a [k-regular tree](https://en.wikipedia.org/wiki/Bethe_lattice), 
+Create a [regular tree](https://en.wikipedia.org/wiki/Bethe_lattice), 
 also known as Bethe Lattice or Cayley Tree,
 of depth `k` and degree `z`.
 
