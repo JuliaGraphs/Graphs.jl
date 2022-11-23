@@ -1,5 +1,5 @@
 """
-    euclidean_graph(N, d; seed=-1, L=1., p=2., cutoff=-1., bc=:open)
+    euclidean_graph(N, d; rng=nothing, seed=nothing, L=1., p=2., cutoff=-1., bc=:open)
 
 Generate `N` uniformly distributed points in the box ``[0,L]^{d}``
 and return a Euclidean graph, a map containing the distance on each edge and
@@ -20,9 +20,15 @@ Dict{Graphs.SimpleGraphs.SimpleEdge{Int64},Float64} with 4 entries:
   Edge 4 => 5 => 0.168372
 ```
 """
-function euclidean_graph(N::Int, d::Int;
-    L=1., seed = -1, kws...)
-    rng = Graphs.getRNG(seed)
+function euclidean_graph(
+    N::Int,
+    d::Int;
+    L=1.0,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+    kws...,
+)
+    rng = rng_from_rng_or_seed(rng, seed)
     points = rmul!(rand(rng, d, N), L)
     return (euclidean_graph(points; L=L, kws...)..., points)
 end
@@ -55,16 +61,17 @@ julia> g
 {10, 45} undirected simple Int64 graph
 ```
 """
-function euclidean_graph(points::Matrix;
-    L=1., p=2., cutoff=-1., bc=:open)
+function euclidean_graph(points::Matrix; L=1.0, p=2.0, cutoff=-1.0, bc=:open)
     d, N = size(points)
     weights = Dict{SimpleEdge{Int},Float64}()
-    cutoff < 0. && (cutoff = typemax(Float64))
+    cutoff < 0.0 && (cutoff = typemax(Float64))
     if bc == :periodic
-        maximum(points) > L && throw(DomainError(maximum(points), "Some points are outside the box of size $L"))
+        maximum(points) > L && throw(
+            DomainError(maximum(points), "Some points are outside the box of size $L")
+        )
     end
-    for i = 1:N
-        for j = (i + 1):N
+    for i in 1:N
+        for j in (i + 1):N
             if bc == :open
                 Δ = points[:, i] - points[:, j]
             elseif bc == :periodic

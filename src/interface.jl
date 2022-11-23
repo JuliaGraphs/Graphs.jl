@@ -11,7 +11,9 @@ struct NotImplementedError{M} <: Exception
     NotImplementedError(m::M) where {M} = new{M}(m)
 end
 
-Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not implemented.")
+function Base.showerror(io::IO, ie::NotImplementedError)
+    return print(io, "method $(ie.m) not implemented.")
+end
 
 _NI(m) = throw(NotImplementedError(m))
 
@@ -36,10 +38,8 @@ An abstract type representing a graph.
 """
 abstract type AbstractGraph{T} end
 
-
 @traitdef IsDirected{G<:AbstractGraph}
-@traitimpl IsDirected{G} <- is_directed(G)
-
+@traitimpl IsDirected{G} < -is_directed(G)
 
 #
 # Interface for AbstractEdges
@@ -106,7 +106,6 @@ Edge 2 => 1
 reverse(e::AbstractEdge) = _NI("reverse")
 
 ==(e1::AbstractEdge, e2::AbstractEdge) = _NI("==")
-
 
 #
 # Interface for AbstractGraphs
@@ -185,7 +184,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
 
 Return (an iterator to or collection of) the edges of a graph.
 For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
-The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+The expressions `e in edges(g)` and `e ∈ edges(g)` evaluate as
 calls to [`has_edge`](@ref).
 
 ### Implementation Notes
@@ -227,7 +226,7 @@ true
 ```
 """
 is_directed(::G) where {G} = is_directed(G)
-is_directed(::Type{T}) where T = _NI("is_directed")
+is_directed(::Type{T}) where {T} = _NI("is_directed")
 
 """
     has_vertex(g, v)
@@ -255,7 +254,7 @@ Return true if the graph `g` has an edge from node `s` to node `d`.
 An optional `has_edge(g, e)` can be implemented to check if an edge belongs
 to a graph, including any data other than source and destination node.
 
-`e ∈ edges(g)` or `e ∈ edges(g)` evaluate as
+`e in edges(g)` or `e ∈ edges(g)` evaluate as
 calls to `has_edge`, c.f. [`edges`](@ref).
 
 # Examples
@@ -338,4 +337,4 @@ julia> zero(g)
 """
 zero(::Type{<:AbstractGraph}) = _NI("zero")
 
-zero(g::G) where {G<: AbstractGraph} = zero(G)
+zero(g::G) where {G<:AbstractGraph} = zero(G)

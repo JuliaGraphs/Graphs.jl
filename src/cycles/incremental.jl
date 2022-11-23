@@ -12,7 +12,9 @@ for a usage example.
 """
 abstract type IncrementalCycleTracker{I} <: AbstractGraph{I} end
 
-function (::Type{IncrementalCycleTracker})(s::AbstractGraph{I}; dir::Union{Symbol,Nothing}=nothing) where {I}
+function (::Type{IncrementalCycleTracker})(
+    s::AbstractGraph{I}; dir::Union{Symbol,Nothing}=nothing
+) where {I}
     # TODO: Once we have more algorithms, the poly-algorithm decision goes here.
     # For now, we only have Algorithm N.
     return DenseGraphICT_BFGT_N{something(dir, :out)}(s)
@@ -75,12 +77,14 @@ Edge 2 => 3
 """
 function add_edge_checked! end
 
-to_edges(v::Integer, w::Integer) = (v=>w,)
+to_edges(v::Integer, w::Integer) = (v => w,)
 to_edges(v::Integer, ws) = zip(repeated(v), ws)
 to_edges(vs, w::Integer) = zip(vs, repeated(w))
 
-add_edge_checked!(ict::IncrementalCycleTracker, vs, ws) = add_edge_checked!(ict, vs, ws) do g
-    foreach(((v, w),)->add_edge!(g, v, w), to_edges(vs, ws))
+function add_edge_checked!(ict::IncrementalCycleTracker, vs, ws)
+    add_edge_checked!(ict, vs, ws) do g
+        foreach(((v, w),) -> add_edge!(g, v, w), to_edges(vs, ws))
+    end
 end
 
 # Utilities
@@ -92,9 +96,8 @@ is set by calling `commit!`.
 """
 struct TransactionalVector{T} <: AbstractVector{T}
     v::Vector{T}
-    log::Vector{Pair{Int, T}}
-    TransactionalVector(v::Vector{T}) where {T} =
-        new{T}(v, Vector{Pair{Int, T}}())
+    log::Vector{Pair{Int,T}}
+    TransactionalVector(v::Vector{T}) where {T} = new{T}(v, Vector{Pair{Int,T}}())
 end
 
 function commit!(v::TransactionalVector)
@@ -112,7 +115,7 @@ end
 function Base.setindex!(vec::TransactionalVector, val, idx)
     oldval = vec.v[idx]
     vec.v[idx] = val
-    push!(vec.log, idx=>oldval)
+    push!(vec.log, idx => oldval)
     return nothing
 end
 Base.getindex(vec::TransactionalVector, idx) = vec.v[idx]
@@ -171,23 +174,23 @@ for dense graphs from BFGT15 (Section 3).
 
 $bibliography
 """
-struct DenseGraphICT_BFGT_N{InOut, I, G<:AbstractGraph{I}} <: IncrementalCycleTracker{I}
+struct DenseGraphICT_BFGT_N{InOut,I,G<:AbstractGraph{I}} <: IncrementalCycleTracker{I}
     graph::G
     levels::TransactionalVector{Int}
-    function DenseGraphICT_BFGT_N{InOut}(g::G) where {InOut, I, G<:AbstractGraph{I}}
+    function DenseGraphICT_BFGT_N{InOut}(g::G) where {InOut,I,G<:AbstractGraph{I}}
         if ne(g) == 0
             # Common case fast path, no edges, all level start at 0.
             levels = fill(0, nv(g))
         else
             levels = weak_topological_levels(g)
         end
-        new{InOut, I, G}(g, TransactionalVector(levels))
+        return new{InOut,I,G}(g, TransactionalVector(levels))
     end
 end
 
 function Base.show(io::IO, ict::DenseGraphICT_BFGT_N)
     print(io, "BFGT_N cycle tracker on ")
-    show(io, ict.graph)
+    return show(io, ict.graph)
 end
 
 function topological_sort(ict::DenseGraphICT_BFGT_N{InOut}) where {InOut}
@@ -200,10 +203,12 @@ end
 
 # Even when both `v` and `w` are integer, we know that `v` would come first, so
 # we prefer to check for `v` as the cycle vertex in this case.
-add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:out}, v::Integer, ws) =
-    _check_cycle_add!(f!, ict, to_edges(v, ws), v)
-add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:in}, vs, w::Integer) =
-    _check_cycle_add!(f!, ict, to_edges(vs, w), w)
+function add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:out}, v::Integer, ws)
+    return _check_cycle_add!(f!, ict, to_edges(v, ws), v)
+end
+function add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:in}, vs, w::Integer)
+    return _check_cycle_add!(f!, ict, to_edges(vs, w), w)
+end
 
 ### [BFGT15] Algorithm N
 #
@@ -224,7 +229,7 @@ add_edge_checked!(f!, ict::DenseGraphICT_BFGT_N{:in}, vs, w::Integer) =
 # 3. We add some early out checks to detect we're about to do redundant work.
 function _check_cycle_add!(f!, ict::DenseGraphICT_BFGT_N{InOut}, edges, v) where {InOut}
     g = ict.graph
-    worklist = Pair{Int, Int}[]
+    worklist = Pair{Int,Int}[]
     # TODO: In the case where there's a single target vertex, we could saturate
     # the level first before we assign it to the tracked vector to save some
     # log space.
@@ -235,7 +240,7 @@ function _check_cycle_add!(f!, ict::DenseGraphICT_BFGT_N{InOut}, edges, v) where
         end
         v == w && return false
         ict.levels[w] = ict.levels[v] + 1
-        push!(worklist, v=>w)
+        push!(worklist, v => w)
     end
     while !isempty(worklist)
         (x, y) = popfirst!(worklist)
@@ -257,7 +262,7 @@ function _check_cycle_add!(f!, ict::DenseGraphICT_BFGT_N{InOut}, edges, v) where
             end
             if ylevel >= ict.levels[z]
                 ict.levels[z] = ylevel + 1
-                push!(worklist, y=>z)
+                push!(worklist, y => z)
             end
         end
     end

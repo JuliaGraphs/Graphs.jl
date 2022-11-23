@@ -1,6 +1,8 @@
 import Base.showerror
 struct CycleError <: Exception end
-Base.showerror(io::IO, e::CycleError) = print(io, "Cycles are not allowed in this function.")
+function Base.showerror(io::IO, e::CycleError)
+    return print(io, "Cycles are not allowed in this function.")
+end
 
 struct DFS <: TraversalAlgorithm end
 
@@ -9,9 +11,8 @@ function traverse_graph!(
     ss::AbstractVector,
     alg::DFS,
     state::AbstractTraversalState,
-    neighborfn::Function=outneighbors
-    ) where U<:Integer
-    
+    neighborfn::Function=outneighbors,
+) where {U<:Integer}
     n = nv(g)
     visited = falses(n)
     S = Vector{U}()
@@ -47,25 +48,25 @@ end
 
 mutable struct TopoSortState{T<:Integer} <: AbstractTraversalState
     vcolor::Vector{UInt8}
-    verts :: Vector{T}
+    verts::Vector{T}
     w::T
 end
 
 # 1 = visited
 # 2 = vcolor 2
 # @inline initfn!(s::TopoSortState{T}, u) where T = s.vcolor[u] = one(T)
-@inline function previsitfn!(s::TopoSortState{T}, u) where T
+@inline function previsitfn!(s::TopoSortState{T}, u) where {T}
     s.w = 0
     return true
 end
-@inline function visitfn!(s::TopoSortState{T}, u, v) where T 
+@inline function visitfn!(s::TopoSortState{T}, u, v) where {T}
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::TopoSortState{T}, u, v) where T 
+@inline function newvisitfn!(s::TopoSortState{T}, u, v) where {T}
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::TopoSortState{T}, u) where T 
+@inline function postvisitfn!(s::TopoSortState{T}, u) where {T}
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -75,8 +76,7 @@ end
     return true
 end
 
-
-@traitfn function topological_sort(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function topological_sort(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     state = TopoSortState(vcolor, verts, zero(T))
@@ -95,18 +95,18 @@ mutable struct CycleState{T<:Integer} <: AbstractTraversalState
     w::T
 end
 
-@inline function previsitfn!(s::CycleState{T}, u) where T
+@inline function previsitfn!(s::CycleState{T}, u) where {T}
     s.w = 0
     return true
 end
-@inline function visitfn!(s::CycleState{T}, u, v) where T 
+@inline function visitfn!(s::CycleState{T}, u, v) where {T}
     return s.vcolor[v] != one(T)
 end
-@inline function newvisitfn!(s::CycleState{T}, u, v) where T 
+@inline function newvisitfn!(s::CycleState{T}, u, v) where {T}
     s.w = v
     return true
 end
-@inline function postvisitfn!(s::CycleState{T}, u) where T 
+@inline function postvisitfn!(s::CycleState{T}, u) where {T}
     if s.w != 0
         s.vcolor[s.w] = one(T)
     else
@@ -115,7 +115,7 @@ end
     return true
 end
 
-@traitfn function is_cyclic(g::AG::IsDirected) where {T, AG<:AbstractGraph{T}}
+@traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     state = CycleState(vcolor, zero(T))
     @inbounds for v in vertices(g)

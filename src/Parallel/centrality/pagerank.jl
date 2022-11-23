@@ -1,20 +1,15 @@
-function pagerank(
-    g::AbstractGraph{U}, 
-    α=0.85, 
-    n=100::Integer, 
-    ϵ=1.0e-6
-    ) where U <: Integer
-    
+function pagerank(g::AbstractGraph{U}, α=0.85, n=100::Integer, ϵ=1.0e-6) where {U<:Integer}
+
     # indegree(g, v) is estimated run-time to iterate over inneighbors(g, v)
     partitions = Graphs.optimal_contiguous_partition(indegree(g), nthreads(), nv(g))
 
-    α_div_outdegree = Vector{Float64}(undef,nv(g))
+    α_div_outdegree = Vector{Float64}(undef, nv(g))
     dangling_nodes = Vector{U}()
     @inbounds for v in vertices(g)
         if outdegree(g, v) == 0
             push!(dangling_nodes, v)
         end
-        α_div_outdegree[v] = (α/outdegree(g, v))
+        α_div_outdegree[v] = (α / outdegree(g, v))
     end
 
     nvg = Int(nv(g))
@@ -50,5 +45,5 @@ function pagerank(
             return x
         end
     end
-    error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
+    return error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
 end

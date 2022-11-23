@@ -12,7 +12,6 @@
 # header followed by a list of (comma-delimited) edges - src,dst.
 # Multiple graphs may be present in one file.
 
-
 struct LGFormat <: AbstractGraphFormat end
 
 struct LGHeader
@@ -26,11 +25,12 @@ struct LGHeader
 end
 function show(io::IO, h::LGHeader)
     isdir = h.is_directed ? "d" : "u"
-    print(io, "$(h.nv),$(h.ne),$isdir,$(h.name),$(h.ver),$(h.dtype),$(h.code)")
+    return print(io, "$(h.nv),$(h.ne),$isdir,$(h.name),$(h.ver),$(h.dtype),$(h.code)")
 end
 
-LGHeader(nv::Int, ne::Int, is_directed::Bool, name::AbstractString) =
-    LGHeader(nv, ne, is_directed, name, 1, Int64, "simplegraph")
+function LGHeader(nv::Int, ne::Int, is_directed::Bool, name::AbstractString)
+    return LGHeader(nv, ne, is_directed, name, 1, Int64, "simplegraph")
+end
 
 function _lg_read_one_graph(f::IO, header::LGHeader)
     T = header.dtype
@@ -39,7 +39,7 @@ function _lg_read_one_graph(f::IO, header::LGHeader)
     else
         g = Graph{T}(header.nv)
     end
-    for i = 1:header.ne
+    for i in 1:(header.ne)
         line = chomp(readline(f))
         if length(line) > 0
             src_s, dst_s = split(line, r"\s*,\s*")
@@ -56,10 +56,10 @@ function _lg_skip_one_graph(f::IO, n_e::Integer)
         readline(f)
     end
 end
- 
+
 function _parse_header(s::AbstractString)
     addl_info = false
-    nvstr, nestr, dirundir, graphname = split(s, r"s*,s*", limit=4)
+    nvstr, nestr, dirundir, graphname = split(s, r"s*,s*"; limit=4)
     if occursin(",", graphname) # version number and type
         graphname, _ver, _dtype, graphcode = split(graphname, r"s*,s*")
         ver = parse(Int, _ver)
@@ -117,7 +117,7 @@ end
 Write a graph `g` with name `gname` in a proprietary format
 to the IO stream designated by `io`. Return 1 (number of graphs written).
 """
-function savelg(io::IO, g::AbstractGraph{T}, gname::String) where T
+function savelg(io::IO, g::AbstractGraph{T}, gname::String) where {T}
     header = LGHeader(nv(g), ne(g), is_directed(g), gname, 2, T, "simplegraph")
     # write header line
     line = string(header)
@@ -142,7 +142,6 @@ function savelg_mult(io::IO, graphs::Dict)
     end
     return ng
 end
-
 
 loadgraph(io::IO, gname::String, ::LGFormat) = loadlg(io, gname)
 loadgraphs(io::IO, ::LGFormat) = loadlg_mult(io)
