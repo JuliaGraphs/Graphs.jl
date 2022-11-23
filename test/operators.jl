@@ -243,18 +243,18 @@
     end
 
     gx = SimpleGraph(100, 200)
-    @testset "Graph product edge counts: $g" for g in testgraphs(gx)
-        gy = SimpleGraph(123, 234)
-        v1 = nv(gx)
-        v2 = nv(gy)
-        e1 = ne(gx)
-        e2 = ne(gy)
+    gy = SimpleGraph(123, 234)
+    @testset "Graph product edge counts" for (g1,g2) in zip(testgraphs(gx),testgraphs(gy))
+        v1 = nv(g1)
+        v2 = nv(g2)
+        e1 = ne(g1)
+        e2 = ne(g2)
         # Edge counts from https://en.wikipedia.org/wiki/Graph_product
-        @test ne(cartesian_product(gx, gy)) == v1*e2 + v2*e1
-        @test ne(tensor_product(gx, gy)) == 2*e1*e2
-        @test ne(lexicographic_product(gx, gy)) == v1*e2 + e1*v2^2
-        @test ne(strong_product(gx, gy)) == v1*e2 + v2*e1 + 2*e1*e2
-        @test ne(disjunctive_product(gx, gy)) == v1^2*e2 + e1*v2^2 - 2*e1*e2
+        @test ne(cartesian_product(g1, g2)) == v1*e2 + v2*e1
+        @test ne(tensor_product(g1, g2)) == 2*e1*e2
+        @test ne(lexicographic_product(g1, g2)) == v1*e2 + e1*v2^2
+        @test ne(strong_product(g1, g2)) == v1*e2 + v2*e1 + 2*e1*e2
+        @test ne(disjunctive_product(g1, g2)) == v1^2*e2 + e1*v2^2 - 2*e1*e2
     end
 
     ## test subgraphs ##
