@@ -411,6 +411,66 @@
         @test isvalid_simplegraph(g)
     end
 
+    @testset "Regular Trees" begin
+        g = @inferred(regular_tree(3, 3))
+        I = [
+            1,
+            1,
+            1,
+            2,
+            2,
+            2,
+            2,
+            3,
+            3,
+            3,
+            3,
+            4,
+            4,
+            4,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+        ]
+        J = [
+            2,
+            3,
+            4,
+            1,
+            5,
+            6,
+            7,
+            8,
+            1,
+            9,
+            10,
+            1,
+            11,
+            12,
+            13,
+            2,
+            2,
+            2,
+            3,
+            3,
+            3,
+            4,
+            4,
+            4
+        ]
+        V = ones(Int, length(I))
+        Adj = sparse(I, J, V)
+        @test Adj == sparse(g)
+        @test isvalid_simplegraph(g)
+    end
+
     @testset "Roach Graphs" begin
         rg3 = @inferred(roach_graph(3))
         # [3]

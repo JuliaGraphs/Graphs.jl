@@ -537,6 +537,68 @@ function double_binary_tree(k::Integer)
 end
 
 """
+    regular_tree(k::Integer, z::integer)
+
+Create a [k-regular tree](https://en.wikipedia.org/wiki/Bethe_lattice)
+of depth `k` and degree `z`.
+
+# Examples
+```jldoctest
+julia> binary_tree(4)
+{15, 14} undirected simple Int64 graph
+
+julia> binary_tree(Int8(5))
+{31, 30} undirected simple Int8 graph
+```
+"""
+function regular_tree(k::T, z::T) where {T<:Integer}
+    k <= 0 && return SimpleGraph(0)
+    k == 1 && return SimpleGraph(1)
+    if Graphs.isbounded(k) && BigInt(z)^k - 1 > typemax(k)
+        throw(DomainError(k, "z^k - 1 not representable by type $T"))
+    end
+
+    n = T((z^k - 1) / (z - 1))
+    ne = Int(n - 1)
+    fadjlist = Vector{Vector{T}}(undef, n)
+
+    @inbounds fadjlist[1] = convert.(T, 2:(z + 1))
+    @inbounds for l in 2:(k - 1)
+        w = Int((z^(l - 1) - 1) / (z - 1))
+        x = w + z^(l - 1)
+        @simd for i in 1:(z^(l - 1))
+            j = w + i
+            fadjlist[j] = [
+                ceil(T, (j - x) / z) + w
+                convert.(T, (x + (i - 1) * z + 1):(x + i * z))
+            ]
+        end
+    end
+    l = k
+    w = Int((z^(l - 1) - 1) / (z - 1))
+    x = w + z^(l - 1)
+    @inbounds @simd for j in (w + 1):x
+        fadjlist[j] = T[ceil(Int, (j - x) / z) + w]
+    end
+    return SimpleGraph(ne, fadjlist)
+
+    # n = T(2^k - 1)
+    # ne = Int(n - 1)
+    # fadjlist = Vector{Vector{T}}(undef, n)
+    # @inbounds fadjlist[1] = T[2, 3]
+    # @inbounds for i in 1:(k - 2)
+    #     @simd for j in (2^i):(2^(i + 1) - 1)
+    #         fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]
+    #     end
+    # end
+    # i = k - 1
+    # @inbounds @simd for j in (2^i):(2^(i + 1) - 1)
+    #     fadjlist[j] = T[j ÷ 2]
+    # end
+    # return SimpleGraph(ne, fadjlist)
+end
+
+"""
     roach_graph(k)
 
 Create a Roach graph of size `k`.
