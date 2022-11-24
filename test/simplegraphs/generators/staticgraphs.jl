@@ -419,6 +419,7 @@
         Adj = sparse(I, J, V)
         @test Adj == sparse(g)
         @test isvalid_simplegraph(g)
+        @test_throws DomainError regular_tree(Int8(4), Int8(4))
         # test that setting z = 2 recovers a binary tree
         @test all(regular_tree(k, 2) == binary_tree(k) for k in 0:10)
     end
