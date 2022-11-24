@@ -366,7 +366,7 @@
     end
 
     @testset "randbn" begin
-        for i in 1:10
+        for i in 0:10
             @test Graphs.SimpleGraphs.randbn(i, 0.0; rng=rng) == 0
             @test Graphs.SimpleGraphs.randbn(i, 1.0; rng=rng) == i
         end
