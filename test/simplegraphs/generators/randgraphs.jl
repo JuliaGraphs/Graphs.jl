@@ -394,11 +394,5 @@
         g2_adj = Int.(adjacency_matrix(g2))
         @test g1_adj == g2_adj
         @test diag(g1_adj) == diag(g2_adj) == zeros(n)
-        ρ2 = 0.4
-        g3, g4 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
-        mean(cor(
-            reshape(Int.(adjacency_matrix(g3)), n * n, 1),
-            reshape(Int.(adjacency_matrix(g4)), n * n, 1),
-        )) ≈ ρ
     end
 end
