@@ -364,4 +364,24 @@
         @test isvalid_simplegraph(rog3)
         @test !is_cyclic(rog3)
     end
+
+    @testset "randbn" begin
+        for i in 0:10
+            @test Graphs.SimpleGraphs.randbn(i, 0.0; rng=rng) == 0
+            @test Graphs.SimpleGraphs.randbn(i, 1.0; rng=rng) == i
+        end
+        N = 30
+        s1 = zeros(N)
+        s2 = zeros(N)
+        for i in 1:N
+            s1[i] = Graphs.SimpleGraphs.randbn(5, 0.3)
+            s2[i] = Graphs.SimpleGraphs.randbn(3, 0.7)
+        end
+        μ1 = mean(s1)
+        μ2 = mean(s2)
+        sv1 = std(s1)
+        sv2 = std(s2)
+        @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1 # since the stdev of μ1 is around sv1/sqrt(N), this should rarely fail
+        @test μ2 - sv2 <= 0.7 * 3 <= μ2 + sv2
+    end
 end
