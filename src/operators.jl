@@ -620,7 +620,7 @@ julia> g == union(cartesian_product(a, b), tensor_product(a, b))
 true
 ```
 """
-function strong_product(g::G, h::G) where G <: AbstractGraph
+function strong_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
@@ -636,7 +636,7 @@ function strong_product(g::G, h::G) where G <: AbstractGraph
     end
     for e in edges(g)
         i1, i2 = Tuple(e)
-        for j = vertices(h)
+        for j in vertices(h)
             add_edge!(z, id(i1, j), id(i2, j))
         end
     end
@@ -674,13 +674,13 @@ julia> complement(g) == strong_product(complement(a), complement(b))
 true
 ```
 """
-function disjunctive_product(g::G, h::G) where G <: AbstractGraph
+function disjunctive_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
         i1, i2 = Tuple(e)
-        for j = vertices(h)
-            for k = vertices(h)
+        for j in vertices(h)
+            for k in vertices(h)
                 add_edge!(z, id(i1, j), id(i2, k))
             end
         end
@@ -726,13 +726,13 @@ julia> adjacency_matrix(g)
  1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
 ```
 """
-function lexicographic_product(g::G, h::G) where G <: AbstractGraph
+function lexicographic_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
         i1, i2 = Tuple(e)
-        for j = vertices(h)
-            for k = vertices(h)
+        for j in vertices(h)
+            for k in vertices(h)
                 add_edge!(z, id(i1, j), id(i2, k))
             end
         end
@@ -776,7 +776,7 @@ julia> adjacency_matrix(g)
  1  ⋅  1  ⋅  ⋅  ⋅  1  1  ⋅
 ```
 """
-function homomorphic_product(g::G, h::G) where G <: AbstractGraph
+function homomorphic_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
