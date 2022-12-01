@@ -11,7 +11,7 @@ using Compat
 using DelimitedFiles
 using Base64
 using Random
-using Statistics: mean
+using Statistics: mean, std
 using StableRNGs
 
 const testdir = dirname(@__FILE__)

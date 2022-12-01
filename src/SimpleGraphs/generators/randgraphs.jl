@@ -114,7 +114,7 @@ function randbn(
     log_q = log(1.0 - p)
     x = 0
     sum = 0.0
-    while true
+    for _ in 1:n
         sum += log(rand(rng)) / (n - x)
         sum < log_q && break
         x += 1
@@ -276,11 +276,11 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k`
+small world random graph with `n` vertices, each with expected degree `k` 
 (or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
-where each vertex has exactly `div(k, 2)` neighbors on each side (i.e., `k` or
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
 `k - 1` in total). Then the following steps are repeated for a hop length `i` of
 `1` through `div(k, 2)`.
 
@@ -296,6 +296,7 @@ For `β = 0`, the graph will remain a 1-lattice, and for `β = 1`, all edges wil
 be rewired randomly.
 
 ### Optional Arguments
+- `remove_edges=true`: if false, do not remove the original edges.
 - `is_directed=false`: if true, return a directed graph.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
@@ -317,7 +318,8 @@ function watts_strogatz(
     n::Integer,
     k::Integer,
     β::Real;
-    is_directed=false,
+    is_directed::Bool=false,
+    remove_edges::Bool=true,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
@@ -363,12 +365,64 @@ function watts_strogatz(
             d == s && continue          # Self-loops prohibited
             d == t && break             # Rewired to original target
             if add_edge!(g, s, d)       # Was this valid (i.e., unconnected)?
-                rem_edge!(g, s, t)      # True rewiring: Delete original edge
-                break                   # We found a valid target
+                remove_edges && rem_edge!(g, s, t)     # True rewiring: Delete original edge
+                break                                   # We found a valid target
             end
         end
     end
     return g
+end
+
+"""
+    newman_watts_strogatz(n, k, β)
+
+Return a Newman-Watts-Strogatz small world random graph with `n` vertices, each
+with expected degree `k(1 + β)` (or `(k - 1)(1 + β)` if `k` is odd). Edges are
+randomized per the model based on probability `β`.
+
+The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
+`k - 1` in total). Then the following steps are repeated for a hop length `i` of
+`1` through `div(k, 2)`.
+
+1. Consider each vertex `s` in turn, along with the edge to its `i`th nearest
+   neighbor `t`, in a clockwise sense.
+
+2. Generate a uniformly random number `r`. If `r < β`, `s` is connected to some
+   vertex `d`, chosen uniformly at random from the entire graph, excluding `s` and
+   its neighbors. (Note that `t` is a valid candidate.)
+
+For `β = 0`, the graph will remain a 1-lattice, and for `β = 1`, all edges will
+be rewired randomly.
+
+Note: In the original paper by Newman and Watts, self-loops and double edges were
+allowed, which is not the case here. However, for large enough networks and small
+enough `p` and `k`, this should not deviate much from the original model.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `rng=nothing`: set the Random Number Generator.
+
+## Examples
+```jldoctest
+julia> newman_watts_strogatz(10, 4, 0.3)
+{10, 26} undirected simple Int64 graph
+
+julia> newman_watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
+{10, 36} directed simple Int8 graph
+```
+
+### References
+- Scaling and percolation in the small-world network model, M. E. J. Newman, Duncan J. Watts. [https://doi.org/10.1103/PhysRevE.60.7332](https://doi.org/10.1103/PhysRevE.60.7332)
+"""
+function newman_watts_strogatz(
+    n::Integer,
+    k::Integer,
+    β::Real;
+    is_directed::Bool=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+)
+    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng)
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
