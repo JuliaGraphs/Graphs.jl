@@ -258,6 +258,8 @@
         @test ne(lexicographic_product(g1, g2)) == v1 * e2 + e1 * v2^2
         @test ne(strong_product(g1, g2)) == v1 * e2 + v2 * e1 + 2 * e1 * e2
         @test ne(disjunctive_product(g1, g2)) == v1^2 * e2 + e1 * v2^2 - 2 * e1 * e2
+        @test ne(homomorphic_product(g1, g2)) ==
+            v1 * v2 * (v2 - 1) / 2 + e1 * (v2^2 - 2 * e2)
     end
 
     ## test subgraphs ##
