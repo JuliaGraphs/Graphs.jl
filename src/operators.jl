@@ -503,6 +503,9 @@ issymmetric(g::AbstractGraph) = !is_directed(g)
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
 
+The cartesian product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂).
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -555,6 +558,8 @@ end
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
+The tensor product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∧ h₁ ∼ h₂.
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -600,6 +605,9 @@ end
 
 Return the [strong product](https://en.wikipedia.org/wiki/Strong_product_of_graphs)
 of `g` and `h`.
+
+The strong product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂) ∨ (g₁ ∼ g₂ ∧ h₁ ∼ h₂).
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
@@ -655,6 +663,8 @@ end
 Return the [disjunctive product](https://en.wikipedia.org/wiki/Graph_product)
 of `g` and `h`.
 
+The disjunctive product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∨ h₁ ∼ h₂.
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -701,6 +711,8 @@ end
 
 Return the [lexicographic product](https://en.wikipedia.org/wiki/Lexicographic_product_of_graphs)
 of `g` and `h`.
+
+The lexicographic product has edges (g₁, h₁) ∼ (g₂, h₂) when (g₁ ∼ g₂) ∨ (g₁ = g₂ ∧ h₁ ∼ h₂).
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
@@ -751,6 +763,9 @@ end
 
 Return the [homomorphic product](https://en.wikipedia.org/wiki/Graph_product)
 of `g` and `h`.
+
+The homomorphic product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂) ∨ (g₁ ∼ g₂ ∧ h₁ ≁ h₂).
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
