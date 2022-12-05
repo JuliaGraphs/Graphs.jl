@@ -1426,7 +1426,7 @@ end
 """
     bernoulli_graph(Λ)
 
-Given the parametric symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with  probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
+Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with  probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
 """
 function bernoulli_graph(
     Λ::Matrix{Float64};
@@ -1449,7 +1449,7 @@ end
 """
 rho_correlated_bernoulli_graphs(Λ,ρ)
 
-Given the parametric symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
+Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
 """
 function rho_correlated_bernoulli_graphs(
 Λ::Matrix{Float64},
