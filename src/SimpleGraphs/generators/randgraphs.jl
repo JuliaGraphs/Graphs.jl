@@ -1435,10 +1435,11 @@ function bernoulli_graph(
 )
     @assert size(Λ)[1] == size(Λ)[2] "The probability matrix must be a square matrix!"
     n = size(Λ)[1]
+    rng = rng_from_rng_or_seed(rng, seed)
     A = SimpleGraph(n)
     for j in 1:n
         for i in (j + 1):n
-            if Bool(randbn(1, Λ[i, j]; rng=rng, seed=seed))
+            if Bool(randbn(1, Λ[i, j]; rng=rng))
                 add_edge!(A, i, j)
             end
         end
@@ -1452,21 +1453,22 @@ rho_correlated_bernoulli_graphs(Λ,ρ)
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
 """
 function rho_correlated_bernoulli_graphs(
-Λ::Matrix{Float64},
-ρ::Float64;
-rng::Union{Nothing,AbstractRNG}=nothing,
-seed::Union{Nothing,Integer}=nothing,
+    Λ::Matrix{Float64},
+    ρ::Float64;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
 )
-n = size(Λ)[1]
-B = SimpleGraph(n)
-A = bernoulli_graph(Λ; rng=rng, seed=seed)
-A_adj = Int.(adjacency_matrix(A))
-for j in 1:n
-    for i in (j + 1):n
-        if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * A_adj[i, j]; rng=rng, seed=seed))
-            add_edge!(B, i, j)
+    n = size(Λ)[1]
+    rng = rng_from_rng_or_seed(rng, seed)
+    B = SimpleGraph(n)
+    A = bernoulli_graph(Λ; rng=rng, seed=seed)
+    A_adj = Int.(adjacency_matrix(A))
+    for j in 1:n
+        for i in (j + 1):n
+            if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * A_adj[i, j]; rng=rng))
+                add_edge!(B, i, j)
+            end
         end
     end
-end
-return A, B
+    return A, B
 end
