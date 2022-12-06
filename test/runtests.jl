@@ -11,7 +11,7 @@ using Compat
 using DelimitedFiles
 using Base64
 using Random
-using Statistics: mean, std, cor
+using Statistics: mean, std
 using StableRNGs
 
 const testdir = dirname(@__FILE__)
@@ -21,7 +21,7 @@ const testdir = dirname(@__FILE__)
 end
 
 @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
+    @test format(Graphs; verbose=false, overwrite=false, ignore=["vf2.jl"])  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
 @testset verbose = true "Doctests (Documenter.jl)" begin
