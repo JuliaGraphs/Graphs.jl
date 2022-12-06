@@ -394,5 +394,17 @@
         g2_adj = Int.(adjacency_matrix(g2))
         @test g1_adj == g2_adj
         @test diag(g1_adj) == diag(g2_adj) == zeros(n)
+        ρ = 0.5 # non isomorphism case
+        g3, g4 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
+        g3_adj = Int.(adjacency_matrix(g3))
+        g4_adj = Int.(adjacency_matrix(g4))
+        @test g3_adj != g4_adj
+        @test diag(g3_adj) == diag(g4_adj) == zeros(n)
+        g5=bernoulli_graph(Λ,seed=1) # check seed
+        g6=bernoulli_graph(Λ,seed=1)
+        @test g5==g6
+        for g in testgraphs(g5)
+            @test nv(g)== n
+        end
     end
 end
