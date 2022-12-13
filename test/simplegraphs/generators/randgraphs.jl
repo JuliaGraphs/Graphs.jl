@@ -404,7 +404,7 @@
         g6=bernoulli_graph(Λ,seed=1)
         @test g5==g6
         for g in testgraphs(g5)
-            @test nv(g)== n
+            @test nv(g) == n
         end
     end
 end
