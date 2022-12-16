@@ -387,7 +387,7 @@
 
     @testset "bernoulli graphs" begin
         n = 50
-        Λ = rand(n, n)
+        Λ = sparse(rand(n, n))
         ρ = 1.0 # isomorphism case
         g1, g2 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
         g1_adj = Int.(adjacency_matrix(g1))
@@ -400,9 +400,7 @@
         g4_adj = Int.(adjacency_matrix(g4))
         @test g3_adj != g4_adj
         @test diag(g3_adj) == diag(g4_adj) == zeros(n)
-        g5=bernoulli_graph(Λ,rng) 
-        g6=bernoulli_graph(Λ,rng)
-        @test g5==g6
+        g5=bernoulli_graph(Λ;rng) 
         for g in testgraphs(g5)
             @test nv(g) == n
         end
