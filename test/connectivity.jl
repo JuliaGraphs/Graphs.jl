@@ -306,7 +306,7 @@
     @test !@inferred(isdigraphical([1, 1, 1], [1, 1, 0]))
     @test @inferred(isdigraphical(Integer[], Integer[]))
     #@test !@inferred(isdigraphical([1], [1]))
-    
+
     # 1116
     gc = cycle_graph(4)
     for g in testgraphs(gc)
