@@ -1454,6 +1454,7 @@ Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real numb
 function rho_correlated_bernoulli_graphs(
     Λ::AbstractMatrix{<:AbstractFloat}, ρ::Float64; rng::Union{Nothing,AbstractRNG}=nothing
 )
+    (p < 0 || p > 1) && throw(ArgumentError("ρ must be in [0,1]"))
     n = size(Λ)[1]
     g2 = SimpleGraph(n)
     g1 = bernoulli_graph(Λ; rng)
