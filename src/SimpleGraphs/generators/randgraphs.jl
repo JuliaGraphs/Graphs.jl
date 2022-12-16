@@ -1431,11 +1431,10 @@ Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Berno
 function bernoulli_graph(
     Λ::AbstractMatrix{<:AbstractFloat};
     rng::Union{Nothing,AbstractRNG}=nothing,
-    seed::Union{Nothing,Integer}=nothing,
 )
     @assert size(Λ)[1] == size(Λ)[2] "The probability matrix must be a square matrix!"
     n = size(Λ)[1]
-    rng = rng_from_rng_or_seed(rng, seed)
+    rng = rng_from_rng_or_seed(rng)
     A = SimpleGraph(n)
     for j in 1:n
         for i in (j + 1):n
