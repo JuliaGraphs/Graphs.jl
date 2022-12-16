@@ -297,6 +297,16 @@
     @test @inferred(!isgraphical([1, 1, 1]))
     @test @inferred(isgraphical([2, 2, 2]))
     @test @inferred(isgraphical(fill(3, 10)))
+    @test @inferred(isgraphical(Integer[]))
+    ##@test !@inferred(isgraphical([2]))
+    
+    # Test directed simple graphicality
+    sdg = SimpleDiGraph(10, 90)
+    @test @inferred(isdigraphical(indegree(sdg), outdegree(sdg)))
+    @test !@inferred(isdigraphical([1, 1, 1], [1, 1, 0]))
+    @test @inferred(isdigraphical(Integer[], Integer[]))
+    #@test !@inferred(isdigraphical([1], [1]))
+    
     # 1116
     gc = cycle_graph(4)
     for g in testgraphs(gc)

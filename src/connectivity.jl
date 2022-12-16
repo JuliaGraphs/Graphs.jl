@@ -728,17 +728,29 @@ According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (so
 ```math
 \\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
 ```
-for each integer r <= n-1
+for each integer r <= n-1. 
+
+See also: [`isdigraphical`](@ref)
 """
-function isgraphical(degs::Vector{<:Integer})
+function isgraphical(degs::AbstractVector{<:Integer})
+    # Check whether the degree sequence is empty
+    !isempty(degs) || return true
+    # Check whether the degree sequence has only non-negative values
+    all(degs .>= 0) ||
+        throw(ArgumentError("The degree sequence must contain non-negative integers only."))
+    # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
+    # Sort the degree sequence in non-increasing order
     sorted_degs = sort(degs; rev=true)
+    # Compute the length of the degree sequence
     n = length(sorted_degs)
     cur_sum = zero(UInt64)
+    # Compute the minimum of each degree and the corresponding index
     mindeg = Vector{UInt64}(undef, n)
     @inbounds for i in 1:n
         mindeg[i] = min(i, sorted_degs[i])
     end
+    # Check if the degree sequence satisfies the Erdös-Gallai condition
     cum_min = sum(mindeg)
     @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
@@ -746,5 +758,75 @@ function isgraphical(degs::Vector{<:Integer})
         cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
     end
+    return true
+end
+
+"""
+    isdigraphical(indegree_sequence, outdegree_sequence)
+
+Check whether the given indegree sequence and outdegree sequence are digraphical, that is whether they can be the indegree and outdegree sequence of a digraph.
+
+### Implementation Notes
+According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n, b_n)\\}`` (sorted in descending order of a) is graphic iff the sum of vertex degrees is even and  ``\\sum_{i = 1}^{n} a_i = \\sum_{i = 1}^{n} b_i\\}`` and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} a_i \\leq \\sum_{i=r+1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
+```
+for each integer r <= n-1. 
+
+See also: [`isgraphical`](@ref)
+"""
+function isdigraphical(
+    indegree_sequence::AbstractVector{<:Integer},
+    outdegree_sequence::AbstractVector{<:Integer},
+)
+    # Check whether the degree sequences have the same length 
+    length(indegree_sequence) == length(outdegree_sequence) || throw(
+        ArgumentError("The indegree and outdegree sequences must have the same length.")
+    )
+    # Check whether the degree sequence is empty
+    !(isempty(indegree_sequence) && isempty(outdegree_sequence)) || return true
+    # Check whether the degree sequences have only non-negative values
+    all(indegree_sequence .>= 0) || throw(
+        ArgumentError("The indegree sequence must contain non-negative integers only.")
+    )
+    all(outdegree_sequence .>= 0) || throw(
+        ArgumentError("The outdegree sequence must contain non-negative integers only.")
+    )
+
+    n = length(indegree_sequence)
+    n == length(outdegree_sequence) || return false
+
+    sum(indegree_sequence) == sum(outdegree_sequence) || return false
+
+    _sortperm = sortperm(indegree_sequence; rev=true)
+
+    sorted_indegree_sequence = indegree_sequence[_sortperm]
+    sorted_outdegree_sequence = outdegree_sequence[_sortperm]
+
+    indegree_sum = zero(Int64)
+    outdegree_min_sum = zero(Int64)
+
+    cum_min = zero(Int64)
+
+    # The following approach, which requires substituting the line
+    # cum_min = sum([min(sorted_outdegree_sequence[i], r) for i in (1+r):n])
+    # with the line
+    # cum_min -= mindeg[r]
+    # inside the for loop below, work as well, but the values of `cum_min` at each iteration differ. To be on the safe side we implemented it as in https://en.wikipedia.org/wiki/Fulkerson%E2%80%93Chen%E2%80%93Anstee_theorem
+    #=     mindeg = Vector{Int64}(undef, n)
+        @inbounds for i = 1:n
+            mindeg[i] = min(i, sorted_outdegree_sequence[i])
+        end
+        cum_min = sum(mindeg) =#
+    # Similarly for `outdegree_min_sum`.
+
+    @inbounds for r in 1:(n - 1)
+        indegree_sum += sorted_indegree_sequence[r]
+        outdegree_min_sum = sum([min(sorted_outdegree_sequence[i], r - 1) for i in 1:r])
+        cum_min = sum([min(sorted_outdegree_sequence[i], r) for i in (1 + r):n])
+        cond = indegree_sum <= (outdegree_min_sum + cum_min)
+        cond || return false
+    end
+
     return true
 end
