@@ -209,6 +209,7 @@ export
     neighborhood,
     neighborhood_dists,
     isgraphical,
+    isdigraphical,
 
     # cycles
     simplecycles_hawick_james,

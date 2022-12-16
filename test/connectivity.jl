@@ -300,7 +300,7 @@
     @test @inferred(isgraphical(Integer[]))
     ##@test !@inferred(isgraphical([2]))
 
-    # Test directed simple graphicality
+    # Test simple digraphicality
     sdg = SimpleDiGraph(10, 90)
     @test @inferred(isdigraphical(indegree(sdg), outdegree(sdg)))
     @test !@inferred(isdigraphical([1, 1, 1], [1, 1, 0]))
