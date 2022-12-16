@@ -1429,21 +1429,21 @@ end
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
 """
 function bernoulli_graph(
-    Λ::AbstractMatrix{<:AbstractFloat};
-    rng::Union{Nothing,AbstractRNG}=nothing,
+    Λ::AbstractMatrix{<:AbstractFloat}; rng::Union{Nothing,AbstractRNG}=nothing
 )
-    size(Λ)[1] != size(Λ)[2] && throw(ArgumentError("The probability matrix must be a square matrix"))
-    !issymmetric(Λ) && throw(ArgumentError("Λ must be symmetric"))  
+    size(Λ)[1] != size(Λ)[2] &&
+        throw(ArgumentError("The probability matrix must be a square matrix"))
+    !issymmetric(Λ) && throw(ArgumentError("Λ must be symmetric"))
     n = size(Λ)[1]
-    A = SimpleGraph(n)
+    g = SimpleGraph(n)
     for j in 1:n
         for i in (j + 1):n
-            if Bool(randbn(1, Λ[i, j]; rng=rng))
-                add_edge!(A, i, j)
+            if Bool(randbn(1, Λ[i, j]; rng))
+                add_edge!(g, i, j)
             end
         end
     end
-    return A
+    return g
 end
 
 """
@@ -1452,20 +1452,18 @@ rho_correlated_bernoulli_graphs(Λ,ρ)
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
 """
 function rho_correlated_bernoulli_graphs(
-    Λ::AbstractMatrix{<:AbstractFloat},
-    ρ::Float64;
-    rng::Union{Nothing,AbstractRNG}=nothing,
+    Λ::AbstractMatrix{<:AbstractFloat}, ρ::Float64; rng::Union{Nothing,AbstractRNG}=nothing
 )
     n = size(Λ)[1]
-    B = SimpleGraph(n)
-    A = bernoulli_graph(Λ; rng=rng)
-    A_adj = Int.(adjacency_matrix(A))
+    g2 = SimpleGraph(n)
+    g1 = bernoulli_graph(Λ; rng)
+    g1_adj = Int.(adjacency_matrix(g1))
     for j in 1:n
         for i in (j + 1):n
-            if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * A_adj[i, j]; rng=rng))
-                add_edge!(B, i, j)
+            if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * g1_adj[i, j]; rng))
+                add_edge!(g2, i, j)
             end
         end
     end
-    return A, B
+    return g1, g2
 end
