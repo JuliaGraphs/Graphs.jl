@@ -388,6 +388,9 @@
     @testset "bernoulli graphs" begin
         n = 50
         Λ = sparse(rand(n, n))
+        @test_throws ArgumentError("Λ must be symmetric") bernoulli_graph(Λ;rng)
+        @test_throws ArgumentError("The probability matrix must be a square matrix") bernoulli_graph(sparse(rand(2,3));rng)
+        Λ=Symmetric(Λ)
         ρ = 1.0 # isomorphism case
         g1, g2 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
         g1_adj = Int.(adjacency_matrix(g1))
