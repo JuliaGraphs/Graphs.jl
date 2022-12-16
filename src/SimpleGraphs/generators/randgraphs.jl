@@ -1426,7 +1426,7 @@ end
 """
     bernoulli_graph(Λ; rng = nothing)
 
-Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
+Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\Lambda[i,j]``.
 """
 function bernoulli_graph(
     Λ::AbstractMatrix{<:AbstractFloat}; rng::Union{Nothing,AbstractRNG}=nothing
