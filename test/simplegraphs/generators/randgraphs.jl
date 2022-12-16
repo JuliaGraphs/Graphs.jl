@@ -393,14 +393,14 @@
         Λ=Symmetric(Λ)
         ρ = 1.0 # isomorphism case
         g1, g2 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
-        g1_adj = Int.(adjacency_matrix(g1))
-        g2_adj = Int.(adjacency_matrix(g2))
+        g1_adj = adjacency_matrix(g1)
+        g2_adj = adjacency_matrix(g2)
         @test g1_adj == g2_adj
         @test diag(g1_adj) == diag(g2_adj) == zeros(n)
         ρ = 0.5 # non isomorphism case
         g3, g4 = rho_correlated_bernoulli_graphs(Λ, ρ; rng=rng)
-        g3_adj = Int.(adjacency_matrix(g3))
-        g4_adj = Int.(adjacency_matrix(g4))
+        g3_adj = adjacency_matrix(g3)
+        g4_adj = adjacency_matrix(g4)
         @test g3_adj != g4_adj
         @test diag(g3_adj) == diag(g4_adj) == zeros(n)
         g5=bernoulli_graph(Λ;rng) 
