@@ -1432,7 +1432,7 @@ function bernoulli_graph(
     Λ::AbstractMatrix{<:AbstractFloat};
     rng::Union{Nothing,AbstractRNG}=nothing,
 )
-    @assert size(Λ)[1] == size(Λ)[2] "The probability matrix must be a square matrix!"
+    size(Λ)[1] != size(Λ)[2] && throw(ArgumentError("The probability matrix must be a square matrix")) 
     n = size(Λ)[1]
     A = SimpleGraph(n)
     for j in 1:n
