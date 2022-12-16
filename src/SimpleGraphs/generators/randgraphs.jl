@@ -1424,7 +1424,7 @@ function random_orientation_dag(
 end
 
 """
-    bernoulli_graph(Λ)
+    bernoulli_graph(Λ; rng = nothing)
 
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\operatorname{Bernoulli}(\\Lambda[i,j])``.
 """
@@ -1447,7 +1447,7 @@ function bernoulli_graph(
 end
 
 """
-rho_correlated_bernoulli_graphs(Λ,ρ)
+rho_correlated_bernoulli_graphs(Λ, ρ; rng = nothing)
 
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
 """
