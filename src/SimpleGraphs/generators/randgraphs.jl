@@ -1434,7 +1434,6 @@ function bernoulli_graph(
 )
     @assert size(Λ)[1] == size(Λ)[2] "The probability matrix must be a square matrix!"
     n = size(Λ)[1]
-    rng = rng_from_rng_or_seed(rng)
     A = SimpleGraph(n)
     for j in 1:n
         for i in (j + 1):n
@@ -1457,7 +1456,6 @@ function rho_correlated_bernoulli_graphs(
     rng::Union{Nothing,AbstractRNG}=nothing,
 )
     n = size(Λ)[1]
-    rng = rng_from_rng_or_seed(rng)
     B = SimpleGraph(n)
     A = bernoulli_graph(Λ; rng=rng)
     A_adj = Int.(adjacency_matrix(A))
