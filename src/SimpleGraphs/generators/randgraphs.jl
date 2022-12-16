@@ -1438,7 +1438,7 @@ function bernoulli_graph(
     g = SimpleGraph(n)
     for j in 1:n
         for i in (j + 1):n
-            if Bool(randbn(1, Λ[i, j]; rng))
+            if rand(rng) <= Λ[i, j]
                 add_edge!(g, i, j)
             end
         end
@@ -1460,7 +1460,7 @@ function rho_correlated_bernoulli_graphs(
     g1_adj = Int.(adjacency_matrix(g1))
     for j in 1:n
         for i in (j + 1):n
-            if Bool(randbn(1, (1 - ρ) * Λ[i, j] + ρ * g1_adj[i, j]; rng))
+            if rand(rng) <= ((1 - ρ) * Λ[i, j] + ρ * g1_adj[i, j])
                 add_edge!(g2, i, j)
             end
         end
