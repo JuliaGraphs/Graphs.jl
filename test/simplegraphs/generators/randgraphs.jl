@@ -400,8 +400,8 @@
         g4_adj = Int.(adjacency_matrix(g4))
         @test g3_adj != g4_adj
         @test diag(g3_adj) == diag(g4_adj) == zeros(n)
-        g5=bernoulli_graph(Λ,seed=1) # check seed
-        g6=bernoulli_graph(Λ,seed=1)
+        g5=bernoulli_graph(Λ,rng) # check seed
+        g6=bernoulli_graph(Λ,rng)
         @test g5==g6
         for g in testgraphs(g5)
             @test nv(g) == n
