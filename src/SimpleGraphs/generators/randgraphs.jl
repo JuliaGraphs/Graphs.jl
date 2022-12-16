@@ -1451,7 +1451,7 @@ rho_correlated_bernoulli_graphs(Λ,ρ)
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices.
 """
 function rho_correlated_bernoulli_graphs(
-    Λ::Matrix{Float64},
+    Λ::AbstractMatrix{<:AbstractFloat},
     ρ::Float64;
     rng::Union{Nothing,AbstractRNG}=nothing,
 )
