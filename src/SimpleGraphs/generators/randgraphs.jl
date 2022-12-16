@@ -1455,12 +1455,11 @@ function rho_correlated_bernoulli_graphs(
     Λ::Matrix{Float64},
     ρ::Float64;
     rng::Union{Nothing,AbstractRNG}=nothing,
-    seed::Union{Nothing,Integer}=nothing,
 )
     n = size(Λ)[1]
-    rng = rng_from_rng_or_seed(rng, seed)
+    rng = rng_from_rng_or_seed(rng)
     B = SimpleGraph(n)
-    A = bernoulli_graph(Λ; rng=rng, seed=seed)
+    A = bernoulli_graph(Λ; rng=rng)
     A_adj = Int.(adjacency_matrix(A))
     for j in 1:n
         for i in (j + 1):n
