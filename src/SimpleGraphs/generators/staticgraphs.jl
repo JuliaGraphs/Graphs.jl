@@ -537,11 +537,12 @@ function double_binary_tree(k::Integer)
 end
 
 """
-    regular_tree([T=Int64, ], k::Integer, z::integer)
+    regular_tree([T::Type], k, z)
 
 Create a regular tree or [perfect z-ary tree](https://en.wikipedia.org/wiki/M-ary_tree#Types_of_m-ary_trees): 
 a `k`-level tree where all nodes except the leaves have exactly `z` children. 
 For `z = 2` one recovers a binary tree.
+The optional `T` argument specifies the element type, which defaults to `Int64`.
 
 # Examples
 ```jldoctest
@@ -560,11 +561,12 @@ function regular_tree(T::Type{<:Integer}, k::Integer, z::Integer)
     z == 1 && return path_graph(T(k))
     k <= 0 && return SimpleGraph(zero(T))
     k == 1 && return SimpleGraph(one(T))
-    if Graphs.isbounded(k) && (BigInt(z)^k - 1) ÷ (z - 1) > typemax(T)
-        throw(InexactError(:convert, T, (BigInt(z)^k - 1) ÷ (z - 1)))
+    nbig = (BigInt(z)^k - 1) ÷ (z - 1)
+    if Graphs.isbounded(k) && nbig > typemax(T)
+        throw(InexactError(:convert, T, nbig))
     end
 
-    n = T((z^k - 1) / (z - 1))
+    n = T(nbig)
     ne = n - 1
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = convert.(T, 2:(z + 1))
