@@ -139,7 +139,7 @@ function LRPlanarity(g)
     lowpt2 = Dict{Edge{T},Int64}()  # height of second lowest return point
     nesting_depth = Dict{Edge{T},Int64}()  # for nesting order
 
-    # None == Edge(-1, 0)  for our type-stable algo
+    # None == Edge(0, 0)  for our type-stable algo
 
     parent_edge = DefaultDict{T,Edge{T}}(Edge(zero(T), zero(T)))
 
