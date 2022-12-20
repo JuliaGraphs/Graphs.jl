@@ -2,11 +2,8 @@
 # Algorithm from https://www.uni-konstanz.de/algo/publications/b-lrpt-sub.pdf
 # The implementation is heavily influenced by the recursive implementation in Networkx (https://networkx.org/documentation/stable/_modules/networkx/algorithms/planarity.html)
 
-using DataStructures
-
+import DataStructures: DefaultDict, Stack, top
 import Base: isempty
-
-export is_planar
 
 """
     is_planar(g)
@@ -20,13 +17,13 @@ Uses the [left-right planarity test](https://en.wikipedia.org/wiki/Left-right_pl
 """
 function is_planar(g::SimpleGraph)
     lrp = LRPlanarity(g)
-    lr_planarity!(lrp)
+    return lr_planarity!(lrp)
 end
 
 #if g is directed, analyse the undirected version 
 function is_planar(dg::SimpleDiGraph)
     g = SimpleGraph(dg)
-    is_planar(g)
+    return is_planar(g)
 end
 
 #aux functions 
@@ -44,11 +41,11 @@ end
 
 #Simple structs to be used in algorithm. Keep private for now. 
 function empty_edge(T)
-    Edge{T}(0, 0)
+    return Edge{T}(0, 0)
 end
 
 function isempty(e::Edge{T}) where {T}
-    e.src == zero(T) && e.dst == zero(T)
+    return e.src == zero(T) && e.dst == zero(T)
 end
 
 mutable struct Interval{T}
@@ -57,41 +54,41 @@ mutable struct Interval{T}
 end
 
 function empty_interval(T)
-    Interval(empty_edge(T), empty_edge(T))
+    return Interval(empty_edge(T), empty_edge(T))
 end
 
 function isempty(interval::Interval)
-    isempty(interval.high) && isempty(interval.low)
+    return isempty(interval.high) && isempty(interval.low)
 end
 
 function conflicting(interval::Interval{T}, b, lrp_state) where {T}
-    !isempty(interval) && (lrp_state.lowpt[interval.high] > lrp_state.lowpt[b])
+    return !isempty(interval) && (lrp_state.lowpt[interval.high] > lrp_state.lowpt[b])
 end
 
-mutable struct Pair{T}
+mutable struct ConflictPair{T}
     L::Interval{T}
     R::Interval{T}
 end
 
 function empty_pair(T)
-    Pair(empty_interval(T), empty_interval(T))
+    return ConflictPair(empty_interval(T), empty_interval(T))
 end
 
-function swap!(self::Pair)
+function swap!(self::ConflictPair)
     #Swap left and right intervals
     temp = self.L
     self.L = self.R
-    self.R = temp
+    return self.R = temp
 end
 
 function root_pair(T)
     #returns the "root pair" of type T 
     e = Edge{T}(0, 0)
-    Pair(Interval(e, e), Interval(e, e))
+    return ConflictPair(Interval(e, e), Interval(e, e))
 end
 
-function isempty(p::Pair)
-    isempty(p.L) && isempty(p.R)
+function isempty(p::ConflictPair)
+    return isempty(p.L) && isempty(p.R)
 end
 
 struct LRPlanarity{T}
@@ -110,8 +107,8 @@ struct LRPlanarity{T}
     ordered_adjs::Dict{T,Vector{T}} #Dict of neighbors of nodes sorted by nesting depth, indexed by node
     ref::DefaultDict{Edge{T},Edge{T}} #DefaultDict of Edges, indexed by Edge
     side::DefaultDict{Edge{T},Int8} #DefaultDict of +/- 1, indexed by edge
-    S::Stack{Pair{T}} #Stack of tuples of Edges
-    stack_bottom::Dict{Edge{T},Pair{T}} #Dict of Tuples of Edges, indexed by Edge
+    S::Stack{ConflictPair{T}} #Stack of tuples of Edges
+    stack_bottom::Dict{Edge{T},ConflictPair{T}} #Dict of Tuples of Edges, indexed by Edge
     lowpt_edge::Dict{Edge{T},Edge{T}} #Dict of Edges, indexed by Edge 
     left_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
     right_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
@@ -142,7 +139,7 @@ function LRPlanarity(g)
     lowpt2 = Dict{Edge{T},Int64}()  # height of second lowest return point
     nesting_depth = Dict{Edge{T},Int64}()  # for nesting order
 
-    # None == Edge(0, 0)  for our type-stable algo
+    # None == Edge(-1, 0)  for our type-stable algo
 
     parent_edge = DefaultDict{T,Edge{T}}(Edge(zero(T), zero(T)))
 
@@ -157,14 +154,14 @@ function LRPlanarity(g)
     side = DefaultDict{Edge{T},Int8}(one(Int8))
 
     # stack of conflict pairs
-    S = Stack{Pair{T}}()
-    stack_bottom = Dict{Edge{T},Pair{T}}()
+    S = Stack{ConflictPair{T}}()
+    stack_bottom = Dict{Edge{T},ConflictPair{T}}()
     lowpt_edge = Dict{Edge{T},Edge{T}}()
     left_ref = Dict{T,Edge{T}}()
     right_ref = Dict{T,Edge{T}}()
 
     #self.embedding = PlanarEmbedding()
-    LRPlanarity(
+    return LRPlanarity(
         g,
         roots,
         height,
@@ -185,7 +182,7 @@ function LRPlanarity(g)
     )
 end
 
-function lowest(self::Pair, planarity_state::LRPlanarity)
+function lowest(self::ConflictPair, planarity_state::LRPlanarity)
     #Returns the lowest lowpoint of a conflict pair
     if isempty(self.L)
         return planarity_state.lowpt[self.R.low]
@@ -207,9 +204,8 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
         return false
     end
 
-
     # make adjacency lists for dfs
-    for v = 1:nv(self.G) #for all vertices in G,
+    for v in 1:nv(self.G) #for all vertices in G,
         self.adjs[v] = neighbors(self.G, v) ##neighbourhood of v
     end
 
@@ -224,7 +220,7 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
 
     #Testing stage
     #First, sort the ordered_adjs by nesting depth
-    for v = 1:nv(self.G) #for all vertices in G,
+    for v in 1:nv(self.G) #for all vertices in G,
         #get neighboring nodes
         neighboring_nodes = T[]
         neighboring_nesting_depths = Int64[]
@@ -244,10 +240,8 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
     end
 
     #if the algorithm finishes, the graph is planar. Return true
-    true
+    return true
 end
-
-
 
 function dfs_orientation!(self::LRPlanarity, v)
     # get the parent edge of v. 
@@ -303,7 +297,6 @@ function dfs_orientation!(self::LRPlanarity, v)
             end
         end
     end
-
 end
 
 function dfs_testing!(self, v)
@@ -323,7 +316,7 @@ function dfs_testing!(self, v)
             end
         else #back edge
             self.lowpt_edge[ei] = ei
-            push!(self.S, Pair(empty_interval(T), Interval(ei, ei)))
+            push!(self.S, ConflictPair(empty_interval(T), Interval(ei, ei)))
         end
 
         #integrate new return edges 
@@ -356,7 +349,7 @@ function dfs_testing!(self, v)
             end
         end
     end
-    true
+    return true
 end
 
 function edge_constraints!(self, ei, e)
@@ -408,7 +401,7 @@ function edge_constraints!(self, ei, e)
     if !isempty(P)
         push!(self.S, P)
     end
-    true
+    return true
 end
 
 function trim_back_edges!(self, u)
@@ -448,5 +441,4 @@ function trim_back_edges!(self, u)
         end
         push!(self.S, P)
     end
-
 end
