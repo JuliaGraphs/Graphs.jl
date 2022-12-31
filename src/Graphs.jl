@@ -394,7 +394,7 @@ export
     kruskal_mst,
     prim_mst,
 
-    # prufer coding
+    # trees and prufer
     is_tree,
     prufer_encode,
     prufer_decode,
@@ -521,7 +521,7 @@ include("community/rich_club.jl")
 include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
-include("prufer/prufer_coding.jl")
+include("trees/prufer.jl")
 include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")

@@ -2,7 +2,7 @@ function _harmonize_type(g::AbstractGraph{T}, c::Vector{S}) where {T,S<:Integer}
     return convert(Vector{T}, c)
 end
 
-@testset "Prufer trees" begin
+@testset "Tree utilities" begin
     t1 = Graph(6)
     for e in [(1, 4), (2, 4), (3, 4), (4, 5), (5, 6)]
         add_edge!(t1, e...)
