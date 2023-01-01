@@ -31,7 +31,7 @@ end
             @test !is_tree(g)
         end
         for g in testgraphs(d1, d2, d3)
-            @test_throws ArgumentError is_tree(g)
+            @test_throws MethodError is_tree(g)
         end
     end
 

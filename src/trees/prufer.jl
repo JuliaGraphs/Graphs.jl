@@ -7,9 +7,10 @@ This function does not apply to directed graphs. Directed trees are sometimes ca
 
 """
 
-function is_tree(g::AbstractGraph)
-    is_directed(g) && throw(ArgumentError("g must be undirected. "))
-    return is_connected(g) && ne(g) == nv(g) - 1
+function is_tree end
+
+@traitfn function is_tree(g::::(!IsDirected))
+    return ne(g) == nv(g) - 1 && is_connected(g)
 end
 
 function _is_prufer(c)
