@@ -34,7 +34,7 @@ Each tree of size n is associated with a Prüfer sequence (a[1], ..., a[n-2]) wi
 Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence)
 """
 
-function prufer_decode(code::Array{T,1})::Graph{T} where {T<:Integer}
+function prufer_decode(code::AbstractVector{T})::SimpleGraph{T} where {T<:Integer}
     !_is_prufer(code) && throw(
         ArgumentError(
             "The code must be an Array{T,1} and must be a Prufer sequence with length ⩾1. ",
