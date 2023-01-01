@@ -14,12 +14,12 @@ function is_tree end
 end
 
 function _is_prufer(c)
-    return ndims(c) == 1 && !isempty(c) && maximum(c) <= length(c) + 2
+    return ndims(c) == 1 && eltype(c)<:Integer && (isempty(c) || maximum(c) <= length(c) + 2)
 end
 
 function _degree_from_prufer(c::Vector{T})::Vector{T} where {T<:Integer}
     """
-    Degree sequence from prufer code.
+    Degree sequence from Prüfer code.
     Returns d such that d[i] = 1 + number of occurences of i in c
     """
     n = length(c) + 2
@@ -37,9 +37,11 @@ Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_s
 function prufer_decode(code::AbstractVector{T})::SimpleGraph{T} where {T<:Integer}
     !_is_prufer(code) && throw(
         ArgumentError(
-            "The code must be an Array{T,1} and must be a Prufer sequence with length ⩾1. ",
+            "The code must have one dimension and must be a Prüfer sequence. ",
         ),
     )
+    isempty(code) && return path_graph(T(2)) # the empty Prüfer sequence codes for the one-edge tree
+
     n = length(code) + 2
     d = _degree_from_prufer(code)
     L = BinaryMinHeap{T}(findall(==(1), d))
@@ -70,9 +72,11 @@ Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_s
 """
 
 function prufer_encode(G::SimpleGraph{T})::AbstractVector{T} where {T<:Integer}
+    !is_tree(G) &&
+        throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
+
     n = nv(G)
-    (!is_tree(G) || n <= 2) &&
-        throw(ArgumentError("The graph must be a tree with n ⩾ 3 vertices. "))
+    n==0 && return Vector{T}() # empty Prüfer sequence 
     g = copy(G)
     code = zeros(T, n - 2)
     d = degree(g)

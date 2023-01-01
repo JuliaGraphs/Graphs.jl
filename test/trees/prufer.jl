@@ -38,7 +38,7 @@ end
     @testset "encode/decode" begin
         @test prufer_decode(code) == t1
         @test prufer_encode(t1) == code
-        for g in testgraphs(t3, t4)
+        for g in testgraphs(t2, t3, t4)
             ret_code = prufer_encode(g)
             @test prufer_decode(ret_code) == g
         end
@@ -46,9 +46,9 @@ end
 
     @testset "errors" begin
         b1 = [5, 8, 10, 1, 2]
-        b2 = Vector{Int}()
+        b2 = [0.5, 1.1]
         @test_throws ArgumentError prufer_decode(b1)
-        @test_throws ArgumentError prufer_decode(b2)
+        @test_throws MethodError prufer_decode(b2)
 
         for g in testgraphs(g1, g2, g3)
             @test_throws ArgumentError prufer_encode(g)
