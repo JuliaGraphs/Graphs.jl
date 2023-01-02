@@ -2,7 +2,7 @@
 # Algorithm from https://www.uni-konstanz.de/algo/publications/b-lrpt-sub.pdf
 # The implementation is heavily influenced by the recursive implementation in Networkx (https://networkx.org/documentation/stable/_modules/networkx/algorithms/planarity.html)
 
-import DataStructures: DefaultDict, Stack 
+import DataStructures: DefaultDict, Stack
 import Base: isempty
 
 """
@@ -105,7 +105,7 @@ function isempty(p::ConflictPair)
     return isempty(p.L) && isempty(p.R)
 end
 
-struct LRPlanarity{T<:Integer} 
+struct LRPlanarity{T<:Integer}
     #State class for the planarity test 
     #We index by Edge structs throughout as it is easier than switching between
     #Edges and tuples

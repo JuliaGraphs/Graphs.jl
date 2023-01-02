@@ -37,7 +37,7 @@ function pmfg(
     #we want the smallest weight edges at the end of the edge list
     #after sorting, which means reversing the usual direction of
     #the sort.
-    edge_list .= edge_list[sortperm(weights, rev = !minimize)]
+    edge_list .= edge_list[sortperm(weights; rev=!minimize)]
 
     #construct an initial graph
     test_graph = SimpleGraph(nv(g))
@@ -49,7 +49,7 @@ function pmfg(
         if !is_planar(test_graph) #if resulting graph is not planar, remove it again
             rem_edge!(test_graph, e.src, e.dst)
         end
-        (ne(test_graph) >= 3*nv(test_graph) - 6) && break #break if limit reached
+        (ne(test_graph) >= 3 * nv(test_graph) - 6) && break #break if limit reached
     end
 
     return test_graph
