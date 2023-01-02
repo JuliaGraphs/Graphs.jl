@@ -46,7 +46,7 @@ function prufer_decode(code::AbstractVector{T})::SimpleGraph{T} where {T<:Intege
     n = length(code) + 2
     d = _degree_from_prufer(code)
     L = BinaryMinHeap{T}(findall(==(1), d))
-    g = Graph{T}(n, 0)
+    g = Graph{T}(n)
 
     for i in 1:(n - 2)
         l = pop!(L) # extract leaf with priority rule (max)
