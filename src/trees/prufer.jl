@@ -83,10 +83,10 @@ function prufer_encode(G::SimpleGraph{T})::Vector{T} where {T<:Integer}
     L = BinaryMinHeap(findall(==(1), d))
 
     for i in 1:(n - 2)
-        l = pop!(L)
-        v = neighbors(g, l)[1]
-        rem_edge!(g, l, v)
-        d[l] -= 1
+        u = pop!(L)
+        v = neighbors(g, u)[1]
+        rem_edge!(g, u, v)
+        d[u] -= 1
         d[v] -= 1
         d[v] == 1 && push!(L, v)
         code[i] = v
