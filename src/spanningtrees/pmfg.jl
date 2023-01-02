@@ -15,7 +15,7 @@ p_g = pmfg(g)
 ### References 
 - Tuminello et al. 2005
 """
-function better_mst(
+function pmfg(
     g::AG, distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
     #check graph is not directed
