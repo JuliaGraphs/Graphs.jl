@@ -73,10 +73,10 @@ Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_s
 """
 
 function prufer_encode(G::SimpleGraph{T})::AbstractVector{T} where {T<:Integer}
-    !is_tree(G) && throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
+    (nv(G) < 2 || !is_tree(G)) && throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
 
     n = nv(G)
-    n == 0 && return Vector{T}() # empty Prüfer sequence 
+    n == 2 && return Vector{T}() # empty Prüfer sequence 
     g = copy(G)
     code = zeros(T, n - 2)
     d = degree(g)
