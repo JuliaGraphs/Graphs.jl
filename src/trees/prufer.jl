@@ -72,7 +72,7 @@ Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_s
 
 """
 
-function prufer_encode(G::SimpleGraph{T})::AbstractVector{T} where {T<:Integer}
+function prufer_encode(G::SimpleGraph{T})::Vector{T} where {T<:Integer}
     (nv(G) < 2 || !is_tree(G)) && throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
 
     n = nv(G)
