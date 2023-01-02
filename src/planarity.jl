@@ -15,7 +15,7 @@ Uses the [left-right planarity test](https://en.wikipedia.org/wiki/Left-right_pl
 ### References 
 - [Brandes 2009](https://www.uni-konstanz.de/algo/publications/b-lrpt-sub.pdf)
 """
-function is_planar(g::SimpleGraph)
+function is_planar(g)
     lrp = LRPlanarity(g)
     return lr_planarity!(lrp)
 end
@@ -38,6 +38,20 @@ function add_edges_from!(input_g, output_g)
         add_edge!(output_g, e)
     end
 end
+
+function add_simple_edges_from!(input_g, output_g)
+    for e in edges(input_g)
+        add_edge!(output_g, e.dst, e.src)
+    end
+end
+
+#= function add__simple_edges_from!(input_g::SimpleWeightedGraph, output_g)
+    for e in edges(input_g)
+        if e.dst != e.src
+            add_edge!(output_g, e.src, e.dst)
+        end
+    end
+end =#
 
 #Simple structs to be used in algorithm. Keep private for now. 
 function empty_edge(T)
@@ -91,7 +105,7 @@ function isempty(p::ConflictPair)
     return isempty(p.L) && isempty(p.R)
 end
 
-struct LRPlanarity{T}
+struct LRPlanarity{T<:Integer} 
     #State class for the planarity test 
     #We index by Edge structs throughout as it is easier than switching between
     #Edges and tuples
@@ -110,8 +124,8 @@ struct LRPlanarity{T}
     S::Stack{ConflictPair{T}} #Stack of tuples of Edges
     stack_bottom::Dict{Edge{T},ConflictPair{T}} #Dict of Tuples of Edges, indexed by Edge
     lowpt_edge::Dict{Edge{T},Edge{T}} #Dict of Edges, indexed by Edge 
-    left_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
-    right_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
+    #left_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
+    #right_ref::Dict{T,Edge{T}} #Dict of Edges, indexed by node
     # skip embedding for now 
 end
 
@@ -122,11 +136,7 @@ function LRPlanarity(g)
     # copy G without adding self-loops
     output_g = SimpleGraph{T}()
     add_vertices_from!(g, output_g)
-    for e in edges(g)
-        if e.src != e.dst
-            add_edge!(output_g, e)
-        end
-    end
+    add_simple_edges_from!(g, output_g)
 
     N = nv(output_g)
 
@@ -157,8 +167,8 @@ function LRPlanarity(g)
     S = Stack{ConflictPair{T}}()
     stack_bottom = Dict{Edge{T},ConflictPair{T}}()
     lowpt_edge = Dict{Edge{T},Edge{T}}()
-    left_ref = Dict{T,Edge{T}}()
-    right_ref = Dict{T,Edge{T}}()
+    #left_ref = Dict{T,Edge{T}}()
+    #right_ref = Dict{T,Edge{T}}()
 
     #self.embedding = PlanarEmbedding()
     return LRPlanarity(
@@ -177,8 +187,8 @@ function LRPlanarity(g)
         S,
         stack_bottom,
         lowpt_edge,
-        left_ref,
-        right_ref,
+        #left_ref,
+        #right_ref,
     )
 end
 
@@ -196,8 +206,8 @@ function lowest(self::ConflictPair, planarity_state::LRPlanarity)
 end
 
 function lr_planarity!(self::LRPlanarity{T}) where {T}
-    V = nv(self.G)
-    E = ne(self.G)
+    V::Int64 = nv(self.G)
+    E::Int64 = ne(self.G)
 
     if V > 2 && (E > (3V - 6))
         # graph is not planar
@@ -208,6 +218,7 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
     for v in 1:nv(self.G) #for all vertices in G,
         self.adjs[v] = neighbors(self.G, v) ##neighbourhood of v
     end
+    # TODO this could be done during the alloc phase
 
     # orientation of the graph by depth first search traversal
     for v in vertices(self.G)
