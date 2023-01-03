@@ -413,7 +413,10 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # longestpaths
+    dag_longest_path
 
 """
     Graphs
@@ -526,6 +529,7 @@ include("independentset/degree_ind_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
+include("longestpaths/longest_path.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 
