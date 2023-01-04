@@ -6,17 +6,14 @@ Returns true if g is a tree: that is, a simple, connected undirected graph, wit
 This function does not apply to directed graphs. Directed trees are sometimes called [polytrees](https://en.wikipedia.org/wiki/Polytree)). 
 
 """
-
 function is_tree end
 
 @traitfn function is_tree(g::::(!IsDirected))
     return ne(g) == nv(g) - 1 && is_connected(g)
 end
 
-function _is_prufer(c)
-    return ndims(c) == 1 &&
-           eltype(c) <: Integer &&
-           (isempty(c) || maximum(c) <= length(c) + 2)
+function _is_prufer(c::AbstractVector{T}) where {T<:Integer}
+    return isempty(c) || (minimum(c) >= 1 && maximum(c) <= length(c) + 2)
 end
 
 function _degree_from_prufer(c::Vector{T})::Vector{T} where {T<:Integer}
@@ -25,7 +22,11 @@ function _degree_from_prufer(c::Vector{T})::Vector{T} where {T<:Integer}
     Returns d such that d[i] = 1 + number of occurences of i in c
     """
     n = length(c) + 2
-    return [T(count(==(i), c) + 1) for i in 1:n]
+    d = ones(T, n)
+    for value in c
+        d[value] += 1
+    end
+    return d
 end
 
 """
@@ -46,7 +47,7 @@ function prufer_decode(code::AbstractVector{T})::SimpleGraph{T} where {T<:Intege
     n = length(code) + 2
     d = _degree_from_prufer(code)
     L = BinaryMinHeap{T}(findall(==(1), d))
-    g = Graph{T}(n)
+    g = Graph{T}(n, 0)
 
     for i in 1:(n - 2)
         l = pop!(L) # extract leaf with priority rule (max)
@@ -73,7 +74,8 @@ Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_s
 """
 
 function prufer_encode(G::SimpleGraph{T})::Vector{T} where {T<:Integer}
-    (nv(G) < 2 || !is_tree(G)) && throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
+    (nv(G) < 2 || !is_tree(G)) &&
+        throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
 
     n = nv(G)
     n == 2 && return Vector{T}() # empty Prüfer sequence 
