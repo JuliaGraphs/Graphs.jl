@@ -970,7 +970,7 @@ end
 """
     uniform_tree(n)
 
-Generates a random labelled tree, drawn uniformly at random over the n^{n-2} such trees. A uniform word of length n-2 over the alphabet 1:n is generated (Prüfer sequence) then decoded. See also `prufer_decode` and [prufer sequence](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence). 
+Generates a random labelled tree, drawn uniformly at random over the ``n^{n-2}`` such trees. A uniform word of length `n-2` over the alphabet `1:n` is generated (Prüfer sequence) then decoded. See also the `prufer_decode` function and [this page on Prüfer codes](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence). 
 
 ### Optional Arguments
 - `rng=nothing`: set the Random Number Generator.

@@ -37,7 +37,6 @@ Each tree of size n is associated with a Prüfer sequence (a[1], ..., a[n-2]) wi
 Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence)
 
 """
-
 function prufer_decode(code::AbstractVector{T})::SimpleGraph{T} where {T<:Integer}
     !_is_prufer(code) && throw(
         ArgumentError("The code must have one dimension and must be a Prüfer sequence. "),
@@ -72,7 +71,6 @@ Each tree of size n ⩾ 2 is associated with a Prüfer sequence (a[1], ..., a[n-
 Ref: [Prüfer sequence on Wikipedia](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence)
 
 """
-
 function prufer_encode(G::SimpleGraph{T})::Vector{T} where {T<:Integer}
     (nv(G) < 2 || !is_tree(G)) &&
         throw(ArgumentError("The graph must be a tree with n ⩾ 2 vertices. "))
