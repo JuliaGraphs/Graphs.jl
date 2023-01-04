@@ -282,6 +282,7 @@ export
     watts_strogatz,
     newman_watts_strogatz,
     random_regular_graph,
+    uniform_tree,
     random_regular_digraph,
     random_configuration_model,
     random_tournament_digraph,

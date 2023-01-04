@@ -967,6 +967,33 @@ function random_configuration_model(
     end
     return g
 end
+"""
+    uniform_tree(n)
+
+Generates a random labelled tree, drawn uniformly at random over the n^{n-2} such trees. A uniform word of length n-2 over the alphabet 1:n is generated (Prüfer sequence) then decoded. See also `prufer_decode` and [prufer sequence](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence). 
+
+### Optional Arguments
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
+
+# Examples
+```jldoctest
+julia> uniform_tree(10)
+{10, 9} undirected simple Int64 graph
+```
+"""
+function uniform_tree(
+    n::Integer;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    n == 1 && return Graph(1, 0)
+    n == 2 && return path_graph(2)
+
+    rng = rng_from_rng_or_seed(rng, seed)
+    random_code = rand(rng, 1:n, n - 2)
+    return prufer_decode(random_code)
+end
 
 """
     random_regular_digraph(n, k)

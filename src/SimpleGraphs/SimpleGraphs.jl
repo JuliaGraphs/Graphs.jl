@@ -36,7 +36,8 @@ import Graphs:
     num_self_loops,
     insorted,
     squash,
-    rng_from_rng_or_seed
+    rng_from_rng_or_seed,
+    prufer_decode
 
 export AbstractSimpleGraph,
     AbstractSimpleEdge,
@@ -61,6 +62,7 @@ export AbstractSimpleGraph,
     random_regular_graph,
     random_regular_digraph,
     random_configuration_model,
+    uniform_tree,
     random_tournament_digraph,
     StochasticBlockModel,
     make_edgestream,
