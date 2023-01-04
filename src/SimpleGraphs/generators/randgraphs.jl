@@ -974,7 +974,6 @@ Generates a random labelled tree, drawn uniformly at random over the ``n^{n-2}``
 
 ### Optional Arguments
 - `rng=nothing`: set the Random Number Generator.
-- `seed=nothing`: set the RNG seed.
 
 # Examples
 ```jldoctest
@@ -982,15 +981,10 @@ julia> uniform_tree(10)
 {10, 9} undirected simple Int64 graph
 ```
 """
-function uniform_tree(
-    n::Integer;
-    rng::Union{Nothing,AbstractRNG}=nothing,
-    seed::Union{Nothing,Integer}=nothing,
-)
+function uniform_tree(n::Integer; rng::Union{Nothing,AbstractRNG}=nothing)
     n <= 1 && return Graph(n)
     n == 2 && return path_graph(n)
-
-    rng = rng_from_rng_or_seed(rng, seed)
+    rng = rng_from_rng_or_seed(rng)
     random_code = rand(rng, Base.OneTo(n), n - 2)
     return prufer_decode(random_code)
 end
