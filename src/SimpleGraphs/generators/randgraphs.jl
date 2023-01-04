@@ -987,11 +987,11 @@ function uniform_tree(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    n == 1 && return Graph(1, 0)
-    n == 2 && return path_graph(2)
+    n <= 1 && return Graph(n)
+    n == 2 && return path_graph(n)
 
     rng = rng_from_rng_or_seed(rng, seed)
-    random_code = rand(rng, 1:n, n - 2)
+    random_code = rand(rng, Base.OneTo(n), n - 2)
     return prufer_decode(random_code)
 end
 
