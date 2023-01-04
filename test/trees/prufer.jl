@@ -12,18 +12,18 @@ end
     t2 = path_graph(2)
     t3 = star_graph(10)
     t4 = binary_tree(3)
-    
-    f1 = Graph(8,0) #forest with 4 tree components
-    for e in [(1,2),(2,3),(4,5),(6,7)]
-        add_edge!(f1,e...)
+
+    f1 = Graph(8, 0) #forest with 4 tree components
+    for e in [(1, 2), (2, 3), (4, 5), (6, 7)]
+        add_edge!(f1, e...)
     end
 
     g1 = cycle_graph(8)
     g2 = complete_graph(4)
-    g3 = Graph(1,0)
-    g4 = Graph(2,0)
-    g5 = Graph(1,0) 
-    add_edge!(g5,1,1) # loop
+    g3 = Graph(1, 0)
+    g4 = Graph(2, 0)
+    g5 = Graph(1, 0)
+    add_edge!(g5, 1, 1) # loop
 
     d1 = cycle_digraph(5)
     d2 = path_digraph(5)
