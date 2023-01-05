@@ -116,6 +116,7 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
+    "longestpaths/longest_path.jl",
     "experimental/experimental",
 ]
 
