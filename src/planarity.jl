@@ -22,7 +22,7 @@ end
 
 #if g is directed, analyse the undirected version 
 function is_planar(dg::SimpleDiGraph)
-    g = SimpleGraph(dg)
+    g = SimpleGraph(dg) #TODO - do we need a separate method?
     return is_planar(g)
 end
 
@@ -109,7 +109,9 @@ struct LRPlanarity{T<:Integer}
     #State class for the planarity test 
     #We index by Edge structs throughout as it is easier than switching between
     #Edges and tuples
-    G::SimpleGraph{T} #Copy of the input graph
+    #G::SimpleGraph{T} #Copy of the input graph
+    V::Int64 
+    E::Int64 
     roots::Vector{T} #Vector of roots for disconnected graphs. Normally size(roots, 1) == 1
     height::DefaultDict{T,Int64} #DefaultDict of heights <: Int, indexed by node. default is -1
     lowpt::Dict{Edge{T},Int64} #Dict of low points, indexed by Edge
@@ -131,14 +133,17 @@ end
 
 #outer constructor for LRPlanarity
 function LRPlanarity(g)
+    V = Int64(nv(g)) #needs promoting
+    E = Int64(ne(g)) #JIC
     #record nodetype of g
     T = eltype(g)
+    #= 
     # copy G without adding self-loops
     output_g = SimpleGraph{T}()
     add_vertices_from!(g, output_g)
-    add_simple_edges_from!(g, output_g)
+    add_simple_edges_from!(g, output_g) =#
 
-    N = nv(output_g)
+    N = nv(g)
 
     roots = T[]
 
@@ -154,10 +159,14 @@ function LRPlanarity(g)
     parent_edge = DefaultDict{T,Edge{T}}(Edge(zero(T), zero(T)))
 
     # oriented DFS graph
-    DG = SimpleDiGraph{T}()
-    add_vertices_from!(g, DG)
+    DG = SimpleDiGraph{T}(N)
 
     adjs = Dict{T,Vector{T}}()
+    # make adjacency lists for dfs
+    for v in 1:nv(g) #for all vertices in G,
+        adjs[v] = neighbors(g, v) ##neighbourhood of v
+    end
+    
     ordered_adjs = Dict{T,Vector{T}}()
 
     ref = DefaultDict{Edge{T},Edge{T}}(empty_edge(T))
@@ -172,7 +181,9 @@ function LRPlanarity(g)
 
     #self.embedding = PlanarEmbedding()
     return LRPlanarity(
-        g,
+        #g,
+        V, 
+        E,
         roots,
         height,
         lowpt,
@@ -206,22 +217,22 @@ function lowest(self::ConflictPair, planarity_state::LRPlanarity)
 end
 
 function lr_planarity!(self::LRPlanarity{T}) where {T}
-    V::Int64 = nv(self.G)
-    E::Int64 = ne(self.G)
+    V = self.V
+    E = self.E
 
     if V > 2 && (E > (3V - 6))
         # graph is not planar
         return false
     end
 
-    # make adjacency lists for dfs
+    #= # make adjacency lists for dfs
     for v in 1:nv(self.G) #for all vertices in G,
         self.adjs[v] = neighbors(self.G, v) ##neighbourhood of v
     end
-    # TODO this could be done during the alloc phase
+    # TODO this could be done during the alloc phase =#
 
     # orientation of the graph by depth first search traversal
-    for v in vertices(self.G)
+    for v in 1:V
         if self.height[v] == -one(T) #using -1 rather than nothing for type stability. 
             self.height[v] = zero(T)
             push!(self.roots, v)
@@ -231,7 +242,7 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
 
     #Testing stage
     #First, sort the ordered_adjs by nesting depth
-    for v in 1:nv(self.G) #for all vertices in G,
+    for v in 1:V #for all vertices in G,
         #get neighboring nodes
         neighboring_nodes = T[]
         neighboring_nesting_depths = Int64[]
