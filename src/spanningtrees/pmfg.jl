@@ -15,8 +15,9 @@ p_g = pmfg(g)
 ### References 
 - Tuminello et al. 2005
 """
-function pmfg(
-    g::AG, distmx::AbstractMatrix{T}=weights(g); minimize=true
+function pmfg end
+@traitfn function pmfg(
+    g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
     #check graph is not directed
     if is_directed(g)
