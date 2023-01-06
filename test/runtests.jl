@@ -117,6 +117,7 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
     "longestpaths/longest_path",
+    "trees/prufer",
     "experimental/experimental",
 ]
 
