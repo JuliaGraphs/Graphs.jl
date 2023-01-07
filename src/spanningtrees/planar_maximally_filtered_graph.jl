@@ -19,10 +19,6 @@ function planar_maximally_filtered_graph end
 @traitfn function planar_maximally_filtered_graph(
     g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
-    #check graph is not directed
-    if is_directed(g)
-        error("PMFG only supports non-directed graphs")
-    end
 
     #construct a list of edge weights
     weights = Vector{T}()
