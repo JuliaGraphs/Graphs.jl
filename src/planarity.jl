@@ -110,8 +110,8 @@ struct LRPlanarity{T<:Integer}
     #We index by Edge structs throughout as it is easier than switching between
     #Edges and tuples
     #G::SimpleGraph{T} #Copy of the input graph
-    V::Int64 
-    E::Int64 
+    V::Int64
+    E::Int64
     roots::Vector{T} #Vector of roots for disconnected graphs. Normally size(roots, 1) == 1
     height::DefaultDict{T,Int64} #DefaultDict of heights <: Int, indexed by node. default is -1
     lowpt::Dict{Edge{T},Int64} #Dict of low points, indexed by Edge
@@ -166,7 +166,7 @@ function LRPlanarity(g)
     for v in 1:nv(g) #for all vertices in G,
         adjs[v] = neighbors(g, v) ##neighbourhood of v
     end
-    
+
     ordered_adjs = Dict{T,Vector{T}}()
 
     ref = DefaultDict{Edge{T},Edge{T}}(empty_edge(T))
@@ -182,7 +182,7 @@ function LRPlanarity(g)
     #self.embedding = PlanarEmbedding()
     return LRPlanarity(
         #g,
-        V, 
+        V,
         E,
         roots,
         height,

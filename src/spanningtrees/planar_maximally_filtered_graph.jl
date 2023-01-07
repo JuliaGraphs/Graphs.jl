@@ -17,7 +17,7 @@ p_g = planar_maximally_filtered_graph(g)
 """
 function planar_maximally_filtered_graph end
 @traitfn function planar_maximally_filtered_graph(
-    g::AG::(!IsDirected); distmx::AbstractMatrix{T}=weights(g), minimize=true
+    g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
     #check graph is not directed
     if is_directed(g)
