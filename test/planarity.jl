@@ -46,13 +46,13 @@
         self = Graphs.LRPlanarity(dfs_g)
         #want to test dfs orientation 
         # make adjacency lists for dfs
-        for v in 1:self.V #for all vertices in G,
+        for v in 1:(self.V) #for all vertices in G,
             self.adjs[v] = neighbors(dfs_g, v) ##neighbourhood of v
         end
         T = eltype(dfs_g)
 
         # orientation of the graph by depth first search traversal
-        for v in 1:self.V
+        for v in 1:(self.V)
             if self.height[v] == -one(T) #using -1 rather than nothing for type stability. 
                 self.height[v] = zero(T)
                 push!(self.roots, v)
@@ -119,32 +119,5 @@
         dg = SimpleDiGraphFromIterator([Edge(1, 2), Edge(2, 3), Edge(3, 1)])
 
         @test is_planar(dg) == true
-    end
-
-    @testset "PMFG tests" begin 
-        k5 = complete_graph(5)
-        k5_am = Matrix{Float64}(adjacency_matrix(k5))
-
-        #random weights
-        for i in CartesianIndices(k5_am)
-            if k5_am[i] == 1
-                k5_am[i] = rand()
-            end
-        end
-
-        #let's make 1->5 very distant 
-        k5_am[1, 5] = 10.
-
-        k5_am .= Symmetric(k5_am)
-        k5 = SimpleWeightedGraph(k5_am)
-
-        #correct result of PMFG
-        correct_am = [0  1  1  1  0
-        1  0  1  1  1
-        1  1  0  1  1
-        1  1  1  0  1
-        0  1  1  1  0]
-
-        @test correct_am == adjacency_matrix(pmfg(k5))
     end
 end
