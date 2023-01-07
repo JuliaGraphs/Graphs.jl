@@ -20,12 +20,6 @@ function is_planar(g)
     return lr_planarity!(lrp)
 end
 
-#if g is directed, analyse the undirected version 
-function is_planar(dg::SimpleDiGraph)
-    g = SimpleGraph(dg) #TODO - do we need a separate method?
-    return is_planar(g)
-end
-
 #aux functions 
 function add_vertices_from!(input_g, output_g)
     for v in vertices(input_g)
@@ -164,7 +158,7 @@ function LRPlanarity(g)
     adjs = Dict{T,Vector{T}}()
     # make adjacency lists for dfs
     for v in 1:nv(g) #for all vertices in G,
-        adjs[v] = neighbors(g, v) ##neighbourhood of v
+        adjs[v] = all_neighbors(g, v) ##neighbourhood of v
     end
 
     ordered_adjs = Dict{T,Vector{T}}()
