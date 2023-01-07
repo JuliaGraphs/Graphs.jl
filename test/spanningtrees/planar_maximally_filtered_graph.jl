@@ -27,7 +27,8 @@
     #type test 
     N = 10
     g = SimpleGraph{Int16}(N)
-    X = rand(N, N); C = X'*X
+    X = rand(N, N)
+    C = X' * X
     p = planar_maximally_filtered_graph(g, C)
     @test typeof(p) == SimpleGraph{eltype(g)}
 end
