@@ -15,18 +15,14 @@ p_g = planar_maximally_filtered_graph(g)
 ### References 
 - [Tuminello et al. 2005](https://doi.org/10.1073/pnas.0500298102)
 """
-function planar_maximally_filtered_graph end
-@traitfn function planar_maximally_filtered_graph(
-    g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
+
+function planar_maximally_filtered_graph(
+    g::AG, distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
 
     #construct a list of edge weights
-    weights = Vector{T}()
-    sizehint!(weights, ne(g))
     edge_list = collect(edges(g))
-    for e in edge_list
-        push!(weights, distmx[src(e), dst(e)])
-    end
+    weights = [distmx[src(e), dst(e)] for e in edge_list]
     #sort the set of edges by weight
     #we try to maximally filter the graph and assume that weights
     #represent distances. Thus we want to add edges with the 
@@ -34,14 +30,13 @@ function planar_maximally_filtered_graph end
     #we want the smallest weight edges at the end of the edge list
     #after sorting, which means reversing the usual direction of
     #the sort.
-    edge_list .= edge_list[sortperm(weights; rev=minimize)]
+    edge_list .= edge_list[sortperm(weights; rev=!minimize)]
 
     #construct an initial graph
     test_graph = SimpleGraph{U}(nv(g))
 
     #go through the edge list 
-    while !isempty(edge_list)
-        e = pop!(edge_list) #get most weighted edge
+    for e in edge_list
         add_edge!(test_graph, e.src, e.dst) #add it to graph
         if !is_planar(test_graph) #if resulting graph is not planar, remove it again
             rem_edge!(test_graph, e.src, e.dst)

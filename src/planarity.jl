@@ -126,7 +126,7 @@ struct LRPlanarity{T<:Integer}
 end
 
 #outer constructor for LRPlanarity
-function LRPlanarity(g::AG) where AG<:AbstractGraph
+function LRPlanarity(g::AG) where {AG<:AbstractGraph}
     V = Int64(nv(g)) #needs promoting
     E = Int64(ne(g)) #JIC
     #record nodetype of g
