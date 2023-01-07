@@ -1,4 +1,4 @@
-using Random: randperm, shuffle!
+using Random: randperm, shuffle!, randsubseq
 using Statistics: mean
 using Graphs: sample!
 
@@ -126,6 +126,23 @@ function randbn(
     return x
 end
 
+"maps 1:binomial(n,2) into an upper triangle of [1,n]×[1,n]"
+function trianglemap(r)
+    j = floor(Int, (1+sqrt(8r-7))/2) + 1
+    i = r - binomial(j-1,2)
+    Edge(i, j)
+end
+
+"maps 1:n*(n-1) into non-diagonal elements of [1,n]×[1,n]"
+function nondiagmap(r,n)
+    j = div(r-1, n-1)
+    i = r - j*(n-1)
+    j += 1
+    i += (i >= j)
+    Edge(i, j)
+end
+
+
 """
     erdos_renyi(n, p)
 
@@ -149,7 +166,7 @@ julia> erdos_renyi(10, 0.5)
 julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
-{10, 49} directed simple Int64 graph
+{10, 41} directed simple Int64 graph
 ```
 """
 function erdos_renyi(
@@ -160,13 +177,16 @@ function erdos_renyi(
     seed::Union{Nothing,Integer}=nothing,
 )
     p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
-    m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
-    ne = randbn(m, p; rng=rng, seed=seed)
-    return if is_directed
-        SimpleDiGraph(n, ne; rng=rng, seed=seed)
+    m = is_directed ? n * (n - 1) : binomial(n, 2)
+    seq = randsubseq(rng_from_rng_or_seed(rng, seed), 1:m, p)
+    g = if is_directed
+        SimpleDiGraphFromIterator(nondiagmap(r,n) for r in seq)
     else
-        SimpleGraph(n, ne; rng=rng, seed=seed)
+        SimpleGraphFromIterator(trianglemap(r) for r in seq)
     end
+    # complete to exactly n vertices
+    add_vertices!(g, n - nv(g))
+    return g
 end
 
 """
