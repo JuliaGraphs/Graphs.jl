@@ -1,5 +1,5 @@
 """
-	pmfg(g)
+	planar_maximally_filtered_graph(g)
 
 Compete the Planar Maximally Filtered Graph (PMFG) of weighted graph `g`.
 
@@ -9,14 +9,14 @@ using Graphs, SimpleWeightedGraphs
 N = 20
 M = Symmetric(randn(N, N))
 g = SimpleWeightedGraph(M) 
-p_g = pmfg(g)
+p_g = planar_maximally_filtered_graph(g)
 ```
 
 ### References 
 - Tuminello et al. 2005
 """
-function pmfg end
-@traitfn function pmfg(
+function planar_maximally_filtered_graph end
+@traitfn function planar_maximally_filtered_graph(
     g::AG::(!IsDirected); distmx::AbstractMatrix{T}=weights(g), minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
     #check graph is not directed
