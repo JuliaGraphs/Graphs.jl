@@ -1,7 +1,7 @@
 """
 	planar_maximally_filtered_graph(g)
 
-Compete the Planar Maximally Filtered Graph (PMFG) of weighted graph `g`.
+Compete the Planar Maximally Filtered Graph (PMFG) of weighted graph `g`. Returns a `SimpleGraph{eltype(g)}`.
 
 ### Examples
 ```
@@ -37,7 +37,7 @@ function planar_maximally_filtered_graph end
     edge_list .= edge_list[sortperm(weights; rev=minimize)]
 
     #construct an initial graph
-    test_graph = SimpleGraph(nv(g))
+    test_graph = SimpleGraph{U}(nv(g))
 
     #go through the edge list 
     while !isempty(edge_list)
