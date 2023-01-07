@@ -137,7 +137,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
-    "spanningtrees/planar_maximally_filtered_graph.jl",
+    "spanningtrees/planar_maximally_filtered_graph",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
