@@ -22,7 +22,7 @@
         0 1 1 1 0
     ]
 
-    @test correct_am == Matrix(adjacency_matrix(planar_maximally_filtered_graph(k5, k5_am)))
+    @test correct_am == adjacency_matrix(planar_maximally_filtered_graph(k5, k5_am))
 
     #type test 
     N = 10
