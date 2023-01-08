@@ -1,7 +1,7 @@
 """
 	planar_maximally_filtered_graph(g)
 
-Compete the Planar Maximally Filtered Graph (PMFG) of weighted graph `g`. Returns a `SimpleGraph{eltype(g)}`.
+Compute the Planar Maximally Filtered Graph (PMFG) of weighted graph `g`. Returns a `SimpleGraph{eltype(g)}`.
 
 ### Examples
 ```
