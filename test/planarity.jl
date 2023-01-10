@@ -120,4 +120,11 @@
 
         @test is_planar(dg) == true
     end
+
+    @testset "ManualDict tests" begin 
+        md = Graphs.ManualDict(Int64, Int64, 0)
+        @test md[0] == 0
+        md[0] = 1
+        @test md[0] == 1
+    end
 end

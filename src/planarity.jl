@@ -99,6 +99,37 @@ function isempty(p::ConflictPair)
     return isempty(p.L) && isempty(p.R)
 end
 
+# ATM (Julia 1.8.4, DataStructures v0.18.13), DefaultDict crashes
+# for large order matrices when we attempt to trim the back edges. 
+#To fix this we create a manual version of the DefaultDict that seems to be more stable
+
+struct ManualDict{A, B}
+    d::Dict{A, B}
+    default::B
+end
+
+function ManualDict(A, B, default)
+    ManualDict(Dict{A, B}(), default)
+end
+
+import Base: getindex
+
+function getindex(md::ManualDict, x)
+    d = md.d
+    if haskey(d, x)
+        d[x]
+    else
+        d[x] = md.default
+        md.default
+    end
+end
+
+function setindex!(md::ManualDict, X, key)
+    setindex!(md.d, X, key)
+end
+
+
+
 struct LRPlanarity{T<:Integer}
     #State class for the planarity test 
     #We index by Edge structs throughout as it is easier than switching between
@@ -115,7 +146,7 @@ struct LRPlanarity{T<:Integer}
     DG::SimpleDiGraph{T} #Directed graph for the orientation phase
     adjs::Dict{T,Vector{T}} #Dict of neighbors of nodes, indexed by node
     ordered_adjs::Dict{T,Vector{T}} #Dict of neighbors of nodes sorted by nesting depth, indexed by node
-    ref::DefaultDict{Edge{T},Edge{T}} #DefaultDict of Edges, indexed by Edge
+    ref::ManualDict{Edge{T},Edge{T}} #ManualDict of Edges, indexed by Edge
     side::DefaultDict{Edge{T},Int8} #DefaultDict of +/- 1, indexed by edge
     S::Stack{ConflictPair{T}} #Stack of tuples of Edges
     stack_bottom::Dict{Edge{T},ConflictPair{T}} #Dict of Tuples of Edges, indexed by Edge
@@ -163,7 +194,7 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
 
     ordered_adjs = Dict{T,Vector{T}}()
 
-    ref = DefaultDict{Edge{T},Edge{T}}(empty_edge(T))
+    ref = ManualDict(Edge{T},Edge{T}, empty_edge(T))
     side = DefaultDict{Edge{T},Int8}(one(Int8))
 
     # stack of conflict pairs
