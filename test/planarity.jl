@@ -1,13 +1,4 @@
 @testset "Planarity tests" begin
-    @testset "Aux functions tests" begin
-        g = complete_graph(10)
-        f = SimpleGraph()
-        Graphs.add_vertices_from!(g, f)
-        @test nv(g) == nv(f)
-        Graphs.add_edges_from!(g, f)
-        @test g == f
-    end
-
     @testset "LRP constructor tests" begin
         function lrp_constructor_test(g)
             try
@@ -121,7 +112,7 @@
         @test is_planar(dg) == true
     end
 
-    @testset "ManualDict tests" begin 
+    @testset "ManualDict tests" begin
         md = Graphs.ManualDict(Int64, Int64, 0)
         @test md[0] == 0
         md[0] = 1

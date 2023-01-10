@@ -34,11 +34,12 @@
 
     #Test that MST is a subset of the PMFG 
     N = 50
-    X = rand(N, N); D = X'*X
+    X = rand(N, N)
+    D = X' * X
     c = complete_graph(N)
     p = planar_maximally_filtered_graph(c, D)
     mst_edges = kruskal_mst(c, D)
-    is_subgraph = true 
+    is_subgraph = true
     for mst_edge in mst_edges
         if mst_edge ∉ edges(p)
             is_subgraph = false

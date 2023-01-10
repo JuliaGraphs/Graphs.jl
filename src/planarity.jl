@@ -20,33 +20,6 @@ function is_planar(g)
     return lr_planarity!(lrp)
 end
 
-#aux functions 
-function add_vertices_from!(input_g, output_g)
-    for v in vertices(input_g)
-        add_vertex!(output_g)
-    end
-end
-
-function add_edges_from!(input_g, output_g)
-    for e in edges(input_g)
-        add_edge!(output_g, e)
-    end
-end
-
-function add_simple_edges_from!(input_g, output_g)
-    for e in edges(input_g)
-        add_edge!(output_g, e.dst, e.src)
-    end
-end
-
-#= function add__simple_edges_from!(input_g::SimpleWeightedGraph, output_g)
-    for e in edges(input_g)
-        if e.dst != e.src
-            add_edge!(output_g, e.src, e.dst)
-        end
-    end
-end =#
-
 #Simple structs to be used in algorithm. Keep private for now. 
 function empty_edge(T)
     return Edge{T}(0, 0)
@@ -103,13 +76,13 @@ end
 # for large order matrices when we attempt to trim the back edges. 
 #To fix this we create a manual version of the DefaultDict that seems to be more stable
 
-struct ManualDict{A, B}
-    d::Dict{A, B}
+struct ManualDict{A,B}
+    d::Dict{A,B}
     default::B
 end
 
 function ManualDict(A, B, default)
-    ManualDict(Dict{A, B}(), default)
+    return ManualDict(Dict{A,B}(), default)
 end
 
 import Base: getindex
@@ -125,10 +98,8 @@ function getindex(md::ManualDict, x)
 end
 
 function setindex!(md::ManualDict, X, key)
-    setindex!(md.d, X, key)
+    return setindex!(md.d, X, key)
 end
-
-
 
 struct LRPlanarity{T<:Integer}
     #State class for the planarity test 
@@ -162,12 +133,6 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
     E = Int64(ne(g)) #JIC
     #record nodetype of g
     T = eltype(g)
-    #= 
-    # copy G without adding self-loops
-    output_g = SimpleGraph{T}()
-    add_vertices_from!(g, output_g)
-    add_simple_edges_from!(g, output_g) =#
-
     N = nv(g)
 
     roots = T[]
@@ -194,7 +159,7 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
 
     ordered_adjs = Dict{T,Vector{T}}()
 
-    ref = ManualDict(Edge{T},Edge{T}, empty_edge(T))
+    ref = ManualDict(Edge{T}, Edge{T}, empty_edge(T))
     side = DefaultDict{Edge{T},Int8}(one(Int8))
 
     # stack of conflict pairs
@@ -249,12 +214,6 @@ function lr_planarity!(self::LRPlanarity{T}) where {T}
         # graph is not planar
         return false
     end
-
-    #= # make adjacency lists for dfs
-    for v in 1:nv(self.G) #for all vertices in G,
-        self.adjs[v] = neighbors(self.G, v) ##neighbourhood of v
-    end
-    # TODO this could be done during the alloc phase =#
 
     # orientation of the graph by depth first search traversal
     for v in 1:V
