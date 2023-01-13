@@ -60,6 +60,21 @@ end
     return false
 end
 
+"""
+    topological_sort(g)
+
+Return a [topological sort](https://en.wikipedia.org/wiki/Topological_sorting) of a directed
+graph `g` as a vector of vertices in topological order.
+
+### Implementation Notes
+This is currently just an alias for `topological_sort_by_dfs`
+"""
+function topological_sort end
+
+@traitfn function topological_sort(g::AG::IsDirected) where {AG<:AbstractGraph}
+    return topological_sort_by_dfs(g)
+end
+
 # Topological sort using DFS
 """
     topological_sort_by_dfs(g)
