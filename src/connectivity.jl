@@ -764,10 +764,10 @@ end
 """
     isdigraphical(indegree_sequence, outdegree_sequence)
 
-Check whether the given indegree sequence and outdegree sequence are digraphical, that is whether they can be the indegree and outdegree sequence of a digraph.
+Check whether the given indegree sequence and outdegree sequence are digraphical, that is whether they can be the indegree and outdegree sequence of a simple digraph (i.e. a directed graph with no loops). This implies that `indegree_sequence` and `outdegree_sequence` are not independent, as their elements respectively represent the indegrees and outdegrees that the vertices shall have.
 
 ### Implementation Notes
-According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n, b_n)\\}`` (sorted in descending order of a) is graphic iff the sum of vertex degrees is even and  ``\\sum_{i = 1}^{n} a_i = \\sum_{i = 1}^{n} b_i\\}`` and the sequence obeys the property -
+According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n, b_n)\\}`` (sorted in descending order of a) is graphic iff ``\\sum_{i = 1}^{n} a_i = \\sum_{i = 1}^{n} b_i\\}`` and the sequence obeys the property -
 ```math
 \\sum_{i=1}^{r} a_i \\leq \\sum_{i=r+1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
 ```
@@ -780,7 +780,8 @@ function isdigraphical(
     outdegree_sequence::AbstractVector{<:Integer},
 )
     # Check whether the degree sequences have the same length 
-    length(indegree_sequence) == length(outdegree_sequence) || throw(
+    n = length(indegree_sequence)
+    n == length(outdegree_sequence) || throw(
         ArgumentError("The indegree and outdegree sequences must have the same length.")
     )
     # Check whether the degree sequence is empty
@@ -792,9 +793,6 @@ function isdigraphical(
     all(outdegree_sequence .>= 0) || throw(
         ArgumentError("The outdegree sequence must contain non-negative integers only.")
     )
-
-    n = length(indegree_sequence)
-    n == length(outdegree_sequence) || return false
 
     sum(indegree_sequence) == sum(outdegree_sequence) || return false
 
@@ -820,7 +818,7 @@ function isdigraphical(
         cum_min = sum(mindeg) =#
     # Similarly for `outdegree_min_sum`.
 
-    @inbounds for r in 1:(n - 1)
+    @inbounds for r in 1:n
         indegree_sum += sorted_indegree_sequence[r]
         outdegree_min_sum = sum([min(sorted_outdegree_sequence[i], r - 1) for i in 1:r])
         cum_min = sum([min(sorted_outdegree_sequence[i], r) for i in (1 + r):n])

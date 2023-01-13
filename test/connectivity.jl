@@ -306,6 +306,11 @@
     @test !@inferred(isdigraphical([1, 1, 1], [1, 1, 0]))
     @test @inferred(isdigraphical(Integer[], Integer[]))
     #@test !@inferred(isdigraphical([1], [1]))
+    # Self loops should be excluded
+    @test !@inferred(isdigraphical([1], [1]))
+    @test !@inferred(isdigraphical([1, 0], [1, 0]))
+    # Multi edges should be excluded
+    @test !@inferred(isdigraphical([5], [5]))
 
     # 1116
     gc = cycle_graph(4)
