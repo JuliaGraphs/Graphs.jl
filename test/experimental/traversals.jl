@@ -123,7 +123,7 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
             end
 
             # Currently there is an error in Traverals.topological_sort, so this test fails
-            @test LET.topological_sort(SimpleDiGraph([Edge(2, 1)])) == [2, 1] broken = true
+            @test_broken LET.topological_sort(SimpleDiGraph([Edge(2, 1)])) == [2, 1]
         end
     end
 end
