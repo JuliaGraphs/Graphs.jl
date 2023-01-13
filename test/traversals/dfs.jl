@@ -32,18 +32,18 @@
         end
     end
 
-    @testset "topological_sort_by_dfs" begin
+    @testset "topological_sort" begin
         for g in testdigraphs(SimpleDiGraph([Edge(2, 1)]))
-            @test @inferred(topological_sort_by_dfs(g)) == [2, 1]
+            @test @inferred(topological_sort(g)) == [2, 1]
         end
 
         for g in testdigraphs(g5)
-            @test @inferred(topological_sort_by_dfs(g)) == [1, 2, 3, 4]
+            @test @inferred(topological_sort(g)) == [1, 2, 3, 4]
         end
 
         for g in testdigraphs(gx)
             @test @inferred(is_cyclic(g))
-            @test_throws ErrorException topological_sort_by_dfs(g)
+            @test_throws ErrorException topological_sort(g)
         end
     end
 
