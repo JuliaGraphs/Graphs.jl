@@ -36,8 +36,7 @@ import Graphs:
     num_self_loops,
     insorted,
     squash,
-    rng_from_rng_or_seed,
-    prufer_decode
+    rng_from_rng_or_seed
 
 export AbstractSimpleGraph,
     AbstractSimpleEdge,
