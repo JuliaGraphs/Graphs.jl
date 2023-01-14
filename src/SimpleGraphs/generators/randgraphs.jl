@@ -1014,9 +1014,7 @@ function havel_hakimi_graph(degree_sequence::AbstractVector{<:Integer})
     # Havel-Hakimi algorithm  
     while (any(values(vertices_degrees_dict) .!= 0))
         # Sort the new sequence in non-increasing order
-        vertices_degrees_dict = OrderedDict(
-            sort(collect(vertices_degrees_dict); by=last, rev=true)
-        )
+        sort!(vertices_degrees_dict, byvalues=true, rev=true)
         # Remove the first vertex and distribute its stabs
         max_vertex, max_degree = popfirst!(vertices_degrees_dict)
         # Check whether the new sequence has only positive values
