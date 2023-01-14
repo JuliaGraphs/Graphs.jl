@@ -769,7 +769,7 @@ Check whether the given indegree sequence and outdegree sequence are digraphical
 ### Implementation Notes
 According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n, b_n)\\}`` (sorted in descending order of a) is graphic iff ``\\sum_{i = 1}^{n} a_i = \\sum_{i = 1}^{n} b_i\\}`` and the sequence obeys the property -
 ```math
-\\sum_{i=1}^{r} a_i \\leq \\sum_{i=r+1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
+\\sum_{i=1}^{r} a_i \\leq \\sum_{i=1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
 ```
 for each integer r <= n-1. 
 
