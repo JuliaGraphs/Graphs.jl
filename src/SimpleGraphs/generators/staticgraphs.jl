@@ -812,14 +812,12 @@ function havel_hakimi_graph(T::Type{<:Integer}, degree_sequence::AbstractVector{
         )
         # Remove the first vertex and distribute its stabs
         max_vertex, max_degree = popfirst!(vertices_degrees_dict)
-        # Check whether the new sequence has only positive values
-        all(collect(values(vertices_degrees_dict))[1:max_degree] .> 0) ||
-            throw(ErrorException("The degree sequence is not graphical."))
         # Connect the node of highest degree to other nodes of highest degree 
         for vertex in Iterators.take(keys(vertices_degrees_dict),  max_degree)
             add_edge!(graph, max_vertex, vertex)
             vertices_degrees_dict[vertex] -= 1
-            # vertices_degrees_dict[vertex] >= 0 || throw(ErrorException("The degree sequence is not graphical."))
+            # Check whether the remaining degree is nonnegative
+            vertices_degrees_dict[vertex] >= 0 || throw(ErrorException("The degree sequence is not graphical."))
         end
     end
     # Return the simple graph
@@ -912,14 +910,9 @@ function kleitman_wang_graph( T::Type{<:Integer},
         for (v, degs) in collect(vertices_degrees_dict)[1:b_i]
             add_edge!(graph, i, v)
             vertices_degrees_dict[v] = (degs[1] - 1, degs[2])
-            # vertices_degrees_dict[v][1] >= 0 || throw(ErrorException("The indegree and outdegree sequences are not graphical."))
+            # Check whether the remaining indegree is nonnegative
+            vertices_degrees_dict[v][1] >= 0 || throw(ErrorException("The indegree and outdegree sequences are not graphical."))
         end
-        # Check whether the new sequence has only positive values
-        all(
-            collect(Iterators.flatten(collect(values(vertices_degrees_dict))))[1:b_i] .>= 0
-        ) || throw(
-            ErrorException("The in-degree and out-degree sequences are not digraphical."),
-        )
         # Reinsert the vertex, with zero outdegree
         vertices_degrees_dict[i] = (a_i, 0)
     end
