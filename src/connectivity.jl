@@ -735,15 +735,14 @@ See also: [`isdigraphical`](@ref)
 function isgraphical(degs::AbstractVector{<:Integer})
     # Check whether the degree sequence is empty
     !isempty(degs) || return true
-    # Check whether the degree sequence has only non-negative values
-    all(degs .>= 0) ||
-        throw(ArgumentError("The degree sequence must contain non-negative integers only."))
     # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
+    # Check that all degrees are non negative and less than n-1
+    n = length(degs)
+    all(0 .<= degs .<= n - 1) || return false
     # Sort the degree sequence in non-increasing order
     sorted_degs = sort(degs; rev=true)
     # Compute the length of the degree sequence
-    n = length(sorted_degs)
     cur_sum = zero(UInt64)
     # Compute the minimum of each degree and the corresponding index
     mindeg = Vector{UInt64}(undef, n)
@@ -786,13 +785,9 @@ function isdigraphical(
     )
     # Check whether the degree sequence is empty
     !(isempty(indegree_sequence) && isempty(outdegree_sequence)) || return true
-    # Check whether the degree sequences have only non-negative values
-    all(indegree_sequence .>= 0) || throw(
-        ArgumentError("The indegree sequence must contain non-negative integers only.")
-    )
-    all(outdegree_sequence .>= 0) || throw(
-        ArgumentError("The outdegree sequence must contain non-negative integers only.")
-    )
+    # Check all degrees are non negative and less than n-1
+    all(0 .<= indegree_sequence .<= n - 1) || return false
+    all(0 .<= outdegree_sequence .<= n - 1) || return false
 
     sum(indegree_sequence) == sum(outdegree_sequence) || return false
 
