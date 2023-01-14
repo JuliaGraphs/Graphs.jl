@@ -1086,7 +1086,7 @@ function kleitman_wang_graph_generator(
     # Instantiate an empty simple graph 
     graph = SimpleDiGraph(length(indegree_sequence))
     # Create a (vertex, degree) ordered dictionary
-    S = zip(deepcopy(indegree_sequence), deepcopy(outdegree_sequence))
+    S = zip(indegree_sequence, outdegree_sequence)
     vertices_degrees_dict = OrderedDict(i => tup for (i, tup) in enumerate(S))
     # Kleitman-Wang algorithm  
     while (any(Iterators.flatten(values(vertices_degrees_dict)) .!= 0))
