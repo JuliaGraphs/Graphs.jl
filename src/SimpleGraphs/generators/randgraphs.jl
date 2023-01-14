@@ -1001,7 +1001,7 @@ Returns a simple graph with a given finite degree sequence of non-negative integ
 1. [Hakimi (1962)](https://doi.org/10.1137/0110037);
 2. [Wikipedia](https://en.wikipedia.org/wiki/Havel%E2%80%93Hakimi_algorithm).
 """
-function havel_hakimi_graph_generator(degree_sequence::AbstractVector{<:Integer})
+function havel_hakimi_graph(degree_sequence::AbstractVector{<:Integer})
     # Check whether the degree sequence has only non-negative values
     all(degree_sequence .>= 0) ||
         throw(ArgumentError("The degree sequence must contain non-negative integers only."))
