@@ -771,7 +771,7 @@ According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n
 ```math
 \\sum_{i=1}^{r} a_i \\leq \\sum_{i=1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
 ```
-for each integer r <= n-1. 
+for each integer 1 <= r <= n-1. 
 
 See also: [`isgraphical`](@ref)
 """
