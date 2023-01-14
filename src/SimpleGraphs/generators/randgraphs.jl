@@ -1023,7 +1023,7 @@ function havel_hakimi_graph_generator(degree_sequence::AbstractVector{<:Integer}
         all(collect(values(vertices_degrees_dict))[1:max_degree] .> 0) ||
             throw(ErrorException("The degree sequence is not graphical."))
         # Connect the node of highest degree to other nodes of highest degree 
-        for vertex in collect(keys(vertices_degrees_dict))[1:max_degree]
+        for vertex in Iterators.take(keys(vertices_degrees_dict),  max_degree)
             add_edge!(graph, max_vertex, vertex)
             vertices_degrees_dict[vertex] -= 1
         end
