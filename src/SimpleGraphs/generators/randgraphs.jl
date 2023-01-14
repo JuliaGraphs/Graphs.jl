@@ -1012,7 +1012,7 @@ function havel_hakimi_graph(degree_sequence::AbstractVector{<:Integer})
         vertex => degree for (vertex, degree) in enumerate(degree_sequence)
     )
     # Havel-Hakimi algorithm  
-    while (any(values(vertices_degrees_dict) .!= 0))
+    while (any(!=(0), values(vertices_degrees_dict)))
         # Sort the new sequence in non-increasing order
         sort!(vertices_degrees_dict, byvalues=true, rev=true)
         # Remove the first vertex and distribute its stabs
