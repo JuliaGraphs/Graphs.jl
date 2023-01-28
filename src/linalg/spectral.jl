@@ -85,7 +85,7 @@ Return a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matri
 for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both graph types.
 
 ### Optional Arguments
-`dir=:unspec`: `:unspec`, `:both`, :in`, and `:out` are currently supported.
+`dir=:unspec`: `:unspec`, `:both`, `:in`, and `:out` are currently supported.
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`.
 """
