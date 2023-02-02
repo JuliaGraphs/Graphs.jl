@@ -80,34 +80,33 @@ function floyd_warshall_shortest_paths(
 end
 
 function enumerate_paths(
-    s::FloydWarshallState{T,U}, v::Integer
+    st::FloydWarshallState{T,U}, s::Integer, d::Integer
 ) where {T} where {U<:Integer}
-    pathinfo = s.parents[v, :]
-    paths = Vector{Vector{U}}()
-    for i in 1:length(pathinfo)
-        if (i == v) || (s.dists[v, i] == typemax(T))
-            push!(paths, Vector{U}())
-        else
-            path = Vector{U}()
-            currpathindex = U(i)
-            while currpathindex != 0
-                push!(path, currpathindex)
-                if pathinfo[currpathindex] == currpathindex
-                    currpathindex = zero(currpathindex)
-                else
-                    currpathindex = pathinfo[currpathindex]
-                end
+    pathinfo = @view st.parents[s, :]
+    path = Vector{U}()
+    if (s == d) || (st.dists[s, d] == typemax(T))
+        return path
+    else
+        currpathindex = U(d)
+        while currpathindex != 0
+            push!(path, currpathindex)
+            if pathinfo[currpathindex] == currpathindex
+                currpathindex = zero(currpathindex)
+            else
+                currpathindex = pathinfo[currpathindex]
             end
-            push!(paths, reverse(path))
         end
+        return reverse!(path)
     end
-    return paths
 end
 
-function enumerate_paths(s::FloydWarshallState)
-    return [enumerate_paths(s, v) for v in 1:size(s.parents, 1)]
+function enumerate_paths(st::FloydWarshallState)
+    return [enumerate_paths(st, s) for s in 1:size(st.parents, 1)]
 end
-enumerate_paths(st::FloydWarshallState, s::Integer, d::Integer) = enumerate_paths(st, s)[d]
+
+function enumerate_paths(st::FloydWarshallState, s::Integer)
+    return [enumerate_paths(st, s, d) for d in 1:size(st.parents, 1)]
+end
 
 function enumerate_path_into!(
     pathcontainer, iter::Graphs.FloydWarshallIterator, s::Integer, d::Integer
