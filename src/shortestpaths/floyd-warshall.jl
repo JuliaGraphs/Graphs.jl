@@ -127,7 +127,7 @@ function enumerate_path_into!(
 end
 
 function Base.iterate(iter::FloydWarshallIterator{T,U}) where {T,U<:Integer}
-    pathcontainer = Vector{U}(undef, size(iter.path_state.dists)[1])
+    pathcontainer = Vector{U}(undef, size(iter.path_state.dists, 1))
     pathview = enumerate_path_into!(pathcontainer, iter, 1, 1)
     state = (source=1, destination=1, pathcontainer=pathcontainer)
     return pathview, state
