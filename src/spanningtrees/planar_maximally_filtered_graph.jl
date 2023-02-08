@@ -37,9 +37,9 @@ function planar_maximally_filtered_graph(
 
     #go through the edge list 
     for e in edge_list
-        add_edge!(test_graph, e.src, e.dst) #add it to graph
+        add_edge!(test_graph, src(e), dst(e)) #add it to graph
         if !is_planar(test_graph) #if resulting graph is not planar, remove it again
-            rem_edge!(test_graph, e.src, e.dst)
+            rem_edge!(test_graph, src(e), dst(e))
         end
         (ne(test_graph) >= 3 * nv(test_graph) - 6) && break #break if limit reached
     end

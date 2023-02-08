@@ -26,7 +26,7 @@ function empty_edge(T)
 end
 
 function isempty(e::Edge{T}) where {T}
-    return e.src == zero(T) && e.dst == zero(T)
+    return src(e) == zero(T) && dst(e) == zero(T)
 end
 
 mutable struct Interval{T}
@@ -341,7 +341,7 @@ function dfs_testing!(self, v)
 
     #remove back edges returning to parent 
     if !isempty(e)#v is not root
-        u = e.src
+        u = src(e)
         #trim edges ending at parent u, algo 5 
         trim_back_edges!(self, u)
         #side of e is side of highest returning edge 
@@ -410,7 +410,7 @@ function edge_constraints!(self, ei, e)
     return true
 end
 
-function trim_back_edges!(self, u)
+@noinline function trim_back_edges!(self, u)
     #trim back edges ending at u 
     #drop entire conflict pairs 
     while !isempty(self.S) && (lowest(first(self.S), self) == self.height[u])
