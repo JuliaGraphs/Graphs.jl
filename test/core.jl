@@ -1,6 +1,8 @@
 @testset "Core" begin
-    e2 = Edge(1, 3)
-    e3 = Edge(1, 4)
+    e2 = GenericEdge(Edge(1, 3))
+    e3 = GenericEdge(Edge(1, 4))
+    # TODO do these tests make sense? One might define an edge type for some undirected
+    # graph that is more like a set than a tuple -then reverse would not change the order
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
 

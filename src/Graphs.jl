@@ -21,7 +21,9 @@ using DataStructures:
     in_same_set,
     peek,
     union!,
-    find_root!
+    find_root!,
+    BinaryMaxHeap,
+    BinaryMinHeap
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
@@ -209,6 +211,7 @@ export
     neighborhood,
     neighborhood_dists,
     isgraphical,
+    isdigraphical,
 
     # cycles
     simplecycles_hawick_james,
@@ -280,6 +283,7 @@ export
     watts_strogatz,
     newman_watts_strogatz,
     random_regular_graph,
+    uniform_tree,
     random_regular_digraph,
     random_configuration_model,
     random_tournament_digraph,
@@ -391,6 +395,11 @@ export
     boruvka_mst,
     kruskal_mst,
     prim_mst,
+
+    # trees and prufer
+    is_tree,
+    prufer_encode,
+    prufer_decode,
 
     # steinertree
     steiner_tree,
@@ -514,6 +523,7 @@ include("community/rich_club.jl")
 include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("trees/prufer.jl")
 include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
@@ -528,6 +538,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("Test/Test.jl")
 
 using .LinAlg
 end # module

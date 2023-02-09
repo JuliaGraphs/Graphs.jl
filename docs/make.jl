@@ -52,6 +52,7 @@ pages_files = [
         "algorithms/connectivity.md",
         "algorithms/cut.md",
         "algorithms/cycles.md",
+        "algorithms/trees.md",
         "algorithms/degeneracy.md",
         "algorithms/digraph.md",
         "algorithms/distance.md",

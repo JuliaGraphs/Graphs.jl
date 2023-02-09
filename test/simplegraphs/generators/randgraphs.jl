@@ -245,6 +245,18 @@
         @test is_directed(rd)
     end
 
+    @testset "uniform trees" begin
+        t = uniform_tree(50; rng=rng)
+        @test nv(t) == 50
+        @test ne(t) == 49
+        @test is_tree(t)
+
+        t2 = uniform_tree(50; rng=StableRNG(4))
+        @test nv(t2) == 50
+        @test ne(t2) == 49
+        @test is_tree(t2)
+    end
+
     @testset "random configuration model" begin
         rr = random_configuration_model(10, repeat([2, 4], 5); rng=StableRNG(3))
         @test nv(rr) == 10

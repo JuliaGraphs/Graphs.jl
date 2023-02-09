@@ -4,6 +4,7 @@ using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
 using JuliaFormatter
+using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -21,7 +22,7 @@ const testdir = dirname(@__FILE__)
 end
 
 @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore=["vf2.jl"])  # TODO: remove ignore kwarg once the file is formatted correctly
+    @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
 @testset verbose = true "Doctests (Documenter.jl)" begin
@@ -116,6 +117,7 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
+    "trees/prufer",
     "experimental/experimental",
 ]
 
