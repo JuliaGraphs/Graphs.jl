@@ -40,7 +40,7 @@ true
 julia> last_added_vertex = nv(g)
 11
 ```
-Note that this index is NOT persistent if nodes added earlier are removed. In this case, the last index of the last node (`nv(g)`) is reassigned to the index recently deleted. As edges are often indexed by vertex indices, one has to be careful when working with edges indexed by nodes as well. An edge added as `add_edge!(g, 3, 11)` can not be expected to always pass the `has_edge(g, 3, 11)` check:
+Note that this index is NOT persistent if vertices added earlier are removed. When `rem_vertex!(g, v)` is called, `v` is "switched" with the last vertex before being deleted. As edges are identified by vertex indices, one has to be careful with edges as well. An edge added as `add_edge!(g, 3, 11)` can not be expected to always pass the `has_edge(g, 3, 11)` check:
 ```julia-repl
 julia> g = SimpleGraph(10)
 {10, 0} undirected simple Int64 graph
