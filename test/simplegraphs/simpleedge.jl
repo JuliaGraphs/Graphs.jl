@@ -36,7 +36,8 @@
 
     @testset "comparison" begin
         @test SimpleEdge(1, 2) < SimpleEdge(1, 3) 
-        @test SimpleEdge(1, 2) < SimpleEdge(2, 3) 
+        @test SimpleEdge(1, 2) < SimpleEdge(2, 3)
+        @test SimpleEdge(1, 2) < SimpleEdge(2, 1)
         @test SimpleEdge(1, 2) <= SimpleEdge(1, 2)
         @test SimpleEdge(2, 3) > SimpleEdge(1, 2)
     end
