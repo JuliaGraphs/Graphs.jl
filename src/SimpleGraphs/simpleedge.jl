@@ -1,4 +1,4 @@
-import Base: Pair, Tuple, show, ==, hash, <
+import Base: Pair, Tuple, show, ==, hash, isless
 import Graphs: AbstractEdge, src, dst, reverse
 
 abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
