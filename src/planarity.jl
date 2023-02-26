@@ -117,7 +117,7 @@ struct LRPlanarity{T<:Integer}
     DG::SimpleDiGraph{T} #Directed graph for the orientation phase
     adjs::Dict{T,Vector{T}} #Dict of neighbors of nodes, indexed by node
     ordered_adjs::Dict{T,Vector{T}} #Dict of neighbors of nodes sorted by nesting depth, indexed by node
-    ref::ManualDict{Edge{T},Edge{T}} #ManualDict of Edges, indexed by Edge
+    ref::DefaultDict{Edge{T},Edge{T}} #ManualDict of Edges, indexed by Edge
     side::DefaultDict{Edge{T},Int8} #DefaultDict of +/- 1, indexed by edge
     S::Stack{ConflictPair{T}} #Stack of tuples of Edges
     stack_bottom::Dict{Edge{T},ConflictPair{T}} #Dict of Tuples of Edges, indexed by Edge
@@ -159,7 +159,7 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
 
     ordered_adjs = Dict{T,Vector{T}}()
 
-    ref = ManualDict(Edge{T}, Edge{T}, empty_edge(T))
+    ref = DefaultDict{Edge{T}, Edge{T}}(empty_edge(T))
     side = DefaultDict{Edge{T},Int8}(one(Int8))
 
     # stack of conflict pairs
