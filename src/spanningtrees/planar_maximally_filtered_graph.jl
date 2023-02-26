@@ -49,10 +49,13 @@ function planar_maximally_filtered_graph(
         add_edge!(test_graph, src(e), dst(e))
     end
 
+    #generate lrp state
+    lrp_state = LRPlanarity(test_graph)
     #go through the rest of the edge list 
     for e in edge_list[7:end]
         add_edge!(test_graph, src(e), dst(e)) #add it to graph
-        if !is_planar(test_graph) #if resulting graph is not planar, remove it again
+        reset_lrp_state!(lrp_state, test_graph)
+        if !lr_planarity!(lrp_state) #if resulting graph is not planar, remove it again
             rem_edge!(test_graph, src(e), dst(e))
         end
         (ne(test_graph) >= 3 * nv(test_graph) - 6) && break #break if limit reached
@@ -66,14 +69,9 @@ This could be improved a lot by not reallocating
 the LRP construct. 
 Things to reset on each planarity retest:
 heights 
-lowpts(2)
-nesting_depth 
 parent_edge
 DG (shame...)
-adjs (could just be re-edited?)
-ordered_adjs (same)
 Ref
 side 
-S 
-stack_bottom 
-lowpt_edge =#
+S  =#
+

@@ -101,7 +101,7 @@ function setindex!(md::ManualDict, X, key)
     return setindex!(md.d, X, key)
 end
 
-struct LRPlanarity{T<:Integer}
+mutable struct LRPlanarity{T<:Integer}
     #State class for the planarity test 
     #We index by Edge structs throughout as it is easier than switching between
     #Edges and tuples
@@ -197,9 +197,20 @@ function lrp_type(lrp::LRPlanarity{T}) where T
     T
 end
 
-function reset_lrp_state!(lrp_state)
+function reset_lrp_state!(lrp_state, g)
     T = lrp_type(lrp_state)
     #resets the LRP state 
+
+
+    #reset roots 
+    empty!(lrp_state.roots)
+
+    #reset lowpts 
+    #empty!(lrp_state.lowpt)
+    #empty!(lrp_state.lowpt2)
+    #reset nesting depth
+    empty!(lrp_state.nesting_depth)
+
     #reset heights
     for k ∈ keys(lrp_state.height)
         lrp_state.height[k] = -1
@@ -211,6 +222,10 @@ function reset_lrp_state!(lrp_state)
 
     for e in edges(lrp_state.DG)
         rem_edge!(lrp_state.DG, e)
+    end
+
+    for v in 1:nv(g) #for all vertices in G,
+        lrp_state.adjs[v] = all_neighbors(g, v) ##neighbourhood of v
     end
 
     for k ∈ keys(lrp_state.ref)
@@ -442,7 +457,7 @@ function edge_constraints!(self, ei, e)
     return true
 end
 
-@noinline function trim_back_edges!(self, u)
+function trim_back_edges!(self, u)
     #trim back edges ending at u 
     #drop entire conflict pairs 
     while !isempty(self.S) && (lowest(first(self.S), self) == self.height[u])
