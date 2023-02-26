@@ -193,6 +193,38 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
     )
 end
 
+function lrp_type(lrp::LRPlanarity{T}) where T
+    T
+end
+
+function reset_lrp_state!(lrp_state)
+    T = lrp_type(lrp_state)
+    #resets the LRP state 
+    #reset heights
+    for k ∈ keys(lrp_state.height)
+        lrp_state.height[k] = -1
+    end
+
+    for k in keys(lrp_state.parent_edge)
+        lrp_state.parent_edge[k] = empty_edge(T)
+    end
+
+    for e in edges(lrp_state.DG)
+        rem_edge!(lrp_state.DG, e)
+    end
+
+    for k ∈ keys(lrp_state.ref)
+        lrp_state.ref[k] = empty_edge(T)
+    end
+
+    for k ∈ keys(lrp_state.side)
+        lrp_state.side[k] = one(Int8)
+    end
+
+    empty!(lrp_state.S)
+end
+
+
 function lowest(self::ConflictPair, planarity_state::LRPlanarity)
     #Returns the lowest lowpoint of a conflict pair
     if isempty(self.L)
