@@ -146,7 +146,7 @@ function LRPlanarity(g::AG) where {AG<:AbstractGraph}
 
     # None == Edge(0, 0)  for our type-stable algo
 
-    parent_edge = DefaultDict{T,Edge{T}}(Edge(zero(T), zero(T)))
+    parent_edge = DefaultDict{T,Edge{T}}(empty_edge(T))
 
     # oriented DFS graph
     DG = SimpleDiGraph{T}(N)
