@@ -20,6 +20,15 @@ function planar_maximally_filtered_graph(
     g::AG, distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
 
+    #if graph has <= 6 edges, just return it
+    if ne(g) <= 6
+        test_graph = SimpleGraph{U}(nv(g))
+        for e in edges(g)
+            add_edge!(g, e)
+        end
+        return test_graph
+    end
+
     #construct a list of edge weights
     edge_list = collect(edges(g))
     weights = [distmx[src(e), dst(e)] for e in edge_list]
@@ -35,8 +44,13 @@ function planar_maximally_filtered_graph(
     #construct an initial graph
     test_graph = SimpleGraph{U}(nv(g))
 
-    #go through the edge list 
-    for e in edge_list
+    for e in edge_list[1:6]
+        #we can always add the first six edges of a graph 
+        add_edge!(test_graph, src(e), dst(e))
+    end
+
+    #go through the rest of the edge list 
+    for e in edge_list[7:end]
         add_edge!(test_graph, src(e), dst(e)) #add it to graph
         if !is_planar(test_graph) #if resulting graph is not planar, remove it again
             rem_edge!(test_graph, src(e), dst(e))
