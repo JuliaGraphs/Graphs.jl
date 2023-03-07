@@ -194,6 +194,9 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
     # coloring
     greedy_color,
 
@@ -489,6 +492,7 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("traversals/eulerian.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
