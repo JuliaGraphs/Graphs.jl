@@ -186,4 +186,12 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
             @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8
         end
     end
+
+    @testset "adjacency_matrix with `dir=:both`" begin
+        edges = [Edge(1, 3), Edge(1, 4), Edge(2, 1), Edge(4, 1)]
+        g = SimpleDiGraph(edges)
+        @test all(adjacency_matrix(g; dir=:out) .== [0 0 1 1; 1 0 0 0; 0 0 0 0; 1 0 0 0])
+        @test all(adjacency_matrix(g; dir=:in) .== [0 1 0 1; 0 0 0 0; 1 0 0 0; 1 0 0 0])
+        @test all(adjacency_matrix(g; dir=:both) .== [0 1 1 1; 1 0 0 0; 1 0 0 0; 1 0 0 0])
+    end
 end
