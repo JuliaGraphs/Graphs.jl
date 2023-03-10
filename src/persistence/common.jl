@@ -109,7 +109,7 @@ end
 """
     savegraph(file, d, format=LGFormat)
 
-Save a dictionary of `graphname => graph` to `file` in the format `format`.
+Save a dictionary `d` of `graphname => graph` to `file` in the format `format`.
 Return the number of graphs written.
 
 ### Implementation Notes
