@@ -3,21 +3,19 @@
 # Reproduced under the MIT Expat License.
 
 """
-    eulerian(g::AbstractSimpleGraph{T}[, u::T, v::T]) --> T[]
+    eulerian(g::AbstractSimpleGraph{T}[, u::T]) --> T[]
 
-Compute an Eulerian tour through an undirected graph `g`, starting at `u` and ending at `v`,
-returning a vector listing the vertices of `g` in the order that they are travailed. If no
-such tour exists, throws an error.
+Compute an [Eulerian trail or cycle](https://en.wikipedia.org/wiki/Eulerian_path) through an
+undirected graph `g`, starting at `u`, returning a vector listing the vertices of `g` in the
+order that they are traversed. If no such trail or cycle exists, throws an error.
 
 ## Optional arguments
-- If `v` is omitted, an Eulerian cycle is computed with `v = u`.
-- If both `u` and `v` are omitted, a Eulerian cycle is computed with
-  `u = v = first(vertices(g))`.
+- If `u` is omitted, a Eulerian trail or cycle is computed with `u = first(vertices(g))`.
 """
-function eulerian(g::AbstractSimpleGraph{T}, u::T, v::T) where {T}
+function eulerian(g::AbstractSimpleGraph{T}, u::T=first(vertices(g))) where {T}
     is_directed(g) && error("`eulerian` is not yet implemented for directed graphs")
     
-    _check_eulerian_input(g, u, v) # perform basic sanity checks
+    _check_eulerian_input(g, u) # perform basic sanity checks
 
     g′ = SimpleGraph{T}(nv(g)) # copy `g`
     for e in edges(g)
@@ -27,17 +25,11 @@ function eulerian(g::AbstractSimpleGraph{T}, u::T, v::T) where {T}
     return _eulerian!(g′, u)
 end
 
-# special case: find an Euler cycle from a specified vertex
-eulerian(G::AbstractSimpleGraph{T}, u::T) where {T} = eulerian(G, u, u)
-
-# special case: find any Euler tour; randomly pick first vertex
-eulerian(g::AbstractSimpleGraph) = eulerian(g, first(vertices(g)))
-
 function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
     # TODO: This uses Fleury's algorithm which is O(|E|²) in the number of edges |E|.
     #       Hierholzer's algorithm [https://en.wikipedia.org/wiki/Eulerian_path#Hierholzer's_algorithm]
-    #       is presumably faster, running in O(|E|) time, but requires more space due to
-    #       needing to keep track of visited/nonvisited sites in a doubly-linked list/deque.
+    #       is presumably faster, running in O(|E|) time, but requires needing to keep track
+    #       of visited/nonvisited sites in a doubly-linked list/deque.
     trail = T[]
 
     nverts = nv(g)
@@ -75,36 +67,29 @@ function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
     error("unreachable reached")
 end
 
-function _check_eulerian_input(g, u, v)
-    if !(has_vertex(g, u) && has_vertex(g, v))
-        error("one or both of the provided start and end vertices are not in the graph")
+function _check_eulerian_input(g, u)
+    if !has_vertex(g, u)
+        error("starting vertex is not in the graph")
     end
 
-    # special case: if any vertex have degree zero
+    # special case: if any vertex has degree zero
     if any(x->degree(g, x) == 0, vertices(g))
         error("some vertices have degree zero (are isolated) and cannot be reached")
     end
 
     # vertex degree checks
-    if u == v   # (cycle)
-        if any(x->isodd(degree(g, x)), vertices(g))
-            error("start and end vertices are identical but there exists vertices of odd degree: a eulerian cycle does not exist")
+    du = degree(g, u)
+    if iseven(du)     # cycle: start (u) == stop (v) - all nodes must have even degree
+        if any(x -> isodd(degree(g, x)), vertices(g))
+            error("starting vertex has even degree but there are other vertices with odd degree: a eulerian cycle does not exist")
         end
-    else        # u != v (tour)
-        for x in vertices(g)
-            if x == u || x == v
-                if iseven(degree(g, x))
-                    return error("start and end vertices differ but have even degree: a eulerian tour does not exist")
-                end
-            else
-                if isodd(degree(g, x))
-                    return error("a non-start/end vertex has odd degree: a eulerian tour does not exist")
-                end
-            end
+    else # isodd(du)  # trail: start (u) != stop (v) - all nodes, except u and v, must have even degree
+        if count(x -> iseven(degree(g, x)), vertices(g)) != 2
+            error("starting vertex has odd degree but the total number of vertices of odd degree is not equal to 2: a eulerian trail does not exist")
         end
     end
 
     if !is_connected(g)
-        error("graph is not connected: a eulerian cycle/tour does not exist")
+        error("graph is not connected: a eulerian cycle/trail does not exist")
     end
 end
