@@ -107,7 +107,7 @@ function savegraph(fn::AbstractString, g::AbstractSimpleGraph; compress=nothing)
 end
 
 """
-    savegraph(file, d, format)
+    savegraph(file, d, format=LGFormat())
 
 Save a dictionary `d` of `graphname => graph` to `file` in the format `format`.
 Return the number of graphs written.
