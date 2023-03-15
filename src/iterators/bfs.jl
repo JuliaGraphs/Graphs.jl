@@ -16,20 +16,6 @@ julia> for node in BFSIterator(g,3)
 4
 5
 2
-
-julia> for node in BFSIterator(g,[1,3])
-           display(node)
-       end
-1
-2
-3
-4
-5
-3
-1
-4
-5
-2
 ```
 """
 struct BFSIterator{S} <: VertexIterator
@@ -39,6 +25,9 @@ end
 
 BFSIterator(g::AbstractGraph) = BFSIterator(g, one(eltype(g)))
 
+Base.length(t::BFSIterator) = nv(t.graph)
+Base.eltype(t::BFSIterator) = eltype(t.graph)
+
 
 """
     Base.iterate(t::BFSIterator)
@@ -47,25 +36,19 @@ First iteration to visit each vertex in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator)
     visited = falses(nv(t.graph))
-    if t.source isa Number
-        visited[t.source] = true
-        return (t.source, SingleSourceIteratorState(visited, [t.source]))
-    else
-        init_source = first(t.source)
-        visited[init_source] = true
-        return (init_source, MultiSourceIteratorState(visited, [init_source], 1))
-    end
+    visited[t.source] = true
+    return (t.source, VertexIteratorState(visited, [t.source]))
 end
 
 
 """
-    Base.iterate(t::BFSIterator, state::SingleSourceIteratorState)
+    Base.iterate(t::BFSIterator, state::VertexIteratorState)
 
 Iterator to visit each vertex in a graph using breadth-first search.
 """
-function Base.iterate(t::BFSIterator, state::SingleSourceIteratorState)
+function Base.iterate(t::BFSIterator, state::VertexIteratorState)
     while !isempty(state.queue)
-        for node in outneighbors(t.graph, state.queue[1])
+        for node in outneighbors(t.graph, first(state.queue))
             if !state.visited[node]
                 push!(state.queue, node)
                 state.visited[node] = true
@@ -76,29 +59,3 @@ function Base.iterate(t::BFSIterator, state::SingleSourceIteratorState)
     end
 end
 
-
-"""
-    Base.iterate(t::BFSIterator, state::SingleSourceIteratorState)
-
-Iterator to visit each vertex in a graph using breadth-first search.
-"""
-function Base.iterate(t::BFSIterator, state::MultiSourceIteratorState)
-    while !isempty(state.queue)
-        for node in outneighbors(t.graph, state.queue[1])
-            if !state.visited[node]
-                push!(state.queue, node)
-                state.visited[node] = true
-                return (node, state)
-            end
-        end
-        popfirst!(state.queue)
-    end
-    # reset state and begin traversal at next source
-    state.source_id += 1
-    state.source_id > length(t.source) && return nothing
-    init_source =t.source[state.source_id]
-    state.visited .= false
-    state.visited[init_source] = true
-    state.queue = [init_source]
-    return (init_source, state)
-end

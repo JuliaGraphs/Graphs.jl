@@ -2,6 +2,7 @@
 *.jl.cov
 *.jl.mem
 .vscode
+*.code-workspace
 docs/build/
 docs/site/
 benchmark/.results/*

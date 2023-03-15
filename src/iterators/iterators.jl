@@ -31,28 +31,17 @@ abstract type AbstractIteratorState end
 
 
 """
-    mutable struct SingleSourceIteratorState
+    mutable struct VertexIteratorState
 
-`SingleSourceIteratorState` is a struct to hold the current state of iteration which is need for the Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when a single source is supplied.
+`VertexIteratorState` is a struct to hold the current state of iteration which is need for the Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when a single source is supplied.
 """
-mutable struct SingleSourceIteratorState <: AbstractIteratorState
+mutable struct VertexIteratorState <: AbstractIteratorState
     visited::BitArray
     queue::Vector{Int}
 end
 
 
-"""
-    mutable struct MultiSourceIteratorState
-
-`MultiSourceIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when mutltiple sources are supplied.
-"""
-mutable struct MultiSourceIteratorState <: AbstractIteratorState
-    visited::BitArray
-    queue::Vector{Int}
-    source_id::Int
-end
-
-
+# traversal implementations
 include("bfs.jl")
 include("dfs.jl")
 include("kruskal.jl")
