@@ -498,4 +498,145 @@ using Random: Random
     end
     # codecov for has_edge(::AbstractSimpleGraph, x, y)
     @test @inferred has_edge(DummySimpleGraph(), 1, 2)
+
+    @testset "Construct SimpleGraph from AbstractGraph" begin
+        # Test empty generic graph conversion to SimpleGraph
+        h1 = GenericGraph(SimpleGraph())
+        h2 = GenericDiGraph(SimpleDiGraph())
+        h3 = GenericGraph{UInt128}(SimpleGraph{UInt128}())
+        h4 = GenericDiGraph{UInt128}(SimpleDiGraph{UInt128}())
+
+        genericH1ToSimpleGraph = SimpleGraph(h1)
+        genericH2ToSimpleGraph = SimpleGraph(h2)
+        genericH3ToSimpleGraph = SimpleGraph(h3)
+        genericH4ToSimpleGraph = SimpleGraph(h4)
+
+        # Test properties
+        @test isvalid_simplegraph(genericH1ToSimpleGraph)
+        @test isvalid_simplegraph(genericH2ToSimpleGraph)
+        @test @inferred(!is_directed(genericH1ToSimpleGraph))
+        @test @inferred(!is_directed(genericH2ToSimpleGraph))
+        @test @inferred(!is_directed(genericH3ToSimpleGraph))
+        @test @inferred(!is_directed(genericH4ToSimpleGraph))
+        @test isvalid_simplegraph(genericH3ToSimpleGraph)
+        @test isvalid_simplegraph(genericH4ToSimpleGraph)
+        @test nv(genericH1ToSimpleGraph) == 0
+        @test nv(genericH2ToSimpleGraph) == 0
+        @test nv(genericH3ToSimpleGraph) == 0
+        @test nv(genericH4ToSimpleGraph) == 0
+        @test ne(genericH1ToSimpleGraph) == 0
+        @test ne(genericH2ToSimpleGraph) == 0
+        @test ne(genericH3ToSimpleGraph) == 0
+        @test ne(genericH4ToSimpleGraph) == 0
+        @test @inferred(eltype(h3)) == UInt128
+        @test @inferred(eltype(h4)) == UInt128
+
+        # Test GenericGraph conversion to SimpleGraph
+        h1 = SimpleGraph(3)
+        add_edge!(h1, 1, 2)
+        add_edge!(h1, 2, 3)
+
+        genericH1 = GenericGraph(h1)
+        genericH1ToSimpleGraph = SimpleGraph(genericH1)
+
+        # Test properties
+        @test isvalid_simplegraph(genericH1ToSimpleGraph)
+        @test nv(genericH1ToSimpleGraph) == 3
+        @test ne(genericH1ToSimpleGraph) == 2
+        @test @inferred(eltype(genericH1ToSimpleGraph)) == Int
+        @test Edge(1, 2) in edges(genericH1ToSimpleGraph)
+        @test Edge(2, 3) in edges(genericH1ToSimpleGraph)
+
+        # Test GenericDiGraph conversion to SimpleGraph
+        h2 = SimpleDiGraph(3)
+        # add directed edges 1 -> 2 and 2 -> 1 and test that only one undirected edge is added
+        add_edge!(h2, 1, 2)
+        add_edge!(h2, 2, 1)
+        # add directed edge 1 -> 3 and test that the undirected edge 1 - 3 is added.
+        add_edge!(h2, 1, 3)
+
+        genericH2 = GenericDiGraph(h2)
+        genericH2ToSimpleGraph = SimpleGraph(genericH2)
+
+        # Test properties
+        @test isvalid_simplegraph(genericH1ToSimpleGraph)
+        @test nv(genericH2ToSimpleGraph) == 3
+        @test ne(genericH2) == 3
+        @test ne(genericH2ToSimpleGraph) == 2
+        @test @inferred(eltype(genericH2ToSimpleGraph)) == Int
+        @test Edge(1, 2) in edges(genericH2ToSimpleGraph)
+        @test Edge(1, 3) in edges(genericH2ToSimpleGraph)
+    end
+
+    @testset "Construct SimpleDiGraph from AbstractGraph" begin
+         # Test empty generic graph conversion to SimpleDiGraph
+         h1 = GenericGraph(SimpleGraph())
+         h2 = GenericDiGraph(SimpleDiGraph())
+         h3 = GenericGraph{UInt128}(SimpleGraph{UInt128}())
+         h4 = GenericDiGraph{UInt128}(SimpleDiGraph{UInt128}())
+ 
+         genericH1ToSimpleGraph = SimpleDiGraph(h1)
+         genericH2ToSimpleGraph = SimpleDiGraph(h2)
+         genericH3ToSimpleGraph = SimpleDiGraph(h3)
+         genericH4ToSimpleGraph = SimpleDiGraph(h4)
+ 
+         # Test properties
+         @test isvalid_simplegraph(genericH1ToSimpleGraph)
+         @test isvalid_simplegraph(genericH2ToSimpleGraph)
+         @test @inferred(is_directed(genericH1ToSimpleGraph))
+         @test @inferred(is_directed(genericH2ToSimpleGraph))
+         @test @inferred(is_directed(genericH3ToSimpleGraph))
+         @test @inferred(is_directed(genericH4ToSimpleGraph))
+         @test isvalid_simplegraph(genericH3ToSimpleGraph)
+         @test isvalid_simplegraph(genericH4ToSimpleGraph)
+         @test nv(genericH1ToSimpleGraph) == 0
+         @test nv(genericH2ToSimpleGraph) == 0
+         @test nv(genericH3ToSimpleGraph) == 0
+         @test nv(genericH4ToSimpleGraph) == 0
+         @test ne(genericH1ToSimpleGraph) == 0
+         @test ne(genericH2ToSimpleGraph) == 0
+         @test ne(genericH3ToSimpleGraph) == 0
+         @test ne(genericH4ToSimpleGraph) == 0
+         @test @inferred(eltype(h3)) == UInt128
+         @test @inferred(eltype(h4)) == UInt128
+ 
+         # Test GenericGraph conversion to SimpleDiGraph
+         h1 = SimpleGraph(3)
+         add_edge!(h1, 1, 2)
+         add_edge!(h1, 2, 3)
+ 
+         genericH1 = GenericGraph(h1)
+         genericH1ToSimpleGraph = SimpleDiGraph(genericH1)
+ 
+         # Test properties
+         @test isvalid_simplegraph(genericH1ToSimpleGraph)
+         @test nv(genericH1ToSimpleGraph) == 3
+         # two directed edges for each undirected edge
+         @test ne(genericH1ToSimpleGraph) == 4
+         @test @inferred(eltype(genericH1ToSimpleGraph)) == Int
+         @test Edge(1, 2) in edges(genericH1ToSimpleGraph)
+         @test Edge(2, 1) in edges(genericH1ToSimpleGraph)
+         @test Edge(2, 3) in edges(genericH1ToSimpleGraph)
+         @test Edge(3, 2) in edges(genericH1ToSimpleGraph)
+ 
+         # Test GenericDiGraph conversion to SimpleGraph
+         h2 = SimpleDiGraph(3)
+         # add directed edges 1 -> 2 and 2 -> 1 and test that only one undirected edge is added
+         add_edge!(h2, 1, 2)
+         add_edge!(h2, 2, 1)
+         # add directed edge 1 -> 3 and test that the undirected edge 1 - 3 is added.
+         add_edge!(h2, 1, 3)
+ 
+         genericH2 = GenericDiGraph(h2)
+         genericH2ToSimpleGraph = SimpleDiGraph(genericH2)
+ 
+         # Test properties
+         @test isvalid_simplegraph(genericH1ToSimpleGraph)
+         @test nv(genericH2ToSimpleGraph) == 3
+         @test ne(genericH2ToSimpleGraph) == 3
+         @test @inferred(eltype(genericH2ToSimpleGraph)) == Int
+         @test Edge(1, 2) in edges(genericH2ToSimpleGraph)
+         @test Edge(2, 1) in edges(genericH2ToSimpleGraph)
+         @test Edge(1, 3) in edges(genericH2ToSimpleGraph)
+    end
 end
