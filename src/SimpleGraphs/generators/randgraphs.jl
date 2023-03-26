@@ -1424,18 +1424,20 @@ function random_orientation_dag(
 end
 
 """
-    bernoulli_graph(Λ; rng = nothing)
+    bernoulli_graph(Λ; rng = nothing, nodes_type = Int64)
 
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\Lambda[i,j]``.
 """
 function bernoulli_graph(
-    Λ::AbstractMatrix{<:AbstractFloat}; rng::Union{Nothing,AbstractRNG}=nothing
+    Λ::AbstractMatrix{<:AbstractFloat};
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    nodes_type::Type=Int64,
 )
     size(Λ)[1] != size(Λ)[2] &&
         throw(ArgumentError("The probability matrix must be a square matrix"))
     !issymmetric(Λ) && throw(ArgumentError("Λ must be symmetric"))
     n = size(Λ)[1]
-    g = SimpleGraph(n)
+    g = SimpleGraph{nodes_type}(n)
     for j in 1:n
         for i in (j + 1):n
             if rand(rng) <= Λ[i, j]
@@ -1447,17 +1449,20 @@ function bernoulli_graph(
 end
 
 """
-rho_correlated_bernoulli_graphs(Λ, ρ; rng = nothing)
+rho_correlated_bernoulli_graphs(Λ, ρ; rng = nothing, nodes_type = Int64)
 
 Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return a Tuple with two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices. It means that, calling ``A`` and ``B`` the adjacency matrix of the outputed graphs, for ``i,j`` such that ``i``!=``j`` the Pearson correlation coefficient for ``A_{i,j}`` and ``B_{i,j}`` is ``\\rho``.
 """
 function rho_correlated_bernoulli_graphs(
-    Λ::AbstractMatrix{<:AbstractFloat}, ρ::Float64; rng::Union{Nothing,AbstractRNG}=nothing
+    Λ::AbstractMatrix{<:AbstractFloat},
+    ρ::Float64;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    nodes_type::Type=Int64,
 )
     (ρ < 0.0 || ρ > 1.0) && throw(ArgumentError("ρ must be in [0,1]"))
     n = size(Λ)[1]
-    g2 = SimpleGraph(n)
-    g1 = bernoulli_graph(Λ; rng)
+    g2 = SimpleGraph{nodes_type}(n)
+    g1 = bernoulli_graph(Λ; rng, nodes_type=eltype(g2))
     g1_adj = Int.(adjacency_matrix(g1))
     for j in 1:n
         for i in (j + 1):n
