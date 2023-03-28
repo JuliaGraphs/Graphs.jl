@@ -181,7 +181,9 @@ algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 `true` if any cycle detected in the graph has a negative weight.
 # Examples
 
-```jldoctest
+```
+julia> using Graphs
+
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];

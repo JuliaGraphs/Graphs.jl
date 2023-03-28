@@ -14,14 +14,16 @@ using Kirchhoff's Laws.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)];
 
-julia> g = SimpleGraph(SimpleEdge.(elist));
+julia> g = SimpleGraph(Graphs.SimpleEdge.(elist));
 
 julia> cycle_basis(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
+ [2, 4, 1]
  [2, 3, 4]
- [2, 1, 3]
 ```
 
 ### References

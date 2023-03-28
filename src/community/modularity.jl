@@ -52,7 +52,8 @@ julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
 
 julia> modularity(barbell, [1, 1, 1, 2, 2, 2], γ=0.5)
 0.6071428571428571  
-
+```
+```
 julia> using SimpleWeightedGraphs
 
 julia> triangle = SimpleWeightedGraph(3);

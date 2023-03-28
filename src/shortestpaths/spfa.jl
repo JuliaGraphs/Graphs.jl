@@ -18,6 +18,22 @@ other nodes in graph `g` using the [Shortest Path Faster Algorithm]
 # Examples
 
 ```jldoctest
+julia> using Graphs
+
+julia> g = complete_graph(4);
+
+julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
+
+julia> spfa_shortest_paths(g, 1, d)
+4-element Vector{Int64}:
+  0
+  0
+ -1
+  0
+```
+
+```
+
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
@@ -25,20 +41,7 @@ julia> d = [1 -3 1; -3 1 1; 1 1 1];
 julia> spfa_shortest_paths(g, 1, d)
 
 ERROR: Graphs.NegativeCycleError()
-
-julia> g = complete_graph(4);
-
-julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
-
-julia> spfa_shortest_paths(gx, 1, d)
-
-4-element Array{Int64,1}:
-  0
-  0
- -1
-  0
 ```
-
 """
 function spfa_shortest_paths(
     graph::AbstractGraph{U}, source::Integer, distmx::AbstractMatrix{T}=weights(graph)
@@ -91,6 +94,8 @@ Function which returns true if there is any negative weight cycle in the graph.
 # Examples
 
 ```jldoctest
+julia> using Graphs
+
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
@@ -102,7 +107,7 @@ julia> g = complete_graph(4);
 
 julia> d = [1 1 -1 1; 1 1 -1 1; 1 1 1 1; 1 1 1 1];
 
-julia> has_negative_edge_cycle_spfa(g, d);
+julia> has_negative_edge_cycle_spfa(g, d)
 false
 ```
 

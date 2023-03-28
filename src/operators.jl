@@ -9,6 +9,8 @@ Preserves the `eltype` of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> foreach(println, edges(complement(g)))
@@ -63,6 +65,8 @@ Preserves the eltype of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> foreach(println, edges(reverse(g)))
@@ -109,6 +113,8 @@ number of vertices in the generated graph exceeds the `eltype`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -151,6 +157,8 @@ Preserves the eltype of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -183,6 +191,8 @@ Preserves the `eltype` of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -230,7 +240,7 @@ julia> add_edge!(h, 2, 3);
 julia> f = symmetric_difference(g, h);
 
 julia> collect(edges(f))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 2 => 3
@@ -279,7 +289,7 @@ julia> add_edge!(h, 4, 5);
 julia> f = union(g, h);
 
 julia> collect(edges(f))
-5-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 3 => 4
@@ -323,7 +333,7 @@ julia> g = join(star_graph(3), path_graph(2))
 {5, 9} undirected simple Int64 graph
 
 julia> collect(edges(g))
-9-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+9-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -363,7 +373,7 @@ julia> g = crosspath(3, path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
-12-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+12-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 2 => 3
@@ -422,10 +432,12 @@ Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> sum(g, 2)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  1
  2
@@ -433,7 +445,7 @@ julia> sum(g, 2)
  1
 
 julia> sum(g, 1)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  1
  1
@@ -478,6 +490,8 @@ Return the number of edges in `g`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> sum(g)
@@ -515,7 +529,7 @@ julia> g = cartesian_product(star_graph(3), path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
-12-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+12-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 1 => 7
@@ -567,7 +581,7 @@ julia> g = tensor_product(star_graph(3), path_graph(3))
 {9, 8} undirected simple Int64 graph
 
 julia> collect(edges(g))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+8-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 5
  Edge 1 => 8
  Edge 2 => 4
@@ -737,7 +751,7 @@ julia> using Graphs
 julia> g = path_graph(5);
 
 julia> collect(edges(g))
-4-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
@@ -746,7 +760,7 @@ julia> collect(edges(g))
 julia> h = merge_vertices(g, [2, 3]);
 
 julia> collect(edges(h))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
@@ -797,14 +811,14 @@ julia> using Graphs
 julia> g = path_graph(5);
 
 julia> collect(edges(g))
-4-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
  Edge 4 => 5
 
 julia> merge_vertices!(g, [2, 3])
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  2
@@ -812,7 +826,7 @@ julia> merge_vertices!(g, [2, 3])
  4
 
 julia> collect(edges(g))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4

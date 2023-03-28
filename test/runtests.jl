@@ -26,7 +26,7 @@ end
 end
 
 @testset verbose = true "Doctests (Documenter.jl)" begin
-    # doctest(Graphs)  # TODO: uncomment it when the errors it throws are fixed
+    doctest(Graphs)
 end
 
 function testgraphs(g)
