@@ -35,7 +35,7 @@ using Random:
     seed!,
     shuffle,
     shuffle!
-using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals, spzeros
 import SparseArrays: blockdiag, sparse
 import Base:
     adjoint,
@@ -260,6 +260,16 @@ export
     eigenvector_centrality,
     stress_centrality,
     radiality_centrality,
+
+    # flows
+    maximum_flow,
+    EdmondsKarpAlgorithm, 
+    DinicAlgorithm, 
+    BoykovKolmogorovAlgorithm, 
+    PushRelabelAlgorithm,
+    multiroute_flow, 
+    KishimotoAlgorithm, 
+    ExtendedMultirouteFlowAlgorithm, 
 
     # spectral
     adjacency_matrix,
@@ -500,6 +510,15 @@ include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("shortestpaths/spfa.jl")
+include("flows/maximum_flow.jl")
+include("flows/boykov_kolmogorov.jl")
+include("flows/dinic.jl")
+include("flows/edmonds_karp.jl")
+include("flows/ext_multiroute_flow.jl")
+include("flows/kishimoto.jl")
+include("flows/mincut.jl")
+include("flows/multiroute_flow.jl")
+include("flows/push_relabel.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")

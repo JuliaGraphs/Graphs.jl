@@ -66,6 +66,7 @@ pages_files = [
         "algorithms/traversals.md",
         "algorithms/utils.md",
         "algorithms/vertexcover.md",
+        "algorithms/flows.md",
     ],
     "For advanced users" => [
         "advanced/errorhandling.md",

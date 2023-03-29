@@ -119,6 +119,13 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "flows/boykov_kolmogorov",
+    "flows/dinic",
+    "flows/edmonds_karp",
+    "flows/maximum_flow",
+    "flows/mincut",
+    "flows/multiroute_flow",
+    "flows/push_relabel",
 ]
 
 @testset verbose = true "Graphs" begin
