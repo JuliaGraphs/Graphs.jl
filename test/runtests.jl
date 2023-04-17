@@ -17,6 +17,12 @@ using StableRNGs
 
 const testdir = dirname(@__FILE__)
 
+if VERSION >= v"1.7"
+    @testset "Code quality (JET.jl)" begin
+        include("jet_test.jl")
+    end
+end
+
 @testset verbose = true "Code quality (Aqua.jl)" begin
     Aqua.test_all(Graphs; ambiguities=false)
 end
