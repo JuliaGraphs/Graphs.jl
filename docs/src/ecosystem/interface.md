@@ -5,7 +5,6 @@ This section is designed to guide developers who wish to write their own graph s
 All Graphs.jl functions rely on a standard API to function. As long as your graph structure is a subtype of [`AbstractGraph`](@ref) and implements the following API functions with the given return values, all functions within the Graphs.jl package should just work:
 
 - [`edges`](@ref)
-- [Base.eltype](https://docs.julialang.org/en/latest/base/collections/#Base.eltype)
 - [`edgetype`](@ref) (example: `edgetype(g::CustomGraph) = Graphs.SimpleEdge{eltype(g)})`)
 - [`has_edge`](@ref)
 - [`has_vertex`](@ref)
