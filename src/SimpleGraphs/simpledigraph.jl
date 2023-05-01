@@ -35,6 +35,8 @@ If not specified, the element type `T` is the type of `n`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleDiGraph(UInt8(10))
 {10, 0} directed simple UInt8 graph
 ```
@@ -59,6 +61,8 @@ Construct an empty `SimpleDiGraph{T}` with 0 vertices and 0 edges.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleDiGraph(UInt8)
 {0, 0} directed simple UInt8 graph
 ```
@@ -75,11 +79,21 @@ The element type `T` can be omitted.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> A1 = [false true; false false]
+2×2 Matrix{Bool}:
+ 0  1
+ 0  0
+
 julia> SimpleDiGraph(A1)
 {2, 1} directed simple Int64 graph
 
 julia> A2 = [2 7; 5 0]
+2×2 Matrix{Int64}:
+ 2  7
+ 5  0
+
 julia> SimpleDiGraph{Int16}(A2)
 {2, 3} directed simple Int16 graph
 ```
@@ -129,7 +143,11 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = complete_digraph(5)
+{5, 20} directed simple Int64 graph
+
 julia> SimpleDiGraph{UInt8}(g)
 {5, 20} directed simple UInt8 graph
 ```
@@ -151,7 +169,11 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = path_graph(Int8(5))
+{5, 4} undirected simple Int8 graph
+
 julia> SimpleDiGraph(g)
 {5, 8} directed simple Int8 graph
 ```
@@ -198,8 +220,14 @@ by the lexical ordering and does not contain any duplicates.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
 
 julia> el = Edge.([ (1, 3), (1, 5), (3, 1) ])
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 3
+ Edge 1 => 5
+ Edge 3 => 1
+ 
 julia> SimpleDiGraph(el)
 {5, 3} directed simple Int64 graph
 ```
@@ -349,7 +377,7 @@ julia> h = SimpleDiGraphFromIterator(edges(g))
 {2, 2} directed simple Int64 graph
 
 julia> collect(edges(h))
-2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 1
 ```

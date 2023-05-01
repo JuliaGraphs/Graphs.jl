@@ -6,7 +6,10 @@ with degree cut-off `k`.
 
 ```jldoctest
 julia> using Graphs
+
 julia> g = star_graph(5)
+{5, 4} undirected simple Int64 graph
+
 julia> rich_club(g, 1)
 0.4
 ```

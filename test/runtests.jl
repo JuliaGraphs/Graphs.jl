@@ -25,9 +25,7 @@ end
     @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
-@testset verbose = true "Doctests (Documenter.jl)" begin
-    # doctest(Graphs)  # TODO: uncomment it when the errors it throws are fixed
-end
+doctest(Graphs)
 
 function testgraphs(g)
     return if is_directed(g)

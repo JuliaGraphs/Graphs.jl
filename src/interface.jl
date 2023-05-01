@@ -170,7 +170,7 @@ is invalidated by changes to `g`.
 julia> using Graphs
 
 julia> collect(vertices(SimpleGraph(4)))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  1
  2
  3
@@ -198,7 +198,7 @@ julia> using Graphs
 julia> g = path_graph(3);
 
 julia> collect(edges(g))
-2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
 ```
@@ -287,10 +287,12 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> inneighbors(g, 4)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  3
  5
 ```
@@ -309,10 +311,12 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> outneighbors(g, 4)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  5
 ```
 """
@@ -326,6 +330,8 @@ The fallback is defined for graph values `zero(g::G) = zero(G)`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> zero(typeof(g))

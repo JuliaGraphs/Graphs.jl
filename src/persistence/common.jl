@@ -114,6 +114,8 @@ Return the number of graphs written.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleGraph(5,8)
 {5, 8} undirected simple Int64 graph
 
