@@ -57,15 +57,12 @@ function _adjacency_matrix(
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
-            if !(T <: Bool) && !is_directed(g)
-                nz -= 1
-            end
         end
         dsts = sort(collect(neighborfn(g, j))) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
         append!(rowval, dsts)
     end
-    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
+    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, length(rowval)))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
