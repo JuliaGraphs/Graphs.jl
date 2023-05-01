@@ -35,10 +35,7 @@ pages_files = [
         "first_steps/plotting.md",
         "first_steps/persistence.md",
     ],
-    "Ecosystem" => [
-        "ecosystem/graphtypes.md",
-        "ecosystem/interface.md",
-    ],
+    "Ecosystem" => ["ecosystem/graphtypes.md", "ecosystem/interface.md"],
     "Core API" => [
         "core_functions/core.md",
         "core_functions/interface.md",
@@ -55,6 +52,7 @@ pages_files = [
         "algorithms/connectivity.md",
         "algorithms/cut.md",
         "algorithms/cycles.md",
+        "algorithms/trees.md",
         "algorithms/degeneracy.md",
         "algorithms/digraph.md",
         "algorithms/distance.md",
@@ -78,7 +76,7 @@ pages_files = [
     ],
 ]
 
-pages=[
+pages = [
     section_name => [
         get_title(joinpath(normpath(@__FILE__, ".."), "src", file)) => file for
         file in section_files

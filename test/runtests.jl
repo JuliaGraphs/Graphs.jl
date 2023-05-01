@@ -1,6 +1,10 @@
+using Aqua
+using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
+using JuliaFormatter
+using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -8,17 +12,42 @@ using Compat
 using DelimitedFiles
 using Base64
 using Random
-using Statistics: mean
+using Statistics: mean, std
+using StableRNGs
 
 const testdir = dirname(@__FILE__)
 
-testgraphs(g) = is_directed(g) ? [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)] : [g, Graph{UInt8}(g), Graph{Int16}(g)]
+@testset verbose = true "Code quality (Aqua.jl)" begin
+    Aqua.test_all(Graphs; ambiguities=false)
+end
+
+@testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
+    @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
+end
+
+@testset verbose = true "Doctests (Documenter.jl)" begin
+    # doctest(Graphs)  # TODO: uncomment it when the errors it throws are fixed
+end
+
+function testgraphs(g)
+    return if is_directed(g)
+        [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
+    else
+        [g, Graph{UInt8}(g), Graph{Int16}(g)]
+    end
+end
 testgraphs(gs...) = vcat((testgraphs(g) for g in gs)...)
 testdigraphs = testgraphs
 
 # some operations will create a large graph from two smaller graphs. We
 # might error out on very small eltypes.
-testlargegraphs(g) = is_directed(g) ? [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)] : [g, Graph{UInt16}(g), Graph{Int32}(g)]
+function testlargegraphs(g)
+    return if is_directed(g)
+        [g, DiGraph{UInt16}(g), DiGraph{Int32}(g)]
+    else
+        [g, Graph{UInt16}(g), Graph{Int32}(g)]
+    end
+end
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
 tests = [
@@ -88,12 +117,13 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
-    "experimental/experimental"
+    "trees/prufer",
+    "experimental/experimental",
 ]
 
-@testset "Graphs" begin
+@testset verbose = true "Graphs" begin
     for t in tests
         tp = joinpath(testdir, "$(t).jl")
         include(tp)
     end
-end
+end;

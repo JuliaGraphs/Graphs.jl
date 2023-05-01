@@ -1,4 +1,4 @@
-struct DijkstraResult{T, U<:Integer}  <: ShortestPathResult
+struct DijkstraResult{T,U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -40,10 +40,11 @@ struct Dijkstra <: ShortestPathAlgorithm
     track_vertices::Bool
 end
 
-Dijkstra(;all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
+Dijkstra(; all_paths=false, track_vertices=false) = Dijkstra(all_paths, track_vertices)
 
-
-function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra) where {T, U<:Integer}
+function shortest_paths(
+    g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatrix{T}, alg::Dijkstra
+) where {T,U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -118,10 +119,13 @@ function shortest_paths(g::AbstractGraph, srcs::Vector{U}, distmx::AbstractMatri
         empty!(preds[src])
     end
 
-    return DijkstraResult{T, U}(parents, dists, preds, pathcounts, closest_vertices)
+    return DijkstraResult{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra) = shortest_paths(g, [s], distmx, alg)
+function shortest_paths(g::AbstractGraph, s::Integer, distmx::AbstractMatrix, alg::Dijkstra)
+    return shortest_paths(g, [s], distmx, alg)
+end
 # If we don't specify an algorithm, use dijkstra.
-shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix) = shortest_paths(g, s, distmx, Dijkstra())
-
+function shortest_paths(g::AbstractGraph, s, distmx::AbstractMatrix)
+    return shortest_paths(g, s, distmx, Dijkstra())
+end

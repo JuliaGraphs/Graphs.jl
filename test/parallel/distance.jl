@@ -11,8 +11,12 @@
         z = @inferred(Graphs.eccentricity(g, distmx1))
         y = @inferred(Parallel.eccentricity(g, distmx1))
         @test isapprox(y, z)
-        @test @inferred(Graphs.diameter(y)) == @inferred(Parallel.diameter(g, distmx1)) == 6.2
-        @test @inferred(Graphs.periphery(y)) == @inferred(Parallel.periphery(g, distmx1)) == [1, 3]
+        @test @inferred(Graphs.diameter(y)) ==
+            @inferred(Parallel.diameter(g, distmx1)) ==
+            6.2
+        @test @inferred(Graphs.periphery(y)) ==
+            @inferred(Parallel.periphery(g, distmx1)) ==
+            [1, 3]
         @test @inferred(Graphs.radius(y)) == @inferred(Parallel.radius(g, distmx1)) == 4.2
         @test @inferred(Graphs.center(y)) == @inferred(Parallel.center(g, distmx1)) == [2]
     end
@@ -21,9 +25,13 @@
         z = @inferred(Graphs.eccentricity(g, distmx2))
         y = @inferred(Parallel.eccentricity(g, distmx2))
         @test isapprox(y, z)
-        @test @inferred(Graphs.diameter(y)) == @inferred(Parallel.diameter(g, distmx2)) == 6.2
-        @test @inferred(Graphs.periphery(y)) == @inferred(Parallel.periphery(g, distmx2)) == [1]
+        @test @inferred(Graphs.diameter(y)) ==
+            @inferred(Parallel.diameter(g, distmx2)) ==
+            6.2
+        @test @inferred(Graphs.periphery(y)) ==
+            @inferred(Parallel.periphery(g, distmx2)) ==
+            [1]
         @test @inferred(Graphs.radius(y)) == @inferred(Parallel.radius(g, distmx2)) == 4.2
         @test @inferred(Graphs.center(y)) == @inferred(Parallel.center(g, distmx2)) == [2]
-    end    
+    end
 end

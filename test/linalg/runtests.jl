@@ -4,11 +4,7 @@ using SparseArrays
 using LinearAlgebra
 const linalgtestdir = dirname(@__FILE__)
 
-tests = [
-    "graphmatrices",
-    "spectral"
-]
-
+tests = ["graphmatrices", "spectral"]
 
 @testset "Graphs.LinAlg" begin
     for t in tests

@@ -29,10 +29,9 @@ julia> closeness_centrality(path_graph(4))
  0.5
 ```
 """
-function closeness_centrality(g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
-    normalize=true)
-
+function closeness_centrality(
+    g::AbstractGraph, distmx::AbstractMatrix=weights(g); normalize=true
+)
     n_v = nv(g)
     closeness = zeros(n_v)
 

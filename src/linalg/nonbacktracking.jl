@@ -61,7 +61,7 @@ Additionally the `contract!(vertexspace, nbt, edgespace)` method takes vectors
 represented in the domain of ``B`` and represents them in the domain of the
 adjacency matrix of `g`.
 """
-struct Nonbacktracking{G <: AbstractGraph}
+struct Nonbacktracking{G<:AbstractGraph}
     g::G
     edgeidmap::Dict{Edge,Int}
     m::Int
@@ -88,7 +88,7 @@ size(nbt::Nonbacktracking, i::Number) = size(nbt)[i]
 eltype(::Type{Nonbacktracking}) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
-function *(nbt::Nonbacktracking, x::Vector{T}) where T <: Number
+function *(nbt::Nonbacktracking, x::Vector{T}) where {T<:Number}
     length(x) == nbt.m || error("dimension mismatch")
     y = zeros(T, length(x))
     for (e, u) in nbt.edgeidmap
@@ -131,7 +131,7 @@ sparse(nbt::Nonbacktracking) = sparse(coo_sparse(nbt)..., nbt.m, nbt.m)
 
 function *(nbt::Nonbacktracking, x::AbstractMatrix)
     y = zero(x)
-    for i in 1:nbt.m
+    for i in 1:(nbt.m)
         y[:, i] = nbt * x[:, i]
     end
     return y
@@ -144,13 +144,13 @@ The mutating version of `contract(nbt, edgespace)`. Modifies `vertexspace`.
 """
 function contract!(vertexspace::Vector, nbt::Nonbacktracking, edgespace::Vector)
     T = eltype(nbt.g)
-    for i = one(T):nv(nbt.g), j in neighbors(nbt.g, i)
+    for i in one(T):nv(nbt.g), j in neighbors(nbt.g, i)
         u = nbt.edgeidmap[i > j ? Edge(j, i) : Edge(i, j)]
         vertexspace[i] += edgespace[u]
     end
 end
 
-#TODO: documentation needs work. sbromberger 20170326
+# TODO: documentation needs work. sbromberger 20170326
 """
     contract(nbt, edgespace)
 

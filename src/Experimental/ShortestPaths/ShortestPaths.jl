@@ -4,9 +4,10 @@ using Graphs
 using Graphs.Experimental.Traversals
 using Graphs: AbstractGraph, AbstractEdge
 using Graphs.SimpleGraphs: AbstractSimpleGraph
-using DataStructures:PriorityQueue, enqueue!, dequeue!
+using DataStructures: PriorityQueue, enqueue!, dequeue!
 
-import Graphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
+import Graphs.Experimental.Traversals:
+    initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
 
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment
@@ -32,7 +33,6 @@ calculation.
 """
 abstract type ShortestPathResult <: AbstractGraphResult end
 
-
 """
     ShortestPathAlgorithm <: AbstractGraphAlgorithm
 
@@ -56,7 +56,6 @@ include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
-
 
 ################################
 # Shortest Paths via algorithm #
@@ -99,12 +98,17 @@ s4 = shortest_paths(g, 1, BellmanFord())
 s5 = shortest_paths(g, 1, w, DEsopoPape())
 ```
 """
-shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm) =
-    shortest_paths(g, s, weights(g), alg)
+function shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm)
+    return shortest_paths(g, s, weights(g), alg)
+end
 
 # If we don't specify an algorithm AND there are no dists, use BFS.
-shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer} = shortest_paths(g, s, BFS())
-shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = shortest_paths(g, ss, BFS())
+function shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer}
+    return shortest_paths(g, s, BFS())
+end
+function shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer}
+    return shortest_paths(g, ss, BFS())
+end
 
 # Full-formed methods.
 """
@@ -137,7 +141,7 @@ function paths(state::ShortestPathResult, vs::AbstractVector{<:Integer})
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
-    for i = 1:num_vs
+    for i in 1:num_vs
         all_paths[i] = Vector{T}()
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
@@ -193,7 +197,9 @@ julia> has_negative_weight_cycle(g, d, SPFA())
 false
 ```
 """
-has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = has_negative_weight_cycle(g, distmx, BellmanFord())
+function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return has_negative_weight_cycle(g, distmx, BellmanFord())
+end
 has_negative_weight_cycle(g::AbstractSimpleGraph) = false
 
 export ShortestPathAlgorithm

@@ -19,7 +19,7 @@ No fields are specified or required.
 - all destinations
 """
 struct BellmanFord <: ShortestPathAlgorithm end
-struct BellmanFordResult{T, U<:Integer} <: ShortestPathResult
+struct BellmanFordResult{T,U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -28,9 +28,8 @@ function shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T},
-    ::BellmanFord
-   ) where {T, U<:Integer}
-
+    ::BellmanFord,
+) where {T,U<:Integer}
     nvg = nv(graph)
     active = falses(nvg)
     active[sources] .= true
@@ -61,12 +60,17 @@ function shortest_paths(
     return BellmanFordResult(parents, dists)
 end
 
-shortest_paths(g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::BellmanFord) =
-    shortest_paths(g, [v], distmx, alg)
+function shortest_paths(
+    g::AbstractGraph, v::Integer, distmx::AbstractMatrix, alg::BellmanFord
+)
+    return shortest_paths(g, [v], distmx, alg)
+end
 
 has_negative_weight_cycle(g::AbstractGraph, ::BellmanFord) = false
 
-function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix, alg::BellmanFord)
+function has_negative_weight_cycle(
+    g::AbstractGraph, distmx::AbstractMatrix, alg::BellmanFord
+)
     try
         shortest_paths(g, vertices(g), distmx, alg)
     catch e

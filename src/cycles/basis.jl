@@ -44,30 +44,30 @@ function cycle_basis(g::AbstractSimpleGraph, root=nothing)
         while !isempty(stack)
             z = pop!(stack)
             zused = used[z]
-            for nbr in neighbors(g,z)
+            for nbr in neighbors(g, z)
                 if !in(nbr, keys_used)
                     pred[nbr] = z
                     push!(keys_pred, nbr)
-                    push!(stack,nbr)
+                    push!(stack, nbr)
                     used[nbr] = [z]
                     push!(keys_used, nbr)
                 elseif nbr == z
                     push!(cycles, [z])
                 elseif !in(nbr, zused)
                     pn = used[nbr]
-                    cycle = [nbr,z]
+                    cycle = [nbr, z]
                     p = pred[z]
                     while !in(p, pn)
                         push!(cycle, p)
                         p = pred[p]
                     end
-                    push!(cycle,p)
-                    push!(cycles,cycle)
+                    push!(cycle, p)
+                    push!(cycles, cycle)
                     push!(used[nbr], z)
                 end
             end
-        end  
-        setdiff!(gnodes,keys_pred)
+        end
+        setdiff!(gnodes, keys_pred)
         isempty(gnodes) && break
         r = pop!(gnodes)
     end
