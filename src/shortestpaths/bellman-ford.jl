@@ -41,7 +41,7 @@ function bellman_ford_shortest_paths(
     active[sources] .= true
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    dists[sources] .= 0
+    dists[sources] .= zero(T)
     no_changes = false
     new_active = falses(nvg)
 
