@@ -26,6 +26,31 @@ end
 
 eltype(x::SimpleDiGraph{T}) where {T} = T
 
+# SimpleDiGraph(g)
+"""
+    SimpleDiGraph{T}(g::AbstractGraph)
+
+Construct a `SimpleDiGraph{T}` from an `AbstractGraph`. 
+If `g` is undirected, then every undirected edge x - y in `g` is added 
+as two directed edges x -> y and y -> x.
+"""
+SimpleDiGraph(g::AbstractGraph) = SimpleDiGraph{Int}(g)
+
+function SimpleDiGraph{T}(g::AbstractGraph) where {T<:Integer}
+    simpleDiGraph = SimpleDiGraph(nv(g))
+    if !is_directed(g)
+        @inbounds for e in edges(g)
+            add_edge!(simpleDiGraph, src(e), dst(e))
+            add_edge!(simpleDiGraph, dst(e), src(e))
+        end
+    else
+        @inbounds for e in edges(g)
+            add_edge!(simpleDiGraph, src(e), dst(e))
+        end
+    end
+    return simpleDiGraph
+end
+
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """
     SimpleDiGraph{T}(n=0)

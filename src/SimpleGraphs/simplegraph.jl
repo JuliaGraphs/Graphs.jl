@@ -21,6 +21,26 @@ end
 
 eltype(x::SimpleGraph{T}) where {T} = T
 
+# SimpleGraph(g)
+"""
+    SimpleGraph{T}(g::AbstractGraph)
+
+Construct a `SimpleGraph{T}` from an `AbstractGraph`. 
+If `g` is a `SimpleDiGraph`, then every directed edge in `g` is 
+added as an undirected edge.
+"""
+SimpleGraph(g::AbstractGraph) = SimpleGraph{Int}(g)
+
+# SimpleGraph{UInt8}(g)
+function SimpleGraph{T}(g::AbstractGraph) where {T<:Integer}
+    simpleGraph = SimpleGraph(nv(g))
+    @inbounds for e in edges(g)
+        # it seems that the `add_edge` function already handles multiple edges efficiently (e.g. in the case of directed edges 1 -> 2 and 2 -> 1).
+        add_edge!(simpleGraph, src(e), dst(e))
+    end
+    return simpleGraph
+end
+
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
     SimpleGraph{T}(n=0)
