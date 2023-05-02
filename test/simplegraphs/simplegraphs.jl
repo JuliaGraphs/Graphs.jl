@@ -498,4 +498,11 @@ using Random: Random
     end
     # codecov for has_edge(::AbstractSimpleGraph, x, y)
     @test @inferred has_edge(DummySimpleGraph(), 1, 2)
+
+    @testset "Constructors from tuples" begin
+        g = SimpleGraph(Int32(4), [(1, 2), (2, 3)])
+        @test g isa SimpleGraph{Int32}
+        @test nv(g) == 4
+        @test ne(g) == 2
+    end
 end

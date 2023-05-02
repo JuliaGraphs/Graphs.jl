@@ -15,8 +15,31 @@ mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
     end
 end
 
-function SimpleGraph(ne, fadjlist::Vector{Vector{T}}) where {T}
+function SimpleGraph(ne::Integer, fadjlist::Vector{Vector{T}}) where {T}
     return SimpleGraph{T}(ne, fadjlist)
+end
+
+# initialize a graph by a vector of tuples
+"""
+    SimpleGraph{T}(n, tuples_as_edges)
+
+Construct a `SimpleGraph{T}` with `n` vertices, with the edges specified as a vector of tuples.
+The element type `T` is the type of `n`.
+
+## Examples
+```jldoctest
+julia> using Graphs
+
+julia> SimpleGraph(UInt8(10), [(1,2), (2, 3)])
+{10, 2} undirected simple UInt8 graph
+```
+"""
+function SimpleGraph(n::Integer, tuples_as_edges::AbstractVector{Tuple{T,T}}) where {T<:Integer}
+    g = SimpleGraph{typeof(n)}(n)
+    for (i, j) in tuples_as_edges
+        add_edge!(g, i, j)
+    end
+    return g
 end
 
 eltype(x::SimpleGraph{T}) where {T} = T
@@ -299,7 +322,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while next !== nothing
         (e, state) = next
 
         if !(e isa E)
