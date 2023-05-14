@@ -127,21 +127,16 @@ function randbn(
 end
 
 "maps 1:binomial(n,2) into an upper triangle of [1,n]×[1,n]"
-function trianglemap(r)
-    j = floor(Int, (1+sqrt(8r-7))/2) + 1
-    i = r - binomial(j-1,2)
-    Edge(i, j)
+function trianglemap(r, n)
+    j, i = fldmod1(r, n - 1)
+    i ≥ j ? Edge(i + 1, j) : Edge(n - i + 1, n - j + 1)
 end
 
 "maps 1:n*(n-1) into non-diagonal elements of [1,n]×[1,n]"
-function nondiagmap(r,n)
-    j = div(r-1, n-1)
-    i = r - j*(n-1)
-    j += 1
-    i += (i >= j)
-    Edge(i, j)
+function nondiagmap(r, n)
+    j, i = fldmod1(r, n - 1)
+    i ≥ j ? Edge(i + 1, j) : Edge(i, j)
 end
-
 
 """
     erdos_renyi(n, p)
@@ -182,7 +177,7 @@ function erdos_renyi(
     g = if is_directed
         SimpleDiGraphFromIterator(nondiagmap(r,n) for r in seq)
     else
-        SimpleGraphFromIterator(trianglemap(r) for r in seq)
+        SimpleGraphFromIterator(trianglemap(r,n) for r in seq)
     end
     # complete to exactly n vertices
     add_vertices!(g, n - nv(g))
