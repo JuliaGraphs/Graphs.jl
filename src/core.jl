@@ -25,185 +25,6 @@ false
 """
 is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
-"""
-    add_vertices!(g, n)
-
-Add `n` new vertices to the graph `g`.
-Return the number of vertices that were added successfully.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> g = SimpleGraph()
-{0, 0} undirected simple Int64 graph
-
-julia> add_vertices!(g, 2)
-2
-```
-"""
-add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i = 1:n])
-
-"""
-    indegree(g[, v])
-
-Return a vector corresponding to the number of edges which end at each vertex in
-graph `g`. If `v` is specified, only return degrees for vertices in `v`.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> g = DiGraph(3);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 1);
-
-julia> indegree(g)
-3-element Array{Int64,1}:
- 1
- 0
- 1
-```
-"""
-indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
-
-"""
-    outdegree(g[, v])
-
-Return a vector corresponding to the number of edges which start at each vertex in
-graph `g`. If `v` is specified, only return degrees for vertices in `v`.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> g = DiGraph(3);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 1);
-
-julia> outdegree(g)
-3-element Array{Int64,1}:
- 0
- 1
- 1
-```
-"""
-outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
-
-"""
-    degree(g[, v])
-
-Return a vector corresponding to the number of edges which start or end at each
-vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
-For directed graphs, this value equals the incoming plus outgoing edges.
-For undirected graphs, it equals the connected edges.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> g = DiGraph(3);
-
-julia> add_edge!(g, 2, 3);
-
-julia> add_edge!(g, 3, 1);
-
-julia> degree(g)
-3-element Array{Int64,1}:
- 1
- 1
- 2
-```
-"""
-function degree end
-@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
-
-degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
-
-"""
-    Δout(g)
-
-Return the maximum [`outdegree`](@ref) of vertices in `g`.
-"""
-Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
-"""
-    δout(g)
-
-Return the minimum [`outdegree`](@ref) of vertices in `g`.
-"""
-δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
-
-"""
-    Δin(g)
-
-Return the maximum [`indegree`](@ref) of vertices in `g`.
-"""
-Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
-
-"""
-    δin(g)
-
-Return the minimum [`indegree`](@ref) of vertices in `g`.
-"""
-δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
-
-"""
-    Δ(g)
-
-Return the maximum [`degree`](@ref) of vertices in `g`.
-"""
-Δ(g) = noallocextreme(degree, (>), typemin(Int), g)
-
-"""
-    δ(g)
-
-Return the minimum [`degree`](@ref) of vertices in `g`.
-"""
-δ(g) = noallocextreme(degree, (<), typemax(Int), g)
-
-
-"""
-    noallocextreme(f, comparison, initial, g)
-
-Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
-"""
-function noallocextreme(f, comparison, initial, g)
-    value = initial
-    for i in vertices(g)
-        funci = f(g, i)
-        if comparison(funci, value)
-            value = funci
-        end
-    end
-    return value
-end
-
-"""
-    degree_histogram(g, degfn=degree)
-
-Return a `Dict` with values representing the number of vertices that have degree
-represented by the key.
-
-Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
-overriding `degfn`.
-"""
-function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
-    hist = Dict{T,Int}()
-    for v in vertices(g)        # minimize allocations by
-        for d in degfn(g, v)    # iterating over vertices
-            hist[d] = get(hist, d, 0) + 1
-        end
-    end
-    return hist
-end
-
 
 """
     neighbors(g, v)
@@ -239,7 +60,7 @@ julia> neighbors(g, 3)
  1
 ```
 """
-neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
+neighbors(g::AbstractGenericGraph, v::Integer) = outneighbors(g, v)
 
 """
     all_neighbors(g, v)
@@ -320,8 +141,169 @@ julia> common_neighbors(g, 1, 4)
  3
 ```
 """
-common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
+common_neighbors(g::AbstractGenericGraph, u::Integer, v::Integer) =
     intersect(neighbors(g, u), neighbors(g, v))
+
+"""
+    indegree(g[, v])
+
+Return a vector corresponding to the number of edges which end at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> indegree(g)
+3-element Array{Int64,1}:
+ 1
+ 0
+ 1
+```
+"""
+indegree(g::AbstractGenericGraph, v::Integer) = length(inneighbors(g, v))
+indegree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
+
+"""
+    outdegree(g[, v])
+
+Return a vector corresponding to the number of edges which start at each vertex in
+graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> outdegree(g)
+3-element Array{Int64,1}:
+ 0
+ 1
+ 1
+```
+"""
+outdegree(g::AbstractGenericGraph, v::Integer) = length(outneighbors(g, v))
+outdegree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
+
+"""
+    degree(g[, v])
+
+Return a vector corresponding to the number of edges which start or end at each
+vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+For directed graphs, this value equals the incoming plus outgoing edges.
+For undirected graphs, it equals the connected edges.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = DiGraph(3);
+
+julia> add_edge!(g, 2, 3);
+
+julia> add_edge!(g, 3, 1);
+
+julia> degree(g)
+3-element Array{Int64,1}:
+ 1
+ 1
+ 2
+```
+"""
+function degree end
+@traitfn degree(g::AbstractGenericGraph::IsDirected, v::Integer) = length(all_neighbors(g, v))
+@traitfn degree(g::AbstractGenericGraph::(!IsDirected), v::Integer) = indegree(g, v)
+@traitfn degree(g::AbstractGraph::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
+
+degree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
+
+"""
+    Δout(g)
+
+Return the maximum [`outdegree`](@ref) of vertices in `g`.
+"""
+Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
+"""
+    δout(g)
+
+Return the minimum [`outdegree`](@ref) of vertices in `g`.
+"""
+δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
+
+"""
+    Δin(g)
+
+Return the maximum [`indegree`](@ref) of vertices in `g`.
+"""
+Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
+
+"""
+    δin(g)
+
+Return the minimum [`indegree`](@ref) of vertices in `g`.
+"""
+δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
+
+"""
+    Δ(g)
+
+Return the maximum [`degree`](@ref) of vertices in `g`.
+"""
+Δ(g) = noallocextreme(degree, (>), typemin(Int), g)
+
+"""
+    δ(g)
+
+Return the minimum [`degree`](@ref) of vertices in `g`.
+"""
+δ(g) = noallocextreme(degree, (<), typemax(Int), g)
+
+
+"""
+    noallocextreme(f, comparison, initial, g)
+
+Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
+"""
+function noallocextreme(f, comparison, initial, g)
+    value = initial
+    for i in vertices(g)
+        funci = f(g, i)
+        if comparison(funci, value)
+            value = funci
+        end
+    end
+    return value
+end
+
+"""
+    degree_histogram(g, degfn=degree)
+
+Return a `Dict` with values representing the number of vertices that have degree
+represented by the key.
+
+Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
+overriding `degfn`.
+"""
+function degree_histogram(g::AbstractGenericGraph{T}, degfn=degree) where T
+    hist = Dict{T,Int}()
+    for v in vertices(g)        # minimize allocations by
+        for d in degfn(g, v)    # iterating over vertices
+            hist[d] = get(hist, d, 0) + 1
+        end
+    end
+    return hist
+end
 
 """
     has_self_loops(g)
@@ -345,7 +327,7 @@ julia> has_self_loops(g)
 true
 ```
 """
-has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGenericGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
 
 """
     num_self_loops(g)
@@ -369,7 +351,27 @@ julia> num_self_loops(g)
 1
 ```
 """
-num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
+num_self_loops(g::AbstractGenericGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
+
+
+"""
+    add_vertices!(g, n)
+
+Add `n` new vertices to the graph `g`.
+Return the number of vertices that were added successfully.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = SimpleGraph()
+{0, 0} undirected simple Int64 graph
+
+julia> add_vertices!(g, 2)
+2
+```
+"""
+@traitfn add_vertices!(g::AbstractGenericGraph::IsSimplyMutable, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
     density(g)

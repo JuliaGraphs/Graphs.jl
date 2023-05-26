@@ -16,11 +16,20 @@ Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not 
 _NI(m) = throw(NotImplementedError(m))
 
 """
+    AbstractVertex
+
+A trait representing a single vertex.
+"""
+@traitdef AbstractVertex{V}
+@traitimpl AbstractVertex{V} <- is_directed(V)
+
+"""
     AbstractEdge
 
 An abstract type representing a single edge between two vertices of a graph.
 """
-abstract type AbstractEdge{T} end
+abstract type AbstractEdge{V} end
+abstract type AbstractWeightedEdge{V, U} <: AbstractEdge{V} end
 
 """
     AbstractEdgeIter
@@ -32,18 +41,70 @@ abstract type AbstractEdgeIter end
 """
     AbstractGraph
 
-An abstract type representing a graph.
+An abstract type representing a simple graph (but which can have loops).
 """
-abstract type AbstractGraph{T} end
+abstract type AbstractGraph{V, E} end
 
+"""
+    AbstractGraph
+
+An abstract type representing a simple graph (but which can have loops).
+"""
+abstract type AbstractGraph{V, E} end
+
+abstract type AbstractBidirectionalGraph{V, E} <: AbstractGraph{V, E} end
 
 @traitdef IsDirected{G<:AbstractGraph}
 @traitimpl IsDirected{G} <- is_directed(G)
 
+@traitdef IsRangeBased{G<:AbstractGraph}
+@traitimpl IsRangeBased{G} <- is_range_based(G)
+
+@traitdef IsSimplyMutable{G<:AbstractGraph}
+@traitimpl IsSimplyMutable{G} <- is_simply_mutable(G)
+
+@traitdef IsMutable{G<:AbstractGraph}
+@traitimpl IsMutable{G} <- is_mutable(G)
+
+@traitdef IsWeightMutable{G<:AbstractGraph}
+@traitimpl IsWeightMutable{G} <- is_weight_mutable(G)
+
+@traitdef IsVertexStable{G<:AbstractGraph}
+@traitimpl IsVertexStable{G} <- is_vertex_stable(G)
 
 #
-# Interface for AbstractEdges
+# Interface for AbstractVertex
 #
+import Base.isless#, Base.:(==)
+"""
+    isless(v1, v2)
+
+Return true if vertex v1 is less than vertex v2 in lexicographic order.
+"""
+@traitfn Base.isless(v1::V, v2::V) where {V; AbstractVertex{V}} = _NI("src")
+
+# @traitfn Base.:(==)(v1::V, v2::V) where {V; AbstractVertex{V}} = _NI("==")
+
+"""
+    vindex(v)
+
+Return an index for the vertex `v`.
+"""
+vindex(v) = _NI("vindex")
+
+#
+# Interface for AbstractEdge
+#
+hash(v::AbstractEdge) = _NI("hash")
+
+"""
+    isless(e1, e2)
+
+Return true if edge e1 is less than edge e2 in lexicographic order.
+"""
+isless(v1::AbstractEdge , v2::AbstractEdge) = _NI("src")
+
+==(e1::AbstractEdge, e2::AbstractEdge) = _NI("==")
 
 """
     src(e)
@@ -83,6 +144,14 @@ julia> dst(first(edges(g)))
 """
 dst(e::AbstractEdge) = _NI("dst")
 
+"""
+    weight(e)
+
+Return the weight of edge `e`.
+"""
+weight(e::AbstractWeightedEdge) = _NI("weight")
+
+
 Pair(e::AbstractEdge) = _NI("Pair")
 Tuple(e::AbstractEdge) = _NI("Tuple")
 
@@ -105,8 +174,6 @@ Edge 2 => 1
 """
 reverse(e::AbstractEdge) = _NI("reverse")
 
-==(e1::AbstractEdge, e2::AbstractEdge) = _NI("==")
-
 
 #
 # Interface for AbstractGraphs
@@ -116,46 +183,15 @@ reverse(e::AbstractEdge) = _NI("reverse")
 
 Return the type of graph `g`'s edge
 """
-edgetype(g::AbstractGraph) = _NI("edgetype")
+edgetype(g::AbstractGraph{V, E}) where {V, E} = E
 
 """
     eltype(g)
 
-Return the type of the graph's vertices (must be <: Integer)
+Return the type of the graph's vertices
 """
-eltype(g::AbstractGraph) = _NI("eltype")
+eltype(g::AbstractGraph{V, E}) where {V, E} = V
 
-"""
-    nv(g)
-
-Return the number of vertices in `g`.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> nv(SimpleGraph(3))
-3
-```
-"""
-nv(g::AbstractGraph) = _NI("nv")
-
-"""
-    ne(g)
-
-Return the number of edges in `g`.
-
-# Examples
-```jldoctest
-julia> using Graphs
-
-julia> g = path_graph(3);
-
-julia> ne(g)
-2
-```
-"""
-ne(g::AbstractGraph) = _NI("ne")
 
 """
     vertices(g)
@@ -181,6 +217,29 @@ julia> collect(vertices(SimpleGraph(4)))
 vertices(g::AbstractGraph) = _NI("vertices")
 
 """
+    get_edges(g, u, v)
+
+Return (an iterator to or collection of) the edges of a graph `g`
+going from `u` to `v`.
+
+### Implementation Notes
+A returned iterator is valid for one pass over the edges, and
+is invalidated by changes to `g`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(3);
+
+julia> collect(get_edges(g, 1, 2))
+1-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+```
+"""
+@traitfn get_edges(g::AbstractGraph, u::V, v::V) where {V; AbstractVertex{V}} = _NI("get_edges")
+
+"""
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
@@ -204,7 +263,72 @@ julia> collect(edges(g))
  Edge 2 => 3
 ```
 """
-edges(g) = _NI("edges")
+edges(g::AbstractGraph) = _NI("edges")
+
+"""
+    outedges(g, u)
+
+Return (an iterator to or collection of) the edges of a graph `g`
+leaving `u`.
+
+### Implementation Notes
+A returned iterator is valid for one pass over the edges, and
+is invalidated by changes to `g`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(3);
+
+julia> collect(outedges(g, 1))
+1-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+```
+"""
+@traitfn outedges(g::AbstractGraph, v::V) where {V; AbstractVertex{V}} = _NI("outedges")
+
+"""
+    nv(g)
+
+Return the number of vertices in `g`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> nv(SimpleGraph(3))
+3
+```
+"""
+nv(g::AbstractGraph) = length(vertices(g))
+
+"""
+    ne(g)
+
+Return the number of edges in `g`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(3);
+
+julia> ne(g)
+2
+```
+"""
+ne(g::AbstractGraph) = length(edges(g))
+
+
+"""
+    is_vertex(G)
+
+Return `true` if the graph type `V` is an AbstractVertex ; `false` otherwise.
+The method can also be called with `is_vertex(v::V)`
+"""
+is_vertex(::V) where {V} = is_vertex(V)
+is_vertex(::Type{T}) where T = _NI("is_vertex")
 
 """
     is_directed(G)
@@ -230,6 +354,60 @@ is_directed(::G) where {G} = is_directed(G)
 is_directed(::Type{T}) where T = _NI("is_directed")
 
 """
+    is_range_based(G)
+
+Return `true` if the vertex of graph type `G` forms a OneTo range; `false` otherwise.
+New graph types must implement `is_range_based(::Type{<:G})`.
+The method can also be called with `is_range_based(g::G)`
+"""
+is_range_based(::G) where {G} = is_range_based(G)
+is_range_based(::Type{T}) where T = false
+
+"""
+    is_simply_mutable(G)
+
+Return `true` if the graph type `G` is able to represent the structure
+of any unweighted simple graph (with loops); `false` otherwise.
+New graph types must implement `is_simply_mutable(::Type{<:G})`.
+The method can also be called with `is_simply_mutable(g::G)`
+"""
+is_simply_mutable(::G) where {G} = is_simply_mutable(G)
+is_simply_mutable(::Type{T}) where T = false
+
+"""
+    is_mutable(G)
+
+Return `true` if the graph type `G` is able to represent the structure
+of any unweighted multigraph; `false` otherwise.
+New graph types must implement `is_mutable(::Type{<:G})`.
+The method can also be called with `is_mutable(g::G)`
+"""
+is_mutable(::G) where {G} = is_mutable(G)
+is_mutable(::Type{T}) where T = false
+
+"""
+    is_weight_mutable(G)
+
+Return `true` if the graph type `G` is able to modify any of its weights
+(but not necessarily able to modify its structure); `false` otherwise.
+New graph types must implement `is_weight_mutable(::Type{<:G})`.
+The method can also be called with `is_weight_mutable(g::G)`
+"""
+is_weight_mutable(::G) where {G} = is_weight_mutable(G)
+is_weight_mutable(::Type{T}) where T = false
+
+"""
+    is_vertex_stable(G)
+
+Return `true` if vertices of the graph type `G` are kept when mutating
+the graph; `false` otherwise.
+New graph types must implement `is_vertex_stable(::Type{<:G})`.
+The method can also be called with `is_vertex_stable(g::G)`
+"""
+is_vertex_stable(::G) where {G} = is_vertex_stable(G)
+is_vertex_stable(::Type{T}) where T = false
+
+"""
     has_vertex(g, v)
 
 Return true if `v` is a vertex of `g`.
@@ -245,7 +423,7 @@ julia> has_vertex(SimpleGraph(2), 3)
 false
 ```
 """
-has_vertex(x, v) = _NI("has_vertex")
+has_vertex(g, v) = _NI("has_vertex")
 
 """
     has_edge(g, s, d)
@@ -296,7 +474,7 @@ julia> inneighbors(g, 4)
  5
 ```
 """
-inneighbors(x, v) = _NI("inneighbors")
+inneighbors(g, v) = _NI("inneighbors")
 
 """
     outneighbors(g, v)
@@ -317,7 +495,32 @@ julia> outneighbors(g, 4)
  5
 ```
 """
-outneighbors(x, v) = _NI("outneighbors")
+outneighbors(g, v) = _NI("outneighbors")
+
+"""
+    get_vertex_container(g::AbstractGraph{V, E}, K::Type)
+
+Return a container indexed by vertices of 'g' of eltype 'K'.
+
+# Examples
+```jldoctest
+julia> c = get_vertex_container(SimpleGraph(5), Int16)
+
+julia> typeof(c)
+Vector{Int16}
+
+julia> length(c)
+5
+```
+"""
+get_vertex_container(g::AbstractGraph, K::Type) = Dict{V, K}()
+
+"""
+    get_edge_container(g::AbstractGraph{V, E}, K::Type)
+
+Return a container indexed by edges of 'g' of eltype 'K'.
+"""
+get_edge_container(g::AbstractGraph, K::Type) = Dict{E, K}()
 
 """
     zero(G)
