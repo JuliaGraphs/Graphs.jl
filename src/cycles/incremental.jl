@@ -10,7 +10,7 @@ constructor IncrementalCycleTracker(G) may be used to automatically select
 a specific incremental cycle detection algorithm. See [`add_edge_checked!`](@ref)
 for a usage example.
 """
-abstract type IncrementalCycleTracker{I} <: AbstractGraph{I} end
+abstract type IncrementalCycleTracker{I} <: AbstractGraph{I, AbstractEdge} end
 
 function (::Type{IncrementalCycleTracker})(s::AbstractGraph{I}; dir::Union{Symbol,Nothing}=nothing) where {I}
     # TODO: Once we have more algorithms, the poly-algorithm decision goes here.

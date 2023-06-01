@@ -48,7 +48,10 @@ An abstract type representing a simple graph structure.
   - `fadjlist::Vector{Vector{Integer}}`
   - `ne::Integer`
 """
-abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
+
+abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
+
+abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T, AbstractSimpleEdge} end
 
 function summary(io::IO, @nospecialize(g::AbstractSimpleGraph{T})) where T
     dir = is_directed(g) ? "directed" : "undirected"
@@ -147,6 +150,12 @@ badj(x...) = _NI("badj")
 # handles single-argument edge constructors such as pairs and tuples
 has_edge(g::AbstractSimpleGraph, x) = has_edge(g, edgetype(g)(x))
 add_edge!(g::AbstractSimpleGraph, x) = add_edge!(g, edgetype(g)(x))
+@traitfn get_edges(g::AbstractSimpleGraph::IsDirected, u, v) = has_edge(g, u, v) ? [Edge(u, v)] : Edge[]
+@traitfn function get_edges(g::AbstractSimpleGraph::(!IsDirected), u, v)
+	!has_edge(g, u, v) && return Edge[]
+	u < v && return [Edge(u, v)]
+	return [Edge(v, u)]
+end
 
 # handles two-argument edge constructors like src,dst
 has_edge(g::AbstractSimpleGraph, x, y) = has_edge(g, edgetype(g)(x, y))
@@ -154,6 +163,9 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
+
+get_vertex_container(g::AbstractGraph, K::Type) = Vector{K}(undef, nv(g))
+# get_edge_container(g::AbstractGraph, K::Type) = Array{K, 2}(undef, (nv(g), nv(g))
 
 function issubset(g::T, h::T) where T <: AbstractSimpleGraph
     nv(g) <= nv(h) || return false
@@ -271,6 +283,8 @@ function rem_vertex!(g::AbstractSimpleGraph, v::Integer)
 end
 
 zero(::Type{G}) where {G<:AbstractSimpleGraph} = G()
+
+is_range_based(::Type{<:AbstractSimpleGraph}) = true
 
 include("./simpleedge.jl")
 include("./simpledigraph.jl")

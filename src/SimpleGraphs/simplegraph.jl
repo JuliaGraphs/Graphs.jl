@@ -671,3 +671,9 @@ function rem_vertices!(g::SimpleGraph{T},
 
     return reverse_vmap
 end
+
+# defining the Traits
+is_simply_mutable(::Type{<:SimpleGraph}) = true
+is_mutable(::Type{<:SimpleGraph}) = true
+is_weight_mutable(::Type{<:SimpleGraph}) = false
+is_vertex_stable(::Type{<:SimpleGraph}) = false

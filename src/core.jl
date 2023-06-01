@@ -60,7 +60,7 @@ julia> neighbors(g, 3)
  1
 ```
 """
-neighbors(g::AbstractGenericGraph, v::Integer) = outneighbors(g, v)
+neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
 """
     all_neighbors(g, v)
@@ -141,7 +141,7 @@ julia> common_neighbors(g, 1, 4)
  3
 ```
 """
-common_neighbors(g::AbstractGenericGraph, u::Integer, v::Integer) =
+common_neighbors(g::AbstractGraph, u::Integer, v::Integer) =
     intersect(neighbors(g, u), neighbors(g, v))
 
 """
@@ -167,8 +167,8 @@ julia> indegree(g)
  1
 ```
 """
-indegree(g::AbstractGenericGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
+indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
+indegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [indegree(g, x) for x in v]
 
 """
     outdegree(g[, v])
@@ -193,8 +193,8 @@ julia> outdegree(g)
  1
 ```
 """
-outdegree(g::AbstractGenericGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
+outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
+outdegree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [outdegree(g, x) for x in v]
 
 """
     degree(g[, v])
@@ -222,11 +222,11 @@ julia> degree(g)
 ```
 """
 function degree end
-@traitfn degree(g::AbstractGenericGraph::IsDirected, v::Integer) = length(all_neighbors(g, v))
-@traitfn degree(g::AbstractGenericGraph::(!IsDirected), v::Integer) = indegree(g, v)
+@traitfn degree(g::AbstractGraph::IsDirected, v::Integer) = length(all_neighbors(g, v))
+@traitfn degree(g::AbstractGraph::(!IsDirected), v::Integer) = indegree(g, v)
 @traitfn degree(g::AbstractGraph::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
 
-degree(g::AbstractGenericGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
+degree(g::AbstractGraph, v::AbstractVector = vertices(g)) = [degree(g, x) for x in v]
 
 """
     Δout(g)
@@ -295,7 +295,7 @@ represented by the key.
 Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
 overriding `degfn`.
 """
-function degree_histogram(g::AbstractGenericGraph{T}, degfn=degree) where T
+function degree_histogram(g::AbstractGraph{T}, degfn=degree) where T
     hist = Dict{T,Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
@@ -327,7 +327,7 @@ julia> has_self_loops(g)
 true
 ```
 """
-has_self_loops(g::AbstractGenericGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
+has_self_loops(g::AbstractGraph) = nv(g) == 0 ? false : any(v -> has_edge(g, v, v), vertices(g))
 
 """
     num_self_loops(g)
@@ -351,7 +351,7 @@ julia> num_self_loops(g)
 1
 ```
 """
-num_self_loops(g::AbstractGenericGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
+num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
 
 
 """
@@ -371,7 +371,7 @@ julia> add_vertices!(g, 2)
 2
 ```
 """
-@traitfn add_vertices!(g::AbstractGenericGraph::IsSimplyMutable, n::Integer) = sum([add_vertex!(g) for i = 1:n])
+@traitfn add_vertices!(g::AbstractGraph::IsSimplyMutable, n::Integer) = sum([add_vertex!(g) for i = 1:n])
 
 """
     density(g)

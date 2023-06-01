@@ -329,6 +329,7 @@ The method can also be called with `is_vertex(v::V)`
 """
 is_vertex(::V) where {V} = is_vertex(V)
 is_vertex(::Type{T}) where T = _NI("is_vertex")
+is_vertex(::Type{<:Integer}) = true
 
 """
     is_directed(G)
