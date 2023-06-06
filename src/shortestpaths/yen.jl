@@ -57,7 +57,7 @@ function yen_k_shortest_paths(
             end
 
             # Remove node of root path and calculate dist of it
-            distrootpath = 0.0
+            distrootpath = zero(T)
             for n in 1:(length(rootpath) - 1)
                 u = rootpath[n]
                 nei = copy(neighbors(gcopy, u))
