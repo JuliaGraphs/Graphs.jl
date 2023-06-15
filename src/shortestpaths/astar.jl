@@ -75,8 +75,8 @@ function a_star(g::AbstractGraph{V, E},  # the graph
     s,                   # the start vertex
     t,                   # the end vertex
     edge_weight::Function = e -> weight(e),
-    heuristic::Function=n -> zero(T)
-    T::Type=Float64) where {T, V, E<:AbstractEdge}
+    heuristic::Function=n -> zero(T),
+    T::Type=Float64) where {V, E<:AbstractEdge}
 
 
     open_set = PriorityQueue{V, T}()
