@@ -6,7 +6,7 @@ using Graphs
 using SimpleTraits
 
 import Base:
-    eltype, show, summary, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
+    eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
 
 import Graphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
@@ -53,72 +53,10 @@ abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
 
 abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T, AbstractSimpleEdge} end
 
-function summary(io::IO, @nospecialize(g::AbstractSimpleGraph{T})) where T
+function show(io::IO, ::MIME"text/plain", g::AbstractSimpleGraph{T}) where T
     dir = is_directed(g) ? "directed" : "undirected"
     print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
 end
-
-object_width(io, x) = textwidth(sprint(print, x, context=io, sizehint=0))
-
-function _print_outneighbors(io, @nospecialize(X::AbstractVecOrMat))
-	s = sprint(show, X, context=io, sizehint=0)
-	return match(r"(\[.*)", s).match # remove type when vertex type is different from Int64
-end
-
-
-function _print_rows(io, g, rows, lastindx, arrow, max_vertex_size)
-	for i in rows
-		print(io, " "^(max_vertex_size - object_width(io, i)))
-		print(io, i)
-		print(io, arrow)
-		s = _print_outneighbors(io, outneighbors(g, i))
-		if i != lastindx
-			println(io, s)
-		else
-			print(io, s)
-		end
-	end
-end
-
-function _print_graph(io, @nospecialize(g::AbstractSimpleGraph{T})) where T
-    if !(get(io, :limit, false)::Bool)
-        screenheight = typemax(Int)
-    else
-        sz = displaysize(io)::Tuple{Int,Int}
-        screenheight = sz[1] - 4
-    end
-	vdots = "\u22ee"
-	arrow = " => "
-	max_vertex_size = object_width(io, nv(g))
-	halfheight = div(screenheight,2)
-	lastindx = nv(g)
-	if nv(g) > screenheight
-        rowsA, rowsB = 1:halfheight, lastindx-div(screenheight-1,2)+1:lastindx
-    else
-        rowsA, rowsB = 1:lastindx, 1:0
-    end
-
-	_print_rows(io, g, rowsA, nv(g), arrow, max_vertex_size)
-	if last(rowsA) != lastindx
-		print(io, " "^(max_vertex_size - length(vdots)))
-		print(io, vdots)
-		if !isempty(rowsB)
-			println(io)
-		end
-		_print_rows(io, g, rowsB, lastindx, arrow, max_vertex_size)
-	end
-end
-
-function show(io::IO, ::MIME"text/plain", @nospecialize(g::AbstractSimpleGraph{T})) where T
-	summary(io, g)
-	if get(io, :limit, false) && displaysize(io)[1]-4 <= 0
-		return print(io, " …")
-	elseif nv(g) > 0
-		println(io)
-		_print_graph(io, g)
-	end
-end
-
 
 nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
 vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
