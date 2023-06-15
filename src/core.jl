@@ -222,7 +222,6 @@ julia> degree(g)
 ```
 """
 function degree end
-@traitfn degree(g::AbstractGraph::IsDirected, v::Integer) = length(all_neighbors(g, v))
 @traitfn degree(g::AbstractGraph::(!IsDirected), v::Integer) = indegree(g, v)
 @traitfn degree(g::AbstractGraph::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
 

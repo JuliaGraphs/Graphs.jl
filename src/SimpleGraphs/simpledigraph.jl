@@ -602,7 +602,7 @@ function all_neighbors(g::SimpleDiGraph{T}, u::Integer) where T
 end
 
 # defining the Traits
-is_simply_mutable(::Type{<:SimpleGraph}) = true
-is_mutable(::Type{<:SimpleGraph}) = true
-is_weight_mutable(::Type{<:SimpleGraph}) = false
-is_vertex_stable(::Type{<:SimpleGraph}) = false
+is_simply_mutable(::Type{<:SimpleDiGraph}) = true
+is_mutable(::Type{<:SimpleDiGraph}) = true
+is_weight_mutable(::Type{<:SimpleDiGraph}) = false
+is_vertex_stable(::Type{<:SimpleDiGraph}) = false

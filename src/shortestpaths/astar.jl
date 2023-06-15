@@ -69,13 +69,15 @@ Compute a shortest path using the [A* search algorithm](http://en.wikipedia.org/
 - `t::Integer`: the target vertex
 - `edge_weight::Function`: an optional function returning the distance between the vertices `u` and `v` in `g`
 - `heuristic::Function`: an optional function mapping each vertex to a lower estimate of the remaining distance from `v` to `t`. It is set to `v -> 0` by default (which corresponds to Dijkstra's algorithm)
+- `T::Type` : an optional type for the weights
 """
 function a_star(g::AbstractGraph{V, E},  # the graph
     s,                   # the start vertex
     t,                   # the end vertex
     edge_weight::Function = e -> weight(e),
-    T,
-    heuristic::Function=n -> zero(T)) where {T, V, E<:AbstractEdge}
+    heuristic::Function=n -> zero(T)
+    T::Type=Float64) where {T, V, E<:AbstractEdge}
+
 
     open_set = PriorityQueue{V, T}()
     enqueue!(open_set, s, 0)
