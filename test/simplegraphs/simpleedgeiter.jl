@@ -1,13 +1,15 @@
 @testset "SimpleEdgeIter" begin
-    ga = @inferred(SimpleGraph(10, 20; seed=1))
-    gb = @inferred(SimpleGraph(10, 20; seed=1))
-    dga = @inferred(SimpleDiGraph(10, 20; seed=1))
-    dgb = @inferred(SimpleDiGraph(10, 20; seed=1))
+    rng = StableRNG(1)
+
+    ga = @inferred(SimpleGraph(10, 20; rng=StableRNG(1)))
+    gb = @inferred(SimpleGraph(10, 20; rng=StableRNG(1)))
+    dga = @inferred(SimpleDiGraph(10, 20; rng=StableRNG(1)))
+    dgb = @inferred(SimpleDiGraph(10, 20; rng=StableRNG(1)))
     @testset "string representation" begin
         @test sprint(show, edges(ga)) == "SimpleEdgeIter 20"
     end
 
-    @test length(collect(edges(Graph(0, 0)))) == 0
+    @test length(collect(edges(Graph(0, 0; rng=rng)))) == 0
 
     @testset "collection operations" begin
         @test @inferred(edges(ga)) == edges(gb)
@@ -30,10 +32,13 @@
         @test eltype(collect(edges(dga))) == edgetype(dga)
         #
         # codecov for eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T}
-        gd = SimpleDiGraph{UInt8}(10, 20)
-        @test @inferred(eltype(edges(gd))) == eltype(typeof(edges(gd))) == edgetype(gd) == SimpleDiGraphEdge{UInt8}
+        gd = SimpleDiGraph{UInt8}(10, 20; rng=rng)
+        @test @inferred(eltype(edges(gd))) ==
+            eltype(typeof(edges(gd))) ==
+            edgetype(gd) ==
+            SimpleDiGraphEdge{UInt8}
     end
-    
+
     ga = SimpleGraph(10)
     add_edge!(ga, 3, 2)
     add_edge!(ga, 3, 10)
@@ -72,10 +77,8 @@
         @test collect(eit) == [Edge(2, 3), Edge(3, 10), Edge(5, 10)]
 
         eit = @inferred(edges(dga))
-        @test collect(eit) == [
-            SimpleEdge(3, 2), SimpleEdge(3, 10),
-            SimpleEdge(5, 10), SimpleEdge(10, 3)
-        ]
+        @test collect(eit) ==
+            [SimpleEdge(3, 2), SimpleEdge(3, 10), SimpleEdge(5, 10), SimpleEdge(10, 3)]
     end
 
     @testset "graph modifications" begin

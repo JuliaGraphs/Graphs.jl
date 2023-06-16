@@ -16,23 +16,16 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
 
     for edgefun2edges in [==]
         @test_throws Graphs.NotImplementedError edgefun2edges(dummyedge, dummyedge)
-     end
+    end
 
-    for graphfunbasic in [
-        nv, ne, vertices, edges, is_directed,
-        edgetype, eltype
-    ]
+    for graphfunbasic in [nv, ne, vertices, edges, is_directed, edgetype]
         @test_throws Graphs.NotImplementedError graphfunbasic(dummygraph)
     end
 
-    for graphfun1int in [
-        has_vertex, inneighbors, outneighbors
-    ]
+    for graphfun1int in [has_vertex, inneighbors, outneighbors]
         @test_throws Graphs.NotImplementedError graphfun1int(dummygraph, 1)
     end
-    for graphfunedge in [
-        has_edge,
-      ]
+    for graphfunedge in [has_edge]
         @test_throws Graphs.NotImplementedError graphfunedge(dummygraph, dummyedge)
         @test_throws Graphs.NotImplementedError graphfunedge(dummygraph, 1, 2)
     end
@@ -43,5 +36,4 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
     io = IOBuffer()
     Base.showerror(io, impl_error)
     @test String(take!(io)) == "method $edges not implemented."
-
 end # testset

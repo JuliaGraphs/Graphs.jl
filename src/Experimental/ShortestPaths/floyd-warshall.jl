@@ -19,12 +19,14 @@ No additional configuration parameters are specified or required.
 Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
 """
 struct FloydWarshall <: ShortestPathAlgorithm end
-struct FloydWarshallResult{T, U<:Integer} <: ShortestPathResult
+struct FloydWarshallResult{T,U<:Integer} <: ShortestPathResult
     dists::Matrix{T}
     parents::Matrix{U}
 end
 
-function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydWarshall) where {T, U<:Integer}
+function shortest_paths(
+    g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydWarshall
+) where {T,U<:Integer}
     nvg = nv(g)
     # if we do checkbounds here, we can use @inbounds later
     checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))
@@ -57,7 +59,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydW
             d == typemax(T) && continue
             p = parents[pivot, v]
             for u in vertices(g)
-                ans = (fwdists[u, pivot] == typemax(T) ? typemax(T) : fwdists[u, pivot] + d) 
+                ans = (fwdists[u, pivot] == typemax(T) ? typemax(T) : fwdists[u, pivot] + d)
                 if fwdists[u, v] > ans
                     fwdists[u, v] = ans
                     parents[u, v] = p
@@ -69,7 +71,7 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::FloydW
     return fws
 end
 
-function paths(s::FloydWarshallResult{T, U}, v::Integer) where {T, U<:Integer}
+function paths(s::FloydWarshallResult{T,U}, v::Integer) where {T,U<:Integer}
     pathinfo = s.parents[v, :]
     fwpaths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
@@ -95,8 +97,9 @@ end
 shortest_paths(g::AbstractGraph, alg::FloydWarshall) = shortest_paths(g, weights(g), alg)
 
 # If we don't specify an algorithm AND there's no source, use Floyd-Warshall.
-shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    shortest_paths(g, distmx, FloydWarshall())
+function shortest_paths(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return shortest_paths(g, distmx, FloydWarshall())
+end
 
 paths(s::FloydWarshallResult) = [paths(s, v) for v in 1:size(s.parents, 1)]
 paths(st::FloydWarshallResult, s::Integer, d::Integer) = paths(st, s)[d]

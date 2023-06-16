@@ -4,7 +4,7 @@
 
 An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 """
-struct JohnsonState{T <: Real,U <: Integer} <: AbstractPathState
+struct JohnsonState{T<:Real,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -22,25 +22,24 @@ traversal information.
 ### Performance
 Complexity: O(|V|*|E|)
 """
-function johnson_shortest_paths(g::AbstractGraph{U},
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real where U <: Integer
-
+function johnson_shortest_paths(
+    g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real} where {U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
-    #Change when parallel implementation of Bellman Ford available
+    # Change when parallel implementation of Bellman Ford available
     wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
 
-    @compat if !ismutable(distmx) && type_distmx !=  Graphs.DefaultDistance
-        distmx = sparse(distmx) #Change reference, not value
+    @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
+        distmx = sparse(distmx) # Change reference, not value
     end
 
-    #Weight transform not needed if all weights are positive.
-    if type_distmx !=  Graphs.DefaultDistance
+    # Weight transform not needed if all weights are positive.
+    if type_distmx != Graphs.DefaultDistance
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
-
 
     dists = Matrix{T}(undef, nvg, nvg)
     parents = Matrix{U}(undef, nvg, nvg)
@@ -52,7 +51,7 @@ function johnson_shortest_paths(g::AbstractGraph{U},
 
     broadcast!(-, dists, dists, wt_transform)
     for v in vertices(g)
-        dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+        dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
     @compat if ismutable(distmx)
@@ -64,7 +63,9 @@ function johnson_shortest_paths(g::AbstractGraph{U},
     return JohnsonState(dists, parents)
 end
 
-function enumerate_paths(s::JohnsonState{T,U}, v::Integer) where T <: Real where U <: Integer
+function enumerate_paths(
+    s::JohnsonState{T,U}, v::Integer
+) where {T<:Real} where {U<:Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

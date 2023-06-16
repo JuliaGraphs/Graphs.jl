@@ -11,7 +11,9 @@ struct NotImplementedError{M} <: Exception
     NotImplementedError(m::M) where {M} = new{M}(m)
 end
 
-Base.showerror(io::IO, ie::NotImplementedError) = print(io, "method $(ie.m) not implemented.")
+function Base.showerror(io::IO, ie::NotImplementedError)
+    return print(io, "method $(ie.m) not implemented.")
+end
 
 _NI(m) = throw(NotImplementedError(m))
 
@@ -36,10 +38,8 @@ An abstract type representing a graph.
 """
 abstract type AbstractGraph{T} end
 
-
 @traitdef IsDirected{G<:AbstractGraph}
-@traitimpl IsDirected{G} <- is_directed(G)
-
+@traitimpl IsDirected{G} < -is_directed(G)
 
 #
 # Interface for AbstractEdges
@@ -107,7 +107,6 @@ reverse(e::AbstractEdge) = _NI("reverse")
 
 ==(e1::AbstractEdge, e2::AbstractEdge) = _NI("==")
 
-
 #
 # Interface for AbstractGraphs
 #
@@ -119,11 +118,11 @@ Return the type of graph `g`'s edge
 edgetype(g::AbstractGraph) = _NI("edgetype")
 
 """
-    eltype(g)
+    eltype(G)
 
 Return the type of the graph's vertices (must be <: Integer)
 """
-eltype(g::AbstractGraph) = _NI("eltype")
+eltype(::Type{<:AbstractGraph{T}}) where {T} = T
 
 """
     nv(g)
@@ -171,7 +170,7 @@ is invalidated by changes to `g`.
 julia> using Graphs
 
 julia> collect(vertices(SimpleGraph(4)))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  1
  2
  3
@@ -185,7 +184,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
 
 Return (an iterator to or collection of) the edges of a graph.
 For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
-The expressions `e in edges(g)` and `e ∈ edges(ga)` evaluate as
+The expressions `e in edges(g)` and `e ∈ edges(g)` evaluate as
 calls to [`has_edge`](@ref).
 
 ### Implementation Notes
@@ -199,7 +198,7 @@ julia> using Graphs
 julia> g = path_graph(3);
 
 julia> collect(edges(g))
-2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
 ```
@@ -227,7 +226,7 @@ true
 ```
 """
 is_directed(::G) where {G} = is_directed(G)
-is_directed(::Type{T}) where T = _NI("is_directed")
+is_directed(::Type{T}) where {T} = _NI("is_directed")
 
 """
     has_vertex(g, v)
@@ -255,7 +254,7 @@ Return true if the graph `g` has an edge from node `s` to node `d`.
 An optional `has_edge(g, e)` can be implemented to check if an edge belongs
 to a graph, including any data other than source and destination node.
 
-`e ∈ edges(g)` or `e ∈ edges(g)` evaluate as
+`e in edges(g)` or `e ∈ edges(g)` evaluate as
 calls to `has_edge`, c.f. [`edges`](@ref).
 
 # Examples
@@ -288,10 +287,12 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> inneighbors(g, 4)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  3
  5
 ```
@@ -310,10 +311,12 @@ the array behind this reference may be modified too, but this is not guaranteed.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> outneighbors(g, 4)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  5
 ```
 """
@@ -327,6 +330,8 @@ The fallback is defined for graph values `zero(g::G) = zero(G)`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> zero(typeof(g))
@@ -338,4 +343,4 @@ julia> zero(g)
 """
 zero(::Type{<:AbstractGraph}) = _NI("zero")
 
-zero(g::G) where {G<: AbstractGraph} = zero(G)
+zero(g::G) where {G<:AbstractGraph} = zero(G)

@@ -1,6 +1,10 @@
 # Graphs.jl
 
-[![Build Status](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml?query=branch%3Amaster) [![codecov.io](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master) [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliagraphs.org/Graphs.jl/dev/)
+[![Build status](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaGraphs/Graphs.jl/actions/workflows/ci.yml?query=branch%3Amaster)
+[![Code coverage](http://codecov.io/github/JuliaGraphs/Graphs.jl/coverage.svg?branch=master)](http://codecov.io/github/JuliaGraphs/Graphs.jl?branch=master)
+[![Code style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 ## Overview
 
@@ -20,7 +24,7 @@ pkg> add Graphs
 
 ## Basic use
 
-_Graphs.jl_ includes numerous convenience functions for generating functions, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
+_Graphs.jl_ includes numerous convenience functions for generating graphs, such as `path_graph`, which builds a simple undirected [path graph](https://en.wikipedia.org/wiki/Path_graph) of a given length. Once created, these graphs can be easily interrogated and modified.
 
 ```julia-repl
 julia> g = path_graph(6)

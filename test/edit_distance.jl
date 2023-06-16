@@ -1,4 +1,8 @@
 @testset "Edit distance" begin
+    rng = StableRNG(1)
+    gtri = random_regular_graph(3, 2; rng=rng)
+    gquad = random_regular_graph(4, 2; rng=rng)
+    gpent = random_regular_graph(5, 2; rng=rng)
 
     g1 = star_graph(4)
     g2 = cycle_graph(3)
@@ -13,14 +17,18 @@
     @testset "undirected edit_distance" for G1 in testgraphs(g1), G2 in testgraphs(g2)
         d, λ = @inferred(edit_distance(G1, G2))
         @test d == 2.0
-        d, λ = @inferred(edit_distance(
-            G1, G2,
-            vertex_insert_cost=vertex_insert_cost,
-            vertex_delete_cost=vertex_delete_cost,
-            vertex_subst_cost=vertex_subst_cost,
-            edge_insert_cost=edge_insert_cost,
-            edge_delete_cost=edge_delete_cost,
-            edge_subst_cost=edge_subst_cost))
+        d, λ = @inferred(
+            edit_distance(
+                G1,
+                G2,
+                vertex_insert_cost=vertex_insert_cost,
+                vertex_delete_cost=vertex_delete_cost,
+                vertex_subst_cost=vertex_subst_cost,
+                edge_insert_cost=edge_insert_cost,
+                edge_delete_cost=edge_delete_cost,
+                edge_subst_cost=edge_subst_cost,
+            )
+        )
         # 1 vertex deletion, 3 vertex substitution, 1 edge insertio n, 1 edge deletion, 2 edge substitution
         @test d == 32.0
     end

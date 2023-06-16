@@ -49,6 +49,8 @@ if involved costs are equivalent.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -57,22 +59,24 @@ julia> edit_distance(g1, g2)
 (3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])
 ```
 """
-function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
+function edit_distance(
+    G₁::AbstractGraph,
+    G₂::AbstractGraph;
     vertex_insert_cost=nothing,
     vertex_delete_cost=nothing,
     vertex_subst_cost=nothing,
     edge_insert_cost=nothing,
     edge_delete_cost=nothing,
     edge_subst_cost=nothing,
-    heuristic=nothing)
-
+    heuristic=nothing,
+)
     if isnothing(vertex_insert_cost) &&
-       isnothing(vertex_delete_cost) &&
-       isnothing(vertex_subst_cost) &&
-       isnothing(edge_insert_cost) &&
-       isnothing(edge_delete_cost) &&
-       isnothing(edge_subst_cost) &&
-       isnothing(heuristic)
+        isnothing(vertex_delete_cost) &&
+        isnothing(vertex_subst_cost) &&
+        isnothing(edge_insert_cost) &&
+        isnothing(edge_delete_cost) &&
+        isnothing(edge_subst_cost) &&
+        isnothing(heuristic)
         heuristic = default_edit_heuristic
     end
     vertex_insert_cost = something(vertex_insert_cost, v -> 0.0)
@@ -82,25 +86,30 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
     edge_delete_cost = something(edge_delete_cost, e -> 1.0)
     edge_subst_cost = something(edge_subst_cost, (e1, e2) -> 0.0)
     heuristic = something(heuristic, (λ, G₁, G₂) -> 0.0)
-    return _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
+    return _edit_distance(
+        G₁::AbstractGraph,
+        G₂::AbstractGraph,
         vertex_insert_cost,
         vertex_delete_cost,
         vertex_subst_cost,
         edge_insert_cost,
         edge_delete_cost,
         edge_subst_cost,
-        heuristic)
+        heuristic,
+    )
 end
 
-function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
+function _edit_distance(
+    G₁::AbstractGraph{T},
+    G₂::AbstractGraph{U},
     vertex_insert_cost::Function,
     vertex_delete_cost::Function,
     vertex_subst_cost::Function,
     edge_insert_cost::Function,
     edge_delete_cost::Function,
     edge_subst_cost::Function,
-    heuristic::Function) where {T<:Integer,U<:Integer}
-
+    heuristic::Function,
+) where {T<:Integer,U<:Integer}
     isdirected = is_directed(G₁) || is_directed(G₂)
 
     # compute the cost on edges due to associate u1 to v1 and u2 to v2
@@ -194,7 +203,6 @@ function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
                     for v2 in outneighbors(G₂, v1)
                         (v2 > v1 && v2 in vs) && continue # these edges will be deleted later
                         new_cost += edge_insert_cost(Edge(v1, v2))
-
                     end
                     if isdirected
                         for v2 in inneighbors(G₂, v1)
@@ -259,9 +267,6 @@ function default_edit_heuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
     return abs(total_free_edges_g1 - total_free_edges_g2)
 end
 
-
-
-
 #-------------------------
 # Edit path cost functions
 #-------------------------
@@ -277,7 +282,7 @@ vertex v ∈ G₂.
 `p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
-    (u, v) -> norm(μ₁[u] - μ₂[v], p)
+    return (u, v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
 """
@@ -290,5 +295,5 @@ Return value similar to [`MinkowskiCost`](@ref), but ensure costs smaller than 2
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
-    (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
+    return (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end

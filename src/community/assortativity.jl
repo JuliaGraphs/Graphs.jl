@@ -18,16 +18,16 @@ julia> assortativity(star_graph(4))
 -1.0
 ```
 """
-function assortativity(g::AbstractGraph{T}) where T
+function assortativity(g::AbstractGraph{T}) where {T}
     P = promote_type(Int64, T) # at least Int64 to reduce risk of overflow
-    nue  = ne(g)
+    nue = ne(g)
     sjk = sj = sk = sjs = sks = zero(P)
     for d in edges(g)
         j = P(outdegree(g, src(d)) - 1)
         k = P(indegree(g, dst(d)) - 1)
-        sjk += j*k
-        sj  += j
-        sk  += k
+        sjk += j * k
+        sj += j
+        sk += k
         sjs += j^2
         sks += k^2
     end
@@ -40,7 +40,7 @@ see equation (21) in M. E. J. Newman: Mixing patterns in networks, Phys. Rev. E 
 http://arxiv.org/abs/cond-mat/0209450
 =#
 @traitfn function assortativity_coefficient(g::::IsDirected, sjk, sj, sk, sjs, sks, nue)
-    return (sjk - sj*sk/nue) / sqrt((sjs - sj^2/nue)*(sks - sk^2/nue))
+    return (sjk - sj * sk / nue) / sqrt((sjs - sj^2 / nue) * (sks - sk^2 / nue))
 end
 
 #=
@@ -49,5 +49,6 @@ see equation (4) in M. E. J. Newman: Assortative mixing in networks, Phys. Rev. 
 http://arxiv.org/abs/cond-mat/0205405/
 =#
 @traitfn function assortativity_coefficient(g::::(!IsDirected), sjk, sj, sk, sjs, sks, nue)
-    return (sjk/nue - ((sj + sk)/(2*nue))^2) / ((sjs + sks)/(2*nue) - ((sj + sk)/(2*nue))^2)
+    return (sjk / nue - ((sj + sk) / (2 * nue))^2) /
+           ((sjs + sks) / (2 * nue) - ((sj + sk) / (2 * nue))^2)
 end

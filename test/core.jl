@@ -1,25 +1,32 @@
 @testset "Core" begin
-    e2 = Edge(1, 3)
-    e3 = Edge(1, 4)
+    e2 = GenericEdge(Edge(1, 3))
+    e3 = GenericEdge(Edge(1, 4))
+    # TODO do these tests make sense? One might define an edge type for some undirected
+    # graph that is more like a set than a tuple -then reverse would not change the order
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
 
     @testset "add_vertices!" begin
-        gx = SimpleGraph(10); gdx = SimpleDiGraph(10)
-        @testset "$g" for g in testgraphs(gx, gdx) 
+        gx = SimpleGraph(10)
+        gdx = SimpleDiGraph(10)
+        @testset "$g" for g in testgraphs(gx, gdx)
             gc = copy(g)
             @test add_vertices!(gc, 5) == 5
             @test @inferred(nv(gc)) == 15
         end
     end
 
-    g5w = wheel_graph(5); g5wd = wheel_digraph(5)
+    g5w = wheel_graph(5)
+    g5wd = wheel_digraph(5)
     @testset "degree functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == 4
             @test degree(g, 1) == 4 # explicit codecov
-            @test @inferred(indegree(g)) == @inferred(outdegree(g)) == @inferred(degree(g)) == [4, 3, 3, 3, 3]
-    
+            @test @inferred(indegree(g)) ==
+                @inferred(outdegree(g)) ==
+                @inferred(degree(g)) ==
+                [4, 3, 3, 3, 3]
+
             @test @inferred(Δout(g)) == @inferred(Δin(g)) == @inferred(Δ(g)) == 4
             @test @inferred(δout(g)) == @inferred(δin(g)) == @inferred(δ(g)) == 3
             z1 = @inferred(degree_histogram(g))
@@ -54,7 +61,6 @@
         end
     end
 
-
     @testset "neighbor functions" begin
         @testset "$g" for g in testgraphs(g5w)
             @test @inferred(neighbors(g, 2)) == [1, 3, 5]
@@ -79,7 +85,6 @@
             @test @inferred(num_self_loops(gsl)) == 2
         end
     end
-    
 
     @testset "density" begin
         @testset "$g" for g in testgraphs(g5w)
@@ -89,6 +94,5 @@
         @testset "$g" for g in testdigraphs(g5wd)
             @test @inferred(density(g)) == 0.4
         end
-
     end
 end

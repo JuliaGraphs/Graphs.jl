@@ -16,7 +16,7 @@ julia> using Graphs
 julia> g = SimpleGraph(3);
 
 julia> bipartite_map(g)
-3-element Array{UInt8,1}:
+3-element Vector{UInt8}:
  0x01
  0x01
  0x01
@@ -28,13 +28,16 @@ julia> add_edge!(g, 1, 2);
 julia> add_edge!(g, 2, 3);
 
 julia> bipartite_map(g)
-3-element Array{UInt8,1}:
+6-element Vector{UInt8}:
  0x01
  0x02
  0x01
+ 0x01
+ 0x01
+ 0x01
 ```
 """
-function bipartite_map(g::AbstractGraph{T}) where T
+function bipartite_map(g::AbstractGraph{T}) where {T}
     nvg = nv(g)
     if !is_directed(g)
         ccs = filter(x -> length(x) >= 2, connected_components(g))
@@ -61,7 +64,7 @@ function bipartite_map(g::AbstractGraph{T}) where T
             end
         end
     end
-    return UInt8.(colors).+(one(UInt8))
+    return UInt8.(colors) .+ (one(UInt8))
 end
 
 """

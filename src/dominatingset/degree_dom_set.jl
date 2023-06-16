@@ -14,16 +14,15 @@ function update_dominated!(
     degree_queue::PriorityQueue,
     v::Integer,
     dominated::BitArray{1},
-    in_dom_set::BitArray{1}
-    ) where T <: Integer
-
+    in_dom_set::BitArray{1},
+) where {T<:Integer}
     @inbounds if !dominated[v]
         dominated[v] = true
-        if !in_dom_set[v] 
+        if !in_dom_set[v]
             degree_queue[v] -= 1
         end
         @inbounds @simd for u in neighbors(g, v)
-            if !in_dom_set[u] 
+            if !in_dom_set[u]
                 degree_queue[u] -= ifelse(in_dom_set[u], 0, 1)
             end
         end
@@ -46,12 +45,8 @@ Runtime: ``\\mathcal{O}((|V|+|E|)*log(|V|))``
 Memory: ``\\mathcal{O}(|V|)``
 Approximation Factor: `ln(maximum(degree(g)))+2`
 """
-function dominating_set(
-    g::AbstractGraph{T},
-    alg::DegreeDominatingSet
-    ) where T <: Integer 
-
-    nvg = nv(g)  
+function dominating_set(g::AbstractGraph{T}, alg::DegreeDominatingSet) where {T<:Integer}
+    nvg = nv(g)
     in_dom_set = falses(nvg)
     dominated = falses(nvg)
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g) .+ 1))
@@ -67,6 +62,6 @@ function dominating_set(
             update_dominated!(g, degree_queue, u, dominated, in_dom_set)
         end
     end
-    
+
     return Graphs.findall!(in_dom_set, Vector{T}(undef, length_ds))
 end
