@@ -58,55 +58,55 @@ julia> edit_distance(g1, g2)
 ```
 """
 function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
-                        vertex_insert_cost=nothing,
-                        vertex_delete_cost=nothing,
-                        vertex_subst_cost=nothing,
-                        edge_insert_cost=nothing,
-                        edge_delete_cost=nothing,
-                        edge_subst_cost=nothing,
-                        heuristic=nothing)
+    vertex_insert_cost=nothing,
+    vertex_delete_cost=nothing,
+    vertex_subst_cost=nothing,
+    edge_insert_cost=nothing,
+    edge_delete_cost=nothing,
+    edge_subst_cost=nothing,
+    heuristic=nothing)
 
     if isnothing(vertex_insert_cost) &&
-            isnothing(vertex_delete_cost) &&
-            isnothing(vertex_subst_cost) &&
-            isnothing(edge_insert_cost) &&
-            isnothing(edge_delete_cost) &&
-            isnothing(edge_subst_cost) &&
-            isnothing(heuristic)
+       isnothing(vertex_delete_cost) &&
+       isnothing(vertex_subst_cost) &&
+       isnothing(edge_insert_cost) &&
+       isnothing(edge_delete_cost) &&
+       isnothing(edge_subst_cost) &&
+       isnothing(heuristic)
         heuristic = default_edit_heuristic
     end
-    vertex_insert_cost = something(vertex_insert_cost, v -> 0.)
-    vertex_delete_cost = something(vertex_delete_cost, v -> 0.)
-    vertex_subst_cost = something(vertex_subst_cost, (u, v) -> 0.)
-    edge_insert_cost = something(edge_insert_cost, e -> 1.)
-    edge_delete_cost = something(edge_delete_cost, e -> 1.)
-    edge_subst_cost = something(edge_subst_cost, (e1, e2) -> 0.)
-    heuristic = something(heuristic, (λ, G₁, G₂) -> 0.)
+    vertex_insert_cost = something(vertex_insert_cost, v -> 0.0)
+    vertex_delete_cost = something(vertex_delete_cost, v -> 0.0)
+    vertex_subst_cost = something(vertex_subst_cost, (u, v) -> 0.0)
+    edge_insert_cost = something(edge_insert_cost, e -> 1.0)
+    edge_delete_cost = something(edge_delete_cost, e -> 1.0)
+    edge_subst_cost = something(edge_subst_cost, (e1, e2) -> 0.0)
+    heuristic = something(heuristic, (λ, G₁, G₂) -> 0.0)
     return _edit_distance(G₁::AbstractGraph, G₂::AbstractGraph,
-                        vertex_insert_cost,
-                        vertex_delete_cost,
-                        vertex_subst_cost,
-                        edge_insert_cost,
-                        edge_delete_cost,
-                        edge_subst_cost,
-                        heuristic)
+        vertex_insert_cost,
+        vertex_delete_cost,
+        vertex_subst_cost,
+        edge_insert_cost,
+        edge_delete_cost,
+        edge_subst_cost,
+        heuristic)
 end
 
 function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
-                        vertex_insert_cost::Function,
-                        vertex_delete_cost::Function,
-                        vertex_subst_cost::Function,
-                        edge_insert_cost::Function,
-                        edge_delete_cost::Function,
-                        edge_subst_cost::Function,
-                        heuristic::Function) where {T <: Integer, U <: Integer}
+    vertex_insert_cost::Function,
+    vertex_delete_cost::Function,
+    vertex_subst_cost::Function,
+    edge_insert_cost::Function,
+    edge_delete_cost::Function,
+    edge_subst_cost::Function,
+    heuristic::Function) where {T<:Integer,U<:Integer}
 
     isdirected = is_directed(G₁) || is_directed(G₂)
 
     # compute the cost on edges due to associate u1 to v1 and u2 to v2
     # u2 and v2 can eventually be 0
     function association_cost(u1, u2, v1, v2)
-        cost = 0.
+        cost = 0.0
         if has_edge(G₁, u1, u2)
             if has_edge(G₂, v1, v2)
                 cost += edge_subst_cost(Edge(u1, u2), Edge(v1, v2))
@@ -211,7 +211,8 @@ function _edit_distance(G₁::AbstractGraph{T}, G₂::AbstractGraph{U},
 end
 
 function is_complete_path(λ, G₁, G₂)
-    us = Set(); vs = Set()
+    us = Set()
+    vs = Set()
     for (u, v) in λ
         push!(us, u)
         push!(vs, v)
@@ -241,19 +242,19 @@ function default_edit_heuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
     total_free_edges_g1 = 0
     total_free_edges_g2 = 0
     if !isempty(us)
-        total_free_edges_g1 = sum(u->outdegree(G₁, u), us)
+        total_free_edges_g1 = sum(u -> outdegree(G₁, u), us)
     end
     if !isempty(vs)
-        total_free_edges_g2 = sum(v->outdegree(G₂, v), vs)
+        total_free_edges_g2 = sum(v -> outdegree(G₂, v), vs)
     end
-    for (u1,v1) in λ
+    for (u1, v1) in λ
         (u1 == 0 || v1 == 0) && continue
-        total_free_edges_g1 += count(u2->u2 in us, outneighbors(G₁, u1))
-        total_free_edges_g2 += count(v2->v2 in vs, outneighbors(G₂, v1))
+        total_free_edges_g1 += count(u2 -> u2 in us, outneighbors(G₁, u1))
+        total_free_edges_g2 += count(v2 -> v2 in vs, outneighbors(G₂, v1))
     end
     if !is_directed(G₁) && !is_directed(G₂)
-        total_free_edges_g1 = total_free_edges_g1/2
-        total_free_edges_g2 = total_free_edges_g2/2
+        total_free_edges_g1 = total_free_edges_g1 / 2
+        total_free_edges_g2 = total_free_edges_g2 / 2
     end
     return abs(total_free_edges_g1 - total_free_edges_g2)
 end
