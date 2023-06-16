@@ -120,7 +120,7 @@ edgetype(g::AbstractGraph) = _NI("edgetype")
 """
     eltype(G)
 
-Return the type of the graph type's vertices (must be <: Integer)
+Return the type of the graph's vertices (must be <: Integer)
 """
 eltype(::Type{<:AbstractGraph{T}}) where {T} = T
 

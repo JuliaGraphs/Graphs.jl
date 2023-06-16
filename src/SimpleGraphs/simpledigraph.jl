@@ -475,7 +475,7 @@ function rem_vertices!(
             end
         end
     else
-        # traverse the vertex list and replace vertices that get removed
+        # traverse the vertex list and replace vertices that get removed 
         # with the furthest one to the back that does not get removed
         i = 1
         j = length(remove)

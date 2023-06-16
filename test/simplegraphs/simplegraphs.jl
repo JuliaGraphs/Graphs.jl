@@ -234,7 +234,7 @@ using Random: Random
             edge_set_any = Set{Any}(edge_list)
 
             g1 = @inferred SimpleGraph(edge_list)
-            # we can't infer the return type of SimpleGraphFromIterator at the moment
+            # we can't infer the return type of SimpleGraphFromIterator at the moment 
             g2 = SimpleGraphFromIterator(edge_list)
             g3 = SimpleGraphFromIterator(edge_iter)
             g4 = SimpleGraphFromIterator(edge_set)
