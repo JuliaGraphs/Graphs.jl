@@ -240,11 +240,12 @@ end
 #  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
 #  To save the loop state of each recursive step in a stack efficiently, 
 #  we need to infer the type of its state (which should almost always be an int).
-infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
+destructure_type(x) = Any
+destructure_type(::Type{Union{Nothing,Tuple{<:Any,B}}}) where {B} = B
+
+infer_nb_iterstate_type(::AbstractSimpleGraph{T}) where {T} = T
 
 function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
-    destructure_type(x) = Any
-    destructure_type(x::Type{Union{Nothing,Tuple{A,B}}}) where {A,B} = B
     # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
     return destructure_type(
         Base.Iterators.approx_iter_type(typeof(outneighbors(g, one(T))))
