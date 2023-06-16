@@ -21,7 +21,7 @@ _NI(m) = throw(NotImplementedError(m))
 A trait representing a single vertex.
 """
 @traitdef AbstractVertex{V}
-@traitimpl AbstractVertex{V} <- is_directed(V)
+@traitimpl AbstractVertex{V} <- is_vertex(V)
 
 """
     AbstractEdge
@@ -514,14 +514,14 @@ julia> length(c)
 5
 ```
 """
-get_vertex_container(g::AbstractGraph, K::Type) = Dict{V, K}()
+get_vertex_container(g::AbstractGraph{V}, K::Type) where V = Dict{V, K}()
 
 """
     get_edge_container(g::AbstractGraph{V, E}, K::Type)
 
 Return a container indexed by edges of 'g' of eltype 'K'.
 """
-get_edge_container(g::AbstractGraph, K::Type) = Dict{E, K}()
+get_edge_container(g::AbstractGraph{V, E}, K::Type) where {V, E} = Dict{E, K}()
 
 """
     zero(G)

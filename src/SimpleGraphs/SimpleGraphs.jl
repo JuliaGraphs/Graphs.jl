@@ -10,8 +10,10 @@ import Base:
 
 import Graphs:
     _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
-    src, dst, edgetype, nv, ne, vertices, edges, is_directed,
+    src, dst, edgetype, nv, ne, vertices, edges, outedges, inedges, is_directed,
+	is_simply_mutable, is_range_based,
     has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
+	get_vertex_container, get_edge_container,
     deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
     num_self_loops, insorted, squash
 
@@ -101,8 +103,10 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
+outedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, outneighbors(v))
+inedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, inneighbors(v))
 
-get_vertex_container(g::AbstractGraph, K::Type) = Vector{K}(undef, nv(g))
+get_vertex_container(g::AbstractSimpleGraph, K::Type) = Vector{K}(undef, nv(g))
 # get_edge_container(g::AbstractGraph, K::Type) = Array{K, 2}(undef, (nv(g), nv(g))
 
 function issubset(g::T, h::T) where T <: AbstractSimpleGraph

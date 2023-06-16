@@ -83,14 +83,15 @@ function a_star(g::AbstractGraph{V, E},  # the graph
     enqueue!(open_set, s, 0)
 
     closed_set = get_vertex_container(g, Bool)
-    closed_set[vertices(g)] .= false
-
     g_score = get_vertex_container(g, T)
-    g_score[vertices(g)] .= typemax(T)
+    came_from = get_vertex_container(g, T)
+    for u in vertices(g)
+        closed_set[u] = false
+        g_score[u] = typemax(T)
+        came_from[u] = s
+    end
     g_score[s] = 0
 
-    came_from = get_vertex_container(g, T)
-    came_from[vertices(g)] .= s
 
     came_from_edge = get_vertex_container(g, E)
 

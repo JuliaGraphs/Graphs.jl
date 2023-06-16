@@ -24,11 +24,13 @@ import Base: adjoint, write, ==, <, *, ≈, convert, isless, issubset, union, in
 
 export
 # Interface
-AbstractGraph, AbstractEdge, AbstractEdgeIter,
+AbstractGraph, is_vertex, AbstractVertex, AbstractEdge, AbstractWeightedEdge, AbstractEdgeIter,
 Edge, Graph, SimpleGraph, SimpleGraphFromIterator, DiGraph, SimpleDiGraphFromIterator,
 SimpleDiGraph, vertices, edges, edgetype, nv, ne, src, dst,
-is_directed, IsDirected,
-has_vertex, has_edge, inneighbors, outneighbors,
+is_directed, IsDirected, is_range_based, IsRangeBased, is_simply_mutable, IsSimplyMutable,
+is_mutable, IsMutable, is_weight_mutable, IsWeightMutable, is_vertex_stable, IsVertexStable,
+has_vertex, has_edge, inneighbors, outneighbors, outedges, inedges,
+weight, get_vertex_container, get_edge_container,
 
 # core
 is_ordered, add_vertices!, indegree, outdegree, degree,
