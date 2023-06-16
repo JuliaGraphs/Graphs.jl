@@ -5,6 +5,7 @@ using Random: Random
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     # specific concrete generators - no need for loop
+    @test @inferred(eltype(SimpleGraph())) == Int
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ArgumentError SimpleGraph(adjmx2)
 
@@ -14,6 +15,7 @@ using Random: Random
     @test @inferred(!is_directed(SimpleGraph))
     @test @inferred(!is_directed(SimpleGraph{Int}))
 
+    @test @inferred(eltype(SimpleDiGraph())) == Int
     @test @inferred(eltype(SimpleDiGraph(adjmx2))) == Int
     @test @inferred(ne(SimpleDiGraph(path_graph(5)))) == 8
     @test @inferred(is_directed(SimpleDiGraph))

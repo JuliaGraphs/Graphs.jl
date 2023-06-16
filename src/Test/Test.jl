@@ -49,9 +49,6 @@ end
 Graphs.is_directed(::Type{<:GenericGraph}) = false
 Graphs.is_directed(::Type{<:GenericDiGraph}) = true
 
-Base.eltype(g::GenericGraph) = eltype(g.g)
-Base.eltype(g::GenericDiGraph) = eltype(g.g)
-
 Graphs.edges(g::GenericGraph) = (GenericEdge(e) for e in Graphs.edges(g.g))
 Graphs.edges(g::GenericDiGraph) = (GenericEdge(e) for e in Graphs.edges(g.g))
 
