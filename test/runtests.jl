@@ -3,6 +3,7 @@ using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
+using JET
 using JuliaFormatter
 using Graphs.Test
 using Test
