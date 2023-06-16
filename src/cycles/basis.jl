@@ -3,7 +3,7 @@
 """
     cycle_basis(g, root=nothing)
 
-Return a list of cycles which form a basis for cycles of graph `g`, optionally starting at node `root`.
+Return a list of cycles which form a basis for cycles of the undirected graph `g`, optionally starting at node `root`.
 
 A basis for cycles of a network is a minimal collection of
 cycles such that any cycle in the network can be written
@@ -14,14 +14,16 @@ using Kirchhoff's Laws.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)];
 
-julia> g = SimpleGraph(SimpleEdge.(elist));
+julia> g = SimpleGraph(Graphs.SimpleEdge.(elist));
 
 julia> cycle_basis(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
+ [2, 4, 1]
  [2, 3, 4]
- [2, 1, 3]
 ```
 
 ### References
@@ -44,30 +46,30 @@ function cycle_basis(g::AbstractSimpleGraph, root=nothing)
         while !isempty(stack)
             z = pop!(stack)
             zused = used[z]
-            for nbr in neighbors(g,z)
+            for nbr in neighbors(g, z)
                 if !in(nbr, keys_used)
                     pred[nbr] = z
                     push!(keys_pred, nbr)
-                    push!(stack,nbr)
+                    push!(stack, nbr)
                     used[nbr] = [z]
                     push!(keys_used, nbr)
                 elseif nbr == z
                     push!(cycles, [z])
                 elseif !in(nbr, zused)
                     pn = used[nbr]
-                    cycle = [nbr,z]
+                    cycle = [nbr, z]
                     p = pred[z]
                     while !in(p, pn)
                         push!(cycle, p)
                         p = pred[p]
                     end
-                    push!(cycle,p)
-                    push!(cycles,cycle)
+                    push!(cycle, p)
+                    push!(cycles, cycle)
                     push!(used[nbr], z)
                 end
             end
-        end  
-        setdiff!(gnodes,keys_pred)
+        end
+        setdiff!(gnodes, keys_pred)
         isempty(gnodes) && break
         r = pop!(gnodes)
     end

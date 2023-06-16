@@ -26,7 +26,7 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> core_number(g)
-6-element Array{Int64,1}:
+6-element Vector{Int64}:
  1
  2
  2
@@ -35,48 +35,48 @@ julia> core_number(g)
  0
 ```
 """
-function core_number(g::AbstractGraph{T}) where T
+function core_number(g::AbstractGraph{T}) where {T}
     has_self_loops(g) && throw(ArgumentError("graph must not have self-loops"))
     n = nv(g)
     deg = T.(degree(g)) # this will contain core number for each vertex of graph
     maxdeg = maximum(deg) # maximum degree of a vertex in graph
-    bin = zeros(T, maxdeg+1) # used for bin-sort and storing starting positions of bins
+    bin = zeros(T, maxdeg + 1) # used for bin-sort and storing starting positions of bins
     vert = zeros(T, n) # contains the set of vertices, sorted by their degrees
     pos = zeros(T, n) # contains positions of vertices in array vert
 
     # count number of vertices will be in each bin
-    for v = 1:n
-        bin[deg[v]+1] += one(T)
+    for v in 1:n
+        bin[deg[v] + 1] += one(T)
     end
     # from bin sizes determine starting positions of bins in array vert
     start = one(T)
-    for d = zero(T):maxdeg
-        num = bin[d+1]
-        bin[d+1] = start
+    for d in zero(T):maxdeg
+        num = bin[d + 1]
+        bin[d + 1] = start
         start += num
     end
     # sort the vertices in increasing order of their degrees and store in array vert
     for v in vertices(g)
-        pos[v] = bin[deg[v]+1]
+        pos[v] = bin[deg[v] + 1]
         vert[pos[v]] = v
-        bin[deg[v]+1] += one(T)
+        bin[deg[v] + 1] += one(T)
     end
 
     # recover starting positions of the bins
-    for d = maxdeg:-1:one(T)
-       bin[d+1] = bin[d]
+    for d in maxdeg:-1:one(T)
+        bin[d + 1] = bin[d]
     end
     bin[1] = one(T)
 
     # cores decomposition
-    for i = 1:n
+    for i in 1:n
         v = vert[i]
         # for each neighbor u of vertex v with higher degree we have to decrease its degree and move it for one bin to the left
         for u in outneighbors(g, v)
             if deg[u] > deg[v]
                 du = deg[u]
                 pu = pos[u]
-                pw = bin[du+1]
+                pw = bin[du + 1]
                 w = vert[pw]
                 if u != w
                     pos[u] = pw
@@ -84,28 +84,28 @@ function core_number(g::AbstractGraph{T}) where T
                     pos[w] = pu
                     vert[pw] = u
                 end
-                bin[du+1] += one(T)
+                bin[du + 1] += one(T)
                 deg[u] -= one(T)
             end
         end
         if is_directed(g)
-	        for u in inneighbors(g, v)
-	            if deg[u] > deg[v]
-	                du = deg[u]
-	                pu = pos[u]
-	                pw = bin[du+1]
-	                w = vert[pw]
-	                if u != w
-	                    pos[u] = pw
-	                    vert[pu] = w
-	                    pos[w] = pu
-	                    vert[pw] = u
-	                end
-	                bin[du+1] += one(T)
-	                deg[u] -= one(T)
-	            end
-	        end
-	    end
+            for u in inneighbors(g, v)
+                if deg[u] > deg[v]
+                    du = deg[u]
+                    pu = pos[u]
+                    pw = bin[du + 1]
+                    w = vert[pw]
+                    if u != w
+                        pos[u] = pw
+                        vert[pu] = w
+                        pos[w] = pu
+                        vert[pw] = u
+                    end
+                    bin[du + 1] += one(T)
+                    deg[u] -= one(T)
+                end
+            end
+        end
     end
 
     return deg
@@ -138,7 +138,7 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_core(g, 1)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  3
@@ -146,16 +146,17 @@ julia> k_core(g, 1)
  5
 
 julia> k_core(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
- 5    
+ 5
 ```
 """
 function k_core(g::AbstractGraph, k=-1; corenum=core_number(g))
     if (k == -1)
-        k = maximum(corenum) # max core
+        # type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum) # max core
     end
 
     return findall(x -> x >= k, corenum)
@@ -193,15 +194,15 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_shell(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_shell(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> k_shell(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
@@ -210,7 +211,8 @@ julia> k_shell(g, 2)
 """
 function k_shell(g::AbstractGraph, k=-1; corenum=core_number(g))
     if k == -1
-        k = maximum(corenum)
+        # type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum)
     end
     return findall(x -> x == k, corenum)
 end
@@ -218,7 +220,7 @@ end
 """
     k_crust(g[, k]; corenum=core_number(g))
 
-Return a vector of vertices in the k-crust of `g`. 
+Return a vector of vertices in the k-crust of `g`.
 If `k` is not specified, return the crust of the core with
 the largest degree.
 
@@ -247,16 +249,16 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_crust(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_crust(g, 1)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  6
 
 julia> k_crust(g, 2)
-6-element Array{Int64,1}:
+6-element Vector{Int64}:
  1
  2
  3
@@ -267,7 +269,8 @@ julia> k_crust(g, 2)
 """
 function k_crust(g, k=-1; corenum=core_number(g))
     if k == -1
-        k = maximum(corenum) - 1
+        # type assertion for inference (performance of captured variables julia#15726)
+        k::Int = maximum(corenum) - 1
     end
     return findall(x -> x <= k, corenum)
 end
@@ -275,7 +278,7 @@ end
 """
     k_corona(g, k; corenum=core_number(g))
 
-Return a vector of vertices in the k-corona of `g`. 
+Return a vector of vertices in the k-corona of `g`.
 
 The k-corona is the subgraph of vertices in the [`k-core`](@ref k_core) which
 have exactly `k` neighbors in the k-core.
@@ -302,22 +305,22 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_corona(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_corona(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> k_corona(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
  5
 
 julia> k_corona(g, 3)
-0-element Array{Int64,1}
+Int64[]
 ```
 """
 function k_corona(g::AbstractGraph, k; corenum=core_number(g))
@@ -325,5 +328,5 @@ function k_corona(g::AbstractGraph, k; corenum=core_number(g))
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)
 
-    return kcore[findall(x-> x == k, kcoredeg)]
+    return kcore[findall(x -> x == k, kcoredeg)]
 end

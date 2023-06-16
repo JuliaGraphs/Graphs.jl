@@ -12,7 +12,9 @@ end
 
 DefaultDistance(nv::Integer) = DefaultDistance(Int(nv))
 
-show(io::IO, x::DefaultDistance) = print(io, "$(x.nv) × $(x.nv) default distance matrix (value = 1)")
+function show(io::IO, x::DefaultDistance)
+    return print(io, "$(x.nv) × $(x.nv) default distance matrix (value = 1)")
+end
 show(io::IO, z::MIME"text/plain", x::DefaultDistance) = show(io, x)
 
 getindex(::DefaultDistance, s::Integer, d::Integer) = 1
@@ -51,38 +53,40 @@ An infinite path length is represented by the `typemax` of the distance matrix.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> eccentricity(g, 1)
 2
 
 julia> eccentricity(g, [1; 2])
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  2
  1
 
 julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  2.5
  0.5
 ```
 """
-function eccentricity(g::AbstractGraph,
-    v::Integer,
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
+function eccentricity(
+    g::AbstractGraph, v::Integer, distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real}
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && @warn("Infinite path length detected for vertex $v")
 
     return e
 end
 
-eccentricity(g::AbstractGraph,
-    vs=vertices(g),
-    distmx::AbstractMatrix=weights(g)) = [eccentricity(g, v, distmx) for v in vs]
+function eccentricity(g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix=weights(g))
+    return [eccentricity(g, v, distmx) for v in vs]
+end
 
-
-eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
-    eccentricity(g, vertices(g), distmx)
+function eccentricity(g::AbstractGraph, distmx::AbstractMatrix)
+    return eccentricity(g, vertices(g), distmx)
+end
 
 """
     diameter(eccentricities)
@@ -103,8 +107,9 @@ julia> diameter(path_graph(5))
 ```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
-diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    maximum(eccentricity(g, distmx))
+function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return maximum(eccentricity(g, distmx))
+end
 
 """
     periphery(eccentricities)
@@ -120,14 +125,14 @@ largest eccentricity).
 julia> using Graphs
 
 julia> periphery(star_graph(5))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
  5
 
 julia> periphery(path_graph(5))
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  5
 ```
@@ -137,8 +142,9 @@ function periphery(eccentricities::Vector)
     return filter(x -> eccentricities[x] == diam, 1:length(eccentricities))
 end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    periphery(eccentricity(g, distmx))
+function periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return periphery(eccentricity(g, distmx))
+end
 
 """
     radius(eccentricities)
@@ -159,8 +165,9 @@ julia> radius(path_graph(5))
 ```
 """
 radius(eccentricities::Vector) = minimum(eccentricities)
-radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    minimum(eccentricity(g, distmx))
+function radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return minimum(eccentricity(g, distmx))
+end
 
 """
     center(eccentricities)
@@ -175,11 +182,11 @@ to the graph's radius (that is, the set of vertices with the smallest eccentrici
 julia> using Graphs
 
 julia> center(star_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> center(path_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 ```
 """
@@ -188,5 +195,6 @@ function center(eccentricities::Vector)
     return filter(x -> eccentricities[x] == rad, 1:length(eccentricities))
 end
 
-center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    center(eccentricity(g, distmx))
+function center(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return center(eccentricity(g, distmx))
+end

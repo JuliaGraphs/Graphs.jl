@@ -19,8 +19,8 @@ function transitiveclosure! end
 
     x = selflooped ? 0 : 1
     for comp in scc
-        for j in 1:(length(comp)-x)
-            for k in (j+x):length(comp)
+        for j in 1:(length(comp) - x)
+            for k in (j + x):length(comp)
                 add_edge!(g, comp[j], comp[k])
                 add_edge!(g, comp[k], comp[j])
             end
@@ -54,7 +54,7 @@ is `true`, add self loops to the graph.
 Time complexity is ``\\mathcal{O}(|E||V|)``.
 
 # Examples
-```jldoctest
+```
 julia> using Graphs
 
 julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
@@ -62,7 +62,7 @@ julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 julia> add_edge!(barbell, 1, 4);
 
 julia> collect(edges(barbell))
-13-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+13-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -78,7 +78,7 @@ julia> collect(edges(barbell))
  Edge 6 => 5
 
 julia> collect(edges(transitiveclosure(barbell)))
-21-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+21-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -102,7 +102,7 @@ julia> collect(edges(transitiveclosure(barbell)))
  Edge 6 => 5
 ```
 """
-function transitiveclosure(g::DiGraph, selflooped = false)
+function transitiveclosure(g::DiGraph, selflooped=false)
     copyg = copy(g)
     return transitiveclosure!(copyg, selflooped)
 end
@@ -128,7 +128,7 @@ julia> barbell = blockdiag(complete_digraph(3), complete_digraph(3));
 julia> add_edge!(barbell, 1, 4);
 
 julia> collect(edges(barbell))
-13-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+13-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -144,7 +144,7 @@ julia> collect(edges(barbell))
  Edge 6 => 5
 
 julia> collect(edges(transitivereduction(barbell)))
-7-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+7-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 2 => 3
@@ -154,7 +154,7 @@ julia> collect(edges(transitivereduction(barbell)))
  Edge 6 => 4
 ```
 """
-function transitivereducion end
+function transitivereduction end
 @traitfn function transitivereduction(g::::IsDirected; selflooped::Bool=false)
     scc = strongly_connected_components(g)
     cg = condensation(g, scc)
@@ -164,56 +164,58 @@ function transitivereducion end
     stack = Vector{eltype(cg)}(undef, nv(cg))
     resultg = SimpleDiGraph{eltype(g)}(nv(g))
 
-# Calculate the transitive reduction of the acyclic condensation graph.
+    # Calculate the transitive reduction of the acyclic condensation graph.
     @inbounds(
-    for u in vertices(cg)
-        fill!(reachable, false) # vertices reachable from u on a path of length >= 2
-        fill!(visited, false)
-        stacksize = 0
-        for v in outneighbors(cg,u)
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
+        for u in vertices(cg)
+            fill!(reachable, false) # vertices reachable from u on a path of length >= 2
+            fill!(visited, false)
+            stacksize = 0
+            for v in outneighbors(cg, u)
+                @simd for w in outneighbors(cg, v)
+                    if !visited[w]
+                        visited[w] = true
+                        stacksize += 1
+                        stack[stacksize] = w
+                    end
+                end
+            end
+            while stacksize > 0
+                v = stack[stacksize]
+                stacksize -= 1
+                reachable[v] = true
+                @simd for w in outneighbors(cg, v)
+                    if !visited[w]
+                        visited[w] = true
+                        stacksize += 1
+                        stack[stacksize] = w
+                    end
+                end
+            end
+            # Add the edges from the condensation graph to the resulting graph.
+            @simd for v in outneighbors(cg, u)
+                if !reachable[v]
+                    add_edge!(resultg, scc[u][1], scc[v][1])
                 end
             end
         end
-        while stacksize > 0
-            v = stack[stacksize]
-            stacksize -= 1
-            reachable[v] = true
-      @simd for w in outneighbors(cg, v)
-                if !visited[w]
-                    visited[w] = true
-                    stacksize += 1
-                    stack[stacksize] = w
-                end
-            end
-        end
-# Add the edges from the condensation graph to the resulting graph.
-  @simd for v in outneighbors(cg,u)
-            if !reachable[v]
-                add_edge!(resultg, scc[u][1], scc[v][1])
-            end
-        end
-    end)
+    )
 
-# Replace each strongly connected component with a directed cycle.
+    # Replace each strongly connected component with a directed cycle.
     @inbounds(
-    for component in scc
-        nvc = length(component)
-        if nvc == 1
-            if selflooped && has_edge(g, component[1], component[1])
-                add_edge!(resultg, component[1], component[1])
+        for component in scc
+            nvc = length(component)
+            if nvc == 1
+                if selflooped && has_edge(g, component[1], component[1])
+                    add_edge!(resultg, component[1], component[1])
+                end
+                continue
             end
-            continue
+            for i in 1:(nvc - 1)
+                add_edge!(resultg, component[i], component[i + 1])
+            end
+            add_edge!(resultg, component[nvc], component[1])
         end
-        for i in 1:(nvc-1)
-            add_edge!(resultg, component[i], component[i+1])
-        end
-        add_edge!(resultg, component[nvc], component[1])
-    end)
+    )
 
     return resultg
 end

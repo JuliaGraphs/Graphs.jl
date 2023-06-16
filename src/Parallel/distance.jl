@@ -1,11 +1,11 @@
 # used in shortest path calculations
 
-function eccentricity(g::AbstractGraph,
-    vs=vertices(g),
-    distmx::AbstractMatrix{T}=weights(g)) where T <: Real
+function eccentricity(
+    g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real}
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
-    @sync @distributed for i = 1:vlen
+    @sync @distributed for i in 1:vlen
         eccs[i] = maximum(Graphs.dijkstra_shortest_paths(g, vs[i], distmx).dists)
     end
     d = sdata(eccs)
@@ -13,17 +13,22 @@ function eccentricity(g::AbstractGraph,
     return d
 end
 
-eccentricity(g::AbstractGraph, distmx::AbstractMatrix) =
-    eccentricity(g, vertices(g), distmx)
+function eccentricity(g::AbstractGraph, distmx::AbstractMatrix)
+    return eccentricity(g, vertices(g), distmx)
+end
 
-diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    maximum(eccentricity(g, distmx))
+function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return maximum(eccentricity(g, distmx))
+end
 
-periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    Graphs.periphery(eccentricity(g, distmx))
+function periphery(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return Graphs.periphery(eccentricity(g, distmx))
+end
 
-radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    minimum(eccentricity(g, distmx))
+function radius(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return minimum(eccentricity(g, distmx))
+end
 
-center(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) =
-    Graphs.center(eccentricity(g, distmx))
+function center(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return Graphs.center(eccentricity(g, distmx))
+end

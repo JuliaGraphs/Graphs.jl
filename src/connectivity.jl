@@ -10,9 +10,7 @@ to each vertex. The component value is the smallest vertex ID in the component.
 ### Performance
 This algorithm is linear in the number of edges of the graph.
 """
-function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where T
-    nvg = nv(g)
-
+function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where {T}
     for u in vertices(g)
         label[u] != zero(T) && continue
         label[u] = u
@@ -31,7 +29,6 @@ function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where
     return label
 end
 
-
 """
     components_dict(labels)
 
@@ -39,7 +36,7 @@ Convert an array of labels to a map of component id to vertices, and return
 a map with each key corresponding to a given component id
 and each value containing the vertices associated with that component.
 """
-function components_dict(labels::Vector{T}) where T <: Integer
+function components_dict(labels::Vector{T}) where {T<:Integer}
     d = Dict{T,Vector{T}}()
     for (v, l) in enumerate(labels)
         vec = get(d, l, Vector{T}())
@@ -55,7 +52,7 @@ end
 Given a vector of component labels, return a vector of vectors representing the vertices associated
 with a given component id.
 """
-function components(labels::Vector{T}) where T <: Integer
+function components(labels::Vector{T}) where {T<:Integer}
     d = Dict{T,T}()
     c = Vector{Vector{T}}()
     i = one(T)
@@ -83,21 +80,23 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> connected_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [1, 2, 3]
 
 julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [1, 2, 3]
  [4, 5]
 ```
 """
-function connected_components(g::AbstractGraph{T}) where T
+function connected_components(g::AbstractGraph{T}) where {T}
     label = zeros(T, nv(g))
     connected_components!(label, g)
     c, d = components(label)
@@ -112,6 +111,8 @@ if graph `g` is weakly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> is_connected(g)
@@ -142,10 +143,12 @@ For undirected graphs this is equivalent to the [`connected_components`](@ref) o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
 
 julia> weakly_connected_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [1, 2, 3]
 ```
 """
@@ -159,6 +162,8 @@ this function is equivalent to [`is_connected(g)`](@ref).
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> is_weakly_connected(g)
@@ -178,7 +183,6 @@ true
 """
 is_weakly_connected(g) = is_connected(g)
 
-
 """
     strongly_connected_components(g)
 
@@ -191,15 +195,16 @@ The order of the components is not part of the API contract.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [3]
  [1, 2]
 
-
-julia> g=SimpleDiGraph(11)
+julia> g = SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
 julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
@@ -208,9 +213,9 @@ julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-4-element Array{Array{Int64,1},1}:
- [8, 9]      
- [5, 6, 7]   
+4-element Vector{Vector{Int64}}:
+ [8, 9]
+ [5, 6, 7]
  [1, 2, 3, 4]
  [10, 11]    
 
@@ -223,10 +228,13 @@ imperative algorithm.
 function strongly_connected_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 
-
-@traitfn function strongly_connected_components(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
-    if iszero(nv(g)) return Vector{Vector{T}}() end
-    _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
+@traitfn function strongly_connected_components(
+    g::AG::IsDirected
+) where {T<:Integer,AG<:AbstractGraph{T}}
+    if iszero(nv(g))
+        return Vector{Vector{T}}()
+    end
+    return _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))
 end
 
 #  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
@@ -235,25 +243,26 @@ end
 infer_nb_iterstate_type(g::AbstractSimpleGraph) = Int
 
 function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
-     destructure_type(x) = Any
-     destructure_type(x::Type{Union{Nothing, Tuple{A,B}}}) where {A,B} = B
-     # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
-     destructure_type(Base.Iterators.approx_iter_type(typeof(outneighbors(g, one(T)))))
+    destructure_type(x) = Any
+    destructure_type(x::Type{Union{Nothing,Tuple{A,B}}}) where {A,B} = B
+    # If no specific dispatch is given, we peek at the first vertex and use Base.Iterator magic to try infering the type.
+    return destructure_type(
+        Base.Iterators.approx_iter_type(typeof(outneighbors(g, one(T))))
+    )
 end
-
 
 # Vertex size threshold below which it isn't worth keeping the DFS iteration state.
 is_large_vertex(g, v) = length(outneighbors(g, v)) >= 1024
 is_unvisited(data::AbstractVector, v::Integer) = iszero(data[v])
-
-
 
 # The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
 # Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
+function _strongly_connected_components_tarjan_with_index(
+    g::AG, nb_iter_statetype::Type{S}
+) where {T<:Integer,AG<:AbstractGraph{T},S}
     nvg = nv(g)
     one_count = one(T)
     count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
@@ -269,7 +278,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    largev_iterstate_stack = Vector{Tuple{T, S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    largev_iterstate_stack = Vector{Tuple{T,S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
     # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into this last stack.
 
@@ -283,8 +292,8 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
             push!(dfs_stack, s)
             if is_large_vertex(g, s)
                 push!(largev_iterstate_stack, iterate(outneighbors(g, s)))
-            end 
-            
+            end
+
             @inbounds while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 outn = outneighbors(g, v)
@@ -294,9 +303,9 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
                         break #GOTO A: push v_neighbor onto DFS stack and continue DFS.
-                        # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
-                        # as we save the iteration state in largev_iterstate_stack for large vertices.
-                        # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
+                    # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
+                    # as we save the iteration state in largev_iterstate_stack for large vertices.
+                    # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
                     elseif (rindex[v_neighbor] > rindex[v])
                         rindex[v] = rindex[v_neighbor]
                         is_component_root[v] = false
@@ -319,7 +328,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                         end
                         rindex[popped] = component_count
                         component_count += one_count
-                        push!(components, component)                    
+                        push!(components, component)
                     else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
                         if (rindex[popped] > rindex[dfs_stack[end]])
                             rindex[dfs_stack[end]] = rindex[popped]
@@ -328,8 +337,8 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                         # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
                         push!(stack, popped)  # For DAG inputs, the stack variable never gets touched at all.
                     end
-                    
-                else #LABEL A
+
+                else # LABEL A
                     # add unvisited neighbor to dfs
                     (u, state) = next
                     push!(dfs_stack, u)
@@ -353,12 +362,20 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
     # Scipy's graph library returns only that and lets the user sort by its values.
     return components # ,rindex
 end
-                            
+
+function _strongly_connected_components_tarjan(
+    g::AG, nb_iter_statetype::Type{S}
+) where {T<:Integer,AG<:AbstractGraph{T},S}
+    components, rindex = _strongly_connected_components_tarjan_with_index(
+        g, nb_iter_statetype
+    )
+    return components
+end
 
 """
     strongly_connected_components_kosaraju(g)
 
-Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm. 
+Compute the strongly connected components of a directed graph `g` using Kosaraju's Algorithm.
 (https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).
 
 Return an array of arrays, each of which is the entire connected component.
@@ -372,6 +389,7 @@ Space Complexity : O(|V|) {Excluding the memory required for storing graph}
 
 ### Examples
 ```jldoctest
+julia> using Graphs
 
 julia> g=SimpleDiGraph(3)
 {3, 0} directed simple Int64 graph
@@ -380,7 +398,7 @@ julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
 julia> strongly_connected_components_kosaraju(g)
-3-element Array{Array{Int64,1},1}:
+3-element Vector{Vector{Int64}}:
  [1]
  [2]
  [3]
@@ -390,18 +408,18 @@ julia> g=SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
 julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
-13-element Array{Tuple{Int64,Int64},1}:
- (1, 2)  
- (2, 3)  
- (3, 4)  
- (4, 1)  
- (3, 5)  
- (5, 6)  
- (6, 7)  
- (7, 5)  
- (5, 8)  
- (8, 9)  
- (9, 8)  
+13-element Vector{Tuple{Int64, Int64}}:
+ (1, 2)
+ (2, 3)
+ (3, 4)
+ (4, 1)
+ (3, 5)
+ (5, 6)
+ (6, 7)
+ (7, 5)
+ (5, 8)
+ (8, 9)
+ (9, 8)
  (10, 11)
  (11, 10)
 
@@ -409,102 +427,100 @@ julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
 julia> strongly_connected_components_kosaraju(g)
-4-element Array{Array{Int64,1},1}:
- [11, 10]    
+4-element Vector{Vector{Int64}}:
+ [11, 10]
  [2, 3, 4, 1]
- [6, 7, 5]   
- [9, 8]      
+ [6, 7, 5]
+ [9, 8]
 
 ```
 """
 function strongly_connected_components_kosaraju end
-@traitfn function strongly_connected_components_kosaraju(g::AG::IsDirected) where {T<:Integer, AG <: AbstractGraph{T}}
-       
-   nvg = nv(g)    
+@traitfn function strongly_connected_components_kosaraju(
+    g::AG::IsDirected
+) where {T<:Integer,AG<:AbstractGraph{T}}
+    nvg = nv(g)
 
-   components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
-   
-   order = Vector{T}()         # Vector which will store the order in which vertices are visited
-   sizehint!(order, nvg)    
-   
-   color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
-   
-   dfs_stack = Vector{T}()   # Stack used for dfs
-    
-   # dfs1
-   @inbounds for v in vertices(g)
-       
-       color[v] != 0  && continue  
-       color[v] = 1
-       
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-       
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-       
-           for u_neighbor in outneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-           
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               push!(order, u)  #Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
-               color[u] = 2
-               pop!(dfs_stack)    
-           end
-       end
-   end
-    
-   @inbounds for i in vertices(g)
+    components = Vector{Vector{T}}()    # Maintains a list of strongly connected components
+
+    order = Vector{T}()         # Vector which will store the order in which vertices are visited
+    sizehint!(order, nvg)
+
+    color = zeros(UInt8, nvg)       # Vector used as for marking the colors during dfs
+
+    dfs_stack = Vector{T}()   # Stack used for dfs
+
+    # dfs1
+    @inbounds for v in vertices(g)
+        color[v] != 0 && continue
+        color[v] = 1
+
+        # Start dfs from v
+        push!(dfs_stack, v)   # Push v to the stack
+
+        while !isempty(dfs_stack)
+            u = dfs_stack[end]
+            w = zero(T)
+
+            for u_neighbor in outneighbors(g, u)
+                if color[u_neighbor] == 0
+                    w = u_neighbor
+                    break
+                end
+            end
+
+            if w != 0
+                push!(dfs_stack, w)
+                color[w] = 1
+            else
+                push!(order, u)  # Push back in vector to store the order in which the traversal finishes(Reverse Topological Sort)
+                color[u] = 2
+                pop!(dfs_stack)
+            end
+        end
+    end
+
+    @inbounds for i in vertices(g)
         color[i] = 0    # Marking all the vertices from 1 to n as unvisited for dfs2
-   end
-   
-   # dfs2
-   @inbounds for i in 1:nvg
-    
-       v = order[end-i+1]   # Reading the order vector in the decreasing order of finish time
-       color[v] != 0  && continue  
-       color[v] = 1
-       
-       component=Vector{T}()   # Vector used to store the vertices of one component temporarily
-       
-       # Start dfs from v
-       push!(dfs_stack, v)   # Push v to the stack
-      
-       while !isempty(dfs_stack)
-           u = dfs_stack[end]
-           w = zero(T)
-       
-           for u_neighbor in inneighbors(g, u)
-               if  color[u_neighbor] == 0
-                   w = u_neighbor
-                   break
-               end
-           end
-           
-           if w != 0
-               push!(dfs_stack, w)
-               color[w] = 1
-           else
-               color[u] = 2
-               push!(component, u)   # Push u to the vector component
-               pop!(dfs_stack)    
-           end
-       end
-       
-       push!(components, component)
-   end
- 
-   return components
-end
+    end
 
+    # dfs2
+    @inbounds for i in 1:nvg
+        v = order[end - i + 1]   # Reading the order vector in the decreasing order of finish time
+        color[v] != 0 && continue
+        color[v] = 1
+
+        component = Vector{T}()   # Vector used to store the vertices of one component temporarily
+
+        # Start dfs from v
+        push!(dfs_stack, v)   # Push v to the stack
+
+        while !isempty(dfs_stack)
+            u = dfs_stack[end]
+            w = zero(T)
+
+            for u_neighbor in inneighbors(g, u)
+                if color[u_neighbor] == 0
+                    w = u_neighbor
+                    break
+                end
+            end
+
+            if w != 0
+                push!(dfs_stack, w)
+                color[w] = 1
+            else
+                color[u] = 2
+                push!(component, u)   # Push u to the vector component
+                pop!(dfs_stack)
+            end
+        end
+
+        push!(components, component)
+    end
+
+    return components
+end
 
 """
     is_strongly_connected(g)
@@ -513,6 +529,8 @@ Return `true` if directed graph `g` is strongly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> is_strongly_connected(g)
@@ -520,7 +538,9 @@ true
 ```
 """
 function is_strongly_connected end
-@traitfn is_strongly_connected(g::::IsDirected) = length(strongly_connected_components(g)) == 1
+@traitfn function is_strongly_connected(g::::IsDirected)
+    return length(strongly_connected_components(g)) == 1
+end
 
 """
     period(g)
@@ -530,6 +550,8 @@ Will throw an error if the graph is not strongly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> period(g)
@@ -538,19 +560,19 @@ julia> period(g)
 """
 function period end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function period(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
+@traitfn function period(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     !is_strongly_connected(g) && throw(ArgumentError("Graph must be strongly connected"))
 
     # First check if there's a self loop
     has_self_loops(g) && return 1
 
-    g_bfs_tree  = bfs_tree(g, 1)
-    levels      = gdistances(g_bfs_tree, 1)
-    tree_diff   = difference(g, g_bfs_tree)
+    g_bfs_tree = bfs_tree(g, 1)
+    levels = gdistances(g_bfs_tree, 1)
     edge_values = Vector{T}()
 
     divisor = 0
-    for e in edges(tree_diff)
+    for e in edges(g)
+        has_edge(g_bfs_tree, src(e), dst(e)) && continue
         @inbounds value = levels[src(e)] - levels[dst(e)] + 1
         divisor = gcd(divisor, value)
         isequal(divisor, 1) && return 1
@@ -568,11 +590,13 @@ connected components first.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [4, 5]
  [1, 2, 3]
 
@@ -581,7 +605,7 @@ Edge 2 => 1
 ```
 """
 function condensation end
-@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where T <: Integer
+@traitfn function condensation(g::::IsDirected, scc::Vector{Vector{T}}) where {T<:Integer}
     h = DiGraph{T}(length(scc))
 
     component = Vector{T}(undef, nv(g))
@@ -611,23 +635,25 @@ connected components in which the components do not have any leaving edges.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [4, 5]
  [1, 2, 3]
 
 julia> attracting_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [4, 5]
 ```
 """
 function attracting_components end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function attracting_components(g::AG::IsDirected) where {T, AG <: AbstractGraph{T}}
-    scc  = strongly_connected_components(g)
+@traitfn function attracting_components(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+    scc = strongly_connected_components(g)
     cond = condensation(g, scc)
 
     attracting = Vector{T}()
@@ -652,23 +678,25 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> neighborhood(g, 1, 2)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  2
  3
 
 julia> neighborhood(g, 1, 3)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  1
  2
  3
  4
 
 julia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  3
@@ -676,8 +704,11 @@ julia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 
  5
 ```
 """
-neighborhood(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    first.(neighborhood_dists(g, v, d, distmx; dir=dir))
+function neighborhood(
+    g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out
+) where {T<:Integer} where {U<:Real}
+    return first.(neighborhood_dists(g, v, d, distmx; dir=dir))
+end
 
 """
     neighborhood_dists(g, v, d, distmx=weights(g))
@@ -691,17 +722,19 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> neighborhood_dists(g, 1, 3)
-4-element Array{Tuple{Int64,Int64},1}:
+4-element Vector{Tuple{Int64, Int64}}:
  (1, 0)
  (2, 1)
  (3, 2)
  (4, 3)
 
 julia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
-5-element Array{Tuple{Int64,Float64},1}:
+5-element Vector{Tuple{Int64, Float64}}:
  (1, 0.0)
  (2, 1.0)
  (3, 2.0)
@@ -709,12 +742,12 @@ julia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 
  (5, 2.5)
 
 julia> neighborhood_dists(g, 4, 3)
-2-element Array{Tuple{Int64,Int64},1}:
+2-element Vector{Tuple{Int64, Int64}}:
  (4, 0)
  (5, 1)
 
 julia> neighborhood_dists(g, 4, 3, dir=:in)
-5-element Array{Tuple{Int64,Int64},1}:
+5-element Vector{Tuple{Int64, Int64}}:
  (4, 0)
  (3, 1)
  (5, 1)
@@ -722,22 +755,35 @@ julia> neighborhood_dists(g, 4, 3, dir=:in)
  (1, 3)
 ```
 """
-neighborhood_dists(g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    (dir == :out) ? _neighborhood(g, v, d, distmx, outneighbors) : _neighborhood(g, v, d, distmx, inneighbors)
+function neighborhood_dists(
+    g::AbstractGraph{T}, v::Integer, d, distmx::AbstractMatrix{U}=weights(g); dir=:out
+) where {T<:Integer} where {U<:Real}
+    return if (dir == :out)
+        _neighborhood(g, v, d, distmx, outneighbors)
+    else
+        _neighborhood(g, v, d, distmx, inneighbors)
+    end
+end
 
-
-function _neighborhood(g::AbstractGraph{T}, v::Integer, d::Real, distmx::AbstractMatrix{U}, neighborfn::Function) where T <: Integer where U <: Real
+function _neighborhood(
+    g::AbstractGraph{T},
+    v::Integer,
+    d::Real,
+    distmx::AbstractMatrix{U},
+    neighborfn::Function,
+) where {T<:Integer} where {U<:Real}
     Q = Vector{Tuple{T,U}}()
     d < zero(U) && return Q
-    push!(Q, (v,zero(U),) )
-    seen = fill(false,nv(g)); seen[v] = true #Bool Vector benchmarks faster than BitArray
-    for (src,currdist) in Q
+    push!(Q, (v, zero(U)))
+    seen = fill(false, nv(g))
+    seen[v] = true # Bool Vector benchmarks faster than BitArray
+    for (src, currdist) in Q
         currdist >= d && continue
-        for dst in neighborfn(g,src)
+        for dst in neighborfn(g, src)
             if !seen[dst]
-                seen[dst]=true
-                if currdist+distmx[src,dst] <= d
-                    push!(Q, (dst , currdist+distmx[src,dst],))
+                seen[dst] = true
+                if currdist + distmx[src, dst] <= d
+                    push!(Q, (dst, currdist + distmx[src, dst]))
                 end
             end
         end
@@ -759,23 +805,98 @@ According to Erdös-Gallai theorem, a degree sequence ``\\{d_1, ...,d_n\\}`` (so
 ```math
 \\sum_{i=1}^{r} d_i \\leq r(r-1) + \\sum_{i=r+1}^n min(r,d_i)
 ```
-for each integer r <= n-1
+for each integer r <= n-1. 
+
+See also: [`isdigraphical`](@ref)
 """
-function isgraphical(degs::Vector{<:Integer})
+function isgraphical(degs::AbstractVector{<:Integer})
+    # Check whether the degree sequence is empty
+    !isempty(degs) || return true
+    # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
-    sorted_degs = sort(degs, rev = true)
-    n = length(sorted_degs)
+    # Check that all degrees are non negative and less than n-1
+    n = length(degs)
+    all(0 .<= degs .<= n - 1) || return false
+    # Sort the degree sequence in non-increasing order
+    sorted_degs = sort(degs; rev=true)
+    # Compute the length of the degree sequence
     cur_sum = zero(UInt64)
+    # Compute the minimum of each degree and the corresponding index
     mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i = 1:n
+    @inbounds for i in 1:n
         mindeg[i] = min(i, sorted_degs[i])
     end
+    # Check if the degree sequence satisfies the Erdös-Gallai condition
     cum_min = sum(mindeg)
-    @inbounds for r = 1:(n - 1)
+    @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
         cum_min -= mindeg[r]
         cond = cur_sum <= (r * (r - 1) + cum_min)
         cond || return false
     end
+    return true
+end
+
+"""
+    isdigraphical(indegree_sequence, outdegree_sequence)
+
+Check whether the given indegree sequence and outdegree sequence are digraphical, that is whether they can be the indegree and outdegree sequence of a simple digraph (i.e. a directed graph with no loops). This implies that `indegree_sequence` and `outdegree_sequence` are not independent, as their elements respectively represent the indegrees and outdegrees that the vertices shall have.
+
+### Implementation Notes
+According to Fulkerson-Chen-Anstee theorem, a sequence ``\\{(a_1, b_1), ...,(a_n, b_n)\\}`` (sorted in descending order of a) is graphic iff ``\\sum_{i = 1}^{n} a_i = \\sum_{i = 1}^{n} b_i\\}`` and the sequence obeys the property -
+```math
+\\sum_{i=1}^{r} a_i \\leq \\sum_{i=1}^n min(r-1,b_i) + \\sum_{i=r+1}^n min(r,b_i)
+```
+for each integer 1 <= r <= n-1. 
+
+See also: [`isgraphical`](@ref)
+"""
+function isdigraphical(
+    indegree_sequence::AbstractVector{<:Integer},
+    outdegree_sequence::AbstractVector{<:Integer},
+)
+    # Check whether the degree sequences have the same length 
+    n = length(indegree_sequence)
+    n == length(outdegree_sequence) || throw(
+        ArgumentError("The indegree and outdegree sequences must have the same length.")
+    )
+    # Check whether the degree sequence is empty
+    !(isempty(indegree_sequence) && isempty(outdegree_sequence)) || return true
+    # Check all degrees are non negative and less than n-1
+    all(0 .<= indegree_sequence .<= n - 1) || return false
+    all(0 .<= outdegree_sequence .<= n - 1) || return false
+
+    sum(indegree_sequence) == sum(outdegree_sequence) || return false
+
+    _sortperm = sortperm(indegree_sequence; rev=true)
+
+    sorted_indegree_sequence = indegree_sequence[_sortperm]
+    sorted_outdegree_sequence = outdegree_sequence[_sortperm]
+
+    indegree_sum = zero(Int64)
+    outdegree_min_sum = zero(Int64)
+
+    cum_min = zero(Int64)
+
+    # The following approach, which requires substituting the line
+    # cum_min = sum([min(sorted_outdegree_sequence[i], r) for i in (1+r):n])
+    # with the line
+    # cum_min -= mindeg[r]
+    # inside the for loop below, work as well, but the values of `cum_min` at each iteration differ. To be on the safe side we implemented it as in https://en.wikipedia.org/wiki/Fulkerson%E2%80%93Chen%E2%80%93Anstee_theorem
+    #=     mindeg = Vector{Int64}(undef, n)
+        @inbounds for i = 1:n
+            mindeg[i] = min(i, sorted_outdegree_sequence[i])
+        end
+        cum_min = sum(mindeg) =#
+    # Similarly for `outdegree_min_sum`.
+
+    @inbounds for r in 1:n
+        indegree_sum += sorted_indegree_sequence[r]
+        outdegree_min_sum = sum([min(sorted_outdegree_sequence[i], r - 1) for i in 1:r])
+        cum_min = sum([min(sorted_outdegree_sequence[i], r) for i in (1 + r):n])
+        cond = indegree_sum <= (outdegree_min_sum + cum_min)
+        cond || return false
+    end
+
     return true
 end

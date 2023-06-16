@@ -1,3 +1,7 @@
+
+# Currently used to support the ismutable function that is not available in Julia < v1.7
+using Compat
+
 """
     struct Johnson <: ShortestPathAlgorithm
 
@@ -15,28 +19,31 @@ Complexity: O(|V|*|E|)
 """
 struct Johnson <: ShortestPathAlgorithm end
 
-struct JohnsonResult{T, U<:Integer} <: ShortestPathResult
+struct JohnsonResult{T,U<:Integer} <: ShortestPathResult
     parents::Matrix{U}
     dists::Matrix{T}
 end
 
-function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson) where {T, U<:Integer}
+function shortest_paths(
+    g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnson
+) where {T,U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
-    #Change when parallel implementation of Bellman Ford available
-    wt_transform = Graphs.Experimental.ShortestPaths.dists(shortest_paths(g, vertices(g), distmx, BellmanFord()))
-    
-    if !type_distmx.mutable && type_distmx !=  Graphs.DefaultDistance
-        distmx = sparse(distmx) #Change reference, not value
+    # Change when parallel implementation of Bellman Ford available
+    wt_transform = Graphs.Experimental.ShortestPaths.dists(
+        shortest_paths(g, vertices(g), distmx, BellmanFord())
+    )
+
+    @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
+        distmx = sparse(distmx) # Change reference, not value
     end
 
-    #Weight transform not needed if all weights are positive.
-    if type_distmx !=  Graphs.DefaultDistance
+    # Weight transform not needed if all weights are positive.
+    if type_distmx != Graphs.DefaultDistance
         for e in edges(g)
-            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)] 
+            distmx[src(e), dst(e)] += wt_transform[src(e)] - wt_transform[dst(e)]
         end
     end
-
 
     dists = Matrix{T}(undef, nvg, nvg)
     parents = Matrix{U}(undef, nvg, nvg)
@@ -48,10 +55,10 @@ function shortest_paths(g::AbstractGraph{U}, distmx::AbstractMatrix{T}, ::Johnso
 
     broadcast!(-, dists, dists, wt_transform)
     for v in vertices(g)
-        dists[:, v] .+= wt_transform[v] #Vertical traversal prefered
+        dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
-    if type_distmx.mutable
+    @compat if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end
@@ -62,7 +69,7 @@ end
 
 shortest_paths(g::AbstractGraph, alg::Johnson) = shortest_paths(g, weights(g), alg)
 
-function paths(s::JohnsonResult{T, U}, v::Integer) where {T, U <: Integer}
+function paths(s::JohnsonResult{T,U}, v::Integer) where {T,U<:Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)
