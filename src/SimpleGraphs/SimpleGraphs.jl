@@ -142,7 +142,7 @@ edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
 fadj(g::AbstractSimpleGraph) = g.fadjlist
 fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
 
-badj(x...) = _NI("badj")
+function badj end
 
 # handles single-argument edge constructors such as pairs and tuples
 has_edge(g::AbstractSimpleGraph, x) = has_edge(g, edgetype(g)(x))

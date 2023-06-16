@@ -17,9 +17,9 @@ using StableRNGs
 
 const testdir = dirname(@__FILE__)
 
-if VERSION >= v"1.7"
+if VERSION >= v"1.9"
     @testset "Code quality (JET.jl)" begin
-        include("jet_test.jl")
+        JET.test_package(Graphs; target_modules=(Graphs,))
     end
 end
 
