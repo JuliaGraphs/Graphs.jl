@@ -18,7 +18,7 @@ mutable struct DummyEdge <: AbstractEdge{Int} end
         @test_throws Graphs.NotImplementedError edgefun2edges(dummyedge, dummyedge)
     end
 
-    for graphfunbasic in [nv, ne, vertices, edges, is_directed, edgetype, eltype]
+    for graphfunbasic in [nv, ne, vertices, edges, is_directed, edgetype]
         @test_throws Graphs.NotImplementedError graphfunbasic(dummygraph)
     end
 

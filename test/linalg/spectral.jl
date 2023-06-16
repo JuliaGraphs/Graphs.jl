@@ -61,6 +61,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test size(n10, 1) == n10.m
         @test size(n10, 2) == n10.m
         @test eltype(n10) == Float64
+        @test eltype(typeof(n10)) == Float64
         @test !issymmetric(n10)
 
         contract!(z, n10, v)

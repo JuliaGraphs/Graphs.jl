@@ -89,7 +89,7 @@ using Random: Random
         T = @inferred(eltype(g))
         @test @inferred(nv(SimpleGraph{T}(6))) == 6
 
-        @test @inferred(eltype(SimpleGraph(T))) == T
+        @test @inferred(eltype(SimpleGraph{T})) == T
         @test @inferred(eltype(SimpleGraph{T}(adjmx1))) == T
 
         ga = SimpleGraph(10)
@@ -156,7 +156,7 @@ using Random: Random
         T = @inferred(eltype(g))
         @test @inferred(nv(SimpleDiGraph{T}(6))) == 6
 
-        @test @inferred(eltype(SimpleDiGraph(T))) == T
+        @test @inferred(eltype(SimpleDiGraph{T})) == T
         @test @inferred(eltype(SimpleDiGraph{T}(adjmx2))) == T
 
         ga = SimpleDiGraph(10)
@@ -271,7 +271,7 @@ using Random: Random
             edge_set_any = Set{Any}(edge_list)
 
             g1 = @inferred SimpleDiGraph(edge_list)
-            # we can't infer the return type of SimpleDiGraphFromIterator at the moment 
+            # we can't infer the return type of SimpleDiGraphFromIterator at the moment
             g2 = SimpleDiGraphFromIterator(edge_list)
             g3 = SimpleDiGraphFromIterator(edge_iter)
             g4 = SimpleDiGraphFromIterator(edge_set)
@@ -312,7 +312,7 @@ using Random: Random
             ))
         end
 
-        # check if multiple edges && multiple self-loops result in the 
+        # check if multiple edges && multiple self-loops result in the
         # correct number of edges & vertices
         # edges using integers < 1 should be ignored
         g_undir = SimpleGraph(0)

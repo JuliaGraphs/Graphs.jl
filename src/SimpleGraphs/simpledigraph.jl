@@ -24,7 +24,6 @@ function SimpleDiGraph(
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
 
-eltype(x::SimpleDiGraph{T}) where {T} = T
 
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """

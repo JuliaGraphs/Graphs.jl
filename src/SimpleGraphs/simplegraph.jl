@@ -19,8 +19,6 @@ function SimpleGraph(ne, fadjlist::Vector{Vector{T}}) where {T}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
-eltype(x::SimpleGraph{T}) where {T} = T
-
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
     SimpleGraph{T}(n=0)
