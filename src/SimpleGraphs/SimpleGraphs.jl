@@ -51,9 +51,9 @@ An abstract type representing a simple graph structure.
   - `ne::Integer`
 """
 
-abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T} end
+abstract type AbstractSimpleEdge{T<:Integer} <: AbstractEdge{T, Int} end
 
-abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T, AbstractSimpleEdge} end
+abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T, AbstractSimpleEdge{T}} end
 
 function show(io::IO, ::MIME"text/plain", g::AbstractSimpleGraph{T}) where T
     dir = is_directed(g) ? "directed" : "undirected"
@@ -103,8 +103,8 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
-outedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, outneighbors(v))
-inedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, inneighbors(v))
+outedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, outneighbors(g, v))
+inedges(g::AbstractSimpleGraph, v::Integer) = Edge.(v, inneighbors(g, v))
 
 get_vertex_container(g::AbstractSimpleGraph, K::Type) = Vector{K}(undef, nv(g))
 # get_edge_container(g::AbstractGraph, K::Type) = Array{K, 2}(undef, (nv(g), nv(g))

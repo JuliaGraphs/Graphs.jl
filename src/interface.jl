@@ -27,9 +27,11 @@ A trait representing a single vertex.
     AbstractEdge
 
 An abstract type representing a single edge between two vertices of a graph.
+- `V`: Vertex type
+- `U`: Weight type
 """
-abstract type AbstractEdge{V} end
-abstract type AbstractWeightedEdge{V, U} <: AbstractEdge{V} end
+abstract type AbstractEdge{V, U} end
+# abstract type AbstractWeightedEdge{V, U} <: AbstractEdge{V} end
 
 """
     AbstractEdgeIter
@@ -41,16 +43,12 @@ abstract type AbstractEdgeIter end
 """
     AbstractGraph
 
-An abstract type representing a simple graph (but which can have loops).
-"""
-abstract type AbstractGraph{V, E} end
+An abstract type representing a multi-graph.
+- `V` : Vertex type
+- `E` : Edge type
 
 """
-    AbstractGraph
-
-An abstract type representing a simple graph (but which can have loops).
-"""
-abstract type AbstractGraph{V, E} end
+abstract type AbstractGraph{V, E<:AbstractEdge{V}} end
 
 abstract type AbstractBidirectionalGraph{V, E} <: AbstractGraph{V, E} end
 
@@ -149,7 +147,7 @@ dst(e::AbstractEdge) = _NI("dst")
 
 Return the weight of edge `e`.
 """
-weight(e::AbstractWeightedEdge) = _NI("weight")
+weight(e::AbstractEdge{V, U}) where {V, U} = one(U)
 
 
 Pair(e::AbstractEdge) = _NI("Pair")
@@ -268,8 +266,8 @@ edges(g::AbstractGraph) = _NI("edges")
 """
     outedges(g, u)
 
-Return (an iterator to or collection of) the edges of a graph `g`
-leaving `u`.
+Return (an iterator to or collection of) the outcoming edges of a graph `g`
+leaving vertex `u`.
 
 ### Implementation Notes
 A returned iterator is valid for one pass over the edges, and
@@ -287,6 +285,29 @@ julia> collect(outedges(g, 1))
 ```
 """
 @traitfn outedges(g::AbstractGraph, v::V) where {V; AbstractVertex{V}} = _NI("outedges")
+
+"""
+    inedges(g, u)
+
+Return (an iterator to or collection of) the incoming edges of a graph `g`
+toward vertex `u`.
+
+### Implementation Notes
+A returned iterator is valid for one pass over the edges, and
+is invalidated by changes to `g`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(3);
+
+julia> collect(outedges(g, 1))
+1-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+ Edge 1 => 2
+```
+"""
+@traitfn inedges(g::AbstractGraph, v::V) where {V; AbstractVertex{V}} = _NI("outedges")
 
 """
     nv(g)
@@ -499,7 +520,7 @@ julia> outneighbors(g, 4)
 outneighbors(g, v) = _NI("outneighbors")
 
 """
-    get_vertex_container(g::AbstractGraph{V, E}, K::Type)
+    get_vertex_container(g::AbstractGraph, K::Type)
 
 Return a container indexed by vertices of 'g' of eltype 'K'.
 
@@ -517,7 +538,7 @@ julia> length(c)
 get_vertex_container(g::AbstractGraph{V}, K::Type) where V = Dict{V, K}()
 
 """
-    get_edge_container(g::AbstractGraph{V, E}, K::Type)
+    get_edge_container(g::AbstractGraph, K::Type)
 
 Return a container indexed by edges of 'g' of eltype 'K'.
 """

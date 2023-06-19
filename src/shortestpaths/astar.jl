@@ -39,7 +39,7 @@ function a_star_impl!(g::AbstractGraph{V, E}, # the graph
         closed_set[current] = true
 
         for e in outedges(g, current)
-            neighbor = src(e) == current : dst(e) : src(e)
+            neighbor = src(e) == current ? dst(e) : src(e)
             closed_set[neighbor] && continue
 
             tentative_g_score = g_score[current] + edge_weight(e)
@@ -75,8 +75,7 @@ function a_star(g::AbstractGraph{V, E},  # the graph
     s,                   # the start vertex
     t,                   # the end vertex
     edge_weight::Function = e -> weight(e),
-    heuristic::Function=n -> zero(T),
-    T::Type=Float64) where {V, E<:AbstractEdge}
+    heuristic::Function=n -> zero(T)) where {V, T, E<:AbstractEdge{V, T}}
 
 
     open_set = PriorityQueue{V, T}()
