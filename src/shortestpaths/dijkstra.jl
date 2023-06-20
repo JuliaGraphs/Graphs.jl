@@ -33,7 +33,7 @@ The path count of a source vertex is always `1.0`. The path count of an unreache
 
 `state.closest_vertices` holds a vector of all vertices in the graph ordered from closest to farthest.
 
-* `maxdist::Float64` (default: `Inf`) specifies the maximum path distance beyond which all path distances are assumed to be infinite (that is, they do not exist).
+* `maxdist` (default: `typemax(T)`) specifies the maximum path distance beyond which all path distances are assumed to be infinite (that is, they do not exist).
 
 ### Performance
 If using a sparse matrix for `distmx`, you *may* achieve better performance by passing in a transpose of its sparse transpose.
