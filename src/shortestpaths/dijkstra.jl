@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations.
 """
-struct DijkstraState{T <: Real,U <: Integer} <: AbstractPathState
+struct DijkstraState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -51,7 +51,7 @@ julia> using Graphs
 julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
 
 julia> ds.dists
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  0
  1
@@ -61,7 +61,7 @@ julia> ds.dists
 julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
 
 julia> ds.dists
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  0
  1
@@ -69,7 +69,8 @@ julia> ds.dists
  3
 ```
 """
-function dijkstra_shortest_paths(g::AbstractGraph,
+function dijkstra_shortest_paths(
+    g::AbstractGraph,
     srcs::Vector{U},
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
@@ -156,5 +157,15 @@ function dijkstra_shortest_paths(g::AbstractGraph,
     return DijkstraState{T,U}(parents, dists, preds, pathcounts, closest_vertices)
 end
 
-dijkstra_shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix=weights(g); allpaths=false, trackvertices=false,maxdist=typemax(eltype(distmx))) =
-dijkstra_shortest_paths(g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices,maxdist)
+function dijkstra_shortest_paths(
+    g::AbstractGraph,
+    src::Integer,
+    distmx::AbstractMatrix=weights(g);
+    allpaths=false,
+    trackvertices=false,
+    maxdist=typemax(eltype(distmx))
+)
+    return dijkstra_shortest_paths(
+        g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices, maxdist=maxdist
+    )
+end

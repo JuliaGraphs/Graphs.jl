@@ -22,25 +22,27 @@ end
 
 AStar(T::Type=Float64) = AStar(n -> zero(T))
 
-struct AStarResult{T, U<:Integer} <: ShortestPathResult
+struct AStarResult{T,U<:Integer} <: ShortestPathResult
     path::Vector{U}
     dist::T
 end
 
-function reconstruct_path!(total_path, # a vector to be filled with the shortest path
+function reconstruct_path!(
+    total_path, # a vector to be filled with the shortest path
     came_from, # a vector holding the parent of each node in the A* exploration
     end_idx, # the end vertex
-    g) # the graph
-
+    g,
+) # the graph
     curr_idx = end_idx
     while came_from[curr_idx] != curr_idx
         pushfirst!(total_path, came_from[curr_idx])
         curr_idx = came_from[curr_idx]
     end
-    push!(total_path, end_idx)
+    return push!(total_path, end_idx)
 end
 
-function a_star_impl!(g, # the graph
+function a_star_impl!(
+    g, # the graph
     goal, # the end vertex
     open_set, # an initialized heap containing the active vertices
     closed_set, # an (initialized) color-map to indicate status of vertices
@@ -48,8 +50,8 @@ function a_star_impl!(g, # the graph
     f_score, # a vector holding f scores for each node
     came_from, # a vector holding the parent of each node in the A* exploration
     distmx,
-    heuristic)
-
+    heuristic,
+)
     T = eltype(g)
     total_path = Vector{T}()
 
@@ -93,13 +95,15 @@ function calc_dist(path, distmx)
     return dist
 end
 
-function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar)
+function shortest_paths(
+    g::AbstractGraph, s::Integer, t::Integer, distmx::AbstractMatrix, alg::AStar
+)
     T = eltype(distmx)
 
     # if we do checkbounds here, we can use @inbounds in a_star_impl!
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
 
-    open_set = PriorityQueue{Integer, T}()
+    open_set = PriorityQueue{Integer,T}()
     enqueue!(open_set, s, 0)
 
     closed_set = zeros(Bool, nv(g))
@@ -113,13 +117,16 @@ function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, distmx::Abstra
     came_from = -ones(Integer, nv(g))
     came_from[s] = s
 
-    path = a_star_impl!(g, t, open_set, closed_set, g_score, f_score, came_from, distmx, alg.heuristic)
+    path = a_star_impl!(
+        g, t, open_set, closed_set, g_score, f_score, came_from, distmx, alg.heuristic
+    )
     return AStarResult(path, calc_dist(path, distmx))
 end
 
-shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar) = shortest_paths(g, s, t, weights(g), alg)
+function shortest_paths(g::AbstractGraph, s::Integer, t::Integer, alg::AStar)
+    return shortest_paths(g, s, t, weights(g), alg)
+end
 paths(s::AStarResult) = [s.path]
 paths(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
 dists(s::AStarResult) = [[s.dist]]
 dists(s::AStarResult, v::Integer) = throw(ArgumentError("AStar produces at most one path."))
-

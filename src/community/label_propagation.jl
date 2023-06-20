@@ -10,9 +10,11 @@ the second is the convergence history for each node. Will return after
 - [Raghavan et al.](http://arxiv.org/abs/0709.2938)
 """
 function label_propagation(
-    g::AbstractGraph{T}, maxiter=1000;
-    rng::Union{Nothing, AbstractRNG} = nothing, seed::Union{Nothing, Integer} = nothing
-) where T
+    g::AbstractGraph{T},
+    maxiter=1000;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+) where {T}
     rng = rng_from_rng_or_seed(rng, seed)
 
     n = nv(g)
@@ -34,7 +36,7 @@ function label_propagation(
             random_order[j] = node
         end
         range_shuffle!(rng, 1:num_active, random_order)
-        @inbounds for j = 1:num_active
+        @inbounds for j in 1:num_active
             u = random_order[j]
             old_comm = label[u]
             label[u] = vote!(rng, g, label, c, u)
@@ -49,7 +51,7 @@ function label_propagation(
     end
     fill!(c.neigh_cnt, 0)
     renumber_labels!(label, c.neigh_cnt)
-    label, convergence_hist
+    return label, convergence_hist
 end
 
 """
@@ -69,8 +71,9 @@ end
 Fast shuffle Array `a` in UnitRange `r`.
 """
 function range_shuffle!(rng::AbstractRNG, r::UnitRange, a::AbstractVector)
-    (r.start > 0 && r.stop <= length(a)) || throw(DomainError(r, "range indices are out of bounds"))
-    @inbounds for i = length(r):-1:2
+    (r.start > 0 && r.stop <= length(a)) ||
+        throw(DomainError(r, "range indices are out of bounds"))
+    @inbounds for i in length(r):-1:2
         j = rand(rng, 1:i)
         ii = i + r.start - 1
         jj = j + r.start - 1
@@ -84,7 +87,7 @@ end
 Return the label with greatest frequency.
 """
 function vote!(rng::AbstractRNG, g::AbstractGraph, m::Vector, c::NeighComm, u::Integer)
-    @inbounds for i = 1:c.neigh_last - 1
+    @inbounds for i in 1:(c.neigh_last - 1)
         c.neigh_cnt[c.neigh_pos[i]] = -1
     end
     c.neigh_last = 1
@@ -105,7 +108,7 @@ function vote!(rng::AbstractRNG, g::AbstractGraph, m::Vector, c::NeighComm, u::I
         end
     end
     # ties breaking randomly
-    range_shuffle!(rng, 1:c.neigh_last - 1, c.neigh_pos)
+    range_shuffle!(rng, 1:(c.neigh_last - 1), c.neigh_pos)
 
     result_lbl = zero(eltype(c.neigh_pos))
     for lbl in c.neigh_pos
@@ -118,11 +121,14 @@ function vote!(rng::AbstractRNG, g::AbstractGraph, m::Vector, c::NeighComm, u::I
     return result_lbl
 end
 
-function renumber_labels!(membership::Vector{T}, label_counters::Vector{Int}) where {T <: Integer}
+function renumber_labels!(
+    membership::Vector{T}, label_counters::Vector{Int}
+) where {T<:Integer}
     N = length(membership)
-    (maximum(membership) > N || minimum(membership) < 1) && throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
+    (maximum(membership) > N || minimum(membership) < 1) &&
+        throw(ArgumentError("Labels must between 1 and |V|")) # TODO 0.7: change to DomainError?
     j = one(T)
-    @inbounds for i = 1:length(membership)
+    @inbounds for i in 1:length(membership)
         k::T = membership[i]
         if k >= 1
             if label_counters[k] == 0

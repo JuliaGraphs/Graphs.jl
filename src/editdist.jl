@@ -42,6 +42,8 @@ if involved costs are equivalent.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -50,16 +52,19 @@ julia> edit_distance(g1, g2)
 (3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])
 ```
 """
-function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
-                        insert_cost::Function=v -> 1.0,
-                        delete_cost::Function=u -> 1.0,
-                        subst_cost::Function=(u, v) -> 0.5,
-                        heuristic::Function=DefaultEditHeuristic)
+function edit_distance(
+    G₁::AbstractGraph,
+    G₂::AbstractGraph;
+    insert_cost::Function=v -> 1.0,
+    delete_cost::Function=u -> 1.0,
+    subst_cost::Function=(u, v) -> 0.5,
+    heuristic::Function=DefaultEditHeuristic,
+)
 
-  # A* search heuristic
+    # A* search heuristic
     h(λ) = heuristic(λ, G₁, G₂)
 
-  # initialize open set
+    # initialize open set
     OPEN = PriorityQueue{Vector{Tuple},Float64}()
     for v in 1:nv(G₂)
         enqueue!(OPEN, [(1, v)], subst_cost(1, v) + h([(1, v)]))
@@ -95,7 +100,8 @@ function edit_distance(G₁::AbstractGraph, G₂::AbstractGraph;
 end
 
 function is_complete_path(λ, G₁, G₂)
-      us = Set(); vs = Set()
+    us = Set()
+    vs = Set()
     for (u, v) in λ
         push!(us, u)
         push!(vs, v)
@@ -113,7 +119,6 @@ function DefaultEditHeuristic(λ, G₁::AbstractGraph, G₂::AbstractGraph)
     return nv(G₂) - length(vs)
 end
 
-
 #-------------------------
 # Edit path cost functions
 #-------------------------
@@ -129,7 +134,7 @@ vertex v ∈ G₂.
 `p=1`: the p value for p-norm calculation.
 """
 function MinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1)
-    (u, v) -> norm(μ₁[u] - μ₂[v], p)
+    return (u, v) -> norm(μ₁[u] - μ₂[v], p)
 end
 
 """
@@ -142,5 +147,5 @@ Return value similar to [`MinkowskiCost`](@ref), but ensure costs smaller than 2
 `τ=1`: value specifying half of the upper limit of the Minkowski cost.
 """
 function BoundedMinkowskiCost(μ₁::AbstractVector, μ₂::AbstractVector; p::Real=1, τ::Real=1)
-    (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
+    return (u, v) -> 1 / (1 / (2τ) + exp(-norm(μ₁[u] - μ₂[v], p)))
 end

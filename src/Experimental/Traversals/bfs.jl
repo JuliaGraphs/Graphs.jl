@@ -1,5 +1,5 @@
 import Base.Sort, Base.Sort.Algorithm
-import Base:sort!
+import Base: sort!
 
 struct NOOPSortAlg <: Base.Sort.Algorithm end
 const NOOPSort = NOOPSortAlg()
@@ -24,10 +24,8 @@ function traverse_graph!(
     ss::AbstractVector,
     alg::BFS,
     state::AbstractTraversalState,
-    neighborfn::Function=outneighbors
-    ) where U<:Integer
-
-
+    neighborfn::Function=outneighbors,
+) where {U<:Integer}
     n = nv(g)
     visited = falses(n)
     cur_level = Vector{U}()
@@ -56,7 +54,7 @@ function traverse_graph!(
         postlevelfn!(state) || return false
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg=alg.sort_alg)
+        sort!(cur_level; alg=alg.sort_alg)
     end
     return true
 end
@@ -66,15 +64,15 @@ mutable struct DistanceState{T<:Integer} <: AbstractTraversalState
     n_level::T
 end
 
-@inline function initfn!(s::DistanceState{T}, u) where T 
+@inline function initfn!(s::DistanceState{T}, u) where {T}
     s.distances[u] = zero(T)
     return true
 end
-@inline function newvisitfn!(s::DistanceState, u, v) 
+@inline function newvisitfn!(s::DistanceState, u, v)
     s.distances[v] = s.n_level
     return true
 end
-@inline function postlevelfn!(s::DistanceState{T}) where T
+@inline function postlevelfn!(s::DistanceState{T}) where {T}
     s.n_level += one(T)
     return true
 end
@@ -86,7 +84,7 @@ end
 Return a vector filled with the geodesic distances of vertices in  `g` from vertex `s` / unique vertices `ss`
 using BFS traversal algorithm `alg`.  For vertices in disconnected components the default distance is `typemax(T)`.
 """
-function distances(g::AbstractGraph{T}, s, alg::BFS=BFS()) where T
+function distances(g::AbstractGraph{T}, s, alg::BFS=BFS()) where {T}
     d = fill(typemax(T), nv(g))
     state = DistanceState(d, one(T))
     traverse_graph!(g, s, alg, state)

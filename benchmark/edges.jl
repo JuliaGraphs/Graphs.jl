@@ -32,9 +32,9 @@ end
 
 n = 10000
 @benchgroup "edges" begin
-  @bench "$(n): fille" fille($n)
-  @bench "$(n): fillp" fillp($n)
-  a, b = fille(n), fillp(n)
-  @bench "$(n): tsume" tsum($a)
-  @bench "$(n): tsump" tsum($b)
+    @bench "$(n): fille" fille($n)
+    @bench "$(n): fillp" fillp($n)
+    a, b = fille(n), fillp(n)
+    @bench "$(n): tsume" tsum($a)
+    @bench "$(n): tsump" tsum($b)
 end # edges

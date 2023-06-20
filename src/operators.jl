@@ -9,6 +9,8 @@ Preserves the `eltype` of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> foreach(println, edges(complement(g)))
@@ -31,8 +33,8 @@ Edge 5 => 3
 function complement(g::Graph)
     gnv = nv(g)
     h = SimpleGraph(gnv)
-    for i = 1:gnv
-        for j = (i + 1):gnv
+    for i in 1:gnv
+        for j in (i + 1):gnv
             if !has_edge(g, i, j)
                 add_edge!(h, i, j)
             end
@@ -63,6 +65,8 @@ Preserves the eltype of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> foreach(println, edges(reverse(g)))
@@ -75,7 +79,7 @@ Edge 5 => 4
 ```
 """
 function reverse end
-@traitfn function reverse(g::G::IsDirected) where G<:AbstractSimpleGraph
+@traitfn function reverse(g::G::IsDirected) where {G<:AbstractSimpleGraph}
     gnv = nv(g)
     gne = ne(g)
     h = SimpleDiGraph(gnv)
@@ -92,7 +96,7 @@ In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
-@traitfn function reverse!(g::G::IsDirected) where G<:AbstractSimpleGraph
+@traitfn function reverse!(g::G::IsDirected) where {G<:AbstractSimpleGraph}
     g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
     return g
 end
@@ -109,6 +113,8 @@ number of vertices in the generated graph exceeds the `eltype`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -128,7 +134,7 @@ Edge 7 => 8
 Edge 8 => 6
 ```
 """
-function blockdiag(g::T, h::T) where T <: AbstractGraph
+function blockdiag(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     r = T(gnv + nv(h))
     for e in edges(g)
@@ -151,6 +157,8 @@ Preserves the eltype of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -161,7 +169,7 @@ Edge 2 => 3
 Edge 3 => 1
 ```
 """
-function intersect(g::T, h::T) where T <: AbstractGraph
+function intersect(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -183,6 +191,8 @@ Preserves the `eltype` of the input graph.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
@@ -193,7 +203,7 @@ Edge 4 => 5
 Edge 5 => 4
 ```
 """
-function difference(g::T, h::T) where T <: AbstractGraph
+function difference(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -230,13 +240,13 @@ julia> add_edge!(h, 2, 3);
 julia> f = symmetric_difference(g, h);
 
 julia> collect(edges(f))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 2 => 3
 ```
 """
-function symmetric_difference(g::T, h::T) where T <: AbstractGraph
+function symmetric_difference(g::T, h::T) where {T<:AbstractGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -279,7 +289,7 @@ julia> add_edge!(h, 4, 5);
 julia> f = union(g, h);
 
 julia> collect(edges(f))
-5-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 3 => 4
@@ -287,7 +297,7 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where T <: AbstractSimpleGraph
+function union(g::T, h::T) where {T<:AbstractSimpleGraph}
     gnv = nv(g)
     hnv = nv(h)
 
@@ -304,7 +314,6 @@ function union(g::T, h::T) where T <: AbstractSimpleGraph
     end
     return r
 end
-
 
 """
     join(g, h)
@@ -324,7 +333,7 @@ julia> g = join(star_graph(3), path_graph(2))
 {5, 9} undirected simple Int64 graph
 
 julia> collect(edges(g))
-9-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+9-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -336,16 +345,15 @@ julia> collect(edges(g))
  Edge 4 => 5
 ```
 """
-function join(g::T, h::T) where T <: AbstractGraph
+function join(g::T, h::T) where {T<:AbstractGraph}
     r = blockdiag(g, h)
     for i in vertices(g)
-        for j = (nv(g) + 1):(nv(g) + nv(h))
+        for j in (nv(g) + 1):(nv(g) + nv(h))
             add_edge!(r, i, j)
         end
     end
     return r
 end
-
 
 """
     crosspath(len::Integer, g::Graph)
@@ -365,7 +373,7 @@ julia> g = crosspath(3, path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
-12-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+12-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 2 => 3
@@ -382,7 +390,9 @@ julia> collect(edges(g))
 """
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function crosspath(len::Integer, g::AG::(!IsDirected)) where {T, AG <: AbstractGraph{T}}
+@traitfn function crosspath(
+    len::Integer, g::AG::(!IsDirected)
+) where {T,AG<:AbstractGraph{T}}
     p = path_graph(len)
     h = Graph{T}(p)
     return cartesian_product(h, g)
@@ -392,7 +402,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize Graphs natively.
 # """
-function *(g::Graph, v::Vector{T}) where T <: Real
+function *(g::Graph, v::Vector{T}) where {T<:Real}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -404,7 +414,7 @@ function *(g::Graph, v::Vector{T}) where T <: Real
     return y
 end
 
-function *(g::DiGraph, v::Vector{T}) where T <: Real
+function *(g::DiGraph, v::Vector{T}) where {T<:Real}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -422,10 +432,12 @@ Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> sum(g, 2)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  1
  2
@@ -433,7 +445,7 @@ julia> sum(g, 2)
  1
 
 julia> sum(g, 1)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  1
  1
@@ -446,7 +458,6 @@ function sum(g::AbstractGraph, dim::Int)
     dim == 2 && return outdegree(g, vertices(g))
     throw(ArgumentError("dimension must be <= 2"))
 end
-
 
 size(g::AbstractGraph) = (nv(g), nv(g))
 """
@@ -479,6 +490,8 @@ Return the number of edges in `g`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> sum(g)
@@ -516,7 +529,7 @@ julia> g = cartesian_product(star_graph(3), path_graph(3))
 {9, 12} undirected simple Int64 graph
 
 julia> collect(edges(g))
-12-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+12-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 4
  Edge 1 => 7
@@ -531,12 +544,12 @@ julia> collect(edges(g))
  Edge 8 => 9
 ```
 """
-function cartesian_product(g::G, h::G) where G <: AbstractGraph
+function cartesian_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
         i1, i2 = Tuple(e)
-        for j = 1:nv(h)
+        for j in 1:nv(h)
             add_edge!(z, id(i1, j), id(i2, j))
         end
     end
@@ -568,7 +581,7 @@ julia> g = tensor_product(star_graph(3), path_graph(3))
 {9, 8} undirected simple Int64 graph
 
 julia> collect(edges(g))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+8-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 5
  Edge 1 => 8
  Edge 2 => 4
@@ -579,7 +592,7 @@ julia> collect(edges(g))
  Edge 3 => 8
 ```
 """
-function tensor_product(g::G, h::G) where G <: AbstractGraph
+function tensor_product(g::G, h::G) where {G<:AbstractGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
@@ -595,7 +608,6 @@ function tensor_product(g::G, h::G) where G <: AbstractGraph
     end
     return z
 end
-
 
 ## subgraphs ###
 
@@ -636,7 +648,9 @@ julia> sg, vmap = induced_subgraph(g, elist)
 julia> @assert sg == g[elist]
 ```
 """
-function induced_subgraph(g::T, vlist::AbstractVector{U}) where T <: AbstractGraph where U <: Integer
+function induced_subgraph(
+    g::T, vlist::AbstractVector{U}
+) where {T<:AbstractGraph} where {U<:Integer}
     allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
     h = T(length(vlist))
     newvid = Dict{U,U}()
@@ -664,7 +678,9 @@ function induced_subgraph(g::AbstractGraph, vlist::AbstractVector{Bool})
     return induced_subgraph(g, findall(vlist))
 end
 
-function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractGraph{T} where T where U <: AbstractEdge
+function induced_subgraph(
+    g::AG, elist::AbstractVector{U}
+) where {AG<:AbstractGraph{T}} where {T} where {U<:AbstractEdge}
     h = zero(g)
     newvid = Dict{T,T}()
     vmap = Vector{T}()
@@ -683,7 +699,6 @@ function induced_subgraph(g::AG, elist::AbstractVector{U}) where AG <: AbstractG
     return h, vmap
 end
 
-
 """
     g[iter]
 
@@ -691,7 +706,6 @@ Return the subgraph induced by `iter`.
 Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 """
 getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
-
 
 """
     egonet(g, v, d, distmx=weights(g))
@@ -704,10 +718,15 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 - `dir=:out`: if `g` is directed, this argument specifies the edge direction
 with respect to `v` (i.e. `:in` or `:out`).
 """
-egonet(g::AbstractGraph{T}, v::Integer, d::Integer, distmx::AbstractMatrix{U}=weights(g); dir=:out) where T <: Integer where U <: Real =
-    g[neighborhood(g, v, d, distmx, dir=dir)]
-
-
+function egonet(
+    g::AbstractGraph{T},
+    v::Integer,
+    d::Integer,
+    distmx::AbstractMatrix{U}=weights(g);
+    dir=:out,
+) where {T<:Integer} where {U<:Real}
+    return g[neighborhood(g, v, d, distmx; dir=dir)]
+end
 
 """
     compute_shifts(n::Int, x::AbstractArray)
@@ -732,7 +751,7 @@ julia> using Graphs
 julia> g = path_graph(5);
 
 julia> collect(edges(g))
-4-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
@@ -741,7 +760,7 @@ julia> collect(edges(g))
 julia> h = merge_vertices(g, [2, 3]);
 
 julia> collect(edges(h))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
@@ -754,17 +773,19 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
 
     nvnew = nv(g) - length(vs)
     nvnew <= nv(g) || return g
-    merged_vertex > 0 || throw(ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"))
+    merged_vertex > 0 || throw(
+        ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
+    )
     vs[end] <= nv(g) || throw(ArgumentError("vertex $(vs[end]) not found in graph")) # TODO 0.7: change to DomainError?
 
     new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs)
     new_vertex_ids[vs] .= merged_vertex
 
-    #if v in vs then labels[v] == v0 else labels[v] == v
+    # if v in vs then labels[v] == v0 else labels[v] == v
     newg = SimpleGraph(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
-        if new_vertex_ids[u] != new_vertex_ids[w] #not a new self loop
+        if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
             add_edge!(newg, new_vertex_ids[u], new_vertex_ids[w])
         end
     end
@@ -790,14 +811,14 @@ julia> using Graphs
 julia> g = path_graph(5);
 
 julia> collect(edges(g))
-4-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
  Edge 4 => 5
 
 julia> merge_vertices!(g, [2, 3])
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  2
@@ -805,17 +826,19 @@ julia> merge_vertices!(g, [2, 3])
  4
 
 julia> collect(edges(g))
-3-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+3-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T}
     vs = unique!(sort(vs))
     (merged_vertex, vm) = extrema(vs)
 
-    merged_vertex > 0 || throw(ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"))
+    merged_vertex > 0 || throw(
+        ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
+    )
     vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
 
     new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs[2:end])
@@ -830,7 +853,7 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
             end
             g.fadjlist[new_vertex_ids[i]] = sort!(collect(nbrs_to_rewire))
 
-        # Collect connections to new merged vertex
+            # Collect connections to new merged vertex
         else
             nbrs_to_merge = Set{T}()
             for j in vs, e in outneighbors(g, j)
@@ -842,9 +865,8 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where U <: Integer) where T
         end
     end
 
-
     # Drop excess vertices
-    g.fadjlist = g.fadjlist[firstindex(g.fadjlist):(end - length(vs)+1)]
+    g.fadjlist = g.fadjlist[firstindex(g.fadjlist):(end - length(vs) + 1)]
 
     # Correct edge counts
     g.ne = sum(degree(g, i) for i in vertices(g)) / 2
