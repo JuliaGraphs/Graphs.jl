@@ -21,7 +21,7 @@ function yen_k_shortest_paths(g::AbstractGraph,
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
-    maxdist::Float64=Inf) where T <: Real where U <: Integer
+    maxdist::T=typemax(T)) where T <: Real where U <: Integer
 
     source == target && return YenState{T,U}([U(0)], [[source]])
 
