@@ -75,7 +75,7 @@ function dijkstra_shortest_paths(
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false,
-    maxdist::T=typemax(T)
+    maxdist=typemax(T)
     ) where T <: Real where U <: Integer
 
     nvg = nv(g)
