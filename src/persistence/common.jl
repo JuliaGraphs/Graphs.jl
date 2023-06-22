@@ -44,7 +44,7 @@ function auto_decompress(io::IO)
         b1 = read(io, UInt8)
         if !eof(io)
             b2 = read(io, UInt8)
-            if (b1, b2) == (0x1f, 0x8b)  # check magic bytes
+            if b1 == 0x1f && b2 == 0x8b  # check magic bytes
                 format = :gzip
             end
         end

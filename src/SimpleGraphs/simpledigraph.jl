@@ -380,10 +380,15 @@ function copy(g::SimpleDiGraph{T}) where {T<:Integer}
 end
 
 function ==(g::SimpleDiGraph, h::SimpleDiGraph)
-    return vertices(g) == vertices(h) &&
-           ne(g) == ne(h) &&
-           fadj(g) == fadj(h) &&
-           badj(g) == badj(h)
+    if vertices(g) == vertices(h) && ne(g) == ne(h)
+        if fadj(g) == fadj(h) && badj(g) == badj(h)
+            return true
+        else
+            return false
+        end
+    else
+        return false
+    end
 end
 
 is_directed(::Type{<:SimpleDiGraph}) = true
