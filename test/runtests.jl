@@ -20,7 +20,7 @@ const testdir = dirname(@__FILE__)
 
 if VERSION >= v"1.9"
     @testset "Code quality (JET.jl)" begin
-        JET.test_package(Graphs; target_modules=(Graphs,))
+        JET.test_package(Graphs; target_defined_modules=true)
     end
 end
 
