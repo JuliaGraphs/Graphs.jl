@@ -379,16 +379,23 @@ function copy(g::SimpleDiGraph{T}) where {T<:Integer}
     )
 end
 
-function ==(g::SimpleDiGraph, h::SimpleDiGraph)
-    if vertices(g) == vertices(h) && ne(g) == ne(h)
-        if fadj(g) == fadj(h) && badj(g) == badj(h)
-            return true
-        else
-            return false
-        end
-    else
+function ==(g::SimpleDiGraph{T1}, h::SimpleDiGraph{T2}) where {T1,T2}
+    if (vertices(g) != vertices(h)) || (ne(g) != ne(h))
         return false
     end
+    fadjlist_g, fadjlist_h = fadj(g), fadj(h)
+    for v in eachindex(fadjlist_g, fadjlist_h)
+        if fadjlist_g[v] != fadjlist_h[v]
+            return false
+        end
+    end
+    badjlist_g, badjlist_h = badj(g), badj(h)
+    for v in eachindex(badjlist_g, badjlist_h)
+        if fadjlist_g[v] != fadjlist_h[v]
+            return false
+        end
+    end
+    return true
 end
 
 is_directed(::Type{<:SimpleDiGraph}) = true

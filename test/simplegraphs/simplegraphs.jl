@@ -498,4 +498,15 @@ using Random: Random
     end
     # codecov for has_edge(::AbstractSimpleGraph, x, y)
     @test @inferred has_edge(DummySimpleGraph(), 1, 2)
+
+    # Test for SimpleDiGraph equality #249
+    @test SimpleGraph(1) != SimpleGraph(0)
+    @test SimpleGraph(1) != SimpleGraph(2)
+    @test SimpleGraph(2) != SimpleDiGraphFromIterator(Edge.([(1, 2)]))
+    @test SimpleDiGraphFromIterator(Edge.([(1, 2)])) !=
+        SimpleDiGraphFromIterator(Edge.([(2, 1)]))
+    @test SimpleDiGraphFromIterator(Edge.([(1, 2), (2, 3)])) !=
+        SimpleDiGraphFromIterator(Edge.([(1, 2), (3, 2)]))
+    @test SimpleDiGraphFromIterator(Edge.([(1, 2), (2, 3)])) !=
+        SimpleDiGraphFromIterator(Edge.([(1, 2), (1, 3)]))
 end
