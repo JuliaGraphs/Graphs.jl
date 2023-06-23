@@ -9,7 +9,7 @@ using Random: Random
     @test @inferred(eltype(SimpleGraph(adjmx1))) == Int
     @test_throws ArgumentError SimpleGraph(adjmx2)
 
-    @test_throws Graphs.NotImplementedError badj(DummySimpleGraph())
+    @test_throws MethodError badj(DummySimpleGraph())
 
     @test @inferred(ne(SimpleGraph(path_digraph(5)))) == 4
     @test @inferred(!is_directed(SimpleGraph))

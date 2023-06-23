@@ -34,7 +34,7 @@
 @deprecate CycleDiGraph(n) cycle_digraph(n)
 @deprecate WheelGraph(n) wheel_graph(n)
 @deprecate WheelDiGraph(n) wheel_digraph(n)
-@deprecate Grid(dims; periodic) grid(dims; periodic)
+@deprecate Grid(dims; periodic=false) grid(dims; periodic=false)
 @deprecate BinaryTree(k) binary_tree(k)
 @deprecate Doublebinary_tree(k) double_binary_tree(k)
 @deprecate RoachGraph(k) roach_graph(k)
