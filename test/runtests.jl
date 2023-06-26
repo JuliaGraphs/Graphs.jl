@@ -15,6 +15,7 @@ using Base64
 using Random
 using Statistics: mean, std
 using StableRNGs
+using Pkg
 
 const testdir = dirname(@__FILE__)
 
