@@ -18,8 +18,17 @@ using StableRNGs
 
 const testdir = dirname(@__FILE__)
 
-if VERSION >= v"1.9"
-    @testset "Code quality (JET.jl)" begin
+function get_pkg_version(name::AbstractString)
+    for dep in values(Pkg.dependencies())
+        if dep.name == name
+            return dep.version
+        end
+    end
+    return error("Dependency not available")
+end
+
+@testset "Code quality (JET.jl)" begin
+    if get_pkg_version("JET") >= v"0.8.3"
         JET.test_package(Graphs; target_defined_modules=true)
     end
 end
