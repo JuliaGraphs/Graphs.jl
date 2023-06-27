@@ -306,8 +306,8 @@ function symmetrize(adjmat::CombinatorialAdjacency, which=:or)
 end
 
 # per #564
-# @deprecate mul!(Y, A::Noop, B) None
-@deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
+# @deprecate mul!(Y, A::Noop, B) nothing
+@deprecate convert(::Type{Adjacency}, lapl::Laplacian) nothing
 @deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
 
 """

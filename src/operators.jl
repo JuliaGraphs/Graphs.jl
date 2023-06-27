@@ -394,7 +394,7 @@ function crosspath end
     len::Integer, g::AG::(!IsDirected)
 ) where {T,AG<:AbstractGraph{T}}
     p = path_graph(len)
-    h = Graph{T}(p)
+    h = SimpleGraph{T}(p)
     return cartesian_product(h, g)
 end
 
