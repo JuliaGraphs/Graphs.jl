@@ -511,7 +511,7 @@ length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
 @traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
-    return false
+    return true
 end
 
 @traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
