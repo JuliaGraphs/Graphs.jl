@@ -203,6 +203,15 @@
         @test @inferred(!issymmetric(g))
     end
 
+    gx = SimpleDiGraph(4)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 2, 1)
+    add_edge!(gx, 1, 3)
+    add_edge!(gx, 3, 1)
+    @testset "Matrix operations: $g" for g in testdigraphs(gx)
+        @test @inferred(issymmetric(g))
+    end
+
     nx = 20
     ny = 21
     @testset "Cartesian Product / Crosspath: $g" for g in testlargegraphs(path_graph(ny))
