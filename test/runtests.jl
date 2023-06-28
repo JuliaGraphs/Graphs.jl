@@ -84,6 +84,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "traversals/eulerian",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
