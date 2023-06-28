@@ -56,7 +56,7 @@ julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> edit_distance(g1, g2)
-(3.5, Tuple[(1, 2), (2, 1), (3, 0), (4, 3), (5, 0)])
+(3.0, Tuple[(1, 3), (2, 1), (3, 2), (4, 0), (5, 0)])
 ```
 """
 function edit_distance(
