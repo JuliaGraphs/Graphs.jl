@@ -516,7 +516,7 @@ end
 
 @traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
     for e in edges(g)
-        if !has_edge(g, dst(e), src(e))
+        if !has_edge(g, reverse(e))
             return false
         end
     end
