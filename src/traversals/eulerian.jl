@@ -40,9 +40,7 @@ function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
             return trail
         end
 
-        # get the neighbors of u
         Nu = neighbors(g, u)
-
         if length(Nu) == 1
             # if only one neighbor, delete and move on
             w = first(Nu)
