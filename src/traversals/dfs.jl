@@ -33,26 +33,25 @@ end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
+    S = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        S = Vector{T}([v])
+        push!(S, v)
         vcolor[v] = 1
         while !isempty(S)
             u = S[end]
-            w = 0
-            for n in outneighbors(g, u)
-                if vcolor[n] == 1
-                    return true
-                elseif vcolor[n] == 0
-                    w = n
-                    break
-                end
-            end
-            if w != 0
-                vcolor[w] = 1
-                push!(S, w)
-            else
+            if vcolor[u] == 1
                 vcolor[u] = 2
+                for n in outneighbors(g, u)
+                    if vcolor[n] == 2
+                        return true
+                    elseif vcolor[n] == 0
+                        vcolor[n] = 1
+                        push!(S, n)
+                    end
+                end
+            else
+                vcolor[u] = 3
                 pop!(S)
             end
         end
@@ -87,32 +86,31 @@ function topological_sort_by_dfs end
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
+    S = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        S = Vector{T}([v])
+        push!(S, v)
         vcolor[v] = 1
         while !isempty(S)
             u = S[end]
-            w = 0
-            for n in outneighbors(g, u)
-                if vcolor[n] == 1
-                    error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
-                elseif vcolor[n] == 0
-                    w = n
-                    break
-                end
-            end
-            if w != 0
-                vcolor[w] = 1
-                push!(S, w)
-            else
+            if vcolor[u] == 1
                 vcolor[u] = 2
-                push!(verts, u)
+                for n in outneighbors(g, u)
+                    if vcolor[n] == 2
+                        error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
+                    elseif vcolor[n] == 0
+                        vcolor[n] = 1
+                        push!(S, n)
+                    end
+                end
+            else
+                vcolor[u] = 3
                 pop!(S)
+                pushfirst!(verts, u)
             end
         end
     end
-    return reverse(verts)
+    return verts
 end
 
 """
