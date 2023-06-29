@@ -32,27 +32,30 @@ function is_cyclic end
 end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+    # 0 if not visited, 1 if visited, 2 if in the current dfs path, 3 if fully explored 
     vcolor = zeros(UInt8, nv(g))
-    S = Vector{T}()
+    vertex_queue = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        push!(S, v)
+        push!(vertex_queue, v)
         vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
+        while !isempty(vertex_queue)
+            u = vertex_queue[end]
             if vcolor[u] == 1
                 vcolor[u] = 2
                 for n in outneighbors(g, u)
+                    # we hit a loop when reaching back a vertex of the main path
                     if vcolor[n] == 2
                         return true
                     elseif vcolor[n] == 0
+                        # we store neighbors, but these are not yet on the path
                         vcolor[n] = 1
-                        push!(S, n)
+                        push!(vertex_queue, n)
                     end
                 end
             else
                 vcolor[u] = 3
-                pop!(S)
+                pop!(vertex_queue)
             end
         end
     end
@@ -84,28 +87,31 @@ graph `g` as a vector of vertices in topological order.
 function topological_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
+    # 0 if not visited, 1 if visited, 2 if in the current dfs path, 3 if fully explored 
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    S = Vector{T}()
+    vertex_queue = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        push!(S, v)
+        push!(vertex_queue, v)
         vcolor[v] = 1
-        while !isempty(S)
-            u = S[end]
+        while !isempty(vertex_queue)
+            u = vertex_queue[end]
             if vcolor[u] == 1
                 vcolor[u] = 2
                 for n in outneighbors(g, u)
+                    # we hit a loop when reaching back a vertex of the main path
                     if vcolor[n] == 2
                         error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
                     elseif vcolor[n] == 0
+                        # we store neighbors, but these are not yet on the path
                         vcolor[n] = 1
-                        push!(S, n)
+                        push!(vertex_queue, n)
                     end
                 end
             else
                 vcolor[u] = 3
-                pop!(S)
+                pop!(vertex_queue)
                 pushfirst!(verts, u)
             end
         end
