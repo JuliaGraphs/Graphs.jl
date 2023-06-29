@@ -169,3 +169,91 @@ function dijkstra_shortest_paths(
         g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices, maxdist=maxdist
     )
 end
+
+function relax(u::U, 
+               v::U, 
+               distmx::AbstractMatrix{T}, 
+               dists::Vector{T}, 
+               parents::Vector{U}, 
+               visited::Vector{Bool}, 
+               Q::PriorityQueue{U,T}
+) where {T<:Real} where {U<:Integer}
+     alt = dists[u] + distmx[u, v]
+
+     if !visited[v]
+         visited[v] = true
+         dists[v] = alt
+         parents[v] = u
+         Q[v] = alt
+     elseif alt < dists[v]
+         dists[v] = alt
+         parents[v] = u
+         Q[v] = alt
+     end
+end
+
+function bidijkstra_shortest_path(
+    g::AbstractGraph,
+    src::U,
+    dst::U,
+    distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real} where {U<:Integer}
+    if src == dst
+        return Int64[]
+    end
+    # keep weight of the best seen path and the midpoint vertex
+    mu, mid_v = typemax(T), -1
+
+    nvg = nv(g)
+    dists_f, dists_b= fill(typemax(T), nvg), fill(typemax(T), nvg)
+
+    parents_f, parents_b= zeros(U, nvg), zeros(U, nvg)
+
+    visited_f, visited_b = zeros(Bool, nvg),zeros(Bool, nvg)
+
+    preds_f, preds_b = fill(Vector{U}(), nvg), fill(Vector{U}(), nvg)
+
+    Qf, Qb = PriorityQueue{U,T}(), PriorityQueue{U,T}()
+
+    dists_f[src] = zero(T)
+    visited_f[src] = true
+    Qf[src] = zero(T)
+
+    dists_b[dst] = zero(T)
+    visited_b[dst] = true
+    Qb[dst] = zero(T)
+
+    while !isempty(Qf) && !isempty(Qb)
+        uf, ub = dequeue!(Qf), dequeue!(Qb)
+
+        for v in outneighbors(g, uf)
+            relax(uf, v, distmx, dists_f, parents_f, visited_f, Qf)
+            if visited_b[v] && (dists_f[uf]+distmx[uf,v]+dists_b[v]) < mu
+                # we have found an edge between the forward and backward exploration
+                mu = dists_f[uf]+distmx[uf,v]+dists_b[v]
+                mid_v = v
+            end
+        end
+
+        for v in inneighbors(g, ub)
+            relax(ub, v, distmx, dists_b, parents_b, visited_b, Qb)
+            if visited_f[v] && (dists_f[v]+distmx[v,ub]+dists_b[ub]) < mu
+                # we have found an edge between the forward and backward exploration
+                mu = dists_f[v]+distmx[v,ub]+dists_b[ub]
+                mid_v = v
+            end
+        end
+        if dists_f[uf]+dists_b[ub] >= mu
+            break
+        end
+    end
+    if mid_v == -1
+        # no path exists between source and destination
+        return Int64[]
+    end
+    ds_f = DijkstraState{T,U}(parents_f, dists_f, preds_f, zeros(nvg), Vector{U}())
+    ds_b = DijkstraState{T,U}(parents_b, dists_b, preds_b, zeros(nvg), Vector{U}())
+    path = vcat(enumerate_paths(ds_f, mid_v), reverse(enumerate_paths(ds_b, mid_v)[1:end-1]))
+    return path
+end
+
