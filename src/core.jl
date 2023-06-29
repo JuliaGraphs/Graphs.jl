@@ -6,6 +6,13 @@ An abstract type that provides information from shortest paths calculations.
 abstract type AbstractPathState end
 
 """
+    AbstractPathIterator
+
+An Abstract type that can be iterated over to get all paths encoded in an `AbstractPathState`.
+"""
+abstract type AbstractPathIterator end
+
+"""
     is_ordered(e)
 
 Return true if the source vertex of edge `e` is less than or equal to

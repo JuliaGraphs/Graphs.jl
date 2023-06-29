@@ -234,6 +234,7 @@ export
     maximum_adjacency_visit,
 
     # a-star, dijkstra, bellman-ford, floyd-warshall, desopo-pape, spfa
+    FloydWarshallIterator,
     a_star,
     dijkstra_shortest_paths,
     bellman_ford_shortest_paths,
