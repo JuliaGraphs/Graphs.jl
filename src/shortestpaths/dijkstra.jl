@@ -192,6 +192,30 @@ function relax(u::U,
      end
 end
 
+"""
+    bidijkstra_shortest_paths(g, src, dst, distmx=weights(g));
+
+Perform [Bidirectional Dijkstra's algorithm](https://www.homepages.ucl.ac.uk/~ucahmto/math/2020/05/30/bidirectional-dijkstra.html)
+on a graph, computing the shortest path between `src` and `dst`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> bidijkstra_shortest_path(cycle_graph(5), 1, 4);
+3-element Vector{Int64}:
+ 1
+ 5
+ 4
+
+julia> bidijkstra_shortest_path(path_graph(5), 1, 4);
+4-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+```
+"""
 function bidijkstra_shortest_path(
     g::AbstractGraph,
     src::U,
