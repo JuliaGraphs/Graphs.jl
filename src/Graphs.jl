@@ -248,6 +248,7 @@ export
     transitivereduction,
     yen_k_shortest_paths,
     desopo_pape_shortest_paths,
+    bidijkstra_shortest_path,
 
     # centrality
     betweenness_centrality,
