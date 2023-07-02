@@ -38,7 +38,7 @@ end
 function local_clustering!(storage::AbstractVector{Bool}, g::AbstractGraph, v::Integer)
     k = degree(g, v)
     k <= 1 && return (0, 0)
-    neighs = neighbors(g, v)
+    neighs = collect_if_not_vector(neighbors(g, v))
     tcount = 0
     storage[neighs] .= true
 
@@ -63,7 +63,7 @@ function local_clustering!(
     i = 0
     for (i, v) in enumerate(vs)
         ntriang[i], nalltriang[i] = local_clustering!(storage, g, v)
-        storage[neighbors(g, v)] .= false
+        storage[collect_if_not_vector(neighbors(g, v))] .= false
     end
     return ntriang, nalltriang
 end
