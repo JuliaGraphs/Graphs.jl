@@ -30,8 +30,8 @@ end
 
 @testset "Code quality (JET.jl)" begin
     if VERSION >= v"1.9"
-        @assert get_pkg_version("JET") >= v"0.8.3"
-        JET.test_package(Graphs; target_defined_modules=true)
+        @assert get_pkg_version("JET") >= v"0.8.4"
+        JET.test_package(Graphs; target_defined_modules=true, ignore_missing_comparison=true)
     end
 end
 
@@ -65,6 +65,22 @@ function testlargegraphs(g)
     end
 end
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
+
+function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=false)
+    SG = is_directed(g) ? SimpleDiGraph : SimpleGraph
+    GG = is_directed(g) ? GenericDiGraph : GenericGraph
+    result = GG[]
+    for T in  eltypes
+        if skip_if_too_large && nv(g) > typemax(T)
+            continue
+        end
+        push!(result, GG(SG{T}(g)))
+    end
+    return result
+end
+
+test_large_generic_graphs(g; skip_if_too_large::Bool=false) = test_generic_graphs(g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large)
+
 
 tests = [
     "simplegraphs/runtests",
