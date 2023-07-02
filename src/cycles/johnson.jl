@@ -1,3 +1,7 @@
+# TODO most functions here do not work for general abstract graphs yet
+# as most of them relay on induced_subgraph, which expects the graph type
+# to be modifiable.
+
 abstract type Visitor{T<:Integer} end
 
 """
