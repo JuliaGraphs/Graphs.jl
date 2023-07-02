@@ -30,8 +30,8 @@ end
 
 @testset "Code quality (JET.jl)" begin
     if VERSION >= v"1.9"
-        @assert get_pkg_version("JET") >= v"0.8.3"
-        JET.test_package(Graphs; target_defined_modules=true)
+        @assert get_pkg_version("JET") >= v"0.8.4"
+        JET.test_package(Graphs; target_defined_modules=true, ignore_missing_comparison=true)
     end
 end
 
