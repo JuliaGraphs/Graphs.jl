@@ -35,17 +35,25 @@ function articulation end
         cnt::T = one(T)
         first_time = true
 
+        # TODO the algorithm currently relies on the assumption that
+        # outneighbors(g, v) is indexable. This assumption might not be true
+        # in general, so in case that outneighbors does not produce a vector
+        # we collect these vertices. This might lead to a large number of
+        # allocations, so we should find a way to handle that case differently,
+        # or require inneighbors, outneighbors and neighbors to always
+        # return indexable collections.
+
         while !isempty(s) || first_time
             first_time = false
             if wi < 1
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
-                v_neighbors = outneighbors(g, v)
+                v_neighbors = collect_if_not_vector(outneighbors(g, v))
                 wi = 1
             else
                 wi, u, v = pop!(s)
-                v_neighbors = outneighbors(g, v)
+                v_neighbors = collect_if_not_vector(outneighbors(g, v))
                 w = v_neighbors[wi]
                 low[v] = min(low[v], low[w])
                 if low[w] >= pre[v] && u != v
