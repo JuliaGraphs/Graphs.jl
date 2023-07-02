@@ -81,7 +81,7 @@ function betweenness_centrality(
 )
     return betweenness_centrality(
         g,
-        sample(vertices(g), k; rng=rng, seed=seed),
+        sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed),
         distmx;
         normalize=normalize,
         endpoints=endpoints,
@@ -124,8 +124,7 @@ function _accumulate_endpoints!(
     v1 = collect(Base.OneTo(n_v))
     v2 = state.dists
     S = reverse(state.closest_vertices)
-    s = vertices(g)[si]
-    betweenness[s] += length(S) - 1    # 289
+    betweenness[si] += length(S) - 1    # 289
 
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
