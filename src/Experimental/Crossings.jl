@@ -116,7 +116,7 @@ function find_crossings(graph::SimpleGraph, pos::Vector{GeometryBasics.Point{2,F
         (segments_to_edges[seg1], segments_to_edges[seg2]) => point for
         ((seg1, seg2), point) in intersections
     )
-    return (crossings, segments_to_edges)
+    return (crossings, segments_to_edges, segments)
 end
 
 function compute_intersections(segments::Vector{Segment{2,Float32,Vector{Meshes.Point2f}}})
@@ -138,8 +138,8 @@ function find_crossings(graph::AbstractGraph, pos::Vector{GeometryBasics.Point{2
         (segments_to_edges[seg1], segments_to_edges[seg2]) => point for
         ((seg1, seg2), point) in intersections
     )
-    println(length(crossings))
-    return (crossings, segments_to_edges)
+
+    return (crossings, segments_to_edges, segments)
 end
 
 
@@ -187,15 +187,14 @@ function crossing_construction(
 )
     #Intakes a Graph G and vector of length nv(G) with vertex positions   
     info = crossinginfo(G, positions)
-    println(typeof(info))
     edge_to_id = get_edge_to_id(G)
     edges_to_segments = get_edges_to_segments(G, positions)
     info[:edge_to_id] = edge_to_id
     info[:edges_to_segments] = edges_to_segments
-
-    crossings, segments_to_edges = find_crossings(G, positions)
+    crossings, segments_to_edges, segments = find_crossings(G, positions)
     info[:segments_to_edges] = segments_to_edges
     info[:crossings] = crossings
+    info[:segments] = segments
     return info
 end
 
@@ -220,7 +219,6 @@ function crossing_graph(
     },
 )
     #Where a vertex in this graph represents a unique crossing pt. And two are connected if their crossings share an edge.
-    print(typeof(crossings))
     F = SimpleGraph(length(crossings))
     crossing_to_id = Dict(c => i for (i, c) in enumerate(keys(crossings)))
 
@@ -236,7 +234,7 @@ end
 
 
 function crossing_graph_edge(crossings_matrix::SparseMatrixCSC)
-    #Where a vertex represents a edge with an crossing, and two vertices are conencted if as "edges" in old graph they have a crossing together 
+    #Where a vertex represents an edge with a crossing, and two vertices are conencted if as "edges" in old graph they have a crossing together 
 
     # Find the indices of all non-zero elements
     rows, cols, _ = findnz(crossings_matrix)
