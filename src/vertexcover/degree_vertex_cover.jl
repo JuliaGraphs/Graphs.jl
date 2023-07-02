@@ -21,11 +21,11 @@ Memory: O(|V|)
 julia> using Graphs
 
 julia> vertex_cover(path_graph(3), DegreeVertexCover())
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  2
 
 julia> vertex_cover(cycle_graph(3), DegreeVertexCover())
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  3
 ```

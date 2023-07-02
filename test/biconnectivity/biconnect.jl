@@ -23,7 +23,7 @@
         [Edge(11, 12)],
     ]
 
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         bcc = @inferred(biconnected_components(g))
         @test bcc == a
         @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
@@ -50,7 +50,7 @@
         [Edge(1, 4), Edge(3, 4), Edge(2, 3), Edge(1, 2)],
     ]
 
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         bcc = @inferred(biconnected_components(g))
         @test bcc == a
         @test typeof(bcc) === Vector{Vector{Edge{eltype(g)}}}
@@ -59,6 +59,6 @@
     # Non regression test for #13
     g = complete_graph(4)
     a = [[Edge(2, 4), Edge(1, 4), Edge(3, 4), Edge(1, 3), Edge(2, 3), Edge(1, 2)]]
-    bcc = @inferred(biconnected_components(g))
+    bcc = @inferred(biconnected_components(GenericGraph(g)))
     @test bcc == a
 end

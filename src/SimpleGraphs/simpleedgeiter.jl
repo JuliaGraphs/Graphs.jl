@@ -15,10 +15,10 @@ julia> es = edges(g)
 SimpleEdgeIter 2
 
 julia> e_it = iterate(es)
-(Edge 1 => 2, SimpleEdgeIterState [2, 2])
+(Edge 1 => 2, (1, 2))
 
 julia> iterate(es, e_it[2])
-(Edge 2 => 3, SimpleEdgeIterState [0, 1])
+(Edge 2 => 3, (2, 3))
 ```
 """
 struct SimpleEdgeIter{G} <: AbstractEdgeIter

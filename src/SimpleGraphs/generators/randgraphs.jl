@@ -15,6 +15,8 @@ If not specified, the element type `T` is the type of `nv`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleGraph(5, 7)
 {5, 7} undirected simple Int64 graph
 ```
@@ -63,6 +65,8 @@ If not specified, the element type `T` is the type of `nv`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleDiGraph(5, 7)
 {5, 7} directed simple Int64 graph
 ```
@@ -135,9 +139,14 @@ probability `p`.
 - `seed=nothing`: set the RNG seed.
 
 # Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> erdos_renyi(10, 0.5)
 {10, 20} undirected simple Int64 graph
+```
+```jldoctest
+julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
 {10, 49} directed simple Int64 graph
@@ -173,6 +182,8 @@ graph with `n` vertices and `ne` edges.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> erdos_renyi(10, 30)
 {10, 30} undirected simple Int64 graph
 
@@ -213,8 +224,10 @@ from the expected values are likely.
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 
 # Examples
-```jldoctest
+```
 # 1)
+julia> using Graphs
+
 julia> g = expected_degree_graph([3, 1//2, 1//2, 1//2, 1//2])
 {5, 3} undirected simple Int64 graph
 
@@ -303,6 +316,8 @@ be rewired randomly.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> watts_strogatz(10, 4, 0.3)
 {10, 20} undirected simple Int64 graph
 
@@ -402,11 +417,16 @@ enough `p` and `k`, this should not deviate much from the original model.
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
 - `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
 
 ## Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> newman_watts_strogatz(10, 4, 0.3)
 {10, 26} undirected simple Int64 graph
+````
+```jldoctest
 
 julia> newman_watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
 {10, 36} directed simple Int8 graph
@@ -421,8 +441,9 @@ function newman_watts_strogatz(
     β::Real;
     is_directed::Bool=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
 )
-    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng)
+    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed)
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
@@ -494,6 +515,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barabasi_albert(50, 3)
 {50, 141} undirected simple Int64 graph
 
@@ -520,6 +543,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barabasi_albert(10, 3, 2)
 {10, 14} undirected simple Int64 graph
 
@@ -559,6 +584,8 @@ already present in the system by preferential attachment.
 - `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = cycle_graph(4)
 {4, 4} undirected simple Int64 graph
 
@@ -657,17 +684,31 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 
 ## Examples
-```jldoctest
+```
 julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1])
 {4, 5} undirected simple Int64 graph
 
 julia> edges(g) |> collect
-5-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
  Edge 2 => 3
  Edge 2 => 4
+```
+```jldoctest
+julia> using Graphs
+
+julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1], seed=123)
+{4, 5} undirected simple Int64 graph
+
+julia> edges(g) |> collect
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 2 => 3
+ Edge 2 => 4
+ Edge 3 => 4
 ```
 """
 function static_fitness_model(
@@ -715,11 +756,13 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
 {4, 6} directed simple Int64 graph
 
 julia> edges(g) |> collect
-6-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+6-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -977,6 +1020,8 @@ Generates a random labelled tree, drawn uniformly at random over the ``n^{n-2}``
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> uniform_tree(10)
 {10, 9} undirected simple Int64 graph
 ```
@@ -1050,6 +1095,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> random_tournament_digraph(5)
 {5, 10} directed simple Int64 graph
 
@@ -1423,6 +1470,8 @@ the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> dorogovtsev_mendes(10)
 {10, 17} undirected simple Int64 graph
 
@@ -1472,10 +1521,12 @@ DAG's have a finite topological order; this order is randomly generated via "ord
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> random_orientation_dag(complete_graph(10))
 {10, 45} directed simple Int64 graph
 
-julia> random_orientation_dag(star_graph(Int8(10)), 123)
+julia> random_orientation_dag(star_graph(Int8(10)), seed=123)
 {10, 9} directed simple Int8 graph
 ```
 """

@@ -80,16 +80,18 @@ For directed graphs, see [`strongly_connected_components`](@ref) and
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> connected_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [1, 2, 3]
 
 julia> g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [1, 2, 3]
  [4, 5]
 ```
@@ -109,6 +111,8 @@ if graph `g` is weakly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> is_connected(g)
@@ -139,10 +143,12 @@ For undirected graphs this is equivalent to the [`connected_components`](@ref) o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
 
 julia> weakly_connected_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [1, 2, 3]
 ```
 """
@@ -156,6 +162,8 @@ this function is equivalent to [`is_connected(g)`](@ref).
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> is_weakly_connected(g)
@@ -187,15 +195,16 @@ The order of the components is not part of the API contract.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [3]
  [1, 2]
 
-
-julia> g=SimpleDiGraph(11)
+julia> g = SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
 julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
@@ -204,12 +213,11 @@ julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-4-element Array{Array{Int64,1},1}:
+4-element Vector{Vector{Int64}}:
  [8, 9]
  [5, 6, 7]
  [1, 2, 3, 4]
  [10, 11]
-
 ```
 """
 function strongly_connected_components end
@@ -325,6 +333,7 @@ Space Complexity : O(|V|) {Excluding the memory required for storing graph}
 
 ### Examples
 ```jldoctest
+julia> using Graphs
 
 julia> g=SimpleDiGraph(3)
 {3, 0} directed simple Int64 graph
@@ -333,7 +342,7 @@ julia> g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
 {3, 2} directed simple Int64 graph
 
 julia> strongly_connected_components_kosaraju(g)
-3-element Array{Array{Int64,1},1}:
+3-element Vector{Vector{Int64}}:
  [1]
  [2]
  [3]
@@ -343,7 +352,7 @@ julia> g=SimpleDiGraph(11)
 {11, 0} directed simple Int64 graph
 
 julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
-13-element Array{Tuple{Int64,Int64},1}:
+13-element Vector{Tuple{Int64, Int64}}:
  (1, 2)
  (2, 3)
  (3, 4)
@@ -362,7 +371,7 @@ julia> g = SimpleDiGraph(Edge.(edge_list))
 {11, 13} directed simple Int64 graph
 
 julia> strongly_connected_components_kosaraju(g)
-4-element Array{Array{Int64,1},1}:
+4-element Vector{Vector{Int64}}:
  [11, 10]
  [2, 3, 4, 1]
  [6, 7, 5]
@@ -464,6 +473,8 @@ Return `true` if directed graph `g` is strongly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> is_strongly_connected(g)
@@ -483,6 +494,8 @@ Will throw an error if the graph is not strongly connected.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
 
 julia> period(g)
@@ -521,11 +534,13 @@ connected components first.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [4, 5]
  [1, 2, 3]
 
@@ -564,16 +579,18 @@ connected components in which the components do not have any leaving edges.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
 {5, 6} directed simple Int64 graph
 
 julia> strongly_connected_components(g)
-2-element Array{Array{Int64,1},1}:
+2-element Vector{Vector{Int64}}:
  [4, 5]
  [1, 2, 3]
 
 julia> attracting_components(g)
-1-element Array{Array{Int64,1},1}:
+1-element Vector{Vector{Int64}}:
  [4, 5]
 ```
 """
@@ -605,23 +622,25 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> neighborhood(g, 1, 2)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  2
  3
 
 julia> neighborhood(g, 1, 3)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  1
  2
  3
  4
 
 julia> neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  3
@@ -647,17 +666,19 @@ with respect to `v` of the edges to be considered. Possible values: `:in` or `:o
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> neighborhood_dists(g, 1, 3)
-4-element Array{Tuple{Int64,Int64},1}:
+4-element Vector{Tuple{Int64, Int64}}:
  (1, 0)
  (2, 1)
  (3, 2)
  (4, 3)
 
 julia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
-5-element Array{Tuple{Int64,Float64},1}:
+5-element Vector{Tuple{Int64, Float64}}:
  (1, 0.0)
  (2, 1.0)
  (3, 2.0)
@@ -665,12 +686,12 @@ julia> neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 
  (5, 2.5)
 
 julia> neighborhood_dists(g, 4, 3)
-2-element Array{Tuple{Int64,Int64},1}:
+2-element Vector{Tuple{Int64, Int64}}:
  (4, 0)
  (5, 1)
 
 julia> neighborhood_dists(g, 4, 3, dir=:in)
-5-element Array{Tuple{Int64,Int64},1}:
+5-element Vector{Tuple{Int64, Int64}}:
  (4, 0)
  (3, 1)
  (5, 1)

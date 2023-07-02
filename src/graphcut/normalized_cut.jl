@@ -115,7 +115,7 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
     return (W1, W2, vmap1, vmap2)
 end
 
-function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
+function _recursive_normalized_cut(W, thres, num_cuts)
     m, n = size(W)
     D = Diagonal(vec(sum(W; dims=2)))
 
