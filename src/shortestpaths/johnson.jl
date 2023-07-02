@@ -28,7 +28,7 @@ function johnson_shortest_paths(
     nvg = nv(g)
     type_distmx = typeof(distmx)
     # Change when parallel implementation of Bellman Ford available
-    wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
+    wt_transform = bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx).dists
 
     @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
         distmx = sparse(distmx) # Change reference, not value
