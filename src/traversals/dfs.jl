@@ -34,13 +34,13 @@ end
 @traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     # 0 if not visited, 1 if visited, 2 if in the current dfs path, 3 if fully explored 
     vcolor = zeros(UInt8, nv(g))
-    vertex_queue = Vector{T}()
+    vertex_stack = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        push!(vertex_queue, v)
+        push!(vertex_stack, v)
         vcolor[v] = 1
-        while !isempty(vertex_queue)
-            u = vertex_queue[end]
+        while !isempty(vertex_stack)
+            u = vertex_stack[end]
             if vcolor[u] == 1
                 vcolor[u] = 2
                 for n in outneighbors(g, u)
@@ -50,12 +50,12 @@ end
                     elseif vcolor[n] == 0
                         # we store neighbors, but these are not yet on the path
                         vcolor[n] = 1
-                        push!(vertex_queue, n)
+                        push!(vertex_stack, n)
                     end
                 end
             else
                 vcolor[u] = 3
-                pop!(vertex_queue)
+                pop!(vertex_stack)
             end
         end
     end
@@ -90,13 +90,13 @@ function topological_sort_by_dfs end
     # 0 if not visited, 1 if visited, 2 if in the current dfs path, 3 if fully explored 
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
-    vertex_queue = Vector{T}()
+    vertex_stack = Vector{T}()
     for v in vertices(g)
         vcolor[v] != 0 && continue
-        push!(vertex_queue, v)
+        push!(vertex_stack, v)
         vcolor[v] = 1
-        while !isempty(vertex_queue)
-            u = vertex_queue[end]
+        while !isempty(vertex_stack)
+            u = vertex_stack[end]
             if vcolor[u] == 1
                 vcolor[u] = 2
                 for n in outneighbors(g, u)
@@ -106,12 +106,12 @@ function topological_sort_by_dfs end
                     elseif vcolor[n] == 0
                         # we store neighbors, but these are not yet on the path
                         vcolor[n] = 1
-                        push!(vertex_queue, n)
+                        push!(vertex_stack, n)
                     end
                 end
             else
                 vcolor[u] = 3
-                pop!(vertex_queue)
+                pop!(vertex_stack)
                 pushfirst!(verts, u)
             end
         end
