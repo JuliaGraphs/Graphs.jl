@@ -110,7 +110,6 @@ function dijkstra_shortest_paths(
             alt = d + distmx[u, v]
 
             alt > maxdist && continue
-            
             relax(u,v,distmx,dists,parents,visited,H;
                   allpaths=allpaths,
                   pathcounts=pathcounts,
@@ -149,8 +148,8 @@ function dijkstra_shortest_paths(
     )
 end
 
-function relax(u::U, 
-               v::U, 
+function relax(u,
+               v, 
                distmx::AbstractMatrix{T}, 
                dists::Vector{T}, 
                parents::Vector{U}, 
