@@ -223,29 +223,20 @@ function bidijkstra_shortest_path(
     distmx::AbstractMatrix{T}=weights(g)
 ) where {T<:Real} where {U<:Integer}
     if src == dst
-        return Int64[]
+        return Int[]
     end
     # keep weight of the best seen path and the midpoint vertex
     mu, mid_v = typemax(T), -1
-
     nvg = nv(g)
     dists_f, dists_b= fill(typemax(T), nvg), fill(typemax(T), nvg)
-
     parents_f, parents_b= zeros(U, nvg), zeros(U, nvg)
-
     visited_f, visited_b = zeros(Bool, nvg),zeros(Bool, nvg)
-
     preds_f, preds_b = fill(Vector{U}(), nvg), fill(Vector{U}(), nvg)
-
     Qf, Qb = PriorityQueue{U,T}(), PriorityQueue{U,T}()
 
-    dists_f[src] = zero(T)
-    visited_f[src] = true
-    Qf[src] = zero(T)
-
-    dists_b[dst] = zero(T)
-    visited_b[dst] = true
-    Qb[dst] = zero(T)
+    dists_f[src], dists_b[dst]= zero(T), zero(T)
+    visited_f[src], visited_b[dst]= true, true
+    Qf[src], Qb[dst] = zero(T), zero(T)
 
     while !isempty(Qf) && !isempty(Qb)
         uf, ub = dequeue!(Qf), dequeue!(Qb)
@@ -273,7 +264,7 @@ function bidijkstra_shortest_path(
     end
     if mid_v == -1
         # no path exists between source and destination
-        return Int64[]
+        return Int[]
     end
     ds_f = DijkstraState{T,U}(parents_f, dists_f, preds_f, zeros(nvg), Vector{U}())
     ds_b = DijkstraState{T,U}(parents_b, dists_b, preds_b, zeros(nvg), Vector{U}())
