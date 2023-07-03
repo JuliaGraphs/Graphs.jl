@@ -83,7 +83,7 @@ function dijkstra_shortest_paths(
     parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
 
-    pathcounts = zeros(nvg)
+    pathcounts = zeros(Int, nvg)
     preds = fill(Vector{U}(), nvg)
     H = PriorityQueue{U,T}()
     # fill creates only one array.
@@ -110,33 +110,12 @@ function dijkstra_shortest_paths(
             alt = d + distmx[u, v]
 
             alt > maxdist && continue
-
-            if !visited[v]
-                visited[v] = true
-                dists[v] = alt
-                parents[v] = u
-
-                pathcounts[v] += pathcounts[u]
-                if allpaths
-                    preds[v] = [u;]
-                end
-                H[v] = alt
-            elseif alt < dists[v]
-                dists[v] = alt
-                parents[v] = u
-                #615
-                pathcounts[v] = pathcounts[u]
-                if allpaths
-                    resize!(preds[v], 1)
-                    preds[v][1] = u
-                end
-                H[v] = alt
-            elseif alt == dists[v]
-                pathcounts[v] += pathcounts[u]
-                if allpaths
-                    push!(preds[v], u)
-                end
-            end
+            
+            relax(u,v,distmx,dists,parents,visited,H;
+                  allpaths=allpaths,
+                  pathcounts=pathcounts,
+                  preds=preds
+            )
         end
     end
 
@@ -176,20 +155,45 @@ function relax(u::U,
                dists::Vector{T}, 
                parents::Vector{U}, 
                visited::Vector{Bool}, 
-               Q::PriorityQueue{U,T}
+               Q::PriorityQueue{U,T};
+               allpaths=false,
+               pathcounts=nothing,
+               preds=nothing
 ) where {T<:Real} where {U<:Integer}
-     alt = dists[u] + distmx[u, v]
+    alt = dists[u] + distmx[u, v]
 
-     if !visited[v]
-         visited[v] = true
-         dists[v] = alt
-         parents[v] = u
-         Q[v] = alt
-     elseif alt < dists[v]
-         dists[v] = alt
-         parents[v] = u
-         Q[v] = alt
-     end
+    if !visited[v]
+        visited[v] = true
+        dists[v] = alt
+        parents[v] = u
+        
+        if !isnothing(pathcounts)
+            pathcounts[v] += pathcounts[u]
+        end
+        if allpaths
+            preds[v] = [u;]
+        end
+        Q[v] = alt
+    elseif alt < dists[v]
+        dists[v] = alt
+        parents[v] = u
+        #615
+        if !isnothing(pathcounts)
+            pathcounts[v] = pathcounts[u]
+        end
+        if allpaths
+            resize!(preds[v], 1)
+            preds[v][1] = u
+        end
+        Q[v] = alt
+    elseif alt == dists[v]
+        if !isnothing(pathcounts)
+            pathcounts[v] += pathcounts[u]
+        end
+        if allpaths
+            push!(preds[v], u)
+        end
+    end
 end
 
 """
