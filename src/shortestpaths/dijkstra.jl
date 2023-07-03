@@ -229,7 +229,7 @@ function bidijkstra_shortest_path(
         return Int[]
     end
     # keep weight of the best seen path and the midpoint vertex
-    mu, mid_v = typemax(T), -1
+    μ, mid_v = typemax(T), -1
     nvg = nv(g)
     dists_f, dists_b= fill(typemax(T), nvg), fill(typemax(T), nvg)
     parents_f, parents_b= zeros(U, nvg), zeros(U, nvg)
@@ -246,22 +246,22 @@ function bidijkstra_shortest_path(
 
         for v in outneighbors(g, uf)
             relax(uf, v, distmx, dists_f, parents_f, visited_f, Qf)
-            if visited_b[v] && (dists_f[uf]+distmx[uf,v]+dists_b[v]) < mu
+            if visited_b[v] && (dists_f[uf]+distmx[uf,v]+dists_b[v]) < μ
                 # we have found an edge between the forward and backward exploration
-                mu = dists_f[uf]+distmx[uf,v]+dists_b[v]
+                μ = dists_f[uf]+distmx[uf,v]+dists_b[v]
                 mid_v = v
             end
         end
 
         for v in inneighbors(g, ub)
             relax(ub, v, distmx, dists_b, parents_b, visited_b, Qb)
-            if visited_f[v] && (dists_f[v]+distmx[v,ub]+dists_b[ub]) < mu
+            if visited_f[v] && (dists_f[v]+distmx[v,ub]+dists_b[ub]) < μ
                 # we have found an edge between the forward and backward exploration
-                mu = dists_f[v]+distmx[v,ub]+dists_b[ub]
+                μ = dists_f[v]+distmx[v,ub]+dists_b[ub]
                 mid_v = v
             end
         end
-        if dists_f[uf]+dists_b[ub] >= mu
+        if dists_f[uf]+dists_b[ub] >= μ
             break
         end
     end
