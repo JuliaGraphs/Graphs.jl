@@ -17,6 +17,7 @@ weight of the cut that makes this partition. An optional `distmx` matrix
 of non-negative weights may be specified; if omitted, edge distances are
 assumed to be 1.
 """
+
 @traitfn function mincut(g::::(!IsDirected),
     distmx::AbstractMatrix{T}=weights(g)) where T <: Real
 
@@ -33,48 +34,64 @@ assumed to be 1.
     # We need to mutate the weight matrix,
     # and we need it clean (0 for non edges)
     w = zeros(T, nvg, nvg)
+    size(distmx) != (nvg, nvg) && throw(ArgumentError("Adjacency / distance matrix size should match the number of vertices"))
     @inbounds for e in edges(g)
         d = distmx[src(e), dst(e)]
         (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
         w[src(e), dst(e)] = d
-        if !is_directed(g)
-            (d != distmx[dst(e), src(e)]) && throw(ArgumentError("Adjacency / distance matrices must be symmetric for undirected graph"))
-            w[dst(e), src(e)] = d
-        end
+        (d != distmx[dst(e), src(e)]) && throw(ArgumentError("Adjacency / distance matrix must be symmetric"))
+        w[dst(e), src(e)] = d
     end
     # we also need to mutate neighbors when merging vertices
     fadjlist = [collect(outneighbors(g, v)) for v in vertices(g)]
-    badjlist = [collect(inneighbors(g, v)) for v in vertices(g)]
     parities = falses(nvg)
     bestweight = typemax(T)
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
-
     u = last_vertex = one(U)
+
+    is_processed = falses(nvg)
     @inbounds while graph_size > 1
         cutweight = zero(T)
-        is_processed = falses(nvg) ## 0 if unseen, 1 if processing and 2 if seen and closed
-        # Set number of visited neighbors for all vertices to 0
+        is_processed .= false
+        is_processed[u] = true
+        # initialize pq
         for v in vertices(g)
             is_merged[v] && continue
+            v == u && continue
             pq[v] = zero(T)
         end
-
+        for v in fadjlist[u]
+            (is_merged[v] || v == u ) && continue
+            # && continue
+            pq[v] = w[u, v]
+            cutweight += w[u, v]
+        end
         # Minimum cut phase
         while true
             last_vertex = u
-            u = dequeue!(pq)
+            u, adj_cost = first(pq)
+            dequeue!(pq)
             isempty(pq) && break
-            # update the cutweight
             for v in fadjlist[u]
-                (is_merged[v] || u == v || is_processed[v]) && continue
-                cutweight += w[u, v]
-                pq[v] += w[u, v]
-            end
-            for v in badjlist[u]
-                (is_merged[v] || u == v || !is_processed[v]) && continue
-                cutweight -= w[u, v]
+                (is_merged[v] || u == v) && continue
+                # if the target of e is already marked then decrease cutweight
+                # otherwise, increase it
+                ew = w[u, v]
+                if is_processed[v]
+                    cutweight -= ew
+                else
+                    cutweight += ew
+                    pq[v] += ew
+                end
             end
             is_processed[u] = true
+            # adj_cost is a lower bound on the cut separating the two last vertices
+            # encountered, so if adj_cost >= bestweight, we can already merge these
+            # vertices to save one phase.
+            if adj_cost >= bestweight
+                _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
+                graph_size -= 1
+            end
         end
 
         # check if we improved the mincut
@@ -86,50 +103,27 @@ assumed to be 1.
         end
 
         # merge u and last_vertex
-        root = _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, u, last_vertex)
+        root = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
         graph_size -= 1
-        # optimization : we directly merge edges with weight bigger than curent mincut. It
-        # saves a whole minimum cut phase for each merge.
-        neighboroods_to_check = [root]
-        while !isempty(neighboroods_to_check)
-            v = pop!(neighboroods_to_check)
-            for v2 in Base.Iterators.flatten((fadjlist[v], badjlist[v]))
-                ( is_merged[v2] || (v == v2) ) && continue
-                if min(w[v, v2], w[v2, v]) >= bestweight
-                    root = _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, v, v2)
-                    graph_size -= 1
-                    if root ∉ neighboroods_to_check
-                        push!(neighboroods_to_check, root)
-                    end
-                end
-            end
-        end
+        u = root # we are sure this vertex was not merged, so the next phase start from it
     end
     return(convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
 
-function _merge_vertex!(merged_vertices, fadjlist, badjlist, is_merged, w, u, v)
+function _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, v)
     root = union!(merged_vertices, u, v)
     non_root = (root == u) ? v : u
     is_merged[non_root] = true
     # update weights
     for v2 in fadjlist[non_root]
         w[root, v2] += w[non_root, v2]
-    end
-    for v2 in badjlist[non_root]
-        w[v2, root] += w[v2, non_root]
+        w[v2, root] = w[root, v2]
     end
     # update neighbors
     fadjlist[root] = union(fadjlist[root], fadjlist[non_root])
     for v in fadjlist[non_root]
         if root ∉ fadjlist[v]
             push!(fadjlist[v], root)
-        end
-    end
-    badjlist[root] = union(badjlist[root], badjlist[non_root])
-    for v in badjlist[non_root]
-        if root ∉ badjlist[v]
-            push!(badjlist[v], root)
         end
     end
     return root
