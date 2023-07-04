@@ -6,26 +6,29 @@
     eulerian(g::AbstractSimpleGraph{T}[, u::T]) --> T[]
 
 Returns a [Eulerian trail or cycle](https://en.wikipedia.org/wiki/Eulerian_path) through an
-undirected graph `g`, starting at `u`, returning a vector listing the vertices of `g` in the
-order that they are traversed. If no such trail or cycle exists, throws an error.
+undirected graph `g`, starting at vertex `u`, returning a vector listing the vertices of `g`
+in the order that they are traversed. If no such trail or cycle exists, throws an error.
+
+A Eulerian trail or cycle is a path that visits every edge of `g` exactly once; for a
+cycle, the path starts _and_ ends at vertex `u`.
 
 ## Optional arguments
 - If `u` is omitted, a Eulerian trail or cycle is computed with `u = first(vertices(g))`.
 """
-function eulerian(g::AbstractSimpleGraph{T}, u::T=first(vertices(g))) where {T}
+function eulerian(g::AbstractGraph{T}, u::T=first(vertices(g))) where {T}
     is_directed(g) && error("`eulerian` is not yet implemented for directed graphs")
     
     _check_eulerian_input(g, u) # perform basic sanity checks
 
-    g′ = SimpleGraph{T}(nv(g)) # copy `g`
+    g′ = SimpleGraph{T}(nv(g)) # copy `g` (mutated in `_eulerian!`)
     for e in edges(g)
-        add_edge!(g′, e)
+        add_edge!(g′, src(e), dst(e))
     end
 
     return _eulerian!(g′, u)
 end
 
-function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
+@traitfn function _eulerian!(g::AG::(!IsDirected), u::T) where {T, AG<:AbstractGraph{T}}
     # TODO: This uses Fleury's algorithm which is O(|E|²) in the number of edges |E|.
     #       Hierholzer's algorithm [https://en.wikipedia.org/wiki/Eulerian_path#Hierholzer's_algorithm]
     #       is presumably faster, running in O(|E|) time, but requires needing to keep track
@@ -48,11 +51,13 @@ function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
             nverts -= 1
             push!(trail, u)
             u = w
+        elseif length(Nu) == 0
+            error("graph is not connected: a eulerian cycle/trail does not exist")
         else
             # otherwise, pick whichever neighbor is not a bridge/cut-edge
             bs = bridges(g)
             for w in Nu
-                if all(e -> e ≠ Edge(u, w) && e ≠ Edge(w, u), bs)
+                if all(e -> _excludes_edge(u, w, e), bs)
                     # not a bridge/cut-edge; add to trail
                     rem_edge!(g, u, w)
                     push!(trail, u)
@@ -63,6 +68,12 @@ function _eulerian!(g::AbstractSimpleGraph{T}, u::T) where {T}
         end
     end
     error("unreachable reached")
+end
+
+@inline function _excludes_edge(u, w, e::AbstractEdge)
+    # `true` if `e` is not `Edge(u,w)` or `Edge(w,u)`, otherwise `false`
+    s, d = src(e), dst(e)
+    return !((u == s && w == d) || (u == d && w == s))
 end
 
 function _check_eulerian_input(g, u)
@@ -87,7 +98,6 @@ function _check_eulerian_input(g, u)
         end
     end
 
-    if !is_connected(g)
-        error("graph is not connected: a eulerian cycle/trail does not exist")
-    end
+    # to reduce cost, the graph connectivity check is performed in `_eulerian!` rather
+    # than through `is_connected(g)`
 end

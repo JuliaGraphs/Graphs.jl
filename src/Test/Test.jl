@@ -36,6 +36,10 @@ struct GenericGraph{T} <: Graphs.AbstractGraph{T}
     g::SimpleGraph{T}
 end
 
+function GenericGraph(elist::Vector{Graphs.SimpleGraphEdge{T}}) where {T<:Integer}
+    GenericGraph{T}(SimpleGraph(elist))
+end
+
 """
     GenericDiGraph{T} <: Graphs.AbstractGraph{T}
 
@@ -44,6 +48,10 @@ A directed graph type that can  be used to tests functions that relay on the Gra
 """
 struct GenericDiGraph{T} <: Graphs.AbstractGraph{T}
     g::SimpleDiGraph{T}
+end
+
+function GenericDiGraph(elist::Vector{Graphs.SimpleDiGraphEdge{T}}) where {T<:Integer}
+    GenericDiGraph{T}(SimpleDiGraph(elist))
 end
 
 Graphs.is_directed(::Type{<:GenericGraph}) = false
