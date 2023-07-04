@@ -324,6 +324,10 @@ Int64[]
 ```
 """
 function k_corona(g::AbstractGraph, k; corenum=core_number(g))
+
+    # TODO k_corona does not correctly work for all AbstractGraph as
+    # it relies on induced_subgraph, which does not work on any AbstractGraph
+
     kcore = k_core(g, k)
     kcoreg = g[kcore]
     kcoredeg = degree(kcoreg)

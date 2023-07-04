@@ -55,7 +55,11 @@ function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where {
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds @simd for i in neighborfn(g, v)
+            # TODO we previously used @simd on the loop below, but this would fail
+            # if the result of neighorfn(g, v) would not implement firstindex
+            # If @simd really has a performance advantage, then maybe we make
+            # two different cases here.
+            @inbounds for i in neighborfn(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     parents[i] = v
