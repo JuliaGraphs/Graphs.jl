@@ -62,7 +62,6 @@ assumed to be 1.
         end
         for v in fadjlist[u]
             (is_merged[v] || v == u ) && continue
-            # && continue
             pq[v] = w[u, v]
             cutweight += w[u, v]
         end
