@@ -9,6 +9,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_graph(5)
 {5, 10} undirected simple Int64 graph
 
@@ -16,19 +18,18 @@ julia> complete_graph(Int8(6))
 {6, 15} undirected simple Int8 graph
 ```
 """
-function complete_graph(n::T) where {T <: Integer}
+function complete_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
     ne = Int(n * (n - 1) ÷ 2)
     fadjlist = Vector{Vector{T}}(undef, n)
-    @inbounds @simd for u = 1:n
-        listu = Vector{T}(undef, n-1)
-        listu[1:(u-1)] = 1:(u - 1)
-        listu[u:(n-1)] = (u + 1):n
+    @inbounds @simd for u in 1:n
+        listu = Vector{T}(undef, n - 1)
+        listu[1:(u - 1)] = 1:(u - 1)
+        listu[u:(n - 1)] = (u + 1):n
         fadjlist[u] = listu
     end
     return SimpleGraph(ne, fadjlist)
 end
-
 
 """
     complete_bipartite_graph(n1, n2)
@@ -38,6 +39,8 @@ with `n1 + n2` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_bipartite_graph(3, 4)
 {7, 12} undirected simple Int64 graph
 
@@ -45,7 +48,7 @@ julia> complete_bipartite_graph(Int8(3), Int8(4))
 {7, 12} undirected simple Int8 graph
 ```
 """
-function complete_bipartite_graph(n1::T, n2::T) where {T <: Integer}
+function complete_bipartite_graph(n1::T, n2::T) where {T<:Integer}
     (n1 < 0 || n2 < 0) && return SimpleGraph{T}(0)
     Tw = widen(T)
     nw = Tw(n1) + Tw(n2)
@@ -77,6 +80,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_multipartite_graph([1,2,3])
 {6, 11} undirected simple Int64 graph
 
@@ -84,7 +89,7 @@ julia> complete_multipartite_graph(Int8[5,5,5])
 {15, 75} undirected simple Int8 graph
 ```
 """
-function complete_multipartite_graph(partitions::AbstractVector{T}) where {T <: Integer}
+function complete_multipartite_graph(partitions::AbstractVector{T}) where {T<:Integer}
     any(x -> x < 0, partitions) && return SimpleGraph{T}(0)
     length(partitions) == 1 && return SimpleGraph{T}(partitions[1])
     length(partitions) == 2 && return complete_bipartite_graph(partitions[1], partitions[2])
@@ -93,20 +98,20 @@ function complete_multipartite_graph(partitions::AbstractVector{T}) where {T <: 
 
     ne = 0
     for p in partitions # type stability fails if we use sum and a generator here
-        ne += p*(Int(n)-p) # overflow if we don't convert to Int
+        ne += p * (Int(n) - p) # overflow if we don't convert to Int
     end
     ne = div(ne, 2)
 
     fadjlist = Vector{Vector{T}}(undef, n)
     cur = 1
     for p in partitions
-        currange = cur:(cur+p-1) # all vertices in the current partition
-        lowerrange = 1:(cur-1)   # all vertices lower than the current partition
-        upperrange = (cur+p):n   # all vertices higher than the current partition
+        currange = cur:(cur + p - 1) # all vertices in the current partition
+        lowerrange = 1:(cur - 1)   # all vertices lower than the current partition
+        upperrange = (cur + p):n   # all vertices higher than the current partition
         @inbounds @simd for u in currange
             fadjlist[u] = Vector{T}(undef, length(lowerrange) + length(upperrange))
             fadjlist[u][1:length(lowerrange)] = lowerrange
-            fadjlist[u][(length(lowerrange)+1):end] = upperrange
+            fadjlist[u][(length(lowerrange) + 1):end] = upperrange
         end
         cur += p
     end
@@ -122,6 +127,8 @@ multipartite graph with `n` vertices and `r` partitions.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> turan_graph(6, 2)
 {6, 9} undirected simple Int64 graph
 
@@ -130,15 +137,16 @@ julia> turan_graph(Int8(7), 2)
 ```
 """
 function turan_graph(n::Integer, r::Integer)
-    !(1 <= r <= n) && throw(DomainError("n=$n and r=$r are invalid, must satisfy 1 <= r <= n"))
+    !(1 <= r <= n) &&
+        throw(DomainError("n=$n and r=$r are invalid, must satisfy 1 <= r <= n"))
     T = typeof(n)
     partitions = Vector{T}(undef, r)
-    c = cld(n,r)
-    f = fld(n,r)
-    @inbounds @simd for i in 1:(n%r)
+    c = cld(n, r)
+    f = fld(n, r)
+    @inbounds @simd for i in 1:(n % r)
         partitions[i] = c
     end
-    @inbounds @simd for i in ((n%r)+1):r
+    @inbounds @simd for i in ((n % r) + 1):r
         partitions[i] = f
     end
     return complete_multipartite_graph(partitions)
@@ -152,6 +160,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_digraph(5)
 {5, 20} directed simple Int64 graph
 
@@ -159,16 +169,16 @@ julia> complete_digraph(Int8(6))
 {6, 30} directed simple Int8 graph
 ```
 """
-function complete_digraph(n::T) where {T <: Integer}
+function complete_digraph(n::T) where {T<:Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
 
     ne = Int(n * (n - 1))
     fadjlist = Vector{Vector{T}}(undef, n)
     badjlist = Vector{Vector{T}}(undef, n)
-    @inbounds @simd for u = 1:n
-        listu = Vector{T}(undef, n-1)
-        listu[1:(u-1)] = 1:(u - 1)
-        listu[u:(n-1)] = (u + 1):n
+    @inbounds @simd for u in 1:n
+        listu = Vector{T}(undef, n - 1)
+        listu[1:(u - 1)] = 1:(u - 1)
+        listu[u:(n - 1)] = (u + 1):n
         fadjlist[u] = listu
         badjlist[u] = deepcopy(listu)
     end
@@ -183,6 +193,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> star_graph(3)
 {3, 2} undirected simple Int64 graph
 
@@ -190,13 +202,13 @@ julia> star_graph(Int8(10))
 {10, 9} undirected simple Int8 graph
 ```
 """
-function star_graph(n::T) where {T <: Integer}
+function star_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
 
     ne = Int(n - 1)
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = Vector{T}(2:n)
-    @inbounds @simd for u = 2:n
+    @inbounds @simd for u in 2:n
         fadjlist[u] = T[1]
     end
     return SimpleGraph(ne, fadjlist)
@@ -210,6 +222,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> star_digraph(3)
 {3, 2} directed simple Int64 graph
 
@@ -217,7 +231,7 @@ julia> star_digraph(Int8(10))
 {10, 9} directed simple Int8 graph
 ```
 """
-function star_digraph(n::T) where {T <: Integer}
+function star_digraph(n::T) where {T<:Integer}
     n <= 0 && return SimpleDiGraph{T}(0)
 
     ne = Int(n - 1)
@@ -225,7 +239,7 @@ function star_digraph(n::T) where {T <: Integer}
     badjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = Vector{T}(2:n)
     @inbounds badjlist[1] = T[]
-    @inbounds @simd for u = 2:n
+    @inbounds @simd for u in 2:n
         fadjlist[u] = T[]
         badjlist[u] = T[1]
     end
@@ -240,6 +254,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> path_graph(5)
 {5, 4} undirected simple Int64 graph
 
@@ -247,7 +263,7 @@ julia> path_graph(Int8(10))
 {10, 9} undirected simple Int8 graph
 ```
 """
-function path_graph(n::T) where {T <: Integer}
+function path_graph(n::T) where {T<:Integer}
     n <= 1 && return SimpleGraph(n)
 
     ne = Int(n - 1)
@@ -255,7 +271,7 @@ function path_graph(n::T) where {T <: Integer}
     @inbounds fadjlist[1] = T[2]
     @inbounds fadjlist[n] = T[n - 1]
 
-    @inbounds @simd for u = 2:(n-1)
+    @inbounds @simd for u in 2:(n - 1)
         fadjlist[u] = T[u - 1, u + 1]
     end
     return SimpleGraph(ne, fadjlist)
@@ -269,6 +285,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> path_digraph(5)
 {5, 4} directed simple Int64 graph
 
@@ -276,7 +294,7 @@ julia> path_digraph(Int8(10))
 {10, 9} directed simple Int8 graph
 ```
 """
-function path_digraph(n::T) where {T <: Integer}
+function path_digraph(n::T) where {T<:Integer}
     n <= 1 && return SimpleDiGraph(n)
 
     ne = Int(n - 1)
@@ -288,7 +306,7 @@ function path_digraph(n::T) where {T <: Integer}
     @inbounds fadjlist[n] = T[]
     @inbounds badjlist[n] = T[n - 1]
 
-    @inbounds @simd for u = 2:(n-1)
+    @inbounds @simd for u in 2:(n - 1)
         fadjlist[u] = T[u + 1]
         badjlist[u] = T[u - 1]
     end
@@ -303,6 +321,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> cycle_graph(3)
 {3, 3} undirected simple Int64 graph
 
@@ -310,17 +330,17 @@ julia> cycle_graph(Int8(5))
 {5, 5} undirected simple Int8 graph
 ```
 """
-function cycle_graph(n::T) where {T <: Integer}
+function cycle_graph(n::T) where {T<:Integer}
     n <= 1 && return SimpleGraph(n)
     n == 2 && return SimpleGraph(Edge{T}.([(1, 2)]))
 
     ne = Int(n)
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = T[2, n]
-    @inbounds fadjlist[n] = T[1, n-1]
+    @inbounds fadjlist[n] = T[1, n - 1]
 
-    @inbounds @simd for u = 2:(n-1)
-        fadjlist[u] = T[u-1, u+1]
+    @inbounds @simd for u in 2:(n - 1)
+        fadjlist[u] = T[u - 1, u + 1]
     end
     return SimpleGraph(ne, fadjlist)
 end
@@ -333,6 +353,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> cycle_digraph(3)
 {3, 3} directed simple Int64 graph
 
@@ -340,7 +362,7 @@ julia> cycle_digraph(Int8(5))
 {5, 5} directed simple Int8 graph
 ```
 """
-function cycle_digraph(n::T) where {T <: Integer}
+function cycle_digraph(n::T) where {T<:Integer}
     n <= 1 && return SimpleDiGraph(n)
     n == 2 && return SimpleDiGraph(Edge{T}.([(1, 2), (2, 1)]))
 
@@ -350,15 +372,14 @@ function cycle_digraph(n::T) where {T <: Integer}
     @inbounds fadjlist[1] = T[2]
     @inbounds badjlist[1] = T[n]
     @inbounds fadjlist[n] = T[1]
-    @inbounds badjlist[n] = T[n-1]
+    @inbounds badjlist[n] = T[n - 1]
 
-    @inbounds @simd for u = 2:(n-1)
+    @inbounds @simd for u in 2:(n - 1)
         fadjlist[u] = T[u + 1]
         badjlist[u] = T[u + -1]
     end
     return SimpleDiGraph(ne, fadjlist, badjlist)
 end
-
 
 """
     wheel_graph(n)
@@ -368,6 +389,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> wheel_graph(5)
 {5, 8} undirected simple Int64 graph
 
@@ -375,7 +398,7 @@ julia> wheel_graph(Int8(6))
 {6, 10} undirected simple Int8 graph
 ```
 """
-function wheel_graph(n::T) where {T <: Integer}
+function wheel_graph(n::T) where {T<:Integer}
     n <= 1 && return SimpleGraph(n)
     n <= 3 && return cycle_graph(n)
 
@@ -385,7 +408,7 @@ function wheel_graph(n::T) where {T <: Integer}
     @inbounds fadjlist[2] = T[1, 3, n]
     @inbounds fadjlist[n] = T[1, 2, n - 1]
 
-    @inbounds @simd for u = 3:(n-1)
+    @inbounds @simd for u in 3:(n - 1)
         fadjlist[u] = T[1, u - 1, u + 1]
     end
     return SimpleGraph(ne, fadjlist)
@@ -399,6 +422,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> wheel_digraph(5)
 {5, 8} directed simple Int64 graph
 
@@ -406,9 +431,9 @@ julia> wheel_digraph(Int8(6))
 {6, 10} directed simple Int8 graph
 ```
 """
-function wheel_digraph(n::T) where {T <: Integer}
+function wheel_digraph(n::T) where {T<:Integer}
     n <= 2 && return path_digraph(n)
-    n == 3 && return SimpleDiGraph(Edge{T}.([(1,2),(1,3),(2,3),(3,2)]))
+    n == 3 && return SimpleDiGraph(Edge{T}.([(1, 2), (1, 3), (2, 3), (3, 2)]))
 
     ne = Int(2 * (n - 1))
     fadjlist = Vector{Vector{T}}(undef, n)
@@ -420,7 +445,7 @@ function wheel_digraph(n::T) where {T <: Integer}
     @inbounds fadjlist[n] = T[2]
     @inbounds badjlist[n] = T[1, n - 1]
 
-    @inbounds @simd for u = 3:(n-1)
+    @inbounds @simd for u in 3:(n - 1)
         fadjlist[u] = T[u + 1]
         badjlist[u] = T[1, u - 1]
     end
@@ -439,6 +464,8 @@ condition in each dimension.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> grid([2,3])
 {6, 7} undirected simple Int64 graph
 
@@ -449,7 +476,7 @@ julia> grid((2,3))
 {6, 7} undirected simple Int64 graph
 ```
 """
-function grid(dims::AbstractVector{T}; periodic=false) where {T <: Integer}
+function grid(dims::AbstractVector{T}; periodic=false) where {T<:Integer}
     # checks if T is large enough for product(dims)
     Tw = widen(T)
     n = one(T)
@@ -482,6 +509,8 @@ of depth `k`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> binary_tree(4)
 {15, 14} undirected simple Int64 graph
 
@@ -489,10 +518,10 @@ julia> binary_tree(Int8(5))
 {31, 30} undirected simple Int8 graph
 ```
 """
-function binary_tree(k::T) where {T <: Integer}
+function binary_tree(k::T) where {T<:Integer}
     k <= 0 && return SimpleGraph(0)
     k == 1 && return SimpleGraph(1)
-    if Graphs.isbounded(k) && BigInt(2) ^ k - 1 > typemax(k)
+    if Graphs.isbounded(k) && BigInt(2)^k - 1 > typemax(k)
         throw(DomainError(k, "2^k - 1 not representable by type $T"))
     end
     n = T(2^k - 1)
@@ -522,6 +551,8 @@ Create a double complete binary tree with `k` levels.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> double_binary_tree(4)
 {30, 29} undirected simple Int64 graph
 
@@ -537,7 +568,6 @@ function double_binary_tree(k::Integer)
     return g
 end
 
-
 """
     roach_graph(k)
 
@@ -548,6 +578,8 @@ Create a Roach graph of size `k`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> roach_graph(10)
 {40, 48} undirected simple Int64 graph
 ```
@@ -563,7 +595,6 @@ function roach_graph(k::Integer)
     return roach
 end
 
-
 """
     clique_graph(k, n)
 
@@ -571,6 +602,8 @@ Create a graph consisting of `n` connected `k`-cliques.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> clique_graph(4, 10)
 {40, 70} undirected simple Int64 graph
 
@@ -578,18 +611,18 @@ julia> clique_graph(Int8(10), Int8(4))
 {40, 184} undirected simple Int8 graph
 ```
 """
-function clique_graph(k::T, n::T) where {T <: Integer}
+function clique_graph(k::T, n::T) where {T<:Integer}
     Tw = widen(T)
     knw = Tw(k) * Tw(n)
     kn = T(knw)  # checks if T is large enough for k * n
 
     g = SimpleGraph(kn)
-    for c = 1:n
-        for i = ((c - 1) * k + 1):(c * k - 1), j = (i + 1):(c * k)
+    for c in 1:n
+        for i in ((c - 1) * k + 1):(c * k - 1), j in (i + 1):(c * k)
             add_edge!(g, i, j)
         end
     end
-    for i = 1:(n - 1)
+    for i in 1:(n - 1)
         add_edge!(g, (i - 1) * k + 1, i * k + 1)
     end
     add_edge!(g, 1, (n - 1) * k + 1)
@@ -607,6 +640,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> ladder_graph(3)
 {6, 7} undirected simple Int64 graph
 
@@ -614,23 +649,23 @@ julia> ladder_graph(Int8(4))
 {8, 10} undirected simple Int8 graph
 ```
 """
-function ladder_graph(n::T) where {T <: Integer}
+function ladder_graph(n::T) where {T<:Integer}
     n <= 0 && return SimpleGraph{T}(0)
     n == 1 && return path_graph(T(2))
     Tw = widen(T)
-    temp = T(Tw(n)+Tw(n)) # test to check if T is large enough
+    temp = T(Tw(n) + Tw(n)) # test to check if T is large enough
 
-    fadjlist = Vector{Vector{T}}(undef, 2*n)
-    @inbounds @simd for i in 2:(n-1)
-        fadjlist[i]   = T[i-1, i+1, i+n]
-        fadjlist[n+i] = T[i, n+i-1, n+i+1]
+    fadjlist = Vector{Vector{T}}(undef, 2 * n)
+    @inbounds @simd for i in 2:(n - 1)
+        fadjlist[i] = T[i - 1, i + 1, i + n]
+        fadjlist[n + i] = T[i, n + i - 1, n + i + 1]
     end
-    fadjlist[1]   = T[2, n+1]
-    fadjlist[n+1] = T[1, n+2]
-    fadjlist[n]   = T[n-1, 2*n]
-    fadjlist[2*n] = T[n, 2*n-1]
+    fadjlist[1] = T[2, n + 1]
+    fadjlist[n + 1] = T[1, n + 2]
+    fadjlist[n] = T[n - 1, 2 * n]
+    fadjlist[2 * n] = T[n, 2 * n - 1]
 
-    return SimpleGraph(3*n-2, fadjlist)
+    return SimpleGraph(3 * n - 2, fadjlist)
 end
 
 """
@@ -646,6 +681,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> circular_ladder_graph(3)
 {6, 9} undirected simple Int64 graph
 
@@ -657,7 +694,7 @@ function circular_ladder_graph(n::Integer)
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     g = ladder_graph(n)
     add_edge!(g, 1, n)
-    add_edge!(g, n+1, 2*n)
+    add_edge!(g, n + 1, 2 * n)
     return g
 end
 
@@ -674,6 +711,8 @@ The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barbell_graph(3, 4)
 {7, 10} undirected simple Int64 graph
 
@@ -681,30 +720,30 @@ julia> barbell_graph(Int8(5), Int8(5))
 {10, 21} undirected simple Int8 graph
 ```
 """
-function barbell_graph(n1::T, n2::T) where {T <: Integer}
+function barbell_graph(n1::T, n2::T) where {T<:Integer}
     (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
 
     n = Base.Checked.checked_add(n1, n2) # check for overflow
     fadjlist = Vector{Vector{T}}(undef, n)
 
-    ne = Int(n1)*(n1-1)÷2 + Int(n2)*(n2-1)÷2
+    ne = Int(n1) * (n1 - 1) ÷ 2 + Int(n2) * (n2 - 1) ÷ 2
 
-    @inbounds @simd for u = 1:n1
-        listu = Vector{T}(undef, n1-1)
-        listu[1:(u-1)] = 1:(u-1)
-        listu[u:(n1-1)] = (u+1):n1
+    @inbounds @simd for u in 1:n1
+        listu = Vector{T}(undef, n1 - 1)
+        listu[1:(u - 1)] = 1:(u - 1)
+        listu[u:(n1 - 1)] = (u + 1):n1
         fadjlist[u] = listu
     end
 
-    @inbounds for u = 1:n2
-        listu = Vector{T}(undef, n2-1)
-        listu[1:(u-1)] = (n1+1):(n1+(u-1))
-        listu[u:(n2-1)] = (n1+u+1):(n1+n2)
-        fadjlist[n1+u] = listu
+    @inbounds for u in 1:n2
+        listu = Vector{T}(undef, n2 - 1)
+        listu[1:(u - 1)] = (n1 + 1):(n1 + (u - 1))
+        listu[u:(n2 - 1)] = (n1 + u + 1):(n1 + n2)
+        fadjlist[n1 + u] = listu
     end
 
     g = SimpleGraph(ne, fadjlist)
-    add_edge!(g, n1, n1+1)
+    add_edge!(g, n1, n1 + 1)
     return g
 end
 
@@ -721,6 +760,8 @@ The graph is organized with nodes `1:n1` being the clique and `n1+1:n1+n2` being
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> lollipop_graph(2, 5)
 {7, 6} undirected simple Int64 graph
 
@@ -728,38 +769,38 @@ julia> lollipop_graph(Int8(3), Int8(4))
 {7, 7} undirected simple Int8 graph
 ```
 """
-function lollipop_graph(n1::T, n2::T) where {T <: Integer}
+function lollipop_graph(n1::T, n2::T) where {T<:Integer}
     (n1 < 1 || n2 < 1) && throw(DomainError("n1=$n1 and n2=$n2 must be at least 1"))
 
     if n1 == 1
-        return path_graph(T(n2+1))
+        return path_graph(T(n2 + 1))
     elseif n1 > 1 && n2 == 1
         g = complete_graph(n1)
         add_vertex!(g)
-        add_edge!(g, n1, n1+1)
+        add_edge!(g, n1, n1 + 1)
         return g
     end
 
     n = Base.Checked.checked_add(n1, n2) # check for overflow
     fadjlist = Vector{Vector{T}}(undef, n)
 
-    ne = Int(Int(n1)*(n1-1)÷2 + n2-1)
+    ne = Int(Int(n1) * (n1 - 1) ÷ 2 + n2 - 1)
 
-    @inbounds @simd for u = 1:n1
-        listu = Vector{T}(undef, n1-1)
-        listu[1:(u-1)] = 1:(u-1)
-        listu[u:(n1-1)] = (u+1):n1
+    @inbounds @simd for u in 1:n1
+        listu = Vector{T}(undef, n1 - 1)
+        listu[1:(u - 1)] = 1:(u - 1)
+        listu[u:(n1 - 1)] = (u + 1):n1
         fadjlist[u] = listu
     end
 
-    @inbounds fadjlist[n1+1] = T[n1+2]
-    @inbounds fadjlist[n1+n2] = T[n1+n2-1]
+    @inbounds fadjlist[n1 + 1] = T[n1 + 2]
+    @inbounds fadjlist[n1 + n2] = T[n1 + n2 - 1]
 
-    @inbounds @simd for u = (n1+2):(n1+n2-1)
-        fadjlist[u] = T[u-1, u+1]
+    @inbounds @simd for u in (n1 + 2):(n1 + n2 - 1)
+        fadjlist[u] = T[u - 1, u + 1]
     end
 
     g = SimpleGraph(ne, fadjlist)
-    add_edge!(g, n1, n1+1)
+    add_edge!(g, n1, n1 + 1)
     return g
 end

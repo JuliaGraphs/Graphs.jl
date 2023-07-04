@@ -1,9 +1,10 @@
 @testset "Cycles" begin
+    rng = StableRNG(1)
     completedg = complete_digraph(4)
     pathdg = path_digraph(5)
-    triangle = random_regular_graph(3, 2)
-    quadrangle = random_regular_graph(4, 2)
-    pentagon = random_regular_graph(5, 2)
+    triangle = random_regular_graph(3, 2; rng=rng)
+    quadrangle = random_regular_graph(4, 2; rng=rng)
+    pentagon = random_regular_graph(5, 2; rng=rng)
 
     @testset "path digraph" for g in testgraphs(pathdg)
         @test maxsimplecycles(g) == 0
@@ -49,10 +50,10 @@
     end
 
     selfloopg = DiGraph([
-        0 1 0 0;
-        0 0 1 0;
-        1 0 1 0;
-        0 0 0 1;
+        0 1 0 0
+        0 0 1 0
+        1 0 1 0
+        0 0 0 1
     ])
 
     @testset "self loops" for g in testgraphs(selfloopg)

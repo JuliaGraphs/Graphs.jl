@@ -14,7 +14,7 @@ from node `n`.
 julia> using Graphs
 
 julia> closeness_centrality(star_graph(5))
-5-element Array{Float64,1}:
+5-element Vector{Float64}:
  1.0
  0.5714285714285714
  0.5714285714285714
@@ -22,17 +22,16 @@ julia> closeness_centrality(star_graph(5))
  0.5714285714285714
 
 julia> closeness_centrality(path_graph(4))
-4-element Array{Float64,1}:
+4-element Vector{Float64}:
  0.5
  0.75
  0.75
  0.5
 ```
 """
-function closeness_centrality(g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
-    normalize=true)
-
+function closeness_centrality(
+    g::AbstractGraph, distmx::AbstractMatrix=weights(g); normalize=true
+)
     n_v = nv(g)
     closeness = zeros(n_v)
 

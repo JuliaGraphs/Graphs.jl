@@ -6,7 +6,7 @@ using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
-using Random:shuffle
+using Random: AbstractRNG, shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
 

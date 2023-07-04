@@ -13,8 +13,8 @@
     add_edge!(g1, 4, 5)
     for g in testgraphs(g1)
         zd = @inferred(Parallel.radiality_centrality(g; parallel=:distributed))
-        @test zd ≈ [5 // 6, 3 // 4, 5 // 6, 11 // 12, 2 // 3]
+        @test zd ≈ [5//6, 3//4, 5//6, 11//12, 2//3]
         zt = @inferred(Parallel.radiality_centrality(g; parallel=:threads))
-        @test zt ≈ [5 // 6, 3 // 4, 5 // 6, 11 // 12, 2 // 3]
+        @test zt ≈ [5//6, 3//4, 5//6, 11//12, 2//3]
     end
 end

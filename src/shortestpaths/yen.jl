@@ -3,29 +3,29 @@
 
 Designed for yen k-shortest-paths calculations.
 """
-struct YenState{T,U <: Integer} <: AbstractPathState
+struct YenState{T,U<:Integer} <: AbstractPathState
     dists::Vector{T}
     paths::Vector{Vector{U}}
 end
 
-
 """
-    yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);
+    yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=typemax(T));
 
 Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
 on a graph, computing k-shortest distances between `source` and `target` other vertices.
 Return a [`YenState`](@ref) that contains distances and paths.
 """
-function yen_k_shortest_paths(g::AbstractGraph,
+function yen_k_shortest_paths(
+    g::AbstractGraph,
     source::U,
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
-    maxdist=Inf) where T <: Real where U <: Integer
+    maxdist=typemax(T)) where {T<:Real} where {U<:Integer}
 
     source == target && return YenState{T,U}([U(0)], [[source]])
 
-    dj = dijkstra_shortest_paths(g, source, distmx)
+    dj = dijkstra_shortest_paths(g, source, distmx; maxdist)
     path = enumerate_paths(dj)[target]
     isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
 
@@ -35,8 +35,8 @@ function yen_k_shortest_paths(g::AbstractGraph,
     B = PriorityQueue()
     gcopy = deepcopy(g)
 
-    for k = 1:(K - 1)
-        for j = 1:length(A[k])
+    for k in 1:(K-1)
+        for j in 1:length(A[k])
             # Spur node is retrieved from the previous k-shortest path, k − 1
             spurnode = A[k][j]
             #  The sequence of nodes from the source to the spur node of the previous k-shortest path
@@ -48,7 +48,7 @@ function yen_k_shortest_paths(g::AbstractGraph,
             for ppath in A
                 if length(ppath) > j && rootpath == ppath[1:j]
                     u = ppath[j]
-                    v = ppath[j + 1]
+                    v = ppath[j+1]
                     if has_edge(gcopy, u, v)
                         rem_edge!(gcopy, u, v)
                         push!(edgesremoved, (u, v))
@@ -57,8 +57,8 @@ function yen_k_shortest_paths(g::AbstractGraph,
             end
 
             # Remove node of root path and calculate dist of it
-            distrootpath = 0.
-            for n = 1:(length(rootpath) - 1)
+            distrootpath = zero(T)
+            for n in 1:(length(rootpath)-1)
                 u = rootpath[n]
                 nei = copy(neighbors(gcopy, u))
                 for v in nei
@@ -66,8 +66,8 @@ function yen_k_shortest_paths(g::AbstractGraph,
                     push!(edgesremoved, (u, v))
                 end
 
-                # Evaluate distante of root path
-                v = rootpath[n + 1]
+                # Evaluate distance of root path
+                v = rootpath[n+1]
                 distrootpath += distmx[u, v]
             end
 
@@ -76,8 +76,8 @@ function yen_k_shortest_paths(g::AbstractGraph,
             spurpath = enumerate_paths(djspur)[target]
             if !isempty(spurpath)
                 # Entire path is made up of the root path and spur path
-                pathtotal = [rootpath[1:(end - 1)]; spurpath]
-                distpath  = distrootpath + djspur.dists[target]
+                pathtotal = [rootpath[1:(end-1)]; spurpath]
+                distpath = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B, pathtotal)
                     enqueue!(B, pathtotal, distpath)
@@ -100,4 +100,3 @@ function yen_k_shortest_paths(g::AbstractGraph,
 
     return YenState{T,U}(dists, A)
 end
-

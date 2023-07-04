@@ -1,4 +1,4 @@
-abstract type Visitor{T <: Integer} end
+abstract type Visitor{T<:Integer} end
 
 """
     ncycles_n_i(n::Integer, i::Integer)
@@ -6,8 +6,9 @@ abstract type Visitor{T <: Integer} end
 Compute the theoretical maximum number of cycles of size `i` in a directed graph of `n`
  vertices.
 """
-ncycles_n_i(n::Integer, i::Integer) =
-    binomial(big(n), big(n - i + 1)) * factorial(big(n - i))
+function ncycles_n_i(n::Integer, i::Integer)
+    return binomial(big(n), big(n - i + 1)) * factorial(big(n - i))
+end
 
 """
     maxsimplecycles(n::Integer)
@@ -19,7 +20,6 @@ assuming there are no self-loops.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007).
 """
 maxsimplecycles(n::Integer) = sum(x -> ncycles_n_i(n, x), 1:(n - 1))
-
 
 """
     maxsimplecycles(dg::::IsDirected, byscc::Bool = true)
@@ -71,7 +71,7 @@ vertices to unblock if the key vertex is unblocked.
 
 `JohnsonVisitor` may also be constructed directly from the directed graph.
 """
-struct JohnsonVisitor{T <: Integer} <: Visitor{T}
+struct JohnsonVisitor{T<:Integer} <: Visitor{T}
     stack::Vector{T}
     blocked::BitVector
     blockedmap::Vector{Set{T}}
@@ -93,7 +93,7 @@ Unblock the vertices recursively.
 not and `B` is the map that tells if the unblocking of one vertex should
 unblock other vertices.
 """
-function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where T <: Integer
+function unblock!(v::T, blocked::BitVector, B::Vector{Set{T}}) where {T<:Integer}
     blocked[v] = false
     for w in B[v]
         delete!(B[v], w)
@@ -125,13 +125,19 @@ using a DFS algorithm.
 ### Implementation Notes
 Implements Johnson's CIRCUIT function. This is a recursive version.
 Modifies the vector of cycles, when needed.
- 
+
 ### References
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit end
-@traitfn function circuit(v::T, dg::::IsDirected, vis::JohnsonVisitor{T},
-allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Integer
+@traitfn function circuit(
+    v::T,
+    dg::::IsDirected,
+    vis::JohnsonVisitor{T},
+    allcycles::Vector{Vector{T}},
+    vmap::Vector{T},
+    startnode::T=v,
+) where {T<:Integer}
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
@@ -140,7 +146,7 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Intege
             push!(allcycles, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
+            circuit(w, dg, vis, allcycles, vmap, startnode) && (done = true) # This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done
@@ -155,7 +161,6 @@ allcycles::Vector{Vector{T}}, vmap::Vector{T}, startnode::T=v) where T <: Intege
     pop!(vis.stack)
     return done
 end
-
 
 """
     simplecycles(dg::::IsDirected)
@@ -174,8 +179,10 @@ short cycles of a limited length, [`simplecycles_limited_length`](@ref) can be m
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecycles(complete_digraph(3))
-5-element Array{Array{Int64,1},1}:
+5-element Vector{Vector{Int64}}:
  [1, 2]
  [1, 2, 3]
  [1, 3]
@@ -198,7 +205,6 @@ function simplecycles end
     return cycles
 end
 
-
 ##########################################################
 #### Iterative version, using Tasks, of the previous algorithms.
 """
@@ -211,7 +217,7 @@ Return `true` if a circuit has been found in the current exploration.
 # Arguments
 * v: the vertex considered in this iteration of the DFS
 * dg: the digraph from which cycles are computed
-* visitor: Informations needed for the cycle computation, contains:
+* visitor: information needed for the cycle computation, contains:
     * stack: the stack of parent vertices
     * blocked: tells whether a vertex has already been explored or not
     * blockedmap: mapping of the blocking / unblocking consequences
@@ -228,12 +234,14 @@ Produces a cycle when needed. Can be used only inside a `Channel`.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function circuit_iter end
-@traitfn function circuit_iter(v::T,
-                               dg::::IsDirected,
-                               vis::JohnsonVisitor{T},
-                               vmap::Vector{T},
-                               cycle::Channel{Vector{T}},
-                               startnode::T=v) where T <: Integer
+@traitfn function circuit_iter(
+    v::T,
+    dg::::IsDirected,
+    vis::JohnsonVisitor{T},
+    vmap::Vector{T},
+    cycle::Channel{Vector{T}},
+    startnode::T=v,
+) where {T<:Integer}
     done = false
     push!(vis.stack, v)
     vis.blocked[v] = true
@@ -242,7 +250,7 @@ function circuit_iter end
             put!(cycle, vmap[vis.stack])
             done = true
         elseif !vis.blocked[w]
-            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) #This is different from done = circuit(...). It keeps the previous value of done in the for loop
+            circuit_iter(w, dg, vis, vmap, cycle, startnode) && (done = true) # This is different from done = circuit(...). It keeps the previous value of done in the for loop
         end
     end
     if done
@@ -258,7 +266,6 @@ function circuit_iter end
     return done
 end
 
-
 """
     itercycles(dg::::IsDirected, cycle::Channel)
 
@@ -272,7 +279,9 @@ after a given number of cycles.
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function itercycles end
-@traitfn function itercycles(dg::AG::IsDirected, cycle::Channel{Vector{T}}) where {T, AG <: AbstractGraph{T}}
+@traitfn function itercycles(
+    dg::AG::IsDirected, cycle::Channel{Vector{T}}
+) where {T,AG<:AbstractGraph{T}}
     sccs = strongly_connected_components(dg)
     for scc in sccs
         while length(scc) >= 1
@@ -301,14 +310,20 @@ theoretical maximum number or cycles.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecyclescount(complete_digraph(6))
 409
 ```
 """
 function simplecyclescount end
-@traitfn function simplecyclescount(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}}
+@traitfn function simplecyclescount(
+    dg::AG::IsDirected, ceiling=10^6
+) where {T,AG<:AbstractGraph{T}}
     len = 0
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(
+        Channel(c -> itercycles(dg, c); ctype=Vector{T})::Channel{Vector{T}}, ceiling
+    )
         len += 1
     end
     return len
@@ -333,8 +348,13 @@ To get an idea of the possible number of cycles, use function
 - [Johnson](http://epubs.siam.org/doi/abs/10.1137/0204007)
 """
 function simplecycles_iter end
-@traitfn simplecycles_iter(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}} =
-    return collect(Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T}), ceiling))::Vector{Vector{T}}
+@traitfn function simplecycles_iter(
+    dg::AG::IsDirected, ceiling=10^6
+) where {T,AG<:AbstractGraph{T}}
+    return collect(
+        Iterators.take(Channel(c -> itercycles(dg, c); ctype=Vector{T}), ceiling)
+    )::Vector{Vector{T}}
+end
 
 """
     simplecycleslength(dg::DiGraph, ceiling = 10^6)
@@ -354,6 +374,8 @@ a subset of the cycles lengths.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecycleslength(complete_digraph(16))
 ([0, 1, 1, 1, 1, 1, 2, 10, 73, 511, 3066, 15329, 61313, 183939, 367876, 367876], 1000000)
 
@@ -362,10 +384,14 @@ julia> simplecycleslength(wheel_digraph(16))
 ```
 """
 function simplecycleslength end
-@traitfn function simplecycleslength(dg::AG::IsDirected, ceiling=10^6) where {T, AG <: AbstractGraph{T}}
+@traitfn function simplecycleslength(
+    dg::AG::IsDirected, ceiling=10^6
+) where {T,AG<:AbstractGraph{T}}
     ncycles = 0
     cyclelength = zeros(Int, nv(dg))
-    for cycle in Iterators.take(Channel(c -> itercycles(dg, c), ctype=Vector{T})::Channel{Vector{T}}, ceiling)
+    for cycle in Iterators.take(
+        Channel(c -> itercycles(dg, c); ctype=Vector{T})::Channel{Vector{T}}, ceiling
+    )
         cyclelength[length(cycle)] += 1
         ncycles += 1
     end

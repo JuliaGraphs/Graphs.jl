@@ -5,39 +5,104 @@ using LinearAlgebra
 using Graphs
 using SimpleTraits
 
+import Random: AbstractRNG
+
 import Base:
     eltype, show, ==, Pair, Tuple, copy, length, issubset, reverse, zero, in, iterate
 
 import Graphs:
-    _NI, AbstractGraph, AbstractEdge, AbstractEdgeIter,
-    src, dst, edgetype, nv, ne, vertices, edges, is_directed,
-    has_vertex, has_edge, inneighbors, outneighbors, all_neighbors,
-    deepcopy_adjlist, indegree, outdegree, degree, has_self_loops,
-    num_self_loops, insorted, squash
+    _NI,
+    AbstractGraph,
+    AbstractEdge,
+    AbstractEdgeIter,
+    src,
+    dst,
+    edgetype,
+    nv,
+    ne,
+    vertices,
+    edges,
+    is_directed,
+    has_vertex,
+    has_edge,
+    inneighbors,
+    outneighbors,
+    all_neighbors,
+    deepcopy_adjlist,
+    indegree,
+    outdegree,
+    degree,
+    has_self_loops,
+    num_self_loops,
+    insorted,
+    squash,
+    rng_from_rng_or_seed
 
-using Random: GLOBAL_RNG, AbstractRNG
-
-export AbstractSimpleGraph, AbstractSimpleEdge,
-    SimpleEdge, SimpleGraph, SimpleGraphFromIterator, SimpleGraphEdge,
-    SimpleDiGraph, SimpleDiGraphFromIterator, SimpleDiGraphEdge,
-    add_vertex!, add_edge!, rem_vertex!, rem_vertices!, rem_edge!, squash,
+export AbstractSimpleGraph,
+    AbstractSimpleEdge,
+    SimpleEdge,
+    SimpleGraph,
+    SimpleGraphFromIterator,
+    SimpleGraphEdge,
+    SimpleDiGraph,
+    SimpleDiGraphFromIterator,
+    SimpleDiGraphEdge,
+    add_vertex!,
+    add_edge!,
+    rem_vertex!,
+    rem_vertices!,
+    rem_edge!,
+    squash,
     # randgraphs
-    erdos_renyi, expected_degree_graph, watts_strogatz, random_regular_graph,
-    random_regular_digraph, random_configuration_model, random_tournament_digraph,
-    StochasticBlockModel, make_edgestream, nearbipartiteSBM, blockcounts,
-    blockfractions, stochastic_block_model, barabasi_albert, dorogovtsev_mendes,
-    barabasi_albert!, static_fitness_model, static_scale_free, kronecker, random_orientation_dag,
-    #generators
-    complete_graph, star_graph, path_graph, wheel_graph, cycle_graph,
-    complete_bipartite_graph, complete_multipartite_graph, turan_graph, complete_digraph,
-    star_digraph, path_digraph, grid, wheel_digraph, cycle_digraph, binary_tree,
-    double_binary_tree, roach_graph, clique_graph, barbell_graph, lollipop_graph,
-    ladder_graph, circular_ladder_graph,
-    #smallgraphs
+    erdos_renyi,
+    expected_degree_graph,
+    watts_strogatz,
+    newman_watts_strogatz,
+    random_regular_graph,
+    random_regular_digraph,
+    random_configuration_model,
+    uniform_tree,
+    random_tournament_digraph,
+    StochasticBlockModel,
+    make_edgestream,
+    nearbipartiteSBM,
+    blockcounts,
+    blockfractions,
+    stochastic_block_model,
+    barabasi_albert,
+    dorogovtsev_mendes,
+    barabasi_albert!,
+    static_fitness_model,
+    static_scale_free,
+    kronecker,
+    random_orientation_dag,
+    # generators
+    complete_graph,
+    star_graph,
+    path_graph,
+    wheel_graph,
+    cycle_graph,
+    complete_bipartite_graph,
+    complete_multipartite_graph,
+    turan_graph,
+    complete_digraph,
+    star_digraph,
+    path_digraph,
+    grid,
+    wheel_digraph,
+    cycle_digraph,
+    binary_tree,
+    double_binary_tree,
+    roach_graph,
+    clique_graph,
+    barbell_graph,
+    lollipop_graph,
+    ladder_graph,
+    circular_ladder_graph,
+    # smallgraphs
     smallgraph,
     # Euclidean graphs
     euclidean_graph
-
 
 """
     AbstractSimpleGraph
@@ -50,12 +115,12 @@ An abstract type representing a simple graph structure.
 """
 abstract type AbstractSimpleGraph{T<:Integer} <: AbstractGraph{T} end
 
-function show(io::IO, g::AbstractSimpleGraph{T}) where T
+function show(io::IO, ::MIME"text/plain", g::AbstractSimpleGraph{T}) where {T}
     dir = is_directed(g) ? "directed" : "undirected"
-    print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
+    return print(io, "{$(nv(g)), $(ne(g))} $dir simple $T graph")
 end
 
-nv(g::AbstractSimpleGraph{T}) where T = T(length(fadj(g)))
+nv(g::AbstractSimpleGraph{T}) where {T} = T(length(fadj(g)))
 vertices(g::AbstractSimpleGraph) = Base.OneTo(nv(g))
 
 """
@@ -72,13 +137,10 @@ function throw_if_invalid_eltype(T::Type{<:Integer})
     end
 end
 
-
 edges(g::AbstractSimpleGraph) = SimpleEdgeIter(g)
-
 
 fadj(g::AbstractSimpleGraph) = g.fadjlist
 fadj(g::AbstractSimpleGraph, v::Integer) = g.fadjlist[v]
-
 
 badj(x...) = _NI("badj")
 
@@ -93,7 +155,7 @@ add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
 outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
 
-function issubset(g::T, h::T) where T <: AbstractSimpleGraph
+function issubset(g::T, h::T) where {T<:AbstractSimpleGraph}
     nv(g) <= nv(h) || return false
     for u in vertices(g)
         u_nbrs_g = neighbors(g, u)
@@ -102,7 +164,7 @@ function issubset(g::T, h::T) where T <: AbstractSimpleGraph
         u_nbrs_h = neighbors(h, u)
         p = 1
         len_u_nbrs_g > length(u_nbrs_h) && return false
-		(u_nbrs_g[1] < u_nbrs_h[1] || u_nbrs_g[end] > u_nbrs_h[end]) && return false
+        (u_nbrs_g[1] < u_nbrs_h[1] || u_nbrs_g[end] > u_nbrs_h[end]) && return false
         @inbounds for v in u_nbrs_h
             if v == u_nbrs_g[p]
                 p == len_u_nbrs_g && break
@@ -118,8 +180,8 @@ has_vertex(g::AbstractSimpleGraph, v::Integer) = v in vertices(g)
 
 ne(g::AbstractSimpleGraph) = g.ne
 
-function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where T
-    rem_edge!(g, edgetype(g)(T(u), T(v)))
+function rem_edge!(g::AbstractSimpleGraph{T}, u::Integer, v::Integer) where {T}
+    return rem_edge!(g, edgetype(g)(T(u), T(v)))
 end
 
 """

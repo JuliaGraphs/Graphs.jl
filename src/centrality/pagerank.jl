@@ -12,19 +12,14 @@ graph `g` parameterized by damping factor `α`, number of iterations
 centrality calculated for each node in `g`, or an error if convergence
 is not reached within `n` iterations.
 """
-function pagerank(
-    g::AbstractGraph{U}, 
-    α=0.85, 
-    n::Integer=100,
-    ϵ=1.0e-6
-    ) where U <: Integer
-    α_div_outdegree = Vector{Float64}(undef,nv(g))
+function pagerank(g::AbstractGraph{U}, α=0.85, n::Integer=100, ϵ=1.0e-6) where {U<:Integer}
+    α_div_outdegree = Vector{Float64}(undef, nv(g))
     dangling_nodes = Vector{U}()
     for v in vertices(g)
         if outdegree(g, v) == 0
             push!(dangling_nodes, v)
         end
-        α_div_outdegree[v] = (α/outdegree(g, v))
+        α_div_outdegree[v] = (α / outdegree(g, v))
     end
     N = Int(nv(g))
     # solution vector and temporary vector
@@ -40,7 +35,7 @@ function pagerank(
             xlast[v] = (1 - α + α * dangling_sum) * (1.0 / N)
         end
         # flow from edges
-        
+
         for v in vertices(g)
             for u in inneighbors(g, v)
                 xlast[v] += (x[u] * α_div_outdegree[u])
@@ -56,5 +51,5 @@ function pagerank(
             return x
         end
     end
-    error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
+    return error("Pagerank did not converge after $n iterations.") # TODO 0.7: change to InexactError with appropriate msg.
 end

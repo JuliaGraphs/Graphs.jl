@@ -31,14 +31,14 @@ of graph `g`. Return a vector representing the centrality calculated for each no
 julia> using Graphs
 
 julia> degree_centrality(star_graph(4))
-4-element Array{Float64,1}:
+4-element Vector{Float64}:
  1.0               
  0.3333333333333333
  0.3333333333333333
  0.3333333333333333
 
 julia> degree_centrality(path_graph(3))
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  0.5
  1.0
  0.5
