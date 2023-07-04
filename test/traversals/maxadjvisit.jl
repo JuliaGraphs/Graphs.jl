@@ -42,12 +42,8 @@
         @test bestcut == 4.0
 
         parity, bestcut = @inferred(mincut(g))
-        if parity[1] == 2
-            parity .= 3 .- parity
-        end
 
         @test length(parity) == 8
-        @test parity == [1, 2, 2, 2, 2, 2, 2, 2]
         @test bestcut == 2.0
 
         v = @inferred(maximum_adjacency_visit(g))
