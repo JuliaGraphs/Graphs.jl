@@ -1,7 +1,11 @@
 """
-    edge_betweenness_centrality(g, k)
+    edge_betweenness_centrality(g [, vertices, distmx]; [normalize]) 
+    edge_betweenness_centrality(g, k [, distmx]; [normalize, rng])
 
-Compute the [edge betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality) of an edge `e`.
+Compute the [edge betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
+of every edge `g` in a graph `g` or use a specified subset of vertices `vs`, or a random subset of `k`
+vertices to estimate the edge betweenness of the edges. Including more nodes return better results.
+Return a Sparse Matrix representing the centrality calculated for each edge in `g`.
 It is defined as the sum of the fraction of all-pairs shortest paths that pass through `e`
 ``
 bc(e) =  \\sum_{s, t \\in V}
@@ -11,10 +15,14 @@ bc(e) =  \\sum_{s, t \\in V}
 where `V`, is the set of nodes, \\frac{\\sigma_{st}} is the number of shortest-paths, and \\frac{\\sigma_{st}(e)} is the number of those paths passing through edge.
 
 ### Optional Arguments
-- `normalize=true`: If true, normalize the betweenness values by the
-total number of possible distinct paths between all pairs in the graphs.
-For an undirected graph, this number is ``2/(|V|(|V|-1))``
-and for a directed graph, ````1/(|V|(|V|-1))````.
+`normalize=true` : If set to true, the edge betweenness values will be normalized by the total number of possible distinct paths between all pairs of nodes in the graph. 
+For undirected graphs, the normalization factor is calculated as ``2 / (|V|(|V|-1))``, where |V| is the number of vertices. For directed graphs, the normalization factor 
+is calculated as ``1 / (|V|(|V|-1))``.
+`vs=vertices(g)`: A subset of nodes in the graph g for which the edge betweenness centrality is to be estimated. By including more nodes in this subset, 
+you can achieve a better estimate of the edge betweenness centrality.
+`distmx=weights(g)`: The weights of the edges in the graph g represented as a matrix. This argument allows you to specify custom weights for the edges. 
+The weights can be used to influence the calculation of betweenness centrality, giving higher importance to certain edges over others.
+`rng`: A random number generator used for selecting k vertices. This argument allows you to provide a custom random number generator that will be used for the vertex selection process. 
 
 
 ### References
@@ -40,11 +48,31 @@ julia> Matrix(edge_betweenness_centrality(star_graph(5)))
   0.0  0.0  0.0  0.0  8.0  0.0
   0.0  0.0  0.0  0.0  0.0  5.0
   0.0  0.0  0.0  0.0  0.0  0.0
+
+  julia> g = SimpleGraph(Edge.([(1, 2), (2, 3), (2, 5), (3, 4), (4, 5), (5, 6)]));
+  julia> distmx = [
+             0.0 2.0 0.0 0.0 0.0 0.0
+             2.0 0.0 4.2 0.0 1.2 0.0
+             0.0 4.2 0.0 5.5 0.0 0.0
+             0.0 0.0 5.5 0.0 0.9 0.0
+             0.0 1.2 0.0 0.9 0.0 0.6
+             0.0 0.0 0.0 0.0 0.6 0.0
+         ];
+  
+  julia> Matrix(edge_betweenness_centrality(g; distmx=distmx, normalize=true))
+  6×6 Matrix{Float64}:
+   0.0       0.333333  …  0.0       0.0
+   0.333333  0.0          0.533333  0.0
+   0.0       0.266667     0.0       0.0
+   0.0       0.0          0.266667  0.0
+   0.0       0.533333     0.0       0.333333
+   0.0       0.0       …  0.333333  0.0
 """
+
 function edge_betweenness_centrality(
-    g::AbstractGraph,
+    g::AbstractGraph;
     vs=vertices(g),
-    distmx::AbstractMatrix=weights(g);
+    distmx::AbstractMatrix=weights(g),
     normalize::Bool=true,
 )
     k = length(vs)
@@ -62,16 +90,15 @@ end
 
 function edge_betweenness_centrality(
     g::AbstractGraph,
-    k::Integer,
-    distmx::AbstractMatrix=weights(g);
+    k::Integer;
+    distmx::AbstractMatrix=weights(g),
     normalize=true,
     rng::Union{Nothing,AbstractRNG}=nothing,
-    seed::Union{Nothing,Integer}=nothing,
 )
     return edge_betweenness_centrality(
-        g,
-        sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed),
-        distmx;
+        g;
+        vs=sample(collect_if_not_vector(vertices(g)), k; rng=rng),
+        distmx=distmx,
         normalize=normalize,
     )
 end
