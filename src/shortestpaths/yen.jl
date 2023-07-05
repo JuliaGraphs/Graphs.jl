@@ -1,3 +1,7 @@
+# TODO this algorithm does not work with abitrary AbstractGraph yet,
+# as it relies on rem_edge! and deepcopy
+
+
 """
     struct YenState{T, U}
 
