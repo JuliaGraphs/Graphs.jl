@@ -29,6 +29,8 @@
     add_edge!(g6, 2, 3)
     add_edge!(g6, 2, 4)
     add_edge!(g6, 4, 3)
+    g7 = copy(g6)
+    add_edge!(g7, 3, 4)
     
     @testset "dfs_tree" begin
         for g in testdigraphs(g5)
@@ -94,6 +96,10 @@
             @test @inferred(is_cyclic(g))
         end
         for g in testgraphs(gloop_undirected)
+            @test @inferred(is_cyclic(g))
+        end
+        # non regression test following https://github.com/JuliaGraphs/Graphs.jl/pull/266#issuecomment-1621698039
+        for g in testdigraphs(g7)
             @test @inferred(is_cyclic(g))
         end
     end

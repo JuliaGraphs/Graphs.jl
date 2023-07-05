@@ -38,24 +38,24 @@ end
     for v in vertices(g)
         vcolor[v] != 0 && continue
         push!(vertex_stack, v)
-        vcolor[v] = 1
         while !isempty(vertex_stack)
             u = vertex_stack[end]
-            if vcolor[u] == 1
-                vcolor[u] = 2
+            if vcolor[u] == 0
+                vcolor[u] = 1
                 for n in outneighbors(g, u)
                     # we hit a loop when reaching back a vertex of the main path
-                    if vcolor[n] == 2
+                    if vcolor[n] == 1
                         return true
                     elseif vcolor[n] == 0
                         # we store neighbors, but these are not yet on the path
-                        vcolor[n] = 1
                         push!(vertex_stack, n)
                     end
                 end
             else
-                vcolor[u] = 3
                 pop!(vertex_stack)
+                if vcolor[u] == 1 
+                    vcolor[u] = 2
+                end
             end
         end
     end
