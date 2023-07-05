@@ -35,7 +35,7 @@ using Random:
     seed!,
     shuffle,
     shuffle!
-using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
+using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals, AbstractSparseMatrix
 import SparseArrays: blockdiag, sparse
 import Base:
     adjoint,
