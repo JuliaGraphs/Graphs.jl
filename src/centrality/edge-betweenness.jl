@@ -50,12 +50,20 @@ julia>edge_betweenness_centrality(g; normalize=false)
   ⋅    ⋅    ⋅    ⋅
 ```
 """
+
+##
+using Graphs, Random, SparseArrays, Plots
+GLOBAL_RNG = Random.GLOBAL_RNG
+
+include("../../src/utils.jl")
+
 function edge_betweenness_centrality(
-    g::AbstractGraph;
-    vs=vertices(g),
-    distmx::AbstractMatrix=weights(g),
+    g::AbstractGraph,
+    vs::AbstractArray=vertices(g),
+    distmx::AbstractMatrix=weights(g);
     normalize::Bool=true,
 )
+    k = length(vs)
     edge_betweenness = spzeros(nv(g), nv(g))
     for source in vs
         state = dijkstra_shortest_paths(
@@ -63,9 +71,25 @@ function edge_betweenness_centrality(
         )
         _accumulate_edges!(edge_betweenness, state)
     end
-    _rescale_e!(edge_betweenness, nv(g), normalize, is_directed(g))
+    _rescale_e!(edge_betweenness, nv(g), normalize, is_directed(g), k)
 
     return edge_betweenness
+end
+
+function edge_betweenness_centrality(
+    g::AbstractGraph,
+    k::Integer,
+    distmx::AbstractMatrix=weights(g);
+    normalize=true,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    return edge_betweenness_centrality(
+        g,
+        sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed),
+        distmx;
+        normalize=normalize,
+    )
 end
 
 function _accumulate_edges!(
@@ -93,9 +117,10 @@ function _rescale_e!(
     edge_betweenness::AbstractSparseMatrix,
     n::Integer,
     normalize::Bool,
-    directed::Bool=false,
+    directed::Bool,
+    k::Integer,
 )
-    scale = 1
+    scale = n / k
     if normalize
         if n > 1
             scale *= 1 / (n * (n - 1))
