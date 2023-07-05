@@ -42,7 +42,7 @@ Dict{Graphs.SimpleGraphs.SimpleEdge{Int64}, Float64} with 5 entries:
 """
 
 function edge_betweenness_centrality(
-    g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix=weights(g); normalize=true
+    g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix=weights(g); normalize::Bool=true
 )
     edge_betweenness = Dict(edges(g) .=> 0.0)
     for o in vs
@@ -66,7 +66,7 @@ function _accumulate_edges!(edge_betweenness::AbstractDict, state::Graphs.Abstra
         coeff = (1.0 + δ[w]) / σ[w]
         for v in pred[w]
             c = σ[v] * coeff
-            if Edge(v, w) ∉ edge_betweenness.keys
+            if Edge(v, w) ∉ keys(edge_betweenness)
                 edge_betweenness[Edge(w, v)] += c
             else
                 edge_betweenness[Edge(v, w)] += c
