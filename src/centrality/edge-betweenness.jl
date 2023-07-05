@@ -1,10 +1,10 @@
 """
-    edge_betweenness_centrality(g [, vertices, distmx]; [normalize]) 
-    edge_betweenness_centrality(g, k [, distmx]; [normalize, rng])
+    edge_betweenness_centrality(g[, vertices, distmx]; [normalize]) 
+    edge_betweenness_centrality(g, k[, distmx]; [normalize, rng])
 
 Compute the [edge betweenness centrality](https://en.wikipedia.org/wiki/Centrality#Betweenness_centrality)
-of every edge `g` in a graph `g` or use a specified subset of vertices `vs`, or a random subset of `k`
-vertices to estimate the edge betweenness of the edges. Including more nodes return better results.
+of every edge `e` in a graph `g`. Or use a random subset of `k<|V|` vertices
+to get an estimate of the edge betweenness centrality. Including more nodes yields better more accurate estimates.
 Return a Sparse Matrix representing the centrality calculated for each edge in `g`.
 It is defined as the sum of the fraction of all-pairs shortest paths that pass through `e`
 ``

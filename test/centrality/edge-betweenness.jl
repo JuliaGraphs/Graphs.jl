@@ -15,8 +15,8 @@
     g = GenericGraph(path_graph(2))
     z = @inferred(edge_betweenness_centrality(g; normalize=true))
     @test z[1, 2] == z[2, 1] == 1.0
-    z2 = @inferred(edge_betweenness_centrality(g, vertices(g)))
-    z3 = @inferred(edge_betweenness_centrality(g, collect(vertices(g))))
+    z2 = @inferred(edge_betweenness_centrality(g; vs=vertices(g)))
+    z3 = @inferred(edge_betweenness_centrality(g, nv(g)))
     @test z == z2 == z3
     z = @inferred(edge_betweenness_centrality(g3; normalize=false))
     @test z[1, 2] == z[5, 4] == 4.0
@@ -35,12 +35,16 @@
     ]
 
     @test isapprox(
-        nonzeros(edge_betweenness_centrality(g, vertices(g), distmx; normalize=false)),
+        nonzeros(
+            edge_betweenness_centrality(g; vs=vertices(g), distmx=distmx, normalize=false)
+        ),
         [5.0, 5.0, 4.0, 8.0, 4.0, 1.0, 1.0, 4.0, 8.0, 4.0, 5.0, 5.0],
     )
 
     @test isapprox(
-        nonzeros(edge_betweenness_centrality(g, vertices(g), distmx; normalize=true)),
+        nonzeros(
+            edge_betweenness_centrality(g; vs=vertices(g), distmx=distmx, normalize=true)
+        ),
         [5.0, 5.0, 4.0, 8.0, 4.0, 1.0, 1.0, 4.0, 8.0, 4.0, 5.0, 5.0] /
         (nv(g) * (nv(g) - 1)) * 2,
     )
@@ -53,12 +57,20 @@
         c2 = [0.24390243902439027, 0.27027027027027023, 0.1724137931034483]
 
         @test isapprox(
-            nonzeros(edge_betweenness_centrality(g, vertices(g), distmx2; normalize=false)),
+            nonzeros(
+                edge_betweenness_centrality(
+                    g; vs=vertices(g), distmx=distmx2, normalize=false
+                ),
+            ),
             [1.0, 1.0, 2.0, 1.0, 2.0],
         )
 
         @test isapprox(
-            nonzeros(edge_betweenness_centrality(g, vertices(g), distmx2; normalize=true)),
+            nonzeros(
+                edge_betweenness_centrality(
+                    g; vs=vertices(g), distmx=distmx2, normalize=true
+                ),
+            ),
             [1.0, 1.0, 2.0, 1.0, 2.0] * (1 / 6),
         )
     end
