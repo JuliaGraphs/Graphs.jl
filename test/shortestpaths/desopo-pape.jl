@@ -2,7 +2,7 @@
     g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
     d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
-    @testset "generic tests: $g" for g in testdigraphs(g4)
+    @testset "generic tests: $(typeof(g))" for g in test_generic_graphs(g4)
         y = @inferred(desopo_pape_shortest_paths(g, 2, d1))
         z = @inferred(desopo_pape_shortest_paths(g, 2, d2))
         @test y.parents == z.parents == [0, 0, 2, 3, 4]
@@ -13,7 +13,7 @@
     add_edge!(gx, 2, 4)
     d = ones(Int, 5, 5)
     d[2, 3] = 100
-    @testset "cycles: $g" for g in testgraphs(gx)
+    @testset "cycles: $(typeof(g))" for g in test_generic_graphs(gx)
         z = @inferred(desopo_pape_shortest_paths(g, 1, d))
         @test z.dists == [0, 1, 3, 2, 3]
         @test z.parents == [0, 1, 4, 2, 4]
@@ -28,7 +28,7 @@
     add_edge!(G, 3, 4)
     add_edge!(G, 4, 5)
 
-    @testset "more cycles: $g" for g in testgraphs(G)
+    @testset "more cycles: $(typeof(g))" for g in test_generic_graphs(G)
         y = @inferred(desopo_pape_shortest_paths(g, 1, m))
         @test y.parents == [0, 1, 1, 3, 3]
         @test y.dists == [0, 2, 2, 3, 4]
@@ -43,7 +43,7 @@
     add_edge!(G, 2, 4)
     add_edge!(G, 4, 5)
     m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
-    @testset "self loops: $g" for g in testgraphs(G)
+    @testset "self loops: $(typeof(g))" for g in test_generic_graphs(G)
         z = @inferred(desopo_pape_shortest_paths(g, 1, m))
         y = @inferred(dijkstra_shortest_paths(g, 1, m))
         @test isapprox(z.dists, y.dists)
@@ -54,7 +54,7 @@
     add_edge!(G, 1, 3)
     add_edge!(G, 4, 5)
     inf = typemax(eltype(G))
-    @testset "disconnected: $g" for g in testgraphs(G)
+    @testset "disconnected: $(typeof(G))" for g in test_generic_graphs(G)
         z = @inferred(desopo_pape_shortest_paths(g, 1))
         @test z.dists == [0, 1, 1, inf, inf]
         @test z.parents == [0, 1, 1, 0, 0]
@@ -62,7 +62,7 @@
 
     G = SimpleGraph(3)
     inf = typemax(eltype(G))
-    @testset "empty: $g" for g in testgraphs(G)
+    @testset "empty: $(typeof(g))" for g in test_generic_graphs(G)
         z = @inferred(desopo_pape_shortest_paths(g, 1))
         @test z.dists == [0, inf, inf]
         @test z.parents == [0, 0, 0]
@@ -73,7 +73,7 @@
             rng = StableRNG(seed)
             nvg = Int(ceil(250 * rand(rng)))
             neg = Int(floor((nvg * (nvg - 1) / 2) * rand(rng)))
-            g = SimpleGraph(nvg, neg; rng=rng)
+            g = GenericGraph(SimpleGraph(nvg, neg; rng=rng))
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -85,7 +85,7 @@
             rng = StableRNG(seed)
             nvg = Int(ceil(250 * rand(rng)))
             neg = Int(floor((nvg * (nvg - 1) / 2) * rand(rng)))
-            g = SimpleDiGraph(nvg, neg; rng=rng)
+            g = GenericDiGraph(SimpleDiGraph(nvg, neg; rng=rng))
             z = desopo_pape_shortest_paths(g, 1)
             y = dijkstra_shortest_paths(g, 1)
             @test isapprox(z.dists, y.dists)
@@ -93,42 +93,42 @@
     end
 
     @testset "misc graphs" begin
-        G = complete_graph(9)
+        G = GenericGraph(complete_graph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = complete_digraph(9)
+        G = GenericDiGraph(complete_digraph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = cycle_graph(9)
+        G = GenericGraph(cycle_graph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = cycle_digraph(9)
+        G = GenericDiGraph(cycle_digraph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = star_graph(9)
+        G = GenericGraph(star_graph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = wheel_graph(9)
+        G = GenericGraph(wheel_graph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = roach_graph(9)
+        G = GenericGraph(roach_graph(9))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
 
-        G = clique_graph(5, 19)
+        G = GenericGraph(clique_graph(5, 19))
         z = desopo_pape_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z.dists, y.dists)
@@ -158,16 +158,17 @@
         :truncatedtetrahedron,
         :truncatedtetrahedron_dir,
     ]
-        G = smallgraph(s)
-        z = desopo_pape_shortest_paths(G, 1)
-        y = dijkstra_shortest_paths(G, 1)
+        GS = smallgraph(s)
+        GG = is_directed(GS) ? GenericDiGraph(GS) : GenericGraph(GS)
+        z = desopo_pape_shortest_paths(GG, 1)
+        y = dijkstra_shortest_paths(GG, 1)
         @test isapprox(z.dists, y.dists)
     end
 
     @testset "errors" begin
-        g = Graph()
+        g = GenericGraph(Graph())
         @test_throws DomainError desopo_pape_shortest_paths(g, 1)
-        g = Graph(5)
+        g = GenericGraph(Graph(5))
         @test_throws DomainError desopo_pape_shortest_paths(g, 6)
     end
 end

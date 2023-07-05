@@ -11,6 +11,8 @@ mutable struct Biconnections{E<:AbstractEdge}
     id::Int
 end
 
+# TODO it might be more reasonable to return the components a s collections of vertices
+# instead of edges.
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}

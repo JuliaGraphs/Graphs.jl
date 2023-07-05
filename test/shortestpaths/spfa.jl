@@ -3,7 +3,7 @@
         g4 = path_digraph(5)
         d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
 
-        for g in testdigraphs(g4)
+        for g in test_generic_graphs(g4)
             y = @inferred(spfa_shortest_paths(g, 2, d1))
             @test y == [Inf, 0, 6, 17, 33]
         end
@@ -13,7 +13,7 @@
             add_edge!(gx, 2, 4)
             d = ones(Int, 5, 5)
             d[2, 3] = 100
-            for g in testgraphs(gx)
+            for g in test_generic_graphs(gx)
                 z = @inferred(spfa_shortest_paths(g, 1, d))
                 @test z == [0, 1, 3, 2, 3]
             end
@@ -28,7 +28,7 @@
         add_edge!(G, 3, 4)
         add_edge!(G, 4, 5)
 
-        for g in testgraphs(G)
+        for g in test_generic_graphs(G)
             y = @inferred(spfa_shortest_paths(g, 1, m))
             @test y == [0, 2, 2, 3, 4]
         end
@@ -44,7 +44,7 @@
         add_edge!(G, 2, 4)
         add_edge!(G, 4, 5)
         m = [0 10 2 0 15; 10 9 0 1 0; 2 0 1 0 0; 0 1 0 0 2; 15 0 0 2 0]
-        for g in testgraphs(G)
+        for g in test_generic_graphs(G)
             z = @inferred(spfa_shortest_paths(g, 1, m))
             y = @inferred(dijkstra_shortest_paths(g, 1, m))
             @test isapprox(z, y.dists)
@@ -57,7 +57,7 @@
         add_edge!(G, 1, 3)
         add_edge!(G, 4, 5)
         inf = typemax(eltype(G))
-        for g in testgraphs(G)
+        for g in test_generic_graphs(G)
             z = @inferred(spfa_shortest_paths(g, 1))
             @test z == [0, 1, 1, inf, inf]
         end
@@ -66,7 +66,7 @@
     @testset "Empty graph" begin
         G = SimpleGraph(3)
         inf = typemax(eltype(G))
-        for g in testgraphs(G)
+        for g in test_generic_graphs(G)
             z = @inferred(spfa_shortest_paths(g, 1))
             @test z == [0, inf, inf]
         end
@@ -78,7 +78,7 @@
                 rng = StableRNG(seed)
                 nvg = Int(ceil(250 * rand(rng)))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand(rng)))
-                g = SimpleGraph(nvg, neg; rng=rng)
+                g = GenericGraph(SimpleGraph(nvg, neg; rng=rng))
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)
                 @test isapprox(z, y.dists)
@@ -90,7 +90,7 @@
                 rng = StableRNG(seed)
                 nvg = Int(ceil(250 * rand(rng)))
                 neg = Int(floor((nvg * (nvg - 1) / 2) * rand(rng)))
-                g = SimpleDiGraph(nvg, neg; rng=rng)
+                g = GenericDiGraph(SimpleDiGraph(nvg, neg; rng=rng))
                 z = spfa_shortest_paths(g, 1)
                 y = dijkstra_shortest_paths(g, 1)
                 @test isapprox(z, y.dists)
@@ -99,42 +99,42 @@
     end
 
     @testset "Different types of graph" begin
-        G = complete_graph(9)
+        G = GenericGraph(complete_graph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = complete_digraph(9)
+        G = GenericDiGraph(complete_digraph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = cycle_graph(9)
+        G = GenericGraph(cycle_graph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = cycle_digraph(9)
+        G = GenericDiGraph(cycle_digraph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = star_graph(9)
+        G = GenericGraph(star_graph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = wheel_graph(9)
+        G = GenericGraph(wheel_graph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = roach_graph(9)
+        G = GenericGraph(roach_graph(9))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
 
-        G = clique_graph(5, 19)
+        G = GenericGraph(clique_graph(5, 19))
         z = spfa_shortest_paths(G, 1)
         y = dijkstra_shortest_paths(G, 1)
         @test isapprox(z, y.dists)
@@ -164,9 +164,10 @@
                 :truncatedtetrahedron,
                 :truncatedtetrahedron_dir,
             ]
-                G = smallgraph(s)
-                z = spfa_shortest_paths(G, 1)
-                y = dijkstra_shortest_paths(G, 1)
+                GS = smallgraph(s)
+                GG = is_directed(GS) ? GenericDiGraph(GS) : GenericGraph(GS)
+                z = spfa_shortest_paths(GG, 1)
+                y = dijkstra_shortest_paths(GG, 1)
                 @test isapprox(z, y.dists)
             end
         end
@@ -179,7 +180,7 @@
         d2 = sparse(
             float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
         )
-        for g in testdigraphs(g4)
+        for g in test_generic_graphs(g4)
             y = @inferred(spfa_shortest_paths(g, 2, d1))
             z = @inferred(spfa_shortest_paths(g, 2, d2))
             @test y == z == [Inf, 0, 6, 17, 33]
@@ -198,7 +199,7 @@
     @testset "Negative Cycle" begin
         # Negative Cycle 1
         gx = complete_graph(3)
-        for g in testgraphs(gx)
+        for g in test_generic_graphs(gx)
             d = [1 -3 1; -3 1 1; 1 1 1]
             @test_throws Graphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
             @test has_negative_edge_cycle_spfa(g, d)
@@ -211,7 +212,7 @@
         # Negative cycle of length 3 in graph of diameter 4
         gx = complete_graph(4)
         d = [1 -1 1 1; 1 1 1 -1; 1 1 1 1; 1 1 1 1]
-        for g in testgraphs(gx)
+        for g in test_generic_graphs(gx)
             @test_throws Graphs.NegativeCycleError spfa_shortest_paths(g, 1, d)
             @test has_negative_edge_cycle_spfa(g, d)
         end

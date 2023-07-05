@@ -2,7 +2,7 @@
     g1 = smallgraph(:house)
     g2 = cycle_digraph(4)
 
-    for g in testgraphs(g1)
+    for g in test_generic_graphs(g1)
         y = @inferred(eigenvector_centrality(g))
         @test round.(y, digits=3) ==
             round.(
@@ -16,7 +16,7 @@
             digits=3,
         )
     end
-    for g in testdigraphs(g2)
+    for g in test_generic_graphs(g2)
         y = @inferred(eigenvector_centrality(g))
         @test round.(y, digits=3) == round.([0.5, 0.5, 0.5, 0.5], digits=3)
     end

@@ -297,3 +297,6 @@ function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
 
     return result
 end
+
+collect_if_not_vector(xs::AbstractVector) = xs
+collect_if_not_vector(xs) = collect(xs)
