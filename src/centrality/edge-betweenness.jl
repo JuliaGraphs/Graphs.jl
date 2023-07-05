@@ -24,31 +24,22 @@ and for a directed graph, ````1/(|V|(|V|-1))````.
 ```jldoctest
 julia> using Graphs
 
-julia> edge_betweenness_centrality(star_graph(5))
-5×5 SparseMatrixCSC{Float64, Int64} with 8 stored entries:
-  ⋅   0.4  0.4  0.4  0.4
- 0.4   ⋅    ⋅    ⋅    ⋅ 
- 0.4   ⋅    ⋅    ⋅    ⋅ 
- 0.4   ⋅    ⋅    ⋅    ⋅ 
- 0.4   ⋅    ⋅    ⋅    ⋅ 
+julia> Matrix(edge_betweenness_centrality(star_graph(5)))
+5×5 Matrix{Float64}:
+ 0.0  0.4  0.4  0.4  0.4
+ 0.4  0.0  0.0  0.0  0.0
+ 0.4  0.0  0.0  0.0  0.0
+ 0.4  0.0  0.0  0.0  0.0
+ 0.4  0.0  0.0  0.0  0.0
 
-julia> edge_betweenness_centrality(path_digraph(6), normalize=false)
-6×6 SparseMatrixCSC{Float64, Int64} with 5 stored entries:
-  ⋅   5.0   ⋅    ⋅    ⋅    ⋅ 
-  ⋅    ⋅   8.0   ⋅    ⋅    ⋅ 
-  ⋅    ⋅    ⋅   9.0   ⋅    ⋅ 
-  ⋅    ⋅    ⋅    ⋅   8.0   ⋅ 
-  ⋅    ⋅    ⋅    ⋅    ⋅   5.0
-  ⋅    ⋅    ⋅    ⋅    ⋅    ⋅ 
-
-julia>g = SimpleWeightedDiGraph([1, 2, 3, 2, 2], [2, 3, 1, 4, 1], [1, 2, 3, 4, 5]; combine=+)
-julia>edge_betweenness_centrality(g; normalize=false)
-4×4 SparseMatrixCSC{Float64, Int64} with 5 stored entries:
-  ⋅   5.0   ⋅    ⋅ 
- 0.5   ⋅   2.5  3.0
- 3.5   ⋅    ⋅    ⋅ 
-  ⋅    ⋅    ⋅    ⋅
-```
+ julia> Matrix(edge_betweenness_centrality(path_digraph(6), normalize=false))
+ 6×6 Matrix{Float64}:
+  0.0  5.0  0.0  0.0  0.0  0.0
+  0.0  0.0  8.0  0.0  0.0  0.0
+  0.0  0.0  0.0  9.0  0.0  0.0
+  0.0  0.0  0.0  0.0  8.0  0.0
+  0.0  0.0  0.0  0.0  0.0  5.0
+  0.0  0.0  0.0  0.0  0.0  0.0
 """
 function edge_betweenness_centrality(
     g::AbstractGraph,
