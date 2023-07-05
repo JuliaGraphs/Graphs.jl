@@ -23,7 +23,7 @@
     add_edge!(g6, 1, 3)
     add_edge!(g6, 3, 4)
     for α in [0.75, 0.85]
-        for g in testdigraphs(g5)
+        for g in test_generic_graphs(g5)
             @test pagerank(g)[3] ≈ 0.318 atol = 0.001
             @test length(@inferred(pagerank(g))) == nv(g)
             @test_throws ErrorException pagerank(g, 2)
@@ -31,7 +31,7 @@
             @test isapprox(pagerank(g, α), dense_pagerank_solver(g, α), atol=0.001)
         end
 
-        for g in testgraphs(g6)
+        for g in test_generic_graphs(g6)
             @test length(@inferred(pagerank(g))) == nv(g)
             @test_throws ErrorException pagerank(g, 2)
             @test_throws ErrorException pagerank(g, α, 2)
