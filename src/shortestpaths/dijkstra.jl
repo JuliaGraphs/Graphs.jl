@@ -205,13 +205,13 @@ on a graph, computing the shortest path between `src` and `dst`.
 ```jldoctest
 julia> using Graphs
 
-julia> bidijkstra_shortest_path(cycle_graph(5), 1, 4);
+julia> bidijkstra_shortest_path(cycle_graph(5), 1, 4)
 3-element Vector{Int64}:
  1
  5
  4
 
-julia> bidijkstra_shortest_path(path_graph(5), 1, 4);
+julia> bidijkstra_shortest_path(path_graph(5), 1, 4)
 4-element Vector{Int64}:
  1
  2
