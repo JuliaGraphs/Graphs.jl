@@ -13,8 +13,8 @@ where `V`, is the set of nodes, \\frac{\\sigma_{st}} is the number of shortest-p
 ### Optional Arguments
 - `normalize=true`: If true, normalize the betweenness values by the
 total number of possible distinct paths between all pairs in the graphs.
-For an undirected graph, this number is ``\\frac{(|V|-1)(|V|-2)}{2}``
-and for a directed graph, ``{(|V|-1)(|V|-2)}``.
+For an undirected graph, this number is ``2/(|V|(|V|-1))``
+and for a directed graph, ````1/(|V|(|V|-1))````.
 
 
 ### References
@@ -25,28 +25,42 @@ and for a directed graph, ``{(|V|-1)(|V|-2)}``.
 julia> using Graphs
 
 julia> edge_betweenness_centrality(star_graph(5))
-Dict{Graphs.SimpleGraphs.SimpleEdge{Int64}, Float64} with 4 entries:
-  Edge 1 => 2 => 0.4
-  Edge 1 => 3 => 0.4
-  Edge 1 => 4 => 0.4
-  Edge 1 => 5 => 0.4
+5×5 SparseMatrixCSC{Float64, Int64} with 8 stored entries:
+  ⋅   0.4  0.4  0.4  0.4
+ 0.4   ⋅    ⋅    ⋅    ⋅ 
+ 0.4   ⋅    ⋅    ⋅    ⋅ 
+ 0.4   ⋅    ⋅    ⋅    ⋅ 
+ 0.4   ⋅    ⋅    ⋅    ⋅ 
 
-julia> edge_betweenness_centrality(path_digraph(6))
-Dict{Graphs.SimpleGraphs.SimpleEdge{Int64}, Float64} with 5 entries:
-  Edge 4 => 5 => 0.266667
-  Edge 1 => 2 => 0.166667
-  Edge 3 => 4 => 0.3
-  Edge 5 => 6 => 0.166667
-  Edge 2 => 3 => 0.266667
+julia> edge_betweenness_centrality(path_digraph(6), normalize=false)
+6×6 SparseMatrixCSC{Float64, Int64} with 5 stored entries:
+  ⋅   5.0   ⋅    ⋅    ⋅    ⋅ 
+  ⋅    ⋅   8.0   ⋅    ⋅    ⋅ 
+  ⋅    ⋅    ⋅   9.0   ⋅    ⋅ 
+  ⋅    ⋅    ⋅    ⋅   8.0   ⋅ 
+  ⋅    ⋅    ⋅    ⋅    ⋅   5.0
+  ⋅    ⋅    ⋅    ⋅    ⋅    ⋅ 
+
+julia>g = SimpleWeightedDiGraph([1, 2, 3, 2, 2], [2, 3, 1, 4, 1], [1, 2, 3, 4, 5]; combine=+)
+julia>edge_betweenness_centrality(g; normalize=false)
+4×4 SparseMatrixCSC{Float64, Int64} with 5 stored entries:
+  ⋅   5.0   ⋅    ⋅ 
+ 0.5   ⋅   2.5  3.0
+ 3.5   ⋅    ⋅    ⋅ 
+  ⋅    ⋅    ⋅    ⋅
 ```
 """
-
 function edge_betweenness_centrality(
-    g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix=weights(g); normalize::Bool=true
+    g::AbstractGraph;
+    vs=vertices(g),
+    distmx::AbstractMatrix=weights(g),
+    normalize::Bool=true,
 )
-    edge_betweenness = Dict(edges(g) .=> 0.0)
-    for o in vs
-        state = dijkstra_shortest_paths(g, o, distmx; allpaths=true, trackvertices=true)
+    edge_betweenness = spzeros(nv(g), nv(g))
+    for source in vs
+        state = dijkstra_shortest_paths(
+            g, source, distmx; allpaths=true, trackvertices=true
+        )
         _accumulate_edges!(edge_betweenness, state)
     end
     _rescale_e!(edge_betweenness, nv(g), normalize, is_directed(g))
@@ -54,7 +68,9 @@ function edge_betweenness_centrality(
     return edge_betweenness
 end
 
-function _accumulate_edges!(edge_betweenness::AbstractDict, state::Graphs.AbstractPathState)
+function _accumulate_edges!(
+    edge_betweenness::AbstractSparseMatrix, state::Graphs.AbstractPathState
+)
     σ = state.pathcounts
     pred = state.predecessors
     seen = state.closest_vertices
@@ -66,37 +82,28 @@ function _accumulate_edges!(edge_betweenness::AbstractDict, state::Graphs.Abstra
         coeff = (1.0 + δ[w]) / σ[w]
         for v in pred[w]
             c = σ[v] * coeff
-            if Edge(v, w) ∉ keys(edge_betweenness)
-                edge_betweenness[Edge(w, v)] += c
-            else
-                edge_betweenness[Edge(v, w)] += c
-                δ[v] += c
-            end
+            edge_betweenness[v, w] += c
+            δ[v] += c
         end
     end
     return nothing
 end
 
 function _rescale_e!(
-    edge_betweenness::AbstractDict, n::Integer, normalize::Bool, directed::Bool=false
+    edge_betweenness::AbstractSparseMatrix,
+    n::Integer,
+    normalize::Bool,
+    directed::Bool=false,
 )
+    scale = 1
     if normalize
-        if n <= 1
-            scale = nothing  # no normalization b=0 for all nodes
-        else
-            scale = 1 / (n * (n - 1))
+        if n > 1
+            scale *= 1 / (n * (n - 1))
         end
-    else  # rescale by 2 for undirected graphs
         if !directed
-            scale = 0.5
-        else
-            scale = nothing
+            scale *= 2
         end
     end
-    if scale !== nothing
-        for (k, v) in edge_betweenness
-            edge_betweenness[k] *= scale
-        end
-    end
+    edge_betweenness .*= scale
     return nothing
 end
