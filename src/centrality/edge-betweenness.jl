@@ -50,16 +50,9 @@ julia>edge_betweenness_centrality(g; normalize=false)
   ⋅    ⋅    ⋅    ⋅
 ```
 """
-
-##
-using Graphs, Random, SparseArrays, Plots
-GLOBAL_RNG = Random.GLOBAL_RNG
-
-include("../../src/utils.jl")
-
 function edge_betweenness_centrality(
     g::AbstractGraph,
-    vs::AbstractArray=vertices(g),
+    vs=vertices(g),
     distmx::AbstractMatrix=weights(g);
     normalize::Bool=true,
 )
