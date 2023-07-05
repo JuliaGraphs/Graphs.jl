@@ -250,6 +250,7 @@ export
     desopo_pape_shortest_paths,
 
     # centrality
+    edge_betweenness_centrality,
     betweenness_centrality,
     closeness_centrality,
     degree_centrality,
@@ -504,6 +505,7 @@ include("operators.jl")
 include("persistence/common.jl")
 include("persistence/lg.jl")
 include("centrality/betweenness.jl")
+include("centrality/edge-betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")
 include("centrality/degree.jl")
