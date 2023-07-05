@@ -92,30 +92,30 @@ function topological_sort_by_dfs end
     verts = Vector{T}()
     vertex_stack = Vector{T}()
     for v in vertices(g)
-       vcolor[v] != 0 && continue
-       push!(vertex_stack, v)
-       while !isempty(vertex_stack)
-           u = vertex_stack[end]
-           if vcolor[u] == 0
-               vcolor[u] = 1
-               for n in outneighbors(g, u)
-                   # we hit a loop when reaching back a vertex of the main path
-                   if vcolor[n] == 1
-                       error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
-                   elseif vcolor[n] == 0
-                       # we store neighbors, but these are not yet on the path
-                       push!(vertex_stack, n)
-                   end
-               end
-           else
-               pop!(vertex_stack)
-               # if vcolor[u] == 2, the vertex was already explored and added to verts
-               if vcolor[u] == 1 
-                   vcolor[u] = 2
-                   pushfirst!(verts, u)
-               end
-           end
-       end
+        vcolor[v] != 0 && continue
+        push!(vertex_stack, v)
+        while !isempty(vertex_stack)
+            u = vertex_stack[end]
+            if vcolor[u] == 0
+                vcolor[u] = 1
+                for n in outneighbors(g, u)
+                    # we hit a loop when reaching back a vertex of the main path
+                    if vcolor[n] == 1
+                        error("The input graph contains at least one loop.") # TODO 0.7 should we use a different error?
+                    elseif vcolor[n] == 0
+                        # we store neighbors, but these are not yet on the path
+                        push!(vertex_stack, n)
+                    end
+                end
+                else
+                pop!(vertex_stack)
+                # if vcolor[u] == 2, the vertex was already explored and added to verts
+                if vcolor[u] == 1 
+                    vcolor[u] = 2
+                    pushfirst!(verts, u)
+                end
+            end
+        end
     end
     return verts
 end
