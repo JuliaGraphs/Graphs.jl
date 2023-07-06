@@ -32,7 +32,7 @@ function is_cyclic end
 end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function is_cyclic(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
-    # 0 if not visited, 1 if visited, 2 if in the current dfs path, 3 if fully explored 
+    # 0 if not visited, 1 if in the current dfs path, 2 if fully explored
     vcolor = zeros(UInt8, nv(g))
     vertex_stack = Vector{T}()
     for v in vertices(g)
@@ -87,7 +87,7 @@ graph `g` as a vector of vertices in topological order.
 function topological_sort_by_dfs end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function topological_sort_by_dfs(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
-    # 0 if not visited, 1 if in the current dfs path, 2 if fully explored 
+    # 0 if not visited, 1 if in the current dfs path, 2 if fully explored
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()
     vertex_stack = Vector{T}()
