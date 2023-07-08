@@ -53,18 +53,20 @@ An infinite path length is represented by the `typemax` of the distance matrix.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> eccentricity(g, 1)
 2
 
 julia> eccentricity(g, [1; 2])
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  2
  1
 
 julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  2.5
  0.5
 ```
@@ -123,14 +125,14 @@ largest eccentricity).
 julia> using Graphs
 
 julia> periphery(star_graph(5))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
  5
 
 julia> periphery(path_graph(5))
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  5
 ```
@@ -180,11 +182,11 @@ to the graph's radius (that is, the set of vertices with the smallest eccentrici
 julia> using Graphs
 
 julia> center(star_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> center(path_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 ```
 """

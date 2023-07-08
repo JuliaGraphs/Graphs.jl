@@ -85,7 +85,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 size(nbt::Nonbacktracking, i::Number) = size(nbt)[i]
-eltype(nbt::Nonbacktracking) = Float64
+eltype(::Type{<:Nonbacktracking}) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
 function *(nbt::Nonbacktracking, x::Vector{T}) where {T<:Number}

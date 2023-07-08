@@ -26,7 +26,7 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> core_number(g)
-6-element Array{Int64,1}:
+6-element Vector{Int64}:
  1
  2
  2
@@ -138,7 +138,7 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_core(g, 1)
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  3
@@ -146,7 +146,7 @@ julia> k_core(g, 1)
  5
 
 julia> k_core(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
@@ -194,15 +194,15 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_shell(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_shell(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> k_shell(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
@@ -249,16 +249,16 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_crust(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_crust(g, 1)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  6
 
 julia> k_crust(g, 2)
-6-element Array{Int64,1}:
+6-element Vector{Int64}:
  1
  2
  3
@@ -305,22 +305,22 @@ julia> add_vertex!(g);
 julia> add_edge!(g, 5, 2);
 
 julia> k_corona(g, 0)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  6
 
 julia> k_corona(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> k_corona(g, 2)
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
  5
 
 julia> k_corona(g, 3)
-0-element Array{Int64,1}
+Int64[]
 ```
 """
 function k_corona(g::AbstractGraph, k; corenum=core_number(g))
