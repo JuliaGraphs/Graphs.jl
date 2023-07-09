@@ -157,9 +157,10 @@ function relax(u,
                Q::PriorityQueue{U,T};
                allpaths=false,
                pathcounts=nothing,
-               preds=nothing
+               preds=nothing,
+               forward=true
 ) where {T<:Real} where {U<:Integer}
-    alt = dists[u] + distmx[u, v]
+    alt = dists[u] + (forward ? distmx[u, v] : distmx[v, u])
 
     if !visited[v]
         visited[v] = true
@@ -254,7 +255,7 @@ function bidijkstra_shortest_path(
         end
 
         for v in inneighbors(g, ub)
-            relax(ub, v, distmx, dists_b, parents_b, visited_b, Qb)
+            relax(ub, v, distmx, dists_b, parents_b, visited_b, Qb; forward=false)
             if visited_f[v] && (dists_f[v]+distmx[v,ub]+dists_b[ub]) < μ
                 # we have found an edge between the forward and backward exploration
                 μ = dists_f[v]+distmx[v,ub]+dists_b[ub]
