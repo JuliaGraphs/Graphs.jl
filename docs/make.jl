@@ -60,6 +60,7 @@ pages_files = [
         "algorithms/editdist.md",
         "algorithms/independentset.md",
         "algorithms/linalg.md",
+        "algorithms/matching.md",
         "algorithms/shortestpaths.md",
         "algorithms/spanningtrees.md",
         "algorithms/steinertree.md",
