@@ -422,7 +422,10 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # matching
+    hopcroft_karp_matching
 
 """
     Graphs
@@ -538,6 +541,7 @@ include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")
+include("matching/maximum_matching.jl")
 
 using .LinAlg
 end # module
