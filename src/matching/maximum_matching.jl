@@ -94,6 +94,9 @@ this algorithm is particularly effective for sparse bipartite graphs.
 """
 function hopcroft_karp_matching(graph::Graph)
     bmap = bipartite_map(graph)
+    if length(bmap) != nv(graph)
+        throw(ArgumentError("Provided graph is not bipartite"))
+    end
     set1 = [n for n in vertices(graph) if bmap[n] == 1]
     matching = Dict(n => UNMATCHED for n in vertices(graph))
     distance = Dict{Int, Float64}()
