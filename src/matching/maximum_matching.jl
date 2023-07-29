@@ -81,6 +81,11 @@ Compute a maximum-cardinality matching of a bipartite graph via the
 The return type is a dict mapping nodes in `set1` to other nodes *and* other
 nodes back to their matched nodes in `set`.
 
+### Performance
+The algorithms runs in O((m + n)n^0.5), where n is the number of vertices and
+m is the number of edges. As it does not assume the number of edges is O(n^2),
+this algorithm is particularly effective for sparse bipartite graphs.
+
 ### Arguments
 
 * `graph`: The bipartite `Graph` for which a maximum matching is computed
