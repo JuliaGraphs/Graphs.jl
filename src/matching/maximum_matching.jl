@@ -72,6 +72,22 @@ function _hk_dfs!(
     return true
 end
 
+"""
+    hopcroft_karp_matching(graph::Graph, set1::Set)::Dict
+
+Compute a maximum-cardinality matching of a bipartite graph via the
+[Hopcroft-Karp algorithm](https://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm).
+
+The return type is a dict mapping nodes in `set1` to other nodes *and* other
+nodes back to their matched nodes in `set`.
+
+### Arguments
+
+* `graph`: The bipartite `Graph` for which a maximum matching is computed
+
+* `set1`: A set of vertices in a bipartition
+
+"""
 function hopcroft_karp_matching(graph::Graph, set1::Set)
     matching = Dict(n => UNMATCHED for n in vertices(graph))
     set1 = [n for n in vertices(graph) if n in set1]
