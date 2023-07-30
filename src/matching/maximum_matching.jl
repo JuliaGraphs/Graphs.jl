@@ -1,6 +1,4 @@
-using Graphs
-
-const UNMATCHED = -1
+const UNMATCHED = nothing
 
 """
     AbstractMaximumMatchingAlgorithm
@@ -22,13 +20,15 @@ Determine whether an augmenting path exists and mark distances
 so we can compute shortest-length augmenting paths in the DFS.
 """
 function _hk_augmenting_bfs!(
-    graph::Graph,
-    set1::Vector{Int},
-    matching::Dict{Int, Int},
-    distance::Dict{Int, Float64},
-)::Bool
+    graph::Graph{T},
+    set1::Vector{T},
+    matching::Dict{T, Union{T, typeof(UNMATCHED)}},
+    distance::Dict{Union{T, typeof(UNMATCHED)}, Float64},
+)::Bool where {T <: Integer}
     # Initialize queue with the unmatched nodes in set1
-    queue = Vector{Int}([n for n in set1 if matching[n] == UNMATCHED])
+    queue = Vector{Union{eltype(graph), typeof(UNMATCHED)}}(
+        [n for n in set1 if matching[n] == UNMATCHED]
+    )
 
     distance[UNMATCHED] = Inf
     for n in set1
@@ -66,11 +66,11 @@ end
 Compute augmenting paths and update the matching
 """
 function _hk_augmenting_dfs!(
-    graph::Graph,
-    root::Int,
-    matching::Dict{Int, Int},
-    distance::Dict{Int, Float64},
-)::Bool
+    graph::Graph{T},
+    root::Union{T, typeof(UNMATCHED)},
+    matching::Dict{T, Union{T, typeof(UNMATCHED)}},
+    distance::Dict{Union{T, typeof(UNMATCHED)}, Float64},
+)::Bool where {T <: Integer}
     if root != UNMATCHED
         for n in neighbors(graph, root)
             # Traverse edges of the minimum-length alternating path
@@ -118,24 +118,6 @@ this algorithm is particularly effective for sparse bipartite graphs.
 
 * `ArgumentError`: The provided graph is not bipartite
 
-### Example
-```jldoctest
-julia> using Graphs
-
-julia> g = complete_bipartite_graph(3, 5)
-{8, 15} undirected simple Int64 graph
-
-julia> # Note that the exact matching we compute here is implementation-dependent
-
-julia> hopcroft_karp_matching(g)
-Dict{Int64, Int64} with 6 entries:
-  5 => 2
-  4 => 1
-  6 => 3
-  2 => 5
-  3 => 6
-  1 => 4
-```
 """
 function hopcroft_karp_matching(graph::Graph)::Dict{Int, Int}
     bmap = bipartite_map(graph)
@@ -145,8 +127,10 @@ function hopcroft_karp_matching(graph::Graph)::Dict{Int, Int}
     set1 = [n for n in vertices(graph) if bmap[n] == 1]
 
     # Initialize "state" that is modified during the algorithm
-    matching = Dict(n => UNMATCHED for n in vertices(graph))
-    distance = Dict{Int, Float64}()
+    matching = Dict{eltype(graph), Union{eltype(graph), typeof(UNMATCHED)}}(
+        n => UNMATCHED for n in vertices(graph)
+    )
+    distance = Dict{Union{eltype(graph), typeof(UNMATCHED)}, Float64}()
 
     # BFS to determine whether any augmenting paths exist
     while _hk_augmenting_bfs!(graph, set1, matching, distance)
@@ -183,7 +167,7 @@ included in the returned dict.
 
 ### Arguments
 
-* `graph`: The bipartite `Graph` for which a maximum matching is computed
+* `graph`: The `Graph` for which a maximum matching is computed
 
 * `algorithm`: The algorithm to use to compute the matching. Default is
   `HopcroftKarpAlgorithm`.
@@ -198,6 +182,23 @@ Currently implemented algorithms are:
 * `ArgumentError`: The provided graph is not bipartite but an algorithm that
   only applies to bipartite graphs, e.g. Hopcroft-Karp, was chosen
 
+### Example
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(6)
+{6, 5} undirected simple Int64 graph
+
+julia> maximum_cardinality_matching(g)
+Dict{Int64, Int64} with 6 entries:
+  5 => 6
+  4 => 3
+  6 => 5
+  2 => 1
+  3 => 4
+  1 => 2
+
+```
 """
 function maximum_cardinality_matching(
     graph::Graph;
