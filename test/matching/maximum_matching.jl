@@ -52,8 +52,6 @@ function test_imperfect_matching()
     add_edge!(g, (8, 16))
 
     matching = hopcroft_karp_matching(g)
-    println(matching)
-    println(length(matching))
     @test length(matching) == 14
 
     possibly_unmatched_1 = Set([5, 6, 7, 8])
