@@ -99,6 +99,24 @@ this algorithm is particularly effective for sparse bipartite graphs.
 
 * `graph`: The bipartite `Graph` for which a maximum matching is computed
 
+### Example
+```jldoctest
+julia> using Graphs
+
+julia> g = complete_bipartite_graph(3, 5)
+{8, 15} undirected simple Int64 graph
+
+julia> # Note that the exact matching we compute here is implementation-dependent
+
+julia> hopcroft_karp_matching(g)
+Dict{Int64, Int64} with 6 entries:
+  5 => 2
+  4 => 1
+  6 => 3
+  2 => 5
+  3 => 6
+  1 => 4
+```
 """
 function hopcroft_karp_matching(graph::Graph)
     bmap = bipartite_map(graph)
