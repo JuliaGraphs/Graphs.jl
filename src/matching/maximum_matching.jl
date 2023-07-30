@@ -1,4 +1,5 @@
 const UNMATCHED = nothing
+MatchedNodeType{T} = Union{T, typeof(UNMATCHED)}
 
 """
     AbstractMaximumMatchingAlgorithm
@@ -22,11 +23,11 @@ so we can compute shortest-length augmenting paths in the DFS.
 function _hk_augmenting_bfs!(
     graph::Graph{T},
     set1::Vector{T},
-    matching::Dict{T, Union{T, typeof(UNMATCHED)}},
-    distance::Dict{Union{T, typeof(UNMATCHED)}, Float64},
+    matching::Dict{T, MatchedNodeType{T}},
+    distance::Dict{MatchedNodeType{T}, Float64},
 )::Bool where {T <: Integer}
     # Initialize queue with the unmatched nodes in set1
-    queue = Vector{Union{eltype(graph), typeof(UNMATCHED)}}(
+    queue = Vector{MatchedNodeType{eltype(graph)}}(
         [n for n in set1 if matching[n] == UNMATCHED]
     )
 
@@ -67,9 +68,9 @@ Compute augmenting paths and update the matching
 """
 function _hk_augmenting_dfs!(
     graph::Graph{T},
-    root::Union{T, typeof(UNMATCHED)},
-    matching::Dict{T, Union{T, typeof(UNMATCHED)}},
-    distance::Dict{Union{T, typeof(UNMATCHED)}, Float64},
+    root::MatchedNodeType{T},
+    matching::Dict{T, MatchedNodeType{T}},
+    distance::Dict{MatchedNodeType{T}, Float64},
 )::Bool where {T <: Integer}
     if root != UNMATCHED
         for n in neighbors(graph, root)
@@ -129,10 +130,10 @@ function hopcroft_karp_matching(
     set1 = [n for n in vertices(graph) if bmap[n] == 1]
 
     # Initialize "state" that is modified during the algorithm
-    matching = Dict{eltype(graph), Union{eltype(graph), typeof(UNMATCHED)}}(
+    matching = Dict{eltype(graph), MatchedNodeType{eltype(graph)}}(
         n => UNMATCHED for n in vertices(graph)
     )
-    distance = Dict{Union{eltype(graph), typeof(UNMATCHED)}, Float64}()
+    distance = Dict{MatchedNodeType{eltype(graph)}, Float64}()
 
     # BFS to determine whether any augmenting paths exist
     while _hk_augmenting_bfs!(graph, set1, matching, distance)
