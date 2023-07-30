@@ -119,7 +119,9 @@ this algorithm is particularly effective for sparse bipartite graphs.
 * `ArgumentError`: The provided graph is not bipartite
 
 """
-function hopcroft_karp_matching(graph::Graph)::Dict{Int, Int}
+function hopcroft_karp_matching(
+   graph::Graph{T}
+)::Dict{T, T} where {T <: Integer}
     bmap = bipartite_map(graph)
     if length(bmap) != nv(graph)
         throw(ArgumentError("Provided graph is not bipartite"))
@@ -147,9 +149,9 @@ function hopcroft_karp_matching(graph::Graph)::Dict{Int, Int}
 end
 
 function maximum_cardinality_matching(
-    graph::Graph,
+    graph::Graph{T},
     algorithm::HopcroftKarpAlgorithm,
-)::Dict{Int, Int}
+)::Dict{T, T} where {T <: Integer}
     return hopcroft_karp_matching(graph)
 end
 
@@ -201,8 +203,8 @@ Dict{Int64, Int64} with 6 entries:
 ```
 """
 function maximum_cardinality_matching(
-    graph::Graph;
+    graph::Graph{T};
     algorithm::AbstractMaximumMatchingAlgorithm = HopcroftKarpAlgorithm(),
-)::Dict{Int, Int}
+)::Dict{T, T} where {T <: Integer}
     return maximum_cardinality_matching(graph, algorithm)
 end
