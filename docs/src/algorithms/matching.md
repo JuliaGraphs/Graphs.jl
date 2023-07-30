@@ -11,5 +11,8 @@ Pages = ["matching.md"]
 ## Full docs
 
 ```@docs
+AbstractMaximumMatchingAlgorithm
+HopcroftKarpAlgorithm
+maximum_cardinality_matching
 hopcroft_karp_matching
 ```
