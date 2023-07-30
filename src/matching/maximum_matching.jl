@@ -3,6 +3,21 @@ using Graphs
 const UNMATCHED = -1
 
 """
+    AbstractMaximumMatchingAlgorithm
+
+Abstract type for maximum cardinality matching algorithms
+"""
+abstract type AbstractMaximumMatchingAlgorithm end
+
+"""
+    HopcroftKarpAlgorithm
+
+The [Hopcroft-Karp algorithm](https://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm)
+for computing a maximum cardinality matching of a bipartite graph.
+"""
+struct HopcroftKarpAlgorithm <: AbstractMaximumMatchingAlgorithm end
+
+"""
 Determine whether an augmenting path exists and mark distances
 so we can compute shortest-length augmenting paths in the DFS.
 """
@@ -99,6 +114,10 @@ this algorithm is particularly effective for sparse bipartite graphs.
 
 * `graph`: The bipartite `Graph` for which a maximum matching is computed
 
+### Exceptions
+
+* `ArgumentError`: The provided graph is not bipartite
+
 ### Example
 ```jldoctest
 julia> using Graphs
@@ -118,7 +137,7 @@ Dict{Int64, Int64} with 6 entries:
   1 => 4
 ```
 """
-function hopcroft_karp_matching(graph::Graph)
+function hopcroft_karp_matching(graph::Graph)::Dict{Int, Int}
     bmap = bipartite_map(graph)
     if length(bmap) != nv(graph)
         throw(ArgumentError("Provided graph is not bipartite"))
@@ -141,4 +160,48 @@ function hopcroft_karp_matching(graph::Graph)
     end
     matching = Dict(i => j for (i, j) in matching if j != UNMATCHED)
     return matching
+end
+
+function maximum_cardinality_matching(
+    graph::Graph,
+    algorithm::HopcroftKarpAlgorithm,
+)::Dict{Int, Int}
+    return hopcroft_karp_matching(graph)
+end
+
+"""
+    maximum_cardinality_matching(
+        graph::Graph,
+        algorithm::AbstractMaximumMatchingAlgorithm,
+    )::Dict{Int, Int}
+
+Compute a maximum-cardinality matching.
+
+The return type is a dict mapping nodes to nodes. All matched nodes are included
+as keys. For example, if `i` is matched with `j`, `i => j` and `j => i` are both
+included in the returned dict.
+
+### Arguments
+
+* `graph`: The bipartite `Graph` for which a maximum matching is computed
+
+* `algorithm`: The algorithm to use to compute the matching. Default is
+  `HopcroftKarpAlgorithm`.
+
+### Algorithms
+Currently implemented algorithms are:
+
+* Hopcroft-Karp
+
+### Exceptions
+
+* `ArgumentError`: The provided graph is not bipartite but an algorithm that
+  only applies to bipartite graphs, e.g. Hopcroft-Karp, was chosen
+
+"""
+function maximum_cardinality_matching(
+    graph::Graph;
+    algorithm::AbstractMaximumMatchingAlgorithm = HopcroftKarpAlgorithm(),
+)::Dict{Int, Int}
+    return maximum_cardinality_matching(graph, algorithm)
 end

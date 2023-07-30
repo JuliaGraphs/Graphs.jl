@@ -425,7 +425,10 @@ export
     vertex_cover,
 
     # matching
-    hopcroft_karp_matching
+    AbstractMaximumMatchingAlgorithm,
+    HopcroftKarpAlgorithm,
+    hopcroft_karp_matching,
+    maximum_cardinality_matching
 
 """
     Graphs
