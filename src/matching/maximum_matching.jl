@@ -21,7 +21,7 @@ Determine whether an augmenting path exists and mark distances
 so we can compute shortest-length augmenting paths in the DFS.
 """
 function _hk_augmenting_bfs!(
-    graph::Graph{T},
+    graph::AbstractGraph{T},
     set1::Vector{T},
     matching::Dict{T, MatchedNodeType{T}},
     distance::Dict{MatchedNodeType{T}, Float64},
@@ -67,7 +67,7 @@ end
 Compute augmenting paths and update the matching
 """
 function _hk_augmenting_dfs!(
-    graph::Graph{T},
+    graph::AbstractGraph{T},
     root::MatchedNodeType{T},
     matching::Dict{T, MatchedNodeType{T}},
     distance::Dict{MatchedNodeType{T}, Float64},
@@ -96,7 +96,7 @@ function _hk_augmenting_dfs!(
 end
 
 """
-    hopcroft_karp_matching(graph::Graph)::Dict
+    hopcroft_karp_matching(graph::AbstractGraph)::Dict
 
 Compute a maximum-cardinality matching of a bipartite graph via the
 [Hopcroft-Karp algorithm](https://en.wikipedia.org/wiki/Hopcroft-Karp_algorithm).
@@ -121,7 +121,7 @@ this algorithm is particularly effective for sparse bipartite graphs.
 
 """
 function hopcroft_karp_matching(
-   graph::Graph{T}
+   graph::AbstractGraph{T}
 )::Dict{T, T} where {T <: Integer}
     bmap = bipartite_map(graph)
     if length(bmap) != nv(graph)
@@ -150,7 +150,7 @@ function hopcroft_karp_matching(
 end
 
 function maximum_cardinality_matching(
-    graph::Graph{T},
+    graph::AbstractGraph{T},
     algorithm::HopcroftKarpAlgorithm,
 )::Dict{T, T} where {T <: Integer}
     return hopcroft_karp_matching(graph)
@@ -158,7 +158,7 @@ end
 
 """
     maximum_cardinality_matching(
-        graph::Graph,
+        graph::AbstractGraph,
         algorithm::AbstractMaximumMatchingAlgorithm,
     )::Dict{Int, Int}
 
@@ -204,7 +204,7 @@ Dict{Int64, Int64} with 6 entries:
 ```
 """
 function maximum_cardinality_matching(
-    graph::Graph{T};
+    graph::AbstractGraph{T};
     algorithm::AbstractMaximumMatchingAlgorithm = HopcroftKarpAlgorithm(),
 )::Dict{T, T} where {T <: Integer}
     return maximum_cardinality_matching(graph, algorithm)
