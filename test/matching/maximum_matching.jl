@@ -160,6 +160,24 @@ function test_not_bipartite()
     @test_throws(ArgumentError, maximum_cardinality_matching(g))
 end
 
+function test_empty()
+    g = Graph()
+    matching = maximum_cardinality_matching(g)
+    @test length(matching) == 0
+end
+
+function test_disconnected()
+    g = Graph()
+    add_vertices!(g, 5)
+    add_edge!(g, (1, 3))
+    add_edge!(g, (2, 4))
+    add_edge!(g, (2, 5))
+    matching = maximum_cardinality_matching(g)
+    @test length(matching) == 4
+    @test matching[1] == 3 && matching[3] == 1
+    @test matching[2] == 4 || matching[2] == 5
+end
+
 @testset "Maximum cardinality matching" begin
     test_simple_example()
     test_simple_example_algorithm_argument()
@@ -171,4 +189,6 @@ end
     test_imperfect_matching()
     test_complete_bipartite()
     test_not_bipartite()
+    test_empty()
+    test_disconnected()
 end
