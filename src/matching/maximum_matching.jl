@@ -64,14 +64,13 @@ Dict{Int64, Int64} with 6 entries:
 """
 function maximum_cardinality_matching(
     graph::AbstractGraph{T};
-    algorithm::AbstractMaximumMatchingAlgorithm = HopcroftKarpAlgorithm(),
-)::Dict{T, T} where {T <: Integer}
+    algorithm::AbstractMaximumMatchingAlgorithm=HopcroftKarpAlgorithm(),
+)::Dict{T,T} where {T<:Integer}
     return maximum_cardinality_matching(graph, algorithm)
 end
 
 function maximum_cardinality_matching(
-    graph::AbstractGraph{T},
-    algorithm::HopcroftKarpAlgorithm,
-)::Dict{T, T} where {T <: Integer}
+    graph::AbstractGraph{T}, algorithm::HopcroftKarpAlgorithm
+)::Dict{T,T} where {T<:Integer}
     return hopcroft_karp_matching(graph)
 end

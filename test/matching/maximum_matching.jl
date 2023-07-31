@@ -91,7 +91,7 @@ function test_simple_example_different_node_type()
     add_edge!(g, (5, 9))
 
     matching = hopcroft_karp_matching(g)
-    @test eltype(matching) === Pair{UInt8, UInt8}
+    @test eltype(matching) === Pair{UInt8,UInt8}
     @test length(matching) == 10
     for i in 1:10
         @test i in keys(matching)

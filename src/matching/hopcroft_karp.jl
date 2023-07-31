@@ -1,5 +1,5 @@
 const UNMATCHED = nothing
-MatchedNodeType{T} = Union{T, typeof(UNMATCHED)}
+MatchedNodeType{T} = Union{T,typeof(UNMATCHED)}
 
 """
 Determine whether an augmenting path exists and mark distances
@@ -8,13 +8,13 @@ so we can compute shortest-length augmenting paths in the DFS.
 function _hk_augmenting_bfs!(
     graph::AbstractGraph{T},
     set1::Vector{T},
-    matching::Dict{T, MatchedNodeType{T}},
-    distance::Dict{MatchedNodeType{T}, Float64},
-)::Bool where {T <: Integer}
+    matching::Dict{T,MatchedNodeType{T}},
+    distance::Dict{MatchedNodeType{T},Float64},
+)::Bool where {T<:Integer}
     # Initialize queue with the unmatched nodes in set1
-    queue = Vector{MatchedNodeType{eltype(graph)}}(
-        [n for n in set1 if matching[n] == UNMATCHED]
-    )
+    queue = Vector{MatchedNodeType{eltype(graph)}}([
+        n for n in set1 if matching[n] == UNMATCHED
+    ])
 
     distance[UNMATCHED] = Inf
     for n in set1
@@ -54,9 +54,9 @@ Compute augmenting paths and update the matching
 function _hk_augmenting_dfs!(
     graph::AbstractGraph{T},
     root::MatchedNodeType{T},
-    matching::Dict{T, MatchedNodeType{T}},
-    distance::Dict{MatchedNodeType{T}, Float64},
-)::Bool where {T <: Integer}
+    matching::Dict{T,MatchedNodeType{T}},
+    distance::Dict{MatchedNodeType{T},Float64},
+)::Bool where {T<:Integer}
     if root != UNMATCHED
         for n in neighbors(graph, root)
             # Traverse edges of the minimum-length alternating path
@@ -105,9 +105,7 @@ this algorithm is particularly effective for sparse bipartite graphs.
 * `ArgumentError`: The provided graph is not bipartite
 
 """
-function hopcroft_karp_matching(
-   graph::AbstractGraph{T}
-)::Dict{T, T} where {T <: Integer}
+function hopcroft_karp_matching(graph::AbstractGraph{T})::Dict{T,T} where {T<:Integer}
     bmap = bipartite_map(graph)
     if length(bmap) != nv(graph)
         throw(ArgumentError("Provided graph is not bipartite"))
@@ -115,10 +113,10 @@ function hopcroft_karp_matching(
     set1 = [n for n in vertices(graph) if bmap[n] == 1]
 
     # Initialize "state" that is modified during the algorithm
-    matching = Dict{eltype(graph), MatchedNodeType{eltype(graph)}}(
+    matching = Dict{eltype(graph),MatchedNodeType{eltype(graph)}}(
         n => UNMATCHED for n in vertices(graph)
     )
-    distance = Dict{MatchedNodeType{eltype(graph)}, Float64}()
+    distance = Dict{MatchedNodeType{eltype(graph)},Float64}()
 
     # BFS to determine whether any augmenting paths exist
     while _hk_augmenting_bfs!(graph, set1, matching, distance)
@@ -133,4 +131,3 @@ function hopcroft_karp_matching(
     matching = Dict(i => j for (i, j) in matching if j != UNMATCHED)
     return matching
 end
-
