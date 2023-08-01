@@ -46,10 +46,13 @@ common source or target more efficiently than individual updates.
 ## Example
 
 ```jldoctest
+julia> using Graphs
+
 julia> G = SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
 
 julia> ict = IncrementalCycleTracker(G)
-BFGT_N cycle tracker on {3, 0} directed simple Int64 graph
+BFGT_N cycle tracker on SimpleDiGraph{Int64}(0, [Int64[], Int64[], Int64[]], [Int64[], Int64[], Int64[]])
 
 julia> add_edge_checked!(ict, 1, 2)
 true
@@ -71,8 +74,8 @@ false
 
 julia> collect(edges(G))
 2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
-Edge 1 => 2
-Edge 2 => 3
+ Edge 1 => 2
+ Edge 2 => 3
 ```
 """
 function add_edge_checked! end

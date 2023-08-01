@@ -46,7 +46,7 @@
     add_edge!(g1, 11, 7)
     add_edge!(g1, 12, 9)
 
-    @testset "simple digraphs" for g in testgraphs(g1)
+    @testset "simple digraphs" for g in test_generic_graphs(g1)
         c, λ = karp_minimum_cycle_mean(g, w)
         @test c == [9, 11, 7]
         @test λ == 0.9
@@ -78,7 +78,7 @@
         1.0 Inf 0.0 Inf
     ]
 
-    @testset "tricky case" for g in testgraphs(tricky)
+    @testset "tricky case" for g in test_generic_graphs(tricky)
         c, λ = karp_minimum_cycle_mean(g, distmx)
         @test λ == 0.0
         @test sort(c) == [3, 4]
@@ -97,7 +97,7 @@
         Inf -1
     ]
 
-    @testset "multiple SCCs" for g in testgraphs(multi)
+    @testset "multiple SCCs" for g in test_generic_graphs(multi)
         c, λ = karp_minimum_cycle_mean(g, distmx)
         @test λ == -1.0
         @test c == [2]

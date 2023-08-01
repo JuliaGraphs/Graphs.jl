@@ -5,20 +5,19 @@
     m = n * (n - 1) / 2
     c = ones(Int, n)
     gint = complete_graph(n)
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         @test @inferred(modularity(g, c)) == 0
     end
 
     gint = SimpleGraph(n)
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         @test @inferred(modularity(g, c)) == 0
     end
 
-    barbell = blockdiag(complete_graph(3), complete_graph(3))
-    add_edge!(barbell, 1, 4)
+    barbell = barbell_graph(3, 3)
     c = [1, 1, 1, 2, 2, 2]
 
-    for g in testgraphs(barbell)
+    for g in test_generic_graphs(barbell)
         Q1 = @inferred(modularity(g, c))
         @test isapprox(Q1, 0.35714285714285715, atol=1e-3)
         Q2 = @inferred(modularity(g, c, γ=0.5))
@@ -35,7 +34,7 @@
     add_edge!(barbell, 1, 4)
     c = [1, 1, 1, 2, 2, 2]
 
-    for g in testdigraphs(barbell)
+    for g in test_generic_graphs(barbell)
         Q1 = @inferred(modularity(g, c))
         @test isapprox(Q1, 0.3673469387755103, atol=1e-3)
 
@@ -44,29 +43,25 @@
     end
 
     add_edge!(barbell, 4, 1)
-    for g in testdigraphs(barbell)
+    for g in test_generic_graphs(barbell)
         @test @inferred(modularity(g, c)) == 0.25
     end
 
     # 3. weighted test cases 
     # 3.1. undirected and weighted test cases
-    triangle = SimpleGraph(3)
-    add_edge!(triangle, 1, 2)
-    add_edge!(triangle, 2, 3)
-    add_edge!(triangle, 3, 1)
 
-    barbell = blockdiag(triangle, triangle)
-    add_edge!(barbell, 1, 4) # this edge has a weight of 5
+    # the "handle" of the barbell 3--4 gets a weight of 5
+    barbell = barbell_graph(3, 3)
     c = [1, 1, 1, 2, 2, 2]
     d = [
-        [0 1 1 5 0 0]
+        [0 1 1 0 0 0]
         [1 0 1 0 0 0]
-        [1 1 0 0 0 0]
-        [5 0 0 0 1 1]
+        [1 1 0 5 0 0]
+        [0 0 5 0 1 1]
         [0 0 0 1 0 1]
         [0 0 0 1 1 0]
     ]
-    for g in testgraphs(barbell)
+    for g in test_generic_graphs(barbell)
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.045454545454545456, atol=1e-3)
     end
@@ -88,7 +83,7 @@
         [0 0 0 0 0 1]
         [0 0 0 1 0 0]
     ]
-    for g in testdigraphs(barbell)
+    for g in test_generic_graphs(barbell)
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.1487603305785124, atol=1e-3)
     end

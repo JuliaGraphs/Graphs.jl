@@ -194,6 +194,9 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
     # coloring
     greedy_color,
 
@@ -211,6 +214,7 @@ export
     neighborhood,
     neighborhood_dists,
     isgraphical,
+    isdigraphical,
 
     # cycles
     simplecycles_hawick_james,
@@ -437,14 +441,13 @@ undirected graphs are supported via separate types, and conversion is available
 from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
-analysis libraries such as NetworkX while being simpler to use and more
-efficient than existing Julian graph libraries such as Graphs.jl. It is an
-explicit design decision that any data not required for graph manipulation
+analysis libraries such as NetworkX while being simple to use and efficient.
+It is an explicit design decision that any data not required for graph manipulation
 (attributes and other information, for example) is expected to be stored
 outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
 
-[Full documentation](http://codecov.io/github/JuliaGraphs/Graphs.jl) is available,
+[Full documentation](https://juliagraphs.org/Graphs.jl/stable/) is available,
 and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
@@ -491,6 +494,7 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("traversals/eulerian.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
@@ -541,6 +545,7 @@ include("vertexcover/random_vertex_cover.jl")
 include("longestpaths/longest_path.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("Test/Test.jl")
 
 using .LinAlg
 end # module

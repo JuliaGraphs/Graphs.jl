@@ -29,13 +29,13 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 julia> using Graphs
 
 julia> betweenness_centrality(star_graph(3))
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  1.0
  0.0
  0.0
 
 julia> betweenness_centrality(path_graph(4))
-4-element Array{Float64,1}:
+4-element Vector{Float64}:
  0.0
  0.6666666666666666
  0.6666666666666666
@@ -81,7 +81,7 @@ function betweenness_centrality(
 )
     return betweenness_centrality(
         g,
-        sample(vertices(g), k; rng=rng, seed=seed),
+        sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed),
         distmx;
         normalize=normalize,
         endpoints=endpoints,
@@ -124,8 +124,7 @@ function _accumulate_endpoints!(
     v1 = collect(Base.OneTo(n_v))
     v2 = state.dists
     S = reverse(state.closest_vertices)
-    s = vertices(g)[si]
-    betweenness[s] += length(S) - 1    # 289
+    betweenness[si] += length(S) - 1    # 289
 
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]

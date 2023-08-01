@@ -1,3 +1,7 @@
+# The test here cannot be done with GenericDiGraph, as the functions under test
+# modify the graph. We probably need another generic graph type with more relaxed
+# constraints for modifying graphs.
+
 @testset "ICT" begin
     Gempty = SimpleDiGraph(3)
     Gsomedges = SimpleDiGraph(6)

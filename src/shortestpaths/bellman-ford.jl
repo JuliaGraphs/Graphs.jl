@@ -41,14 +41,15 @@ function bellman_ford_shortest_paths(
     active[sources] .= true
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    dists[sources] .= 0
+    dists[sources] .= zero(T)
     no_changes = false
     new_active = falses(nvg)
 
     for i in vertices(graph)
         no_changes = true
         new_active .= false
-        for u in vertices(graph)[active]
+        for u in vertices(graph)
+            active[u] || continue
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
@@ -80,9 +81,10 @@ function has_negative_edge_cycle(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
 ) where {T<:Real} where {U<:Integer}
     try
-        bellman_ford_shortest_paths(g, vertices(g), distmx)
+        bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e
         isa(e, NegativeCycleError) && return true
+        rethrow()
     end
     return false
 end

@@ -6,7 +6,9 @@ and return a Euclidean graph, a map containing the distance on each edge and
 a matrix with the points' positions.
 
 ## Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> g, dists = euclidean_graph(5, 2, cutoff=0.3);
 
 julia> g
@@ -52,7 +54,9 @@ For `p=2` we have the standard Euclidean distance.
 Set `bc=:periodic` to impose periodic boundary conditions in the box ``[0,L]^d``.
 
 ## Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> pts = rand(3, 10); # 10 vertices in R^3
 
 julia> g, dists = euclidean_graph(pts, p=1, bc=:periodic) # Taxicab-distance (L^1);

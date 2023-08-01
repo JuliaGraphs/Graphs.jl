@@ -3,7 +3,7 @@
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-sc.txt"), ','))
-    for g in testdigraphs(gint)
+    for g in test_generic_graphs(gint)
         z = @inferred(stress_centrality(g))
         @test z == c
 
@@ -16,7 +16,7 @@
     g1 = cycle_graph(4)
     add_vertex!(g1)
     add_edge!(g1, 4, 5)
-    for g in testgraphs(g1)
+    for g in test_generic_graphs(g1)
         z = @inferred(stress_centrality(g))
         @test z == [4, 2, 4, 10, 0]
     end

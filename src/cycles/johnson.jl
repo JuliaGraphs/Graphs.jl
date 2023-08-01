@@ -1,3 +1,7 @@
+# TODO most functions here do not work for general abstract graphs yet
+# as most of them relay on induced_subgraph, which expects the graph type
+# to be modifiable.
+
 abstract type Visitor{T<:Integer} end
 
 """
@@ -179,8 +183,10 @@ short cycles of a limited length, [`simplecycles_limited_length`](@ref) can be m
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecycles(complete_digraph(3))
-5-element Array{Array{Int64,1},1}:
+5-element Vector{Vector{Int64}}:
  [1, 2]
  [1, 2, 3]
  [1, 3]
@@ -308,6 +314,8 @@ theoretical maximum number or cycles.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecyclescount(complete_digraph(6))
 409
 ```
@@ -370,6 +378,8 @@ a subset of the cycles lengths.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> simplecycleslength(complete_digraph(16))
 ([0, 1, 1, 1, 1, 1, 2, 10, 73, 511, 3066, 15329, 61313, 183939, 367876, 367876], 1000000)
 
