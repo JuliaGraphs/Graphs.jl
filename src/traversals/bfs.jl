@@ -43,15 +43,19 @@ end
 function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where {T}
     n = nv(g)
     visited = falses(n)
-    parents = zeros(T, nv(g))
+    parents = zeros(T, n)
     cur_level = Vector{T}()
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
+    k = 0
     @inbounds for s in source
-        visited[s] = true
-        push!(cur_level, s)
-        parents[s] = s
+        if !visited[s]
+            visited[s] = true
+            push!(cur_level, s)
+            parents[s] = s
+            k += 1
+        end
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
@@ -60,8 +64,10 @@ function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where {
                     push!(next_level, i)
                     parents[i] = v
                     visited[i] = true
+                    k += 1
                 end
             end
+            k == n && return parents
         end
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
@@ -105,10 +111,14 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg=QuickSort
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
+    k = 0
     @inbounds for s in source
-        vert_level[s] = zero(T)
-        visited[s] = true
-        push!(cur_level, s)
+        if !visited[s]
+            vert_level[s] = zero(T)
+            visited[s] = true
+            push!(cur_level, s)
+            k += 1
+        end
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
@@ -117,8 +127,10 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg=QuickSort
                     push!(next_level, i)
                     vert_level[i] = n_level
                     visited[i] = true
+                    k += 1
                 end
             end
+            k == n && return vert_level
         end
         n_level += one(T)
         empty!(cur_level)
