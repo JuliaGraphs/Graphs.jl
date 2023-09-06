@@ -44,9 +44,10 @@ function threaded_generate_reduce(
     ntasks = d == 0 ? r : Threads.nthreads()
     min_set = [Vector{T}() for _ in 1:ntasks]
     is_undef = ones(Bool, ntasks)
+    task_size = cld(reps, ntasks)
 
-    @sync for t in 1:ntasks
-        Threads.@spawn for _ in 1:(d + (t <= r))
+    @sync for (t, task_range) in enumerate(Iterators.partition(1:reps, task_size))
+        Threads.@spawn for _ in task_range
             next_set = gen_func(g)
             if is_undef[t] || comp(next_set, min_set[t])
                 min_set[t] = next_set

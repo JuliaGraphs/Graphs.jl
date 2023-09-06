@@ -99,12 +99,14 @@ function threaded_betweenness_centrality(
     isdir = is_directed(g)
 
     vs_active = findall((x) -> degree(g, x) > 0, vs) # 0 might be 1?
-    d, r = divrem(length(vs_active), Threads.nthreads())
+    k_active = length(vs_active)
+    d, r = divrem(k_active, Threads.nthreads())
     ntasks = d == 0 ? r : Threads.nthreads()
-    local_betweenness = [zeros(n_v) for i in 1:ntasks]
+    local_betweenness = [zeros(n_v) for _ in 1:ntasks]
+    task_size = cld(k_active, ntasks)
 
-    @sync for t in 1:ntasks
-        Threads.@spawn for s in @view(vs_active[(d*(t-1)+1):(d*t + (t <= r))])
+    @sync for (t, task_range) in enumerate(Iterators.partition(1:k_active, task_size))
+        Threads.@spawn for s in @view(vs_active[task_range])
             state = Graphs.dijkstra_shortest_paths(
                 g, s, distmx; allpaths=true, trackvertices=true
             )
