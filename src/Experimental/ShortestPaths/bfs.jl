@@ -1,6 +1,5 @@
 using Graphs.Experimental.Traversals
 
-
 """
     struct BFS <: ShortestPathAlgorithm
 
@@ -37,12 +36,12 @@ end
     s.dists[u] = 0
     return true
 end
-@inline function newvisitfn!(s::BFSSPState, u, v) 
-        s.dists[v] = s.n_level
-        s.parents[v] = u
-        return true
+@inline function newvisitfn!(s::BFSSPState, u, v)
+    s.dists[v] = s.n_level
+    s.parents[v] = u
+    return true
 end
-@inline function postlevelfn!(s::BFSSPState{U}) where U
+@inline function postlevelfn!(s::BFSSPState{U}) where {U}
     s.n_level += one(U)
     return true
 end
@@ -53,11 +52,8 @@ struct BFSResult{U<:Integer} <: ShortestPathResult
 end
 
 function shortest_paths(
-    g::AbstractGraph{U},
-    ss::AbstractVector{U},
-    alg::BFS
-   ) where U <: Integer
-
+    g::AbstractGraph{U}, ss::AbstractVector{U}, alg::BFS
+) where {U<:Integer}
     n = nv(g)
     dists = fill(typemax(U), n)
     parents = zeros(U, n)
@@ -66,8 +62,11 @@ function shortest_paths(
     return BFSResult(state.parents, state.dists)
 end
 
-
-
-
-shortest_paths(g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS) where {U<:Integer} = shortest_paths(g, U.(ss), alg)
-shortest_paths(g::AbstractGraph{U}, s::Integer, alg::BFS) where {U<:Integer} = shortest_paths(g, Vector{U}([s]), alg)
+function shortest_paths(
+    g::AbstractGraph{U}, ss::AbstractVector{<:Integer}, alg::BFS
+) where {U<:Integer}
+    return shortest_paths(g, U.(ss), alg)
+end
+function shortest_paths(g::AbstractGraph{U}, s::Integer, alg::BFS) where {U<:Integer}
+    return shortest_paths(g, Vector{U}([s]), alg)
+end

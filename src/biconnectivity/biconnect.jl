@@ -3,7 +3,7 @@
 
 A state type for depth-first search that finds the biconnected components.
 """
-mutable struct Biconnections{E <: AbstractEdge}
+mutable struct Biconnections{E<:AbstractEdge}
     low::Vector{Int}
     depth::Vector{Int}
     stack::Vector{E}
@@ -11,12 +11,13 @@ mutable struct Biconnections{E <: AbstractEdge}
     id::Int
 end
 
+# TODO it might be more reasonable to return the components a s collections of vertices
+# instead of edges.
 @traitfn function Biconnections(g::::(!IsDirected))
     n = nv(g)
     E = Edge{eltype(g)}
     return Biconnections(zeros(Int, n), zeros(Int, n), Vector{E}(), Vector{Vector{E}}(), 0)
 end
-
 
 """
     visit!(g, state, u, v)
@@ -38,9 +39,9 @@ function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Intege
             visit!(g, state, v, w)
             state.low[v] = min(state.low[v], state.low[w])
 
-            #Checking the root, and then the non-roots if they are articulation points
+            # Checking the root, and then the non-roots if they are articulation points
             if (u == v && children > 1) || (u != v && state.low[w] >= state.depth[v])
-                e = E(0, 0)  #Invalid Edge, used for comparison only
+                e = E(0, 0) # Invalid Edge, used for comparison only
                 st = Vector{E}()
                 while e != E(min(v, w), max(v, w))
                     e = pop!(state.stack)
@@ -49,9 +50,13 @@ function visit!(g::AbstractGraph, state::Biconnections{E}, u::Integer, v::Intege
                 push!(state.biconnected_comps, st)
             end
 
-        elseif w != u && state.low[v] > state.depth[w]
-            push!(state.stack, E(min(v, w), max(v, w)))
-            state.low[v] = state.depth[w]
+        elseif w != u
+            if state.depth[v] > state.depth[w]
+                push!(state.stack, E(min(v, w), max(v, w)))
+            end
+            if state.low[v] > state.depth[w]
+                state.low[v] = state.depth[w]
+            end
         end
     end
 end
@@ -71,14 +76,14 @@ Time complexity is ``\\mathcal{O}(|V|)``.
 julia> using Graphs
 
 julia> biconnected_components(star_graph(5))
-4-element Array{Array{Graphs.SimpleGraphs.SimpleEdge,1},1}:
+4-element Vector{Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}}:
  [Edge 1 => 3]
  [Edge 1 => 4]
  [Edge 1 => 5]
  [Edge 1 => 2]
 
 julia> biconnected_components(cycle_graph(5))
-1-element Array{Array{Graphs.SimpleGraphs.SimpleEdge,1},1}:
+1-element Vector{Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}}:
  [Edge 1 => 5, Edge 4 => 5, Edge 3 => 4, Edge 2 => 3, Edge 1 => 2]
 ```
 """

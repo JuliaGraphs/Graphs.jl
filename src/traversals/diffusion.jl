@@ -15,16 +15,21 @@ during the simulation. If left empty, all vertices will be watched.
 each of the outneighbors of ``i`` to ``p``. If `true`, set the probability of spread
 from a vertex ``i`` to each of the `outneighbors` of ``i`` to
 ``\\frac{p}{outdegreee(g, i)}``.
+- `rng=nothing`: A random generator to sample from.
 """
-function diffusion(g::AbstractGraph{T},
-                    p::Real,
-                    n::Integer;
-                    watch::AbstractVector=Vector{Int}(),
-                    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
-                    normalize::Bool=false
-                    ) where T
+function diffusion(
+    g::AbstractGraph{T},
+    p::Real,
+    n::Integer;
+    watch::AbstractVector=Vector{Int}(),
+    normalize::Bool=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1; rng=rng, seed=seed),
+) where {T}
 
     # Initialize
+    rng = rng_from_rng_or_seed(rng, seed)
     watch_set = Set{T}(watch)
     infected_vertices = BitSet(initial_infections)
     vertices_per_step::Vector{Vector{T}} = [Vector{T}() for i in 1:n]
@@ -54,7 +59,7 @@ function diffusion(g::AbstractGraph{T},
                     local_p = p
                 end
 
-                randsubseq!(randsubseq_buf, outn, local_p)
+                randsubseq!(rng, randsubseq_buf, outn, local_p)
                 union!(new_infections, randsubseq_buf)
             end
         end
@@ -84,12 +89,27 @@ diffusion as a vector representing the cumulative number of vertices
 infected at each simulation step, restricted to vertices included
 in `watch`, if specified.
 """
-diffusion_rate(x::Vector{Vector{T}}) where T <: Integer = cumsum(length.(x))
-diffusion_rate(g::AbstractGraph, p::Real, n::Integer;
-    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1),
+diffusion_rate(x::Vector{Vector{T}}) where {T<:Integer} = cumsum(length.(x))
+function diffusion_rate(
+    g::AbstractGraph,
+    p::Real,
+    n::Integer;
     watch::AbstractVector=Vector{Int}(),
-    normalize::Bool=false
-    ) = diffusion_rate(diffusion(g, p, n,
+    normalize::Bool=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+    initial_infections::AbstractVector=Graphs.sample(vertices(g), 1; rng=rng, seed=seed),
+)
+    return diffusion_rate(
+        diffusion(
+            g,
+            p,
+            n;
             initial_infections=initial_infections,
-            watch=watch, normalize=normalize))
-
+            watch=watch,
+            normalize=normalize,
+            rng=rng,
+            seed=seed,
+        ),
+    )
+end

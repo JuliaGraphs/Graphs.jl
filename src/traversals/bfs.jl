@@ -7,11 +7,11 @@
 
 Convert a parents array into a directed graph.
 """
-function tree(parents::AbstractVector{T}) where T <: Integer
+function tree(parents::AbstractVector{T}) where {T<:Integer}
     n = T(length(parents))
     t = DiGraph{T}(n)
     for (v, u) in enumerate(parents)
-        if u > zero(T)  && u != v
+        if u > zero(T) && u != v
             add_edge!(t, u, v)
         end
     end
@@ -32,31 +32,42 @@ implementations which are marginally faster in practice for smaller graphs,
 but the performance improvements using this implementation on large graphs
 can be significant.
 """
-bfs_parents(g::AbstractGraph, s::Integer; dir = :out) = 
-    (dir == :out) ? _bfs_parents(g, s, outneighbors) : _bfs_parents(g, s, inneighbors)
+function bfs_parents(g::AbstractGraph, s::Integer; dir=:out)
+    return if (dir == :out)
+        _bfs_parents(g, s, outneighbors)
+    else
+        _bfs_parents(g, s, inneighbors)
+    end
+end
 
-function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where T
+function _bfs_parents(g::AbstractGraph{T}, source, neighborfn::Function) where {T}
     n = nv(g)
     visited = falses(n)
-    parents = zeros(T, nv(g))
+    parents = zeros(T, n)
     cur_level = Vector{T}()
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
+    k = 0
     @inbounds for s in source
-        visited[s] = true
-        push!(cur_level, s)
-        parents[s] = s
+        if !visited[s]
+            visited[s] = true
+            push!(cur_level, s)
+            parents[s] = s
+            k += 1
+        end
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
-            @inbounds @simd for i in  neighborfn(g, v)
+            @inbounds @simd for i in neighborfn(g, v)
                 if !visited[i]
                     push!(next_level, i)
                     parents[i] = v
                     visited[i] = true
+                    k += 1
                 end
             end
+            k == n && return parents
         end
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
@@ -73,7 +84,7 @@ and return a directed acyclic graph of vertices in the order they were discovere
 If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are
 acceptable values).
 """
-bfs_tree(g::AbstractGraph, s::Integer; dir = :out) = tree(bfs_parents(g, s; dir = dir))
+bfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(bfs_parents(g, s; dir=dir))
 
 """
     gdistances!(g, source, dists; sort_alg=QuickSort)
@@ -92,7 +103,7 @@ the best of the algorithms built into Julia Base. However, passing a `RadixSort`
 [SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
 significant performance improvements on larger graphs.
 """
-function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSort) where T
+function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg=QuickSort) where {T}
     n = nv(g)
     visited = falses(n)
     n_level = one(T)
@@ -100,10 +111,14 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSo
     sizehint!(cur_level, n)
     next_level = Vector{T}()
     sizehint!(next_level, n)
+    k = 0
     @inbounds for s in source
-        vert_level[s] = zero(T)
-        visited[s] = true
-        push!(cur_level, s)
+        if !visited[s]
+            vert_level[s] = zero(T)
+            visited[s] = true
+            push!(cur_level, s)
+            k += 1
+        end
     end
     while !isempty(cur_level)
         @inbounds for v in cur_level
@@ -112,13 +127,15 @@ function gdistances!(g::AbstractGraph{T}, source, vert_level; sort_alg = QuickSo
                     push!(next_level, i)
                     vert_level[i] = n_level
                     visited[i] = true
+                    k += 1
                 end
             end
+            k == n && return vert_level
         end
         n_level += one(T)
         empty!(cur_level)
         cur_level, next_level = next_level, cur_level
-        sort!(cur_level, alg = sort_alg)
+        sort!(cur_level; alg=sort_alg)
     end
     return vert_level
 end
@@ -138,7 +155,9 @@ the best of the algorithms built into Julia Base. However, passing a `RadixSort`
 [SortingAlgorithms.jl](https://github.com/JuliaCollections/SortingAlgorithms.jl)) will provide
 significant performance improvements on larger graphs.
 """
-gdistances(g::AbstractGraph{T}, source; sort_alg = Base.Sort.QuickSort) where T = gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg = sort_alg)
+function gdistances(g::AbstractGraph{T}, source; sort_alg=Base.Sort.QuickSort) where {T}
+    return gdistances!(g, source, fill(typemax(T), nv(g)); sort_alg=sort_alg)
+end
 
 """
     has_path(g::AbstractGraph, u, v; exclude_vertices=Vector())
@@ -147,8 +166,12 @@ Return `true` if there is a path from `u` to `v` in `g` (while avoiding vertices
 `exclude_vertices`) or `u == v`. Return false if there is no such path or if `u` or `v`
 is in `excluded_vertices`. 
 """
-function has_path(g::AbstractGraph{T}, u::Integer, v::Integer; 
-        exclude_vertices::AbstractVector = Vector{T}()) where T
+function has_path(
+    g::AbstractGraph{T},
+    u::Integer,
+    v::Integer;
+    exclude_vertices::AbstractVector=Vector{T}(),
+) where {T}
     seen = zeros(Bool, nv(g))
     for ve in exclude_vertices # mark excluded vertices as seen
         seen[ve] = true

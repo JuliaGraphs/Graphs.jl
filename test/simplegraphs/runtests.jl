@@ -11,7 +11,7 @@ Graphs.edgetype(g::DummySimpleGraph) = DummySimpleEdge
 has_edge(::DummySimpleGraph, ::DummySimpleEdge) = true
 
 # function to check if the invariants for SimpleGraph and SimpleDiGraph holds
-function isvalid_simplegraph(g::SimpleGraph{T}) where {T <: Integer}
+function isvalid_simplegraph(g::SimpleGraph{T}) where {T<:Integer}
     nf = length(g.fadjlist)
     n = T(nf)
     # checks it the adjacency lists are sorted, free of duplicates and in the correct range
@@ -42,7 +42,7 @@ function isvalid_simplegraph(g::SimpleGraph{T}) where {T <: Integer}
     return true
 end
 
-function isvalid_simplegraph(g::SimpleDiGraph{T}) where {T <: Integer}
+function isvalid_simplegraph(g::SimpleDiGraph{T}) where {T<:Integer}
     nf = length(g.fadjlist)
     nb = length(g.badjlist)
     nf == nb || return false
@@ -84,10 +84,11 @@ const simple_tests = [
     "simplegraphs",
     "simpleedge",
     "simpleedgeiter",
+    "specializations",
     "generators/randgraphs",
     "generators/staticgraphs",
     "generators/smallgraphs",
-    "generators/euclideangraphs"
+    "generators/euclideangraphs",
 ]
 
 @testset "Graphs.SimpleGraphs" begin

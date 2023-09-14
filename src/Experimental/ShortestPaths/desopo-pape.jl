@@ -11,12 +11,14 @@ No fields are specified or required.
 - all destinations
 """
 struct DEsopoPape <: ShortestPathAlgorithm end
-struct DEsopoPapeResult{T, U<:Integer} <: ShortestPathResult
+struct DEsopoPapeResult{T,U<:Integer} <: ShortestPathResult
     parents::Vector{U}
     dists::Vector{T}
 end
 
-function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, ::DEsopoPape)
+function shortest_paths(
+    g::AbstractGraph, src::Integer, distmx::AbstractMatrix, ::DEsopoPape
+)
     T = eltype(distmx)
     U = eltype(g)
     nvg = nv(g)
@@ -27,17 +29,17 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
     state = fill(Int8(2), nvg)
     q = U[src]
     @inbounds dists[src] = 0
-    
+
     @inbounds while !isempty(q)
         u = popfirst!(q)
         state[u] = 0
-        
+
         for v in outneighbors(g, u)
             alt = dists[u] + distmx[u, v]
             if (dists[v] > alt)
                 dists[v] = alt
                 parents[v] = u
-                
+
                 if state[v] == 2
                     state[v] = 1
                     push!(q, v)
@@ -48,6 +50,6 @@ function shortest_paths(g::AbstractGraph, src::Integer, distmx::AbstractMatrix, 
             end
         end
     end
-    
-    return DEsopoPapeResult{T, U}(parents, dists)
+
+    return DEsopoPapeResult{T,U}(parents, dists)
 end

@@ -10,7 +10,6 @@ import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
 using ..Graphs
 
-
 import Base: convert, size, eltype, ndims, ==, *, length
 
 export convert,
@@ -35,12 +34,10 @@ export convert,
     prescalefactor,
     postscalefactor,
     perron,
-
     non_backtracking_matrix,
     Nonbacktracking,
     contract!,
     contract,
-
     adjacency_matrix,
     laplacian_matrix,
     incidence_matrix,
@@ -65,6 +62,4 @@ include("./graphmatrices.jl")
 include("./spectral.jl")
 include("./nonbacktracking.jl")
 
-
 end
-

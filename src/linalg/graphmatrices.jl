@@ -3,10 +3,9 @@ const SparseMatrix{T} = SparseMatrixCSC{T,Int}
 """
     GraphMatrix{T}
 
-An abstract type to allow opertions on any type of graph matrix
+An abstract type to allow operations on any type of graph matrix
 """
 abstract type GraphMatrix{T} end
-
 
 """
     Adjacency{T}
@@ -34,11 +33,10 @@ struct CombinatorialAdjacency{T,S,V} <: Adjacency{T}
     D::V
 end
 
-function CombinatorialAdjacency(A::SparseMatrix{T}) where T
-    D = vec(sum(A, dims=1))
+function CombinatorialAdjacency(A::SparseMatrix{T}) where {T}
+    D = vec(sum(A; dims=1))
     return CombinatorialAdjacency{T,SparseMatrix{T},typeof(D)}(A, D)
 end
-
 
 """
     NormalizedAdjacency{T}
@@ -52,7 +50,7 @@ struct NormalizedAdjacency{T} <: Adjacency{T}
     scalefactor::Vector{T}
 end
 function NormalizedAdjacency(adjmat::CombinatorialAdjacency)
-    sf = adjmat.D.^(-1 / 2)
+    sf = adjmat.D .^ (-1 / 2)
     return NormalizedAdjacency(adjmat, sf)
 end
 
@@ -64,10 +62,9 @@ A transition matrix for the random walk.
 struct StochasticAdjacency{T} <: Adjacency{T}
     A::CombinatorialAdjacency{T}
     scalefactor::Vector{T}
-
 end
 function StochasticAdjacency(adjmat::CombinatorialAdjacency)
-    sf = adjmat.D.^(-1)
+    sf = adjmat.D .^ (-1)
     return StochasticAdjacency(adjmat, sf)
 end
 
@@ -81,7 +78,7 @@ struct AveragingAdjacency{T} <: Adjacency{T}
     scalefactor::Vector{T}
 end
 function AveragingAdjacency(adjmat::CombinatorialAdjacency)
-    sf = adjmat.D.^(-1)
+    sf = adjmat.D .^ (-1)
     return AveragingAdjacency(adjmat, sf)
 end
 
@@ -113,7 +110,6 @@ Broadcast.broadcasted(::typeof(*), ::Noop, x) = x
 
 Diagonal(::Noop) = Noop()
 
-
 ==(g::GraphMatrix, h::GraphMatrix) = typeof(g) == typeof(h) && (g.A == h.A)
 
 postscalefactor(::Adjacency) = Noop()
@@ -127,7 +123,6 @@ prescalefactor(::Adjacency) = Noop()
 prescalefactor(adjmat::NormalizedAdjacency) = adjmat.scalefactor
 
 prescalefactor(adjmat::StochasticAdjacency) = adjmat.scalefactor
-
 
 struct CombinatorialLaplacian{T} <: Laplacian{T}
     A::CombinatorialAdjacency{T}
@@ -188,20 +183,17 @@ degrees(mat::GraphMatrix) = degrees(adjacency(mat))
 adjacency(lapl::Laplacian) = lapl.A
 adjacency(lapl::GraphMatrix) = lapl.A
 
-
-
 convert(::Type{CombinatorialAdjacency}, adjmat::Adjacency) = adjmat.A
 convert(::Type{CombinatorialAdjacency}, adjmat::CombinatorialAdjacency) = adjmat
 
-
-function sparse(lapl::M) where M <: Laplacian
+function sparse(lapl::M) where {M<:Laplacian}
     adjmat = adjacency(lapl)
     A = sparse(adjmat)
     L = sparse(Diagonal(diag(lapl))) - A
     return L
 end
 
-function SparseMatrix(lapl::M) where M <: GraphMatrix
+function SparseMatrix(lapl::M) where {M<:GraphMatrix}
     return sparse(lapl)
 end
 
@@ -210,9 +202,7 @@ function sparse(adjmat::Adjacency)
     return Diagonal(prescalefactor(adjmat)) * (A * Diagonal(postscalefactor(adjmat)))
 end
 
-
-
-function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where T
+function convert(::Type{SparseMatrix{T}}, lapl::Laplacian{T}) where {T}
     adjmat = adjacency(lapl)
     A = convert(SparseMatrix{T}, adjmat)
     L = sparse(Diagonal(diag(lapl))) - A
@@ -224,17 +214,17 @@ diag(lapl::Laplacian) = ones(size(lapl)[2])
 
 *(x::AbstractArray, ::Noop) = x
 *(::Noop, x) = x
-*(adjmat::Adjacency{T}, x::AbstractVector{T}) where T <: Number =
-    postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
+function *(adjmat::Adjacency{T}, x::AbstractVector{T}) where {T<:Number}
+    return postscalefactor(adjmat) .* (adjmat.A * (prescalefactor(adjmat) .* x))
+end
 
-*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where T <: Number =
-    adjmat.A * x
+*(adjmat::CombinatorialAdjacency{T}, x::AbstractVector{T}) where {T<:Number} = adjmat.A * x
 
-*(lapl::Laplacian{T}, x::AbstractVector{T}) where T <: Number =
-    (diag(lapl) .* x) - (adjacency(lapl) * x)
+function *(lapl::Laplacian{T}, x::AbstractVector{T}) where {T<:Number}
+    return (diag(lapl) .* x) - (adjacency(lapl) * x)
+end
 
-
-function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where T <: Number
+function *(adjmat::PunchedAdjacency{T}, x::AbstractVector{T}) where {T<:Number}
     y = adjmat.A * x
     return y - dot(adjmat.perron, y) * adjmat.perron
 end
@@ -275,7 +265,6 @@ function mul!(Y, lapl::Laplacian, B)
     return Y
 end
 
-
 """
     symmetrize(A::SparseMatrix, which=:or)
 
@@ -312,16 +301,14 @@ Use `:sum` for weighted graphs.
 ### Implementation Notes
 Only works on [`Adjacency`](@ref) because the normalizations don't commute with symmetrization.
 """
-symmetrize(adjmat::CombinatorialAdjacency, which=:or) =
-    CombinatorialAdjacency(symmetrize(adjmat.A, which))
-
+function symmetrize(adjmat::CombinatorialAdjacency, which=:or)
+    return CombinatorialAdjacency(symmetrize(adjmat.A, which))
+end
 
 # per #564
-# @deprecate mul!(Y, A::Noop, B) None
-@deprecate convert(::Type{Adjacency}, lapl::Laplacian) None
+# @deprecate mul!(Y, A::Noop, B) nothing
+@deprecate convert(::Type{Adjacency}, lapl::Laplacian) nothing
 @deprecate convert(::Type{SparseMatrix}, adjmat::GraphMatrix) sparse(adjmat)
-
-
 
 """
     LinAlg

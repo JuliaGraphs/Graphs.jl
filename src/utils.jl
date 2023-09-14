@@ -24,25 +24,63 @@ function sample!(rng::AbstractRNG, a::AbstractVector, k::Integer; exclude=())
             i += 1
         end
     end
-    res
+    return res
 end
 
-sample!(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), a, k; exclude=exclude)
+function sample!(
+    a::AbstractVector,
+    k::Integer;
+    exclude=(),
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    return sample!(rng_from_rng_or_seed(rng, seed), a, k; exclude=exclude)
+end
 
 """
-    sample([rng,] r, k)
+    sample(a, k; exclude=(), rng=nothing, seed=nothing)
 
-Sample `k` element from unit range `r` without repetition and eventually excluding elements in `exclude`.
+Sample `k` element from AbstractVector `a` without repetition and eventually excluding elements in `exclude`.
 
 ### Optional Arguments
 - `exclude=()`: elements in `a` to exclude from sampling.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: seed the Random Number Generator with this value.
 
 ### Implementation Notes
 Unlike [`sample!`](@ref), does not produce side effects.
 """
-sample(a::AbstractVector, k::Integer; exclude=()) = sample!(getRNG(), collect(a), k; exclude=exclude)
+function sample(
+    a::AbstractVector,
+    k::Integer;
+    exclude=(),
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    return sample!(rng_from_rng_or_seed(rng, seed), collect(a), k; exclude=exclude)
+end
 
 getRNG(seed::Integer=-1) = seed >= 0 ? MersenneTwister(seed) : GLOBAL_RNG
+
+"""
+    rng_from_rng_or_seed(rng, seed)
+
+Helper function for randomized functions that can take a random generator as well as a seed argument.
+
+Currently most randomized functions in this package take a seed integer as an argument.
+As modern randomized Julia functions tend to take a random generator instead of a seed,
+this function helps with the transition by taking `rng` and `seed` as an argument and
+always returning a random number generator.
+At least one of these arguments must be `nothing`.
+"""
+function rng_from_rng_or_seed(rng::Union{Nothing,AbstractRNG}, seed::Union{Nothing,Integer})
+    !(isnothing(seed) || isnothing(rng)) &&
+        throw(ArgumentError("Cannot specify both, seed and rng"))
+    # TODO at some point we might emit a deprecation warning if a seed is specified
+    !isnothing(seed) && return getRNG(seed)
+    isnothing(rng) && return GLOBAL_RNG
+    return rng
+end
 
 """
     insorted(item, collection)
@@ -60,11 +98,11 @@ end
 """
     findall!(A, B)
 
-Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true. 
+Set the `B[1:|I|]` to `I` where `I` is the set of indices `A[I]` returns true.
 
 Assumes `length(B) >= |I|`.
 """
-function findall!(A::Union{BitArray{1}, Vector{Bool}}, B::Vector{T}) where T<:Integer
+function findall!(A::Union{BitArray{1},Vector{Bool}}, B::Vector{T}) where {T<:Integer}
     len = 0
     @inbounds for (i, a) in enumerate(A)
         if a
@@ -79,21 +117,17 @@ end
     unweighted_contiguous_partition(num_items, required_partitions)
 
 Partition `1:num_items` into `required_partitions` number of partitions such that the
-difference in length of the largest and smallest partition is atmost 1.
+difference in length of the largest and smallest partition is at most 1.
 
 ### Performance
 Time: O(required_partitions)
 """
-function unweighted_contiguous_partition(
-    num_items::Integer,
-    required_partitions::Integer
-    )
-
+function unweighted_contiguous_partition(num_items::Integer, required_partitions::Integer)
     left = 1
     part = Vector{UnitRange}(undef, required_partitions)
     for i in 1:required_partitions
-        len = fld(num_items+i-1, required_partitions)
-        part[i] = left:(left+len-1)
+        len = fld(num_items + i - 1, required_partitions)
+        part[i] = left:(left + len - 1)
         left += len
     end
     return part
@@ -102,7 +136,7 @@ end
 """
     greedy_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
-Partition `1:num_items` into atmost `required_partitions` number of contiguous partitions with 
+Partition `1:num_items` into at most `required_partitions` number of contiguous partitions with
 the objective of minimising the largest partition.
 The size of a partition is equal to the num of the weight of its elements.
 `weight[i] > 0`.
@@ -112,44 +146,40 @@ Time: O(num_items+required_partitions)
 Requires only one iteration over `weight` but may not output the optimal partition.
 
 ### Implementation Notes
-`Balance(wt, left, right, n_items, n_part) = 
+`Balance(wt, left, right, n_items, n_part) =
 max(sum(wt[left:right])*(n_part-1), sum(wt[right+1:n_items]))`.
 Find `right` that minimises `Balance(weight, 1, right, num_items, required_partitions)`.
 Set the first partition as `1:right`.
 Repeat on indices `right+1:num_items` and one less partition.
 """
 function greedy_contiguous_partition(
-    weight::Vector{<:Integer},
-    required_partitions::Integer,
-    num_items::U=length(weight)
-    ) where U <: Integer
-
+    weight::Vector{<:Integer}, required_partitions::Integer, num_items::U=length(weight)
+) where {U<:Integer}
     suffix_sum = cumsum(reverse(weight))
-    reverse!(suffix_sum) 
-    push!(suffix_sum, 0) #Eg. [2, 3, 1] => [6, 4, 1, 0]
+    reverse!(suffix_sum)
+    push!(suffix_sum, 0) # Eg. [2, 3, 1] => [6, 4, 1, 0]
 
     partitions = Vector{UnitRange{U}}()
     sizehint!(partitions, required_partitions)
 
     left = one(U)
-    for partitions_remain in reverse(1:(required_partitions-1))
+    for partitions_remain in reverse(1:(required_partitions - 1))
+        left >= num_items && break
 
-        left >= num_items && break 
-
-        partition_size = weight[left]*partitions_remain #At least one item in each partition
+        partition_size = weight[left] * partitions_remain # At least one item in each partition
         right = left
 
-        #Find right: sum(wt[left:right])*partitions_remain and sum(wt[(right+1):num_items]) is balanced
-        while right+one(U) < num_items && partition_size < suffix_sum[right+one(U)] 
+        # Find right: sum(wt[left:right])*partitions_remain and sum(wt[(right+1):num_items]) is balanced
+        while right + one(U) < num_items && partition_size < suffix_sum[right + one(U)]
             right += one(U)
-            partition_size += weight[right]*partitions_remain
+            partition_size += weight[right] * partitions_remain
         end
-        #max( sum(wt[left:right]), sum(wt[(right+1):num_items]) ) = partition_size
-        #max( sum(wt[left:(right-1)]), sum(wt[right:num_items]) ) = suffix_sum[right]
+        # max( sum(wt[left:right]), sum(wt[(right+1):num_items]) ) = partition_size
+        # max( sum(wt[left:(right-1)]), sum(wt[right:num_items]) ) = suffix_sum[right]
         if left != right && partition_size > suffix_sum[right]
             right -= one(U)
         end
-        
+
         push!(partitions, left:right)
         left = right + one(U)
     end
@@ -161,7 +191,7 @@ end
 """
     optimal_contiguous_partition(weight, required_partitions, num_items=length(weight))
 
-Partition `1:num_items` into atmost `required_partitions` number of contiguous partitions such
+Partition `1:num_items` into at most `required_partitions` number of contiguous partitions such
 that the largest partition is minimised.
 The size of a partition is equal to the sum of the weight of its elements.
 `weight[i] > 0`.
@@ -170,22 +200,19 @@ The size of a partition is equal to the sum of the weight of its elements.
 Time: O(num_items*log(sum(weight)))
 
 ### Implementation Notes
-Binary Search for the partitioning over `[fld(sum(weight)-1, required_partitions), sum(weight)]`. 
+Binary Search for the partitioning over `[fld(sum(weight)-1, required_partitions), sum(weight)]`.
 """
 function optimal_contiguous_partition(
-    weight::Vector{<:Integer},
-    required_partitions::Integer,
-    num_items::U=length(weight)
-    ) where U <: Integer
-
+    weight::Vector{<:Integer}, required_partitions::Integer, num_items::U=length(weight)
+) where {U<:Integer}
     item_it = Iterators.take(weight, num_items)
 
     up_bound = sum(item_it) # Smallest known possible value
-    low_bound = fld(up_bound-1, required_partitions) # Largest known impossible value
+    low_bound = fld(up_bound - 1, required_partitions) # Largest known impossible value
 
     # Find optimal balance
-    while up_bound > low_bound+1
-        search_for = fld(up_bound+low_bound, 2) 
+    while up_bound > low_bound + 1
+        search_for = fld(up_bound + low_bound, 2)
 
         sum_part = 0
         remain_part = required_partitions
@@ -218,7 +245,7 @@ function optimal_contiguous_partition(
     for (i, w) in enumerate(item_it)
         sum_part += w
         if sum_part > best_balance
-            push!(partitions, left:(i-1))
+            push!(partitions, left:(i - 1))
             sum_part = w
             left = i
         end
@@ -241,7 +268,7 @@ isbounded(n::BigInt) = false
 
 Returns true if `typemax(T)` of a type `T <: Integer` exists.
 """
-isbounded(::Type{T}) where {T <: Integer} = isconcretetype(T)
+isbounded(::Type{T}) where {T<:Integer} = isconcretetype(T)
 isbounded(::Type{BigInt}) = false
 
 """
@@ -270,3 +297,6 @@ function deepcopy_adjlist(adjlist::Vector{Vector{T}}) where {T}
 
     return result
 end
+
+collect_if_not_vector(xs::AbstractVector) = xs
+collect_if_not_vector(xs) = collect(xs)

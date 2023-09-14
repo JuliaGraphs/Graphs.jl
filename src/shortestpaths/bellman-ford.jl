@@ -5,7 +5,7 @@
 
 ###################################################################
 #
-#   The type that capsulates the state of Bellman Ford algorithm
+#   The type that encapsulates the state of Bellman Ford algorithm
 #
 ###################################################################
 using Base.Threads
@@ -18,7 +18,7 @@ struct NegativeCycleError <: Exception end
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 """
-struct BellmanFordState{T<:Real, U<:Integer} <: AbstractPathState
+struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -34,22 +34,22 @@ Return a [`Graphs.BellmanFordState`](@ref) with relevant traversal information.
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
-    distmx::AbstractMatrix{T}=weights(graph)
-    ) where T<:Real where U<:Integer
-
+    distmx::AbstractMatrix{T}=weights(graph),
+) where {T<:Real} where {U<:Integer}
     nvg = nv(graph)
     active = falses(nvg)
     active[sources] .= true
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
-    dists[sources] .= 0
+    dists[sources] .= zero(T)
     no_changes = false
     new_active = falses(nvg)
 
     for i in vertices(graph)
         no_changes = true
         new_active .= false
-        for u in vertices(graph)[active]
+        for u in vertices(graph)
+            active[u] || continue
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
@@ -69,22 +69,22 @@ function bellman_ford_shortest_paths(
     return BellmanFordState(parents, dists)
 end
 
-bellman_ford_shortest_paths(
-    graph::AbstractGraph{U},
-    v::Integer,
-    distmx::AbstractMatrix{T} = weights(graph);
-    ) where T<:Real where U<:Integer = bellman_ford_shortest_paths(graph, [v], distmx)
+function bellman_ford_shortest_paths(
+    graph::AbstractGraph{U}, v::Integer, distmx::AbstractMatrix{T}=weights(graph);
+) where {T<:Real} where {U<:Integer}
+    return bellman_ford_shortest_paths(graph, [v], distmx)
+end
 
 has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
-    g::AbstractGraph{U}, 
-    distmx::AbstractMatrix{T}
-    ) where T<:Real where U<:Integer
+    g::AbstractGraph{U}, distmx::AbstractMatrix{T}
+) where {T<:Real} where {U<:Integer}
     try
-        bellman_ford_shortest_paths(g, vertices(g), distmx)
+        bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e
         isa(e, NegativeCycleError) && return true
+        rethrow()
     end
     return false
 end
@@ -116,7 +116,7 @@ function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer}
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
-    for i = 1:num_vs
+    for i in 1:num_vs
         all_paths[i] = Vector{T}()
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
@@ -132,5 +132,6 @@ function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer}
 end
 
 enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, [v])[1]
-enumerate_paths(state::AbstractPathState) = enumerate_paths(state, [1:length(state.parents);])
-
+function enumerate_paths(state::AbstractPathState)
+    return enumerate_paths(state, [1:length(state.parents);])
+end

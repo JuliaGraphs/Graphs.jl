@@ -1,5 +1,5 @@
 using ArnoldiMethod
-#computes normalized cut cost for partition `cut`
+# computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = zero(eltype(W))
     for j in axes(W, 2)
@@ -18,7 +18,7 @@ function _normalized_cut_cost(cut, W::SparseMatrixCSC, D)
     rows = rowvals(W)
     vals = nonzeros(W)
     n = size(W, 2)
-    for i = 1:n
+    for i in 1:n
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] != cut[row]
@@ -90,10 +90,13 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
 
     rows = rowvals(W)
     vals = nonzeros(W)
-    I1 = Vector{Int}(); I2 = Vector{Int}()
-    J1 = Vector{Int}(); J2 = Vector{Int}()
-    V1 = Vector{Float64}(); V2 = Vector{Float64}()
-    for i = 1:nv
+    I1 = Vector{Int}()
+    I2 = Vector{Int}()
+    J1 = Vector{Int}()
+    J2 = Vector{Int}()
+    V1 = Vector{Float64}()
+    V2 = Vector{Float64}()
+    for i in 1:nv
         for j in nzrange(W, i)
             row = rows[j]
             if cut[i] == cut[row] == false
@@ -112,7 +115,7 @@ function _partition_weightmx(cut, W::SparseMatrixCSC)
     return (W1, W2, vmap1, vmap2)
 end
 
-function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
+function _recursive_normalized_cut(W, thres, num_cuts)
     m, n = size(W)
     (m <= 1) && return ones(Int, m) # trivial
     D = Diagonal(vec(sum(W, dims=2)))
@@ -138,11 +141,11 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
         (size(Q, 2) <= 1) && return collect(1:m) # no 2nd eigenvector
         ret = convert(Vector, real(view(Q, :, 2)))
     else
-        ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:,2]
+        ret = eigen(Matrix(invDroot' * (D - W) * invDroot)).vectors[:, 2]
     end
     v = real(invDroot * ret)
 
-    #perform n-cuts with different partitions of v and find best one
+    # perform n-cuts with different partitions of v and find best one
     min_cost = Inf
     best_thres = -1
     vmin, vmax = extrema(v)
@@ -156,7 +159,7 @@ function _recursive_normalized_cut(W, thres=thres, num_cuts=num_cuts)
     end
 
     if min_cost < thres
-        #split graph, compute normalized_cut for each subgraph recursively and merge indices.
+        # split graph, compute normalized_cut for each subgraph recursively and merge indices.
         cut = v .> best_thres
         W1, W2, vmap1, vmap2 = _partition_weightmx(cut, W)
         labels1 = _recursive_normalized_cut(W1, thres, num_cuts)
@@ -194,11 +197,11 @@ It is important to identify a good threshold for your application. A bisection s
 ### References
 "Normalized Cuts and Image Segmentation" - Jianbo Shi and Jitendra Malik
 """
-function normalized_cut(g::AbstractGraph,
+function normalized_cut(
+    g::AbstractGraph,
     thres::Real,
     W::AbstractMatrix{T}=adjacency_matrix(g),
-    num_cuts::Int=10) where T <: Real
-
+    num_cuts::Int=10,
+) where {T<:Real}
     return _recursive_normalized_cut(W, thres, num_cuts)
 end
-

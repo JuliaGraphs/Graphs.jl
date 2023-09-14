@@ -6,7 +6,7 @@ using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
 using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod
-using Random:shuffle
+using Random: AbstractRNG, shuffle
 import SparseArrays: sparse
 import Base: push!, popfirst!, isempty, getindex
 
@@ -21,7 +21,6 @@ include("centrality/radiality.jl")
 include("centrality/stress.jl")
 include("distance.jl")
 include("traversals/bfs.jl")
-include("traversals/gdistances.jl")
 include("traversals/greedy_color.jl")
 include("utils.jl")
 include("dominatingset/minimal_dom_set.jl")

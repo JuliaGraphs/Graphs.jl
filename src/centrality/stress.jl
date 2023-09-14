@@ -17,13 +17,13 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 julia> using Graphs
 
 julia> stress_centrality(star_graph(3))
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  2
  0
  0
 
 julia> stress_centrality(cycle_graph(4))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  2
  2
@@ -45,14 +45,18 @@ function stress_centrality(g::AbstractGraph, vs=vertices(g))
     return stress
 end
 
-stress_centrality(g::AbstractGraph, k::Integer) =
-    stress_centrality(g, sample(vertices(g), k))
-
-function _stress_accumulate_basic!(stress::Vector{<:Integer},
-    state::DijkstraState,
+function stress_centrality(
     g::AbstractGraph,
-    si::Integer)
+    k::Integer;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    return stress_centrality(g, sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed))
+end
 
+function _stress_accumulate_basic!(
+    stress::Vector{<:Integer}, state::DijkstraState, g::AbstractGraph, si::Integer
+)
     n_v = length(state.parents) # this is the ttl number of vertices
     δ = zeros(Int, n_v)
     P = state.predecessors
@@ -61,11 +65,11 @@ function _stress_accumulate_basic!(stress::Vector{<:Integer},
     # make sure the source index has no parents.
     P[si] = []
     # we need to order the source vertices by decreasing distance for this to work.
-    S = reverse(state.closest_vertices) #Replaced sortperm with this
+    S = reverse(state.closest_vertices) # Replaced sortperm with this
     for w in S  # w is the farthest vertex from si
         for v in P[w]  # get the predecessors of w
             if v > 0
-                δ[v] +=  δ[w] + 1 # increment sp of pred
+                δ[v] += δ[w] + 1 # increment sp of pred
             end
         end
         δ[w] *= length(P[w]) # adjust the # of sps of vertex

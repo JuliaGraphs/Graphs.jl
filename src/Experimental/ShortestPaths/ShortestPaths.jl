@@ -4,9 +4,10 @@ using Graphs
 using Graphs.Experimental.Traversals
 using Graphs: AbstractGraph, AbstractEdge
 using Graphs.SimpleGraphs: AbstractSimpleGraph
-using DataStructures:PriorityQueue, enqueue!, dequeue!
+using DataStructures: PriorityQueue, enqueue!, dequeue!
 
-import Graphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
+import Graphs.Experimental.Traversals:
+    initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
 
 # TODO: figure out how we keep environmental params.
 # struct LGEnvironment
@@ -14,7 +15,7 @@ import Graphs.Experimental.Traversals: initfn!, previsitfn!, newvisitfn!, visitf
 #     parallel::Bool
 #     LGEnvironment() = new(false, false)
 # end
-     
+
 abstract type AbstractGraphResult end
 abstract type AbstractGraphAlgorithm end
 
@@ -32,7 +33,6 @@ calculation.
 """
 abstract type ShortestPathResult <: AbstractGraphResult end
 
-
 """
     ShortestPathAlgorithm <: AbstractGraphAlgorithm
 
@@ -42,7 +42,7 @@ Some concrete subtypes (most notably [`Dijkstra`](@ref) have fields
 that specify algorithm parameters.
 
 See [`AStar`](@ref), [`BellmanFord`](@ref), [`BFS`](@ref),
-[`DEspopoPape`](@ref), [`Dijkstra`](@ref), [`FloydWarshall`](@ref),
+[`DEsopoPape`](@ref), [`Dijkstra`](@ref), [`FloydWarshall`](@ref),
 [`Johnson`](@ref), and [`SPFA`](@ref) for specific requirements and
 usage details.
 """
@@ -56,7 +56,6 @@ include("dijkstra.jl")
 include("floyd-warshall.jl")
 include("johnson.jl")
 include("spfa.jl")
-
 
 ################################
 # Shortest Paths via algorithm #
@@ -74,7 +73,7 @@ between sets of vertices in graph `g`. Depending on the algorithm specified,
 other information may be required: (e.g., a distance matrix `distmx`, and/or
 a target vertex `t`). Some algorithms will accept multiple source vertices
 `s`; algorithms that do not accept any source vertex `s` produce all-pairs
-shortest paths. 
+shortest paths.
 
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 
@@ -99,12 +98,17 @@ s4 = shortest_paths(g, 1, BellmanFord())
 s5 = shortest_paths(g, 1, w, DEsopoPape())
 ```
 """
-shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm) =
-    shortest_paths(g, s, weights(g), alg)
+function shortest_paths(g::AbstractGraph, s, alg::ShortestPathAlgorithm)
+    return shortest_paths(g, s, weights(g), alg)
+end
 
 # If we don't specify an algorithm AND there are no dists, use BFS.
-shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer} = shortest_paths(g, s, BFS())
-shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer} = shortest_paths(g, ss, BFS())
+function shortest_paths(g::AbstractGraph{T}, s::Integer) where {T<:Integer}
+    return shortest_paths(g, s, BFS())
+end
+function shortest_paths(g::AbstractGraph{T}, ss::AbstractVector) where {T<:Integer}
+    return shortest_paths(g, ss, BFS())
+end
 
 # Full-formed methods.
 """
@@ -137,7 +141,7 @@ function paths(state::ShortestPathResult, vs::AbstractVector{<:Integer})
 
     num_vs = length(vs)
     all_paths = Vector{Vector{T}}(undef, num_vs)
-    for i = 1:num_vs
+    for i in 1:num_vs
         all_paths[i] = Vector{T}()
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
@@ -177,7 +181,9 @@ algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 `true` if any cycle detected in the graph has a negative weight.
 # Examples
 
-```jldoctest
+```
+julia> using Graphs
+
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
@@ -193,7 +199,9 @@ julia> has_negative_weight_cycle(g, d, SPFA())
 false
 ```
 """
-has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g)) = has_negative_weight_cycle(g, distmx, BellmanFord())
+function has_negative_weight_cycle(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+    return has_negative_weight_cycle(g, distmx, BellmanFord())
+end
 has_negative_weight_cycle(g::AbstractSimpleGraph) = false
 
 export ShortestPathAlgorithm
