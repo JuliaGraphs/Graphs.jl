@@ -98,25 +98,26 @@ function threaded_betweenness_centrality(
     k = length(vs)
     isdir = is_directed(g)
 
-    local_betweenness = [zeros(n_v) for i in 1:nthreads()]
     vs_active = findall((x) -> degree(g, x) > 0, vs) # 0 might be 1?
+    k_active = length(vs_active)
+    d, r = divrem(k_active, Threads.nthreads())
+    ntasks = d == 0 ? r : Threads.nthreads()
+    local_betweenness = [zeros(n_v) for _ in 1:ntasks]
+    task_size = cld(k_active, ntasks)
 
-    Base.Threads.@threads for s in vs_active
-        state = Graphs.dijkstra_shortest_paths(
-            g, s, distmx; allpaths=true, trackvertices=true
-        )
-        if endpoints
-            Graphs._accumulate_endpoints!(
-                local_betweenness[Base.Threads.threadid()], state, g, s
+    @sync for (t, task_range) in enumerate(Iterators.partition(1:k_active, task_size))
+        Threads.@spawn for s in @view(vs_active[task_range])
+            state = Graphs.dijkstra_shortest_paths(
+                g, s, distmx; allpaths=true, trackvertices=true
             )
-        else
-            Graphs._accumulate_basic!(
-                local_betweenness[Base.Threads.threadid()], state, g, s
-            )
+            if endpoints
+                Graphs._accumulate_endpoints!(local_betweenness[t], state, g, s)
+            else
+                Graphs._accumulate_basic!(local_betweenness[t], state, g, s)
+            end
         end
     end
     betweenness = reduce(+, local_betweenness)
-
     Graphs._rescale!(betweenness, n_v, normalize, isdir, k)
 
     return betweenness
