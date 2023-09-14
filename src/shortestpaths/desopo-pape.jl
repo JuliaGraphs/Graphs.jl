@@ -2,6 +2,11 @@
     struct DEposoPapeState{T, U}
 
 An [`AbstractPathState`](@ref) designed for D`Esopo-Pape shortest-path calculations.
+
+# Fields
+
+- `parents::Vector{U}`: `parents[v]` is the predecessor of vertex `v` on the shortest path from the source to `v`
+- `dists::Vector{T}`: `dists[v]` is the length of the shortest path from the source to `v`
 """
 struct DEsopoPapeState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
@@ -13,7 +18,7 @@ end
 
 Compute shortest paths between a source `src` and all
 other nodes in graph `g` using the [D'Esopo-Pape algorithm](http://web.mit.edu/dimitrib/www/SLF.pdf).
-Return a [`Graphs.DEsopoPapeState`](@ref) with relevant traversal information.
+Return a [`Graphs.DEsopoPapeState`](@ref) with relevant traversal information (try querying `state.parents` or `state.dists`).
 
 # Examples
 ```jldoctest
