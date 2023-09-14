@@ -6,6 +6,7 @@
     @test @inferred(is_ordered(e2))
     @test @inferred(!is_ordered(reverse(e3)))
 
+    # TODO we cannot test add_vertices! with generic graphs
     @testset "add_vertices!" begin
         gx = SimpleGraph(10)
         gdx = SimpleDiGraph(10)
@@ -19,7 +20,7 @@
     g5w = wheel_graph(5)
     g5wd = wheel_digraph(5)
     @testset "degree functions" begin
-        @testset "$g" for g in testgraphs(g5w)
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5w)
             @test @inferred(indegree(g, 1)) == @inferred(outdegree(g, 1)) == 4
             @test degree(g, 1) == 4 # explicit codecov
             @test @inferred(indegree(g)) ==
@@ -34,7 +35,7 @@
             z3 = @inferred(degree_histogram(g, outdegree))
             @test z1 == z2 == z3 == Dict(4 => 1, 3 => 4)
         end
-        @testset "$g" for g in testdigraphs(g5wd)
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5wd)
             @test @inferred(indegree(g, 2)) == 2
             @test @inferred(outdegree(g, 2)) == 1
             @test @inferred(degree(g, 2)) == 3
@@ -56,42 +57,42 @@
     end
 
     @testset "weights" begin
-        @testset "$g" for g in testgraphs(g5w, g5wd)
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5w, g5wd)
             @test @inferred(weights(g)) == Graphs.DefaultDistance(nv(g))
         end
     end
 
     @testset "neighbor functions" begin
-        @testset "$g" for g in testgraphs(g5w)
-            @test @inferred(neighbors(g, 2)) == [1, 3, 5]
-            @test @inferred(all_neighbors(g, 2)) == [1, 3, 5]
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5w)
+            @test collect(@inferred(neighbors(g, 2))) == [1, 3, 5]
+            @test collect(@inferred(all_neighbors(g, 2))) == [1, 3, 5]
             @test @inferred(common_neighbors(g, 1, 5)) == [2, 4]
         end
-        @testset "$g" for g in testgraphs(g5wd)
-            @test @inferred(neighbors(g, 2)) == [3]
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5wd)
+            @test collect(@inferred(neighbors(g, 2))) == [3]
             @test Set(@inferred(all_neighbors(g, 2))) == Set([1, 3, 5])
             @test @inferred(common_neighbors(g, 1, 5)) == [2]
         end
     end
 
     @testset "self loops" begin
-        @testset "$g" for g in testgraphs(g5w, g5wd)
+        @testset "$(typeof(g))" for g in testgraphs(g5w, g5wd)
             gsl = copy(g)
             add_edge!(gsl, 3, 3)
             add_edge!(gsl, 2, 2)
-            @test @inferred(!has_self_loops(g))
-            @test @inferred(has_self_loops(gsl))
-            @test @inferred(num_self_loops(g)) == 0
-            @test @inferred(num_self_loops(gsl)) == 2
+            @test @inferred(!has_self_loops(generic_graph(g)))
+            @test @inferred(has_self_loops(generic_graph(gsl)))
+            @test @inferred(num_self_loops(generic_graph(g))) == 0
+            @test @inferred(num_self_loops(generic_graph(gsl))) == 2
         end
     end
 
     @testset "density" begin
-        @testset "$g" for g in testgraphs(g5w)
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5w)
             @test @inferred(density(g)) == 0.8
         end
 
-        @testset "$g" for g in testdigraphs(g5wd)
+        @testset "$(typeof(g))" for g in test_generic_graphs(g5wd)
             @test @inferred(density(g)) == 0.4
         end
     end
