@@ -36,10 +36,6 @@ struct GenericGraph{T} <: Graphs.AbstractGraph{T}
     g::SimpleGraph{T}
 end
 
-function GenericGraph(elist::Vector{Graphs.SimpleGraphEdge{T}}) where {T<:Integer}
-    return GenericGraph{T}(SimpleGraph(elist))
-end
-
 """
     GenericDiGraph{T} <: Graphs.AbstractGraph{T}
 
