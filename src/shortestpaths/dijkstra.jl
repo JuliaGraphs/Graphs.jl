@@ -75,15 +75,14 @@ function dijkstra_shortest_paths(
     distmx::AbstractMatrix{T}=weights(g);
     allpaths=false,
     trackvertices=false,
-    maxdist=typemax(T)
-    ) where T <: Real where U <: Integer
-
+    maxdist=typemax(T),
+) where {T<:Real} where {U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
     visited = zeros(Bool, nvg)
 
-    pathcounts = zeros(Int, nvg)
+    pathcounts = zeros(nvg)
     preds = fill(Vector{U}(), nvg)
     H = PriorityQueue{U,T}()
     # fill creates only one array.
@@ -110,11 +109,33 @@ function dijkstra_shortest_paths(
             alt = d + distmx[u, v]
 
             alt > maxdist && continue
-            relax(u,v,distmx,dists,parents,visited,H;
-                  allpaths=allpaths,
-                  pathcounts=pathcounts,
-                  preds=preds
-            )
+
+            if !visited[v]
+                visited[v] = true
+                dists[v] = alt
+                parents[v] = u
+
+                pathcounts[v] += pathcounts[u]
+                if allpaths
+                    preds[v] = [u;]
+                end
+                H[v] = alt
+            elseif alt < dists[v]
+                dists[v] = alt
+                parents[v] = u
+                #615
+                pathcounts[v] = pathcounts[u]
+                if allpaths
+                    resize!(preds[v], 1)
+                    preds[v][1] = u
+                end
+                H[v] = alt
+            elseif alt == dists[v]
+                pathcounts[v] += pathcounts[u]
+                if allpaths
+                    push!(preds[v], u)
+                end
+            end
         end
     end
 
@@ -141,7 +162,7 @@ function dijkstra_shortest_paths(
     distmx::AbstractMatrix=weights(g);
     allpaths=false,
     trackvertices=false,
-    maxdist=typemax(eltype(distmx))
+    maxdist=typemax(eltype(distmx)),
 )
     return dijkstra_shortest_paths(
         g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices, maxdist=maxdist
