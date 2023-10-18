@@ -272,7 +272,11 @@ function bidijkstra_shortest_path(
     end
     ds_f = DijkstraState{T,U}(parents_f, dists_f, preds_f, zeros(nvg), Vector{U}())
     ds_b = DijkstraState{T,U}(parents_b, dists_b, preds_b, zeros(nvg), Vector{U}())
-    path = vcat(enumerate_paths(ds_f, mid_v), reverse(enumerate_paths(ds_b, mid_v)[1:end-1]))
-    return path
+    if mid_v == src
+        return reverse(enumerate_paths(ds_b, mid_v))
+    elseif mid_v ==dst
+        return enumerate_paths(ds_f, mid_v)
+    end
+    return vcat(enumerate_paths(ds_f, mid_v), reverse(enumerate_paths(ds_b, mid_v)[1:end-1]))
 end
 
