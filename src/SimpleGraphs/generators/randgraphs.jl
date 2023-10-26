@@ -134,8 +134,8 @@ end
 
 "maps 1:n*(n-1) into non-diagonal elements of [1,n]×[1,n]"
 function nondiagmap(r, n)
-    j, i = fldmod1(r, n - 1)
-    i ≥ j ? Edge(i + 1, j) : Edge(i, j)
+    i, j = fldmod1(r, n - 1)
+    Edge(i + (i ≥ j), j)
 end
 
 """
