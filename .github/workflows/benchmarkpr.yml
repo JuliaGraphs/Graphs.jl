@@ -1,0 +1,78 @@
+name: performance tracking
+env:
+  JULIA_NUM_THREADS: 2
+on:
+  pull_request:
+    branches:
+      - master
+      - benchx
+  push:
+    branches:
+      - master
+      - benchx
+    tags: '*'
+jobs:
+  benchmark:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow_failure }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1'
+        os:
+          - ubuntu-latest
+        arch:
+          - x64
+        include:
+          - version: '1'
+            allow_failure: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - uses: actions/cache@v3
+        env:
+          cache-name: cache-artifacts
+        with:
+          path: ~/.julia/artifacts
+          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-test-${{ env.cache-name }}-
+            ${{ runner.os }}-test-
+            ${{ runner.os }}-
+      - uses: julia-actions/julia-buildpkg@latest
+      - name: install dependencies
+        run: julia -e 'using Pkg; pkg"add PkgBenchmark BenchmarkCI@0.1"'
+      - name: Run benchmark judge if pull request
+        if: github.event_name == 'pull_request'
+        run: julia -e "
+          using BenchmarkCI, PkgBenchmark; 
+          jd=BenchmarkCI.judge(baseline=\"origin/${GITHUB_BASE_REF}\"); 
+          writeresults(\"targetbenchout.json\", jd.target_results); 
+          writeresults(\"baselinebenchout.json\", jd.baseline_results); 
+          "
+      - name: Post results if pull request
+        if: github.event_name == 'pull_request'
+        run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run benchmark if push/merge
+        if: github.event_name == 'push'
+        run: julia --project=benchmark -e "
+          import Pkg;
+          Pkg.develop(path=pwd());
+          Pkg.instantiate();
+          using PkgBenchmark, BenchmarkTools; 
+          br=benchmarkpkg(pwd()); 
+          br_median = BenchmarkResults(br.name, br.commit, median(br.benchmarkgroup), br.date, br.julia_commit, br.vinfo, br.benchmarkconfig);
+          writeresults(\"medianbenchout.json\", br_median); 
+          "
+      - uses: actions/upload-artifact@v3
+        with: 
+          name: Store benchmark result
+          path: ./*benchout.json
+
