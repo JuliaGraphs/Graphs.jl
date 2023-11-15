@@ -307,6 +307,7 @@ export
 
     # community
     modularity,
+    greedy_modularity,
     core_periphery_deg,
     local_clustering,
     local_clustering_coefficient,
@@ -518,6 +519,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/greedy_modularity.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
