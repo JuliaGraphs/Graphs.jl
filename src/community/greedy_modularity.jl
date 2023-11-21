@@ -4,12 +4,10 @@ function community_detection_greedy_modularity(g::AbstractGraph)
     cs = Vector()
     qs = fill(-1.0, n)
     Q, e, a = compute_modularity(g, c)
-    println(Q)
     push!(cs, c)
     qs[1] = Q
     for i in 1:(n - 1)
         Q = modularity_greedy_step!(g, Q, e, a, c)
-        println(Q)
         push!(cs, copy(c))
         qs[i + 1] = Q
     end
@@ -43,7 +41,6 @@ function modularity_greedy_step!(
         end
     end
     c1, c2 = to_merge
-    println(dq_max, " ", c1, " ", c2)
     for i in 1:n
         e[c1, i] += e[c2, i]
     end
