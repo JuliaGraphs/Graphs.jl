@@ -220,9 +220,10 @@ For directed graphs, the default is equivalent to [`outneighbors`](@ref);
 use [`all_neighbors`](@ref) to list inbound and outbound neighbors.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy.
-Do not modify result. If the graph is modified, the behavior is undefined:
+In some cases might return a reference to the current graph's internal structures,
+not a copy. Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
+If you need to modify the result use `collect` or `copy` to create a copy.
 
 # Examples
 ```jldoctest
@@ -235,14 +236,14 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> neighbors(g, 1)
-Int64[]
+0-element Graphs.FrozenVector{Int64}
 
 julia> neighbors(g, 2)
-1-element Vector{Int64}:
+1-element Graphs.FrozenVector{Int64}:
  3
 
 julia> neighbors(g, 3)
-1-element Vector{Int64}:
+1-element Graphs.FrozenVector{Int64}:
  1
 ```
 """
@@ -256,9 +257,10 @@ For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
 and [`inneighbors`](@ref).
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy.
-Do not modify result. If the graph is modified, the behavior is undefined:
+In some cases might return a reference to the current graph's internal structures,
+not a copy. Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
+If you need to modify the result use `collect` or `copy` to create a copy.
 
 # Examples
 ```jldoctest
