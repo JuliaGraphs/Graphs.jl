@@ -1,15 +1,20 @@
 function community_detection_greedy_modularity(g::AbstractGraph)
-    n = length(vertices(g))
-    c = Vector(1:n)
-    cs = Vector()
-    qs = fill(-1.0, n)
-    Q, e, a = compute_modularity(g, c)
-    push!(cs, c)
+    if is_directed(g)
+        throw(ArgumentError("The graph must not be directed"))
+    end
+    n = nv(g)
+    c = Vector{Int}(1:n)
+    cs = Vector{Vector{Int}}(undef, n)
+    w = weights(g)
+    T = float(eltype(w))
+    qs = Vector{T}(undef, n)
+    Q, e, a = compute_modularity(g, c, w)
+    cs[1] = copy(c)
     qs[1] = Q
-    for i in 1:(n - 1)
+    for i in 2:n
         Q = modularity_greedy_step!(g, Q, e, a, c)
-        push!(cs, copy(c))
-        qs[i + 1] = Q
+        cs[i] = copy(c)
+        qs[i] = Q
     end
     imax = argmax(qs)
     return rewrite_class_ids(cs[imax])
@@ -17,17 +22,17 @@ end
 
 function modularity_greedy_step!(
     g::AbstractGraph,
-    Q::Float64,
-    e::Matrix{<:AbstractFloat},
-    a::AbstractVector{<:AbstractFloat},
+    Q::T,
+    e::AbstractMatrix{T},
+    a::AbstractVector{T},
     c::AbstractVector{<:Integer},
-)
-    m = 2 * length(edges(g))
-    n = length(vertices(g))
-    dq_max = -1
-    tried = Set{Tuple{Int64,Int64}}()
+) where {T}
+    m = 2 * ne(g)
+    n = nv(g)
+    dq_max::typeof(Q) = typemin(Q)
+    tried = Set{Tuple{Integer,Integer}}()
     to_merge::Tuple{Integer,Integer} = (0, 0)
-    tried = Set()
+    tried = Set{Tuple{Integer,Integer}}()
     for edge in edges(g)
         u = min(src(edge), dst(edge))
         v = max(src(edge), dst(edge))
@@ -59,19 +64,20 @@ function modularity_greedy_step!(
     return Q + 2 * dq_max
 end
 
-function compute_modularity(g::AbstractGraph, c::AbstractVector{<:Integer})
-    Q = 0
-    m = length(edges(g)) * 2
+function compute_modularity(g::AbstractGraph, c::AbstractVector{<:Integer}, w::AbstractArray)
+    modularity_type = float(eltype(w))
+    Q = zero(modularity_type)
+    m = sum([w[src(e), dst(e)] for e in edges(g)]) * 2
     n_groups = maximum(c)
-    a = zeros(n_groups)
-    e = zeros(n_groups, n_groups)
+    a = zeros(modularity_type, n_groups)
+    e = zeros(modularity_type, n_groups, n_groups)
     for u in vertices(g)
         for v in neighbors(g, u)
             if c[u] == c[v]
-                Q += 1
+                Q += w[u, v]
             end
-            e[c[u], c[v]] += 1
-            a[c[u]] += 1
+            e[c[u], c[v]] += w[u, v]
+            a[c[u]] += w[u, v]
         end
     end
     Q *= m
@@ -83,7 +89,7 @@ function compute_modularity(g::AbstractGraph, c::AbstractVector{<:Integer})
 end
 
 function rewrite_class_ids(v::AbstractVector{<:Integer})
-    d = Dict()
+    d = Dict{Integer, Integer}()
     vn = zeros(Int64, length(v))
     for i in eachindex(v)
         if !(v[i] in keys(d))
