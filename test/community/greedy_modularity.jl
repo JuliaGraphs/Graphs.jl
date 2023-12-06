@@ -80,7 +80,20 @@ end
     q = modularity(g, c)
 
     expected_c = ones(Int, 10)
-    expected_q = 0
+    expected_q = 0.0
+
+    @test c == expected_c
+    @test q ≈ expected_q
+end
+
+
+@testset "Greedy modularity: empty graph" begin
+    g = SimpleGraph(10)
+    c = community_detection_greedy_modularity(g)
+    q = modularity(g, c)
+
+    expected_c = Vector(1:10)
+    expected_q = 0.0
 
     @test c == expected_c
     @test q ≈ expected_q

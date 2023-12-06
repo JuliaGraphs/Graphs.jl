@@ -67,10 +67,11 @@ end
 function compute_modularity(g::AbstractGraph, c::AbstractVector{<:Integer}, w::AbstractArray)
     modularity_type = float(eltype(w))
     Q = zero(modularity_type)
-    m = sum(w[src(e), dst(e)] for e in edges(g)) * 2
+    m = sum(w[src(e), dst(e)] for e in edges(g); init=Q) * 2
     n_groups = maximum(c)
     a = zeros(modularity_type, n_groups)
     e = zeros(modularity_type, n_groups, n_groups)
+    m == 0 && return 0.0, e, a
     for u in vertices(g)
         for v in neighbors(g, u)
             if c[u] == c[v]
