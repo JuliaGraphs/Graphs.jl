@@ -79,6 +79,8 @@ function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=
     return result
 end
 
+test_generic_graphs(gs...; kwargs...) = vcat((test_generic_graphs(g; kwargs...) for g in gs)...)
+
 test_large_generic_graphs(g; skip_if_too_large::Bool=false) = test_generic_graphs(g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large)
 
 

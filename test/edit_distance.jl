@@ -14,7 +14,7 @@
     edge_delete_cost = e -> 5.0
     edge_subst_cost = (e1, e2) -> 6.0
 
-    @testset "undirected edit_distance" for G1 in testgraphs(g1), G2 in testgraphs(g2)
+    @testset "undirected edit_distance" for G1 in test_generic_graphs(g1), G2 in test_generic_graphs(g2)
         d, λ = @inferred(edit_distance(G1, G2))
         @test d == 2.0
         d, λ = @inferred(
@@ -44,7 +44,7 @@
         add_edge!(g2, e)
     end
 
-    @testset "directed edit_distance" for G1 in testgraphs(g1), G2 in testgraphs(g2)
+    @testset "directed edit_distance" for G1 in test_generic_graphs(g1), G2 in test_generic_graphs(g2)
         d, λ = @inferred(edit_distance(G1, G2))
         @test d == 4.0
     end
