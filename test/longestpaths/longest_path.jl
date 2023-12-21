@@ -20,5 +20,5 @@
         add_edge!(g, (i, j))
         distmx[i, j] = dist
     end
-    @test dag_longest_path(g, distmx) == [2, 3, 5]
+    @test dag_longest_path(g, distmx = distmx) == [2, 3, 5]
 end
