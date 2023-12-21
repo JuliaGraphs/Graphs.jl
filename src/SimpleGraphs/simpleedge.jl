@@ -34,4 +34,6 @@ function ==(e1::AbstractSimpleEdge, e2::AbstractSimpleEdge)
     return (src(e1) == src(e2) && dst(e1) == dst(e2))
 end
 hash(e::AbstractSimpleEdge, h::UInt) = hash(src(e), hash(dst(e), h))
-isless(e1::AbstractSimpleEdge, e2::AbstractSimpleEdge) = (src(e1) < src(e2)) || ((src(e1) == src(e2)) && (dst(e1) < dst(e2)))
+function isless(e1::AbstractSimpleEdge, e2::AbstractSimpleEdge)
+    return (src(e1) < src(e2)) || ((src(e1) == src(e2)) && (dst(e1) < dst(e2)))
+end

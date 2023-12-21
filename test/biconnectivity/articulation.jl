@@ -33,7 +33,7 @@
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
-    for h in test_generic_graphs(hint, eltypes=[Int, UInt8, Int16])
+    for h in test_generic_graphs(hint; eltypes=[Int, UInt8, Int16])
         @test @inferred(articulation(h)) == [5, 6]
     end
 end

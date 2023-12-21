@@ -17,7 +17,7 @@ cycle, the path starts _and_ ends at vertex `u`.
 """
 function eulerian(g::AbstractGraph{T}, u::T=first(vertices(g))) where {T}
     is_directed(g) && error("`eulerian` is not yet implemented for directed graphs")
-    
+
     _check_eulerian_input(g, u) # perform basic sanity checks
 
     g′ = SimpleGraph{T}(nv(g)) # copy `g` (mutated in `_eulerian!`)
@@ -28,7 +28,7 @@ function eulerian(g::AbstractGraph{T}, u::T=first(vertices(g))) where {T}
     return _eulerian!(g′, u)
 end
 
-@traitfn function _eulerian!(g::AG::(!IsDirected), u::T) where {T, AG<:AbstractGraph{T}}
+@traitfn function _eulerian!(g::AG::(!IsDirected), u::T) where {T,AG<:AbstractGraph{T}}
     # TODO: This uses Fleury's algorithm which is O(|E|²) in the number of edges |E|.
     #       Hierholzer's algorithm [https://en.wikipedia.org/wiki/Eulerian_path#Hierholzer's_algorithm]
     #       is presumably faster, running in O(|E|) time, but requires needing to keep track
@@ -67,7 +67,7 @@ end
             end
         end
     end
-    error("unreachable reached")
+    return error("unreachable reached")
 end
 
 @inline function _excludes_edge(u, w, e::AbstractEdge)
@@ -82,7 +82,7 @@ function _check_eulerian_input(g, u)
     end
 
     # special case: if any vertex has degree zero
-    if any(x->degree(g, x) == 0, vertices(g))
+    if any(x -> degree(g, x) == 0, vertices(g))
         error("some vertices have degree zero (are isolated) and cannot be reached")
     end
 
@@ -90,11 +90,15 @@ function _check_eulerian_input(g, u)
     du = degree(g, u)
     if iseven(du)     # cycle: start (u) == stop (v) - all nodes must have even degree
         if any(x -> isodd(degree(g, x)), vertices(g))
-            error("starting vertex has even degree but there are other vertices with odd degree: a eulerian cycle does not exist")
+            error(
+                "starting vertex has even degree but there are other vertices with odd degree: a eulerian cycle does not exist",
+            )
         end
     else # isodd(du)  # trail: start (u) != stop (v) - all nodes, except u and v, must have even degree
         if count(x -> iseven(degree(g, x)), vertices(g)) != 2
-            error("starting vertex has odd degree but the total number of vertices of odd degree is not equal to 2: a eulerian trail does not exist")
+            error(
+                "starting vertex has odd degree but the total number of vertices of odd degree is not equal to 2: a eulerian trail does not exist",
+            )
         end
     end
 

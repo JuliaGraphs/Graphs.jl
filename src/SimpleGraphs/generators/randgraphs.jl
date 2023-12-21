@@ -443,7 +443,9 @@ function newman_watts_strogatz(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed)
+    return watts_strogatz(
+        n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed
+    )
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
