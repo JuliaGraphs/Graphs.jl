@@ -28,10 +28,11 @@ julia> dag_longest_path(g)
 function dag_longest_path end
 
 @traitfn function dag_longest_path(
-    g::AG::IsDirected;
-    distmx::AbstractMatrix{T}=weights(g),
-    topological_order::Vector{U}=topological_sort_by_dfs(g),
-) where {T<:Real,U<:Integer,AG<:AbstractGraph{U}}
+    g::::IsDirected,
+    distmx::AbstractMatrix{T}=weights(g);
+    topological_order=topological_sort_by_dfs(g),
+) where {T<:Real}
+    U = eltype(g)
     n = nv(g)
     path = U[]
 
