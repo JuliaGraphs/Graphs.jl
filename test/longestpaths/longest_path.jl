@@ -11,6 +11,8 @@
     end
     @test dag_longest_path(g) == [1, 2, 3, 5, 6]
 
+    @test dag_longest_path(g; topological_order = topological_sort_by_dfs(g)) == [1, 2, 3, 5, 6]
+
     # weighted DAG
     n = 6
     g = DiGraph(n)
@@ -20,5 +22,8 @@
         add_edge!(g, (i, j))
         distmx[i, j] = dist
     end
-    @test dag_longest_path(g, distmx = distmx) == [2, 3, 5]
+    @test dag_longest_path(g, distmx) == [2, 3, 5]
+
+    @test dag_longest_path(g, distmx; topological_order = topological_sort_by_dfs(g)) == [2, 3, 5]
+
 end

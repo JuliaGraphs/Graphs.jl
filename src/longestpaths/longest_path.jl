@@ -1,5 +1,5 @@
 """
-    dag_longest_path(g; distmx=weights(g), topological_order=topological_sort_by_dfs(g))
+    dag_longest_path(g, distmx=weights(g); topological_order=topological_sort_by_dfs(g))
 
 DAG longest path algorithm.
 Return a longest path of `g`.
@@ -39,7 +39,7 @@ julia> dag_longest_path(g, topological_order = topological_sort_by_dfs(g))
   5
   1
 
-julia> dag_longest_path(g, distmx = weights(g), topological_order = topological_sort_by_dfs(g))
+julia> dag_longest_path(g, weights(g); topological_order = topological_sort_by_dfs(g))
 10-element Vector{Int64}:
  10
   6
@@ -51,15 +51,17 @@ julia> dag_longest_path(g, distmx = weights(g), topological_order = topological_
   4
   5
   1
+
 ```
 """
 function dag_longest_path end
 
-function dag_longest_path(
-        g::SimpleDiGraph{U}; 
-        distmx::AbstractMatrix{T} = weights(g), 
-        topological_order::Vector{U} = topological_sort_by_dfs(g)
-    ) where {T<:Real} where {U<:Integer}
+@traitfn function dag_longest_path(
+    g::::IsDirected,
+    distmx::AbstractMatrix{T}=weights(g);
+    topological_order=topological_sort_by_dfs(g),
+   ) where {T<:Real}
+    U = eltype(g)
     n::Int = nv(g)
     path::Vector{U} = Vector{U}()
 
