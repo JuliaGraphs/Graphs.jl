@@ -1,4 +1,8 @@
-function greedy_modularity(g::AbstractGraph; weights::AbstractMatrix=weights(g))
+using SparseArrays: spzeros, findnz, sparse, rowvals, nonzeros, nzrange, dropzeros!
+
+function community_detection_greedy_modularity(
+    g::AbstractGraph; weights::AbstractMatrix=weights(g)
+)
     if is_directed(g)
         throw(ArgumentError("The graph must not be directed"))
     end

@@ -37,7 +37,6 @@ using Random:
     shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
 import SparseArrays: blockdiag, sparse
-using SparseArrays: spzeros, findnz, sparse, rowvals, nonzeros, nzrange, dropzeros!
 import Base:
     adjoint,
     write,
