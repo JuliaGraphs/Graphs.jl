@@ -106,7 +106,7 @@ function _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, v)
         w[v2, root] = w[root, v2]
     end
     # update neighbors
-    fadjlist[root] = union(fadjlist[root], fadjlist[non_root])
+    union!(fadjlist[root], fadjlist[non_root])
     for v in fadjlist[non_root]
         if root ∉ fadjlist[v]
             push!(fadjlist[v], root)
