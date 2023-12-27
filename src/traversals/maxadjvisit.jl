@@ -63,6 +63,7 @@ assumed to be 1.
             cutweight += w[u, v]
         end
         # Minimum cut phase
+        local adj_cost
         while true
             last_vertex = u
             u, adj_cost = first(pq)
@@ -89,6 +90,8 @@ assumed to be 1.
                 graph_size -= 1
             end
         end
+
+        cutweight = adj_cost
 
         # check if we improved the mincut
         if cutweight < bestweight
