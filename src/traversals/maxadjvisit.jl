@@ -64,8 +64,7 @@ assumed to be 1.
         local cutweight
         while true
             last_vertex = u
-            u, cutweight = first(pq)
-            dequeue!(pq)
+            u, cutweight = dequeue_pair!(pq)
             isempty(pq) && break
             for v in fadjlist[u]
                 (is_processed[v] || is_merged[v] || u == v) && continue
