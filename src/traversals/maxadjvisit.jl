@@ -48,7 +48,6 @@ assumed to be 1.
 
     is_processed = falses(nvg)
     @inbounds while graph_size > 1
-        cutweight = zero(T)
         is_processed .= false
         is_processed[u] = true
         # initialize pq
@@ -60,38 +59,27 @@ assumed to be 1.
         for v in fadjlist[u]
             (is_merged[v] || v == u ) && continue
             pq[v] = w[u, v]
-            cutweight += w[u, v]
         end
         # Minimum cut phase
-        local adj_cost
+        local cutweight
         while true
             last_vertex = u
-            u, adj_cost = first(pq)
+            u, cutweight = first(pq)
             dequeue!(pq)
             isempty(pq) && break
             for v in fadjlist[u]
-                (is_merged[v] || u == v) && continue
-                # if the target of e is already marked then decrease cutweight
-                # otherwise, increase it
-                ew = w[u, v]
-                if is_processed[v]
-                    cutweight -= ew
-                else
-                    cutweight += ew
-                    pq[v] += ew
-                end
+                (is_processed[v] || is_merged[v] || u == v) && continue
+                pq[v] += w[u, v]
             end
             is_processed[u] = true
-            # adj_cost is a lower bound on the cut separating the two last vertices
-            # encountered, so if adj_cost >= bestweight, we can already merge these
+            # cutweight is a lower bound on the cut separating the two last vertices
+            # encountered, so if cutweight >= bestweight, we can already merge these
             # vertices to save one phase.
-            if adj_cost >= bestweight
+            if cutweight >= bestweight
                 _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
                 graph_size -= 1
             end
         end
-
-        cutweight = adj_cost
 
         # check if we improved the mincut
         if cutweight < bestweight
