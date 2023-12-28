@@ -307,7 +307,7 @@ export
 
     # community
     modularity,
-    greedy_modularity,
+    community_detection_greedy_modularity,
     core_periphery_deg,
     local_clustering,
     local_clustering_coefficient,

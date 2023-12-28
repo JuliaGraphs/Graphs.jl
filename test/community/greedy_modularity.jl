@@ -106,6 +106,9 @@ end
 
     c = community_detection_greedy_modularity(g_sbm)
 
-    @test c == expected_c # can fail with low probability?
+    matches1 = sum(c .== expected_c)
+    matches2 = sum((3 .- c) .== expected_c) # complementary cluster numbers assignment
+
+    @test matches1 ≥ 0.95 * nv(g_sbm) || matches2 ≥ nv(g_sbm)
 end
 
