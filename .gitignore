@@ -8,3 +8,7 @@ benchmark/.results/*
 benchmark/.tune.jld
 *.cov
 /Manifest.toml
+/docs/Manifest.toml
+/docs/src/index.md
+/docs/src/contributing.md
+/docs/src/license.md
