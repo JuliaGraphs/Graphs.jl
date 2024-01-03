@@ -165,3 +165,136 @@ function dijkstra_shortest_paths(
         g, [src;], distmx; allpaths=allpaths, trackvertices=trackvertices, maxdist=maxdist
     )
 end
+
+function relax(u,
+               v, 
+               distmx::AbstractMatrix{T}, 
+               dists::Vector{T}, 
+               parents::Vector{U}, 
+               visited::Vector{Bool}, 
+               Q::PriorityQueue{U,T};
+               allpaths=false,
+               pathcounts=nothing,
+               preds=nothing,
+               forward=true
+) where {T<:Real} where {U<:Integer}
+    alt = dists[u] + (forward ? distmx[u, v] : distmx[v, u])
+
+    if !visited[v]
+        visited[v] = true
+        dists[v] = alt
+        parents[v] = u
+        
+        if !isnothing(pathcounts)
+            pathcounts[v] += pathcounts[u]
+        end
+        if allpaths
+            preds[v] = [u;]
+        end
+        Q[v] = alt
+    elseif alt < dists[v]
+        dists[v] = alt
+        parents[v] = u
+        #615
+        if !isnothing(pathcounts)
+            pathcounts[v] = pathcounts[u]
+        end
+        if allpaths
+            resize!(preds[v], 1)
+            preds[v][1] = u
+        end
+        Q[v] = alt
+    elseif alt == dists[v]
+        if !isnothing(pathcounts)
+            pathcounts[v] += pathcounts[u]
+        end
+        if allpaths
+            push!(preds[v], u)
+        end
+    end
+end
+
+"""
+    bidijkstra_shortest_paths(g, src, dst, distmx=weights(g));
+
+Perform [Bidirectional Dijkstra's algorithm](https://www.homepages.ucl.ac.uk/~ucahmto/math/2020/05/30/bidirectional-dijkstra.html)
+on a graph, computing the shortest path between `src` and `dst`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> bidijkstra_shortest_path(cycle_graph(5), 1, 4)
+3-element Vector{Int64}:
+ 1
+ 5
+ 4
+
+julia> bidijkstra_shortest_path(path_graph(5), 1, 4)
+4-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+```
+"""
+function bidijkstra_shortest_path(
+    g::AbstractGraph,
+    src::U,
+    dst::U,
+    distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real} where {U<:Integer}
+    if src == dst
+        return Int[]
+    end
+    # keep weight of the best seen path and the midpoint vertex
+    μ, mid_v = typemax(T), -1
+    nvg = nv(g)
+    dists_f, dists_b= fill(typemax(T), nvg), fill(typemax(T), nvg)
+    parents_f, parents_b= zeros(U, nvg), zeros(U, nvg)
+    visited_f, visited_b = zeros(Bool, nvg),zeros(Bool, nvg)
+    preds_f, preds_b = fill(Vector{U}(), nvg), fill(Vector{U}(), nvg)
+    Qf, Qb = PriorityQueue{U,T}(), PriorityQueue{U,T}()
+
+    dists_f[src], dists_b[dst]= zero(T), zero(T)
+    visited_f[src], visited_b[dst]= true, true
+    Qf[src], Qb[dst] = zero(T), zero(T)
+
+    while !isempty(Qf) && !isempty(Qb)
+        uf, ub = dequeue!(Qf), dequeue!(Qb)
+
+        for v in outneighbors(g, uf)
+            relax(uf, v, distmx, dists_f, parents_f, visited_f, Qf)
+            if visited_b[v] && (dists_f[uf]+distmx[uf,v]+dists_b[v]) < μ
+                # we have found an edge between the forward and backward exploration
+                μ = dists_f[uf]+distmx[uf,v]+dists_b[v]
+                mid_v = v
+            end
+        end
+
+        for v in inneighbors(g, ub)
+            relax(ub, v, distmx, dists_b, parents_b, visited_b, Qb; forward=false)
+            if visited_f[v] && (dists_f[v]+distmx[v,ub]+dists_b[ub]) < μ
+                # we have found an edge between the forward and backward exploration
+                μ = dists_f[v]+distmx[v,ub]+dists_b[ub]
+                mid_v = v
+            end
+        end
+        if dists_f[uf]+dists_b[ub] >= μ
+            break
+        end
+    end
+    if mid_v == -1
+        # no path exists between source and destination
+        return Int[]
+    end
+    ds_f = DijkstraState{T,U}(parents_f, dists_f, preds_f, zeros(nvg), Vector{U}())
+    ds_b = DijkstraState{T,U}(parents_b, dists_b, preds_b, zeros(nvg), Vector{U}())
+    if mid_v == src
+        return reverse(enumerate_paths(ds_b, mid_v))
+    elseif mid_v ==dst
+        return enumerate_paths(ds_f, mid_v)
+    end
+    return vcat(enumerate_paths(ds_f, mid_v), reverse(enumerate_paths(ds_b, mid_v)[1:end-1]))
+end
+

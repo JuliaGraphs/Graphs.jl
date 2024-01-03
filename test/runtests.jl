@@ -107,6 +107,7 @@ tests = [
     "shortestpaths/bellman-ford",
     "shortestpaths/desopo-pape",
     "shortestpaths/dijkstra",
+    "shortestpaths/bidijkstra",
     "shortestpaths/johnson",
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",

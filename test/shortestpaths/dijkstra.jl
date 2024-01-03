@@ -111,4 +111,20 @@
             ds = @inferred(dijkstra_shortest_paths(g, 3, m;maxdist=3.0))
             @test ds.dists == [2, 1, 0, Inf, Inf, 3]
         end
+
+    # bidijkstra_shortest_path
+    g4 = path_digraph(5)
+    d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
+    d2 = sparse(float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0]))
+
+    for g in testdigraphs(g4)
+        x = @inferred(dijkstra_shortest_paths(g, 2, d1))
+        p = enumerate_paths(x, 4)
+        y = @inferred(bidijkstra_shortest_path(g, 2, 4, d1))
+        z = @inferred(bidijkstra_shortest_path(g, 2, 4, d2))
+        
+        @test p == y == z
+    end
+
+   
 end
