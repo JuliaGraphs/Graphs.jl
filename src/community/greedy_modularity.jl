@@ -41,6 +41,14 @@ function modularity_greedy_step!(
             end
         end
     end
+    if to_merge == (0,0)
+        for i in vertices(g)
+            if c[i] != c[1]
+                to_merge = (c[1], c[i])
+                break
+            end
+        end
+    end
     c1, c2 = to_merge
     for i in 1:n
         e[c1, i] += e[c2, i]
