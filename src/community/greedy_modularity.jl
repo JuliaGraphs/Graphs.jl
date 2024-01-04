@@ -17,7 +17,7 @@ function community_detection_greedy_modularity(g::AbstractGraph; weights::Abstra
         qs[i] = Q
     end
     imax = argmax(qs)
-    return rewrite_class_ids(cs[imax]), qs
+    return rewrite_class_ids(cs[imax])
 end
 
 function modularity_greedy_step!(
@@ -41,23 +41,27 @@ function modularity_greedy_step!(
             end
         end
     end
-    c1, c2 = to_merge
-    for i in 1:n
-        e[c1, i] += e[c2, i]
-    end
-    for i in 1:n
-        if i == c2
-            continue
+    if dq_max > zero(typeof(Q))
+        c1, c2 = to_merge
+        for i in 1:n
+            e[c1, i] += e[c2, i]
         end
-        e[i, c1] += e[i, c2]
-    end
-    a[c1] = a[c1] + a[c2]
-    for i in 1:n
-        if c[i] == c2
-            c[i] = c1
+        for i in 1:n
+            if i == c2
+                continue
+            end
+            e[i, c1] += e[i, c2]
         end
+        a[c1] = a[c1] + a[c2]
+        for i in 1:n
+            if c[i] == c2
+                c[i] = c1
+            end
+        end
+        return Q + 2 * dq_max
+    else
+        return Q
     end
-    return Q + 2 * dq_max
 end
 
 function compute_modularity(g::AbstractGraph, c::AbstractVector{<:Integer}, w::AbstractArray)
