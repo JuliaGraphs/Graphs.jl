@@ -31,7 +31,7 @@
     add_edge!(g6, 4, 3)
     g7 = copy(g6)
     add_edge!(g7, 3, 4)
-    
+
     @testset "dfs_tree" begin
         for g in testdigraphs(g5)
             z = @inferred(dfs_tree(GenericDiGraph(g), 1))

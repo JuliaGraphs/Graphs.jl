@@ -16,8 +16,9 @@ weight of the cut that makes this partition. An optional `distmx` matrix
 of non-negative weights may be specified; if omitted, edge distances are
 assumed to be 1.
 """
-@traitfn function mincut(g::::(!IsDirected), distmx::AbstractMatrix{T}=weights(g)) where {T <: Real}
-
+@traitfn function mincut(
+    g::::(!IsDirected), distmx::AbstractMatrix{T}=weights(g)
+) where {T<:Real}
     nvg = nv(g)
     U = eltype(g)
 
@@ -31,12 +32,17 @@ assumed to be 1.
     # We need to mutate the weight matrix,
     # and we need it clean (0 for non edges)
     w = zeros(T, nvg, nvg)
-    size(distmx) != (nvg, nvg) && throw(ArgumentError("Adjacency / distance matrix size should match the number of vertices"))
+    size(distmx) != (nvg, nvg) && throw(
+        ArgumentError(
+            "Adjacency / distance matrix size should match the number of vertices"
+        ),
+    )
     @inbounds for e in edges(g)
         d = distmx[src(e), dst(e)]
         (d < 0) && throw(DomainError(w, "weigths should be non-negative"))
         w[src(e), dst(e)] = d
-        (d != distmx[dst(e), src(e)]) && throw(ArgumentError("Adjacency / distance matrix must be symmetric"))
+        (d != distmx[dst(e), src(e)]) &&
+            throw(ArgumentError("Adjacency / distance matrix must be symmetric"))
         w[dst(e), src(e)] = d
     end
     # we also need to mutate neighbors when merging vertices
@@ -58,7 +64,7 @@ assumed to be 1.
             pq[v] = zero(T)
         end
         for v in fadjlist[u]
-            (is_merged[v] || v == u ) && continue
+            (is_merged[v] || v == u) && continue
             pq[v] = w[u, v]
             cutweight += w[u, v]
         end

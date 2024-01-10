@@ -78,6 +78,6 @@
     @test parity == [1, 1, 1, 1, 2, 2, 2, 2]
     @test bestcut == 6
 
-    w[6,7] = -1
+    w[6, 7] = -1
     @test_throws DomainError mincut(g, w)
 end

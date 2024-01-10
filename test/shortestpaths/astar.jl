@@ -10,7 +10,10 @@
             @inferred(a_star(g, 1, 4, d2))
         @test isempty(@inferred(a_star(dg, 4, 1)))
     end
-    @testset "GenericGraph and GenricDiGraph with SimpleEdge" for g in test_generic_graphs(g3), dg in test_generic_graphs(g4)
+    @testset "GenericGraph and GenricDiGraph with SimpleEdge" for g in
+                                                                  test_generic_graphs(g3),
+        dg in test_generic_graphs(g4)
+
         zero_heuristic = n -> 0
         Eg = SimpleEdge{eltype(g)}
         Edg = SimpleEdge{eltype(dg)}
@@ -30,5 +33,6 @@
         s::Int
         d::Int
     end
-    @test eltype(a_star(GenericGraph(g), 1, 4, w, n -> 0, MyFavoriteEdgeType)) == MyFavoriteEdgeType
+    @test eltype(a_star(GenericGraph(g), 1, 4, w, n -> 0, MyFavoriteEdgeType)) ==
+        MyFavoriteEdgeType
 end
