@@ -26,17 +26,20 @@ function non_backtracking_matrix(g::AbstractGraph)
         end
     end
 
-    B = zeros(Float64, m, m)
-
+    rowidx = Int[]
+    colidx = Int[]
     for (e, u) in edgeidmap
         i, j = src(e), dst(e)
         for k in inneighbors(g, i)
             k == j && continue
             v = edgeidmap[Edge(k, i)]
-            B[v, u] = 1
+
+            push!(rowidx, v)
+            push!(colidx, u)
         end
     end
 
+    B = sparse(rowidx, colidx, ones(Int, length(rowidx)), m, m)
     return B, edgeidmap
 end
 
