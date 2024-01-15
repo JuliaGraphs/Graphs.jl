@@ -91,7 +91,7 @@ assumed to be 1.
             # encountered, so if adj_cost >= bestweight, we can already merge these
             # vertices to save one phase.
             if adj_cost >= bestweight
-                _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
+                u = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
                 graph_size -= 1
             end
         end
