@@ -26,6 +26,9 @@ assumed to be 1.
     # in which case we'll return immediately.
     (nvg > one(U)) || return (Vector{Int8}([1]), zero(T))
 
+    # to avoid reallocating lists in fadjlist, we have some already merged vertices
+    # still appearing in fadjlist. When iterating neighbors, is_merged makes sure
+    # don't consider them
     is_merged = falses(nvg)
     merged_vertices = IntDisjointSets(U(nvg))
     graph_size = nvg
@@ -75,6 +78,7 @@ assumed to be 1.
             dequeue!(pq)
             isempty(pq) && break
             for v in fadjlist[u]
+                # ignore already merged neighbors
                 (is_merged[v] || u == v) && continue
                 # if the target of e is already marked then decrease cutweight
                 # otherwise, increase it
@@ -113,6 +117,7 @@ assumed to be 1.
 end
 
 function _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, v)
+    # root is kept, non-root is discarded
     root = union!(merged_vertices, u, v)
     non_root = (root == u) ? v : u
     is_merged[non_root] = true
