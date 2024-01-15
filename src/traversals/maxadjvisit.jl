@@ -27,7 +27,7 @@ assumed to be 1.
     (nvg > one(U)) || return (Vector{Int8}([1]), zero(T))
 
     # to avoid reallocating lists in fadjlist, we have some already merged vertices
-    # still appearing in fadjlist. When iterating neighbors, is_merged makes sure
+    # still appearing in fadjlist. When iterating neighbors, is_merged makes sure we
     # don't consider them
     is_merged = falses(nvg)
     merged_vertices = IntDisjointSets(U(nvg))
