@@ -36,7 +36,7 @@ using Random:
     shuffle,
     shuffle!
 using SparseArrays: SparseMatrixCSC, nonzeros, nzrange, rowvals
-import SparseArrays: blockdiag, sparse
+import SparseArrays: blockdiag, sparse, spzeros, sparsevec
 import Base:
     adjoint,
     write,
@@ -426,7 +426,17 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # flows
+    maximum_flow,
+    EdmondsKarpAlgorithm,
+    DinicAlgorithm,
+    BoykovKolmogorovAlgorithm,
+    PushRelabelAlgorithm,
+    multiroute_flow,
+    KishimotoAlgorithm,
+    ExtendedMultirouteFlowAlgorithm
 
 """
     Graphs
@@ -540,6 +550,16 @@ include("independentset/degree_ind_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
+include("flows/maximum_flow.jl")
+include("flows/edmonds_karp.jl")
+include("flows/dinic.jl")
+include("flows/boykov_kolmogorov.jl")
+include("flows/push_relabel.jl")
+include("flows/multiroute_flow.jl")
+include("flows/kishimoto.jl")
+include("flows/ext_multiroute_flow.jl")
+include("flows/mincut.jl")
+
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")

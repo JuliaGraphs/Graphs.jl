@@ -160,6 +160,13 @@ tests = [
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
     "trees/prufer",
+    "flows/edmonds_karp",
+    "flows/dinic",
+    "flows/boykov_kolmogorov",
+    "flows/push_relabel",
+    "flows/maximum_flow",
+    "flows/multiroute_flow",
+    "flows/mincut",
     "experimental/experimental",
 ]
 
