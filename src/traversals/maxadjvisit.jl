@@ -75,7 +75,7 @@ assumed to be 1.
             # encountered, so if cutweight >= bestweight, we can already merge these
             # vertices to save one phase.
             if cutweight >= bestweight
-                _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
+                u = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
                 graph_size -= 1
             end
         end
@@ -89,9 +89,8 @@ assumed to be 1.
         end
 
         # merge u and last_vertex
-        root = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
+        u = _merge_vertex!(merged_vertices, fadjlist, is_merged, w, u, last_vertex)
         graph_size -= 1
-        u = root # we are sure this vertex was not merged, so the next phase start from it
     end
     return (convert(Vector{Int8}, parities) .+ one(Int8), bestweight)
 end
