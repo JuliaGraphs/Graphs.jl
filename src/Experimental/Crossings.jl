@@ -53,7 +53,7 @@ end
 ####################------------------------------------------------------------------------------------------------------------------------############################
 
 #temp Makie drawing stuff I was using for troubleshooting
-
+"""
 function testing_draw_crossings(
     crossings::Dict{
         Tuple{
@@ -84,7 +84,7 @@ function testing_draw_layout(graph, layout, ax; kwargs...)
     ]
     return rounded_positions
 end
-
+"""
 ###################----------------------------------------------------------------------------------------------------------------------------------------------------##############    
 function testing_generate_graph()
     n = rand(5:7)
@@ -114,7 +114,7 @@ This function is used for directed graphs on each (e,e) key pair in 'crossings'.
 
 function get_rightsidecrossing(
     seg::Segment{2,Float32,Vector{Meshes.Point2f}},
-    testpt::GeometryBasics.Point{2,Float32},
+    testpt,
 )
     side = Meshes.sideof(testpt, seg)
     if side == :RIGHT
@@ -286,7 +286,7 @@ Function to take in either "crossing", or dict associated with its (G,pos) pair,
 """
 function crossing_pcount(info::Dict{Symbol,Any})
     #nunber of unique points of where edges cross
-    pcount = length(values(info[:crossings]))
+    pcount = length(Set(values(info[:crossings])))
     setindex!(info, pcount, :pcount)
     return pcount
 end
@@ -301,7 +301,7 @@ function crossing_pcount(
     },
 )
     #nunber of unique points of where edges cross
-    pcount = length(values(crossings))
+    pcount = length(Set(values(crossings)))
     return pcount
 end
 
@@ -502,7 +502,7 @@ end
 #=
 
 
-## example Usage (with makie here but not any different with Plots really) ##
+## Example Usage (done with makie.jl here but not much different with Plots really) ##
 
 
 fig = Figure()
