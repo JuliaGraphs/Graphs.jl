@@ -95,7 +95,12 @@ function compute_dq(
     m = sum(w[src(e), dst(e)] for e in edges(g); init=Q_zero) * 2
     n_groups = maximum(c)
     a = zeros(modularity_type, n_groups)
-    dq_dict = Dict(v => DefaultDict{Int, modularity_type}(Q_zero) for v in vertices(g))
+    
+    typical_dict = DefaultDict{Int, modularity_type}(Q_zero)
+    dq_dict = Dict{Int,typeof(typical_dict)}()
+    for v in vertices(g)
+        dq_dict[v] = DefaultDict{Int, modularity_type}(Q_zero)
+    end
 
     for u in vertices(g)
         for v in neighbors(g, u)
@@ -109,8 +114,13 @@ function compute_dq(
             dq_dict[u][v] = w / m - a[c[u]] * a[c[v]] / m^2
         end
     end
+    
+    typical_queue = PriorityQueue{Tuple{Int, Int}, Tuple{modularity_type, Tuple{Int, Int}}}(Base.Order.Reverse)
+    dq_heap = Dict{Int,typeof(typical_queue)}()
+    for u in vertices(g)
+        dq_heap[u] = PriorityQueue{Tuple{Int, Int}, Tuple{modularity_type, Tuple{Int, Int}}}(Base.Order.Reverse, (u, v) => (dq, (-u, -v)) for (v, dq) in dq_dict[u])
+    end
 
-    dq_heap = Dict(u=>PriorityQueue{Tuple{Int, Int}, Tuple{modularity_type, Tuple{Int, Int}}}(Base.Order.Reverse, (u,v)=> (dq, (-u,-v)) for (v, dq) in dq_dict[u]) for u in vertices(g))
     v_connected = filter(v -> !isempty(dq_heap[v]), vertices(g))
     global_heap = PriorityQueue{Tuple{Int, Int}, Tuple{modularity_type, Tuple{Int, Int}}}(Base.Order.Reverse, peek(dq_heap[v]) for v in v_connected)
     return dq_dict, dq_heap, global_heap, a, m
