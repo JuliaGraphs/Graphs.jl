@@ -1,7 +1,8 @@
 """
     abstract type Iterator
 
-`Iterator` is an abstract type which specifies a particular algorithm to use when iterating through a graph.
+`Iterator` is an abstract type which specifies a particular algorithm to use when 
+iterating through a graph.
 """
 abstract type Iterator end
 
@@ -21,7 +22,9 @@ end
 """
     DFSIterator(g::AbstractGraph, sources)
 
-`DFSIterator` is a struct which specifies using depth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `DFSIterator(g::AbstractGraph, source::Int)`.
+`DFSIterator` is a struct which specifies using depth-first traversal to iterate through 
+a graph. A source node must be supplied to construct this iterator as 
+`DFSIterator(g::AbstractGraph, source::Int)`.
 
 # Examples
 ```julia-repl
@@ -58,7 +61,9 @@ DFSIterator(g::AbstractGraph, sources=1) = VertexIterator(g, sources, traverse_d
 """
     BFSIterator(g::AbstractGraph, sources)
 
-`BFSIterator` is a struct which specifies using breadth-first traversal to iterate through a graph. A source node must be supplied to construct this iterator as `BFSIterator(g::AbstractGraph, source::Int)`.
+`BFSIterator` is a struct which specifies using breadth-first traversal to iterate through 
+a graph. A source node must be supplied to construct this iterator as 
+`BFSIterator(g::AbstractGraph, source::Int)`.
 
 # Examples
 ```julia-repl
@@ -95,7 +100,8 @@ BFSIterator(g::AbstractGraph, sources=1) = VertexIterator(g, sources, traverse_b
 """
     abstract type AbstractIteratorState
 
-`IteratorState` is an abstract type to hold the current state of iteration which is need for Julia's Base.iterate() function.
+`IteratorState` is an abstract type to hold the current state of iteration which is need 
+for Julia's Base.iterate() function.
 """
 abstract type AbstractIteratorState end
 
@@ -103,7 +109,9 @@ abstract type AbstractIteratorState end
 """
     mutable struct SingleSourceIteratorState
 
-`SingleSourceIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when a single source is supplied.
+`SingleSourceIteratorState` is a struct to hold the current state of iteration which is need 
+for Julia's Base.iterate() function. It is a basic implementation used for depth-first or 
+breadth-first iterators when a single source is supplied.
 """
 mutable struct SingleSourceIteratorState <: AbstractIteratorState
     visited::BitArray
@@ -114,7 +122,9 @@ end
 """
     mutable struct MultiSourceIteratorState
 
-`MultiSourceIteratorState` is a struct to hold the current state of iteration which is need for Julia's Base.iterate() function. It is a basic implementation used for depth-first or breadth-first iterators when mutltiple sources are supplied.
+`MultiSourceIteratorState` is a struct to hold the current state of iteration which is need 
+for Julia's Base.iterate() function. It is a basic implementation used for depth-first or 
+breadth-first iterators when mutltiple sources are supplied.
 """
 mutable struct MultiSourceIteratorState <: AbstractIteratorState
     visited::BitArray

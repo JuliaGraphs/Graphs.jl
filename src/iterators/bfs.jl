@@ -1,7 +1,10 @@
 """
     BFSIterator
 
-`BFSIterator` is a subtype of [`VertexIterator`](@ref) to iterate through graph vertices using a breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+`BFSIterator` is a subtype of [`VertexIterator`](@ref) to iterate through graph vertices using a 
+breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type 
+that can be indexed if supplying multiple sources. If no source is provided, it defaults to the 
+first vertex.
     
 # Examples
 ```julia-repl
@@ -39,7 +42,11 @@ function Base.iterate(t::BFSIterator)
     visited[t.source] = true
     return (t.source, VertexIteratorState(visited, [t.source]))
 end
-
+function Base.iterate(t::BFSIterator{<:AbstractArray})
+    visited = falses(nv(t.graph))
+    visited[first(t.source)] = true
+    return (first(t.source), VertexIteratorState(visited, t.source))
+end
 
 """
     Base.iterate(t::BFSIterator, state::VertexIteratorState)
@@ -48,7 +55,12 @@ Iterator to visit each vertex in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::VertexIteratorState)
     while !isempty(state.queue)
-        for node in outneighbors(t.graph, first(state.queue))
+        node_start = first(state.queue)
+        if !state.visited[node_start]
+            state.visited[node_start] = true
+            return (node_start, state)
+        end
+        for node in outneighbors(t.graph, node_start)
             if !state.visited[node]
                 push!(state.queue, node)
                 state.visited[node] = true

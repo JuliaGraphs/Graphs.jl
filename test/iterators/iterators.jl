@@ -3,7 +3,10 @@
     add_edge!(g,6,3)
     add_edge!(g,3,1)
     add_edge!(g,4,7)
-
+    g2 = deepcopy(g)
+    add_vertex!(g2)
+    add_vertex!(g2)
+    add_edge!(g2, 8, 9)
     @testset "DFSIterator" begin
         for g in testgraphs(g)
             nodes_visited = fill(0, nv(g))
@@ -28,6 +31,16 @@
                 @test nodes_visited[7] == 2
             end
         end
+        nodes_visited = Int[]
+        for (i, node) in enumerate(DFSIterator(g2, [1, 6]))
+            push!(nodes_visited, node)
+        end
+        @test nodes_visited == [1, 2, 3, 4, 5, 6, 7]
+        nodes_visited = Int[]
+        for (i, node) in enumerate(DFSIterator(g2, [8, 1, 6]))
+            push!(nodes_visited, node)
+        end
+        @test nodes_visited == [8, 9, 1, 2, 3, 4, 5, 6, 7]
     end
 
     @testset "BFSIterator" begin
@@ -54,5 +67,15 @@
                 @test nodes_visited[6:7] == [1,2] || nodes_visited[6:7] == [2,1]
             end
         end
+        nodes_visited = Int[]
+        for (i, node) in enumerate(BFSIterator(g2, [1, 6]))
+            push!(nodes_visited, node)
+        end
+        @test nodes_visited == [1, 2, 3, 6, 5, 7, 4]
+        nodes_visited = Int[]
+        for (i, node) in enumerate(BFSIterator(g2, [8, 1, 6]))
+            push!(nodes_visited, node)
+        end
+        @test nodes_visited == [8, 9, 1, 2, 3, 6, 5, 7, 4]
     end
 end
