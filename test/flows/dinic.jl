@@ -30,17 +30,16 @@
     end
 
     # Construct the residual graph
-    for fg in
-        (flow_graph, Graphs.DiGraph{UInt8}(flow_graph), Graphs.DiGraph{Int16}(flow_graph))
+    for fg in test_generic_graphs(flow_graph)
         residual_graph = @inferred(Graphs.residual(fg))
 
         # Test with default distances
         @test @inferred(
-            Graphs.dinic_impl(residual_graph, 1, 8, Graphs.DefaultCapacity(residual_graph))
+            Graphs.dinic(residual_graph, 1, 8, Graphs.DefaultCapacity(residual_graph))
         )[1] == 3
 
         # Test with capacity matrix
-        @test @inferred(Graphs.dinic_impl(residual_graph, 1, 8, capacity_matrix))[1] == 28
+        @test @inferred(Graphs.dinic(residual_graph, 1, 8, capacity_matrix))[1] == 28
 
         # Test on disconnected graphs
         function test_blocking_flow(
@@ -52,7 +51,7 @@
                 Graphs.rem_edge!(h, source, dst)
             end
             @test @inferred(
-                Graphs.blocking_flow(h, source, target, capacity_matrix, flow_matrix)
+                Graphs.dinic_blocking_flow(h, source, target, capacity_matrix, flow_matrix)
             ) == 0
 
             #disconnect target and add unreachable vertex
@@ -61,7 +60,7 @@
                 Graphs.rem_edge!(h, src, target)
             end
             @test @inferred(
-                Graphs.blocking_flow(h, source, target, capacity_matrix, flow_matrix)
+                Graphs.dinic_blocking_flow(h, source, target, capacity_matrix, flow_matrix)
             ) == 0
 
             # unreachable vertex (covers the case where a vertex isn't reachable from the source)
@@ -78,12 +77,12 @@
             )
 
             @test @inferred(
-                Graphs.blocking_flow(h, source, target, capacity_matrix_, flow_graph_)
+                Graphs.dinic_blocking_flow(h, source, target, capacity_matrix_, flow_graph_)
             ) > 0
 
             #test with connected graph
             @test @inferred(
-                Graphs.blocking_flow(
+                Graphs.dinic_blocking_flow(
                     residual_graph, source, target, capacity_matrix, flow_matrix
                 )
             ) > 0

@@ -28,18 +28,22 @@
         Graphs.add_edge!(flow_graph, u, v)
         capacity_matrix[u, v] = f
     end
-    for g in testdigraphs(flow_graph)
+    for g in test_generic_graphs(flow_graph)
         residual_graph = @inferred(Graphs.residual(g))
 
         # Test enqueue_vertex
         Q = Array{Int,1}()
         excess = [0, 1, 0, 1]
         active = [false, false, true, true]
-        @test @inferred(Graphs.enqueue_vertex!(Q, 1, active, excess)) == nothing
-        @test @inferred(Graphs.enqueue_vertex!(Q, 3, active, excess)) == nothing
-        @test @inferred(Graphs.enqueue_vertex!(Q, 4, active, excess)) == nothing
+        @test @inferred(Graphs.push_relabel_enqueue_vertex!(Q, 1, active, excess)) ==
+            nothing
+        @test @inferred(Graphs.push_relabel_enqueue_vertex!(Q, 3, active, excess)) ==
+            nothing
+        @test @inferred(Graphs.push_relabel_enqueue_vertex!(Q, 4, active, excess)) ==
+            nothing
         @test length(Q) == 0
-        @test @inferred(Graphs.enqueue_vertex!(Q, 2, active, excess)) == nothing
+        @test @inferred(Graphs.push_relabel_enqueue_vertex!(Q, 2, active, excess)) ==
+            nothing
         @test length(Q) == 1
 
         # Test push_flow
@@ -49,7 +53,7 @@
         active = [true, false, false, false, false, false, false, true]
         flow_matrix = zeros(Int, 8, 8)
         @test @inferred(
-            Graphs.push_flow!(
+            Graphs.push_relabel_push_flow!(
                 residual_graph,
                 1,
                 2,
@@ -64,7 +68,7 @@
         @test length(Q) == 1
         @test flow_matrix[1, 2] == 10
         @test @inferred(
-            Graphs.push_flow!(
+            Graphs.push_relabel_push_flow!(
                 residual_graph,
                 2,
                 3,
@@ -100,7 +104,7 @@
         flow_matrix = zeros(Int, 8, 8)
 
         @test @inferred(
-            Graphs.relabel!(
+            Graphs.push_relabel_relabel!(
                 residual_graph,
                 2,
                 capacity_matrix,
@@ -123,7 +127,7 @@
         flow_matrix = zeros(Int, 8, 8)
 
         @test @inferred(
-            Graphs.discharge!(
+            Graphs.push_relabel_discharge!(
                 residual_graph,
                 1,
                 capacity_matrix,

@@ -35,7 +35,7 @@ function push_relabel end
     sizehint!(Q, n)
 
     for v in Graphs.outneighbors(residual_graph, source)
-        push_flow!(
+        push_relabel_push_flow!(
             residual_graph,
             source,
             v,
@@ -51,7 +51,7 @@ function push_relabel end
     while length(Q) > 0
         v = pop!(Q)
         active[v] = false
-        discharge!(
+        push_relabel_discharge!(
             residual_graph,
             v,
             capacity_matrix,
@@ -71,12 +71,12 @@ function push_relabel end
 end
 
 """
-    enqueue_vertex!(Q, v, active, excess)
+    push_relabel_enqueue_vertex!(Q, v, active, excess)
 
 Push inactive node `v` into queue `Q` and activates it. Requires preallocated
 `active` and `excess` vectors.
 """
-function enqueue_vertex!(
+function push_relabel_enqueue_vertex!(
     Q::AbstractVector,
     v::Integer,                   # input vertex
     active::AbstractVector{Bool},
@@ -90,14 +90,14 @@ function enqueue_vertex!(
 end
 
 """
-    push_flow!(residual_graph, u, v, capacity_matrix, flow_matrix, excess, height, active, Q)
+    push_relabel_push_flow!(residual_graph, u, v, capacity_matrix, flow_matrix, excess, height, active, Q)
 
 Using `residual_graph` with capacities in `capacity_matrix`, push as much flow
 as possible through the given edge(`u`, `v`). Requires preallocated `flow_matrix`
 matrix, and `excess`, `height, `active`, and `Q` vectors.
 """
-function push_flow! end
-@traitfn function push_flow!(
+function push_relabel_push_flow! end
+@traitfn function push_relabel_push_flow!(
     residual_graph::::IsDirected,   # the input graph
     u::Integer,                        # input from-vertex
     v::Integer,                        # input to-vetex
@@ -119,12 +119,12 @@ function push_flow! end
     excess[u] -= flow
     excess[v] += flow
 
-    enqueue_vertex!(Q, v, active, excess)
+    push_relabel_enqueue_vertex!(Q, v, active, excess)
     return nothing
 end
 
 """
-    gap!(residual_graph, h, excess, height, active, count, Q)
+    push_relabel_gap!(residual_graph, h, excess, height, active, count, Q)
 
 Implement the push-relabel gap heuristic. Relabel all vertices above a cutoff height.
 Reduce the number of relabels required.
@@ -139,8 +139,8 @@ Requires arguments:
 - count::AbstractVector{Int}
 - Q::AbstractVector
 """
-function gap! end
-@traitfn function gap!(
+function push_relabel_gap! end
+@traitfn function push_relabel_gap!(
     residual_graph::::IsDirected,       # the input graph
     h::Int,                                # cutoff height
     excess::AbstractVector,
@@ -155,18 +155,18 @@ function gap! end
         count[height[v] + 1] -= 1
         height[v] = max(height[v], n + 1)
         count[height[v] + 1] += 1
-        enqueue_vertex!(Q, v, active, excess)
+        push_relabel_enqueue_vertex!(Q, v, active, excess)
     end
     return nothing
 end
 
 """
-    relabel!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
+    push_relabel_relabel!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
 
 Relabel a node `v` with respect to its neighbors to produce an admissable edge.
 """
-function relabel! end
-@traitfn function relabel!(
+function push_relabel_relabel! end
+@traitfn function push_relabel_relabel!(
     residual_graph::::IsDirected,   # the input graph
     v::Integer,                        # input vertex to be relabeled
     capacity_matrix::AbstractMatrix,
@@ -186,18 +186,18 @@ function relabel! end
         end
     end
     count[height[v] + 1] += 1
-    enqueue_vertex!(Q, v, active, excess)
+    push_relabel_enqueue_vertex!(Q, v, active, excess)
     return nothing
 end
 
 """
-    discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
+    push_relabel_discharge!(residual_graph, v, capacity_matrix, flow_matrix, excess, height, active, count, Q)
 
 Drain the excess flow out of node `v`. Run the gap heuristic or relabel the
 vertex if the excess remains non-zero.
 """
-function discharge! end
-@traitfn function discharge!(
+function push_relabel_discharge! end
+@traitfn function push_relabel_discharge!(
     residual_graph::::IsDirected,    # the input graph
     v::Integer,                         # vertex to be discharged
     capacity_matrix::AbstractMatrix,
@@ -210,16 +210,16 @@ function discharge! end
 )
     for to in Graphs.outneighbors(residual_graph, v)
         excess[v] == 0 && break
-        push_flow!(
+        push_relabel_push_flow!(
             residual_graph, v, to, capacity_matrix, flow_matrix, excess, height, active, Q
         )
     end
 
     if excess[v] > 0
         if count[height[v] + 1] == 1
-            gap!(residual_graph, height[v], excess, height, active, count, Q)
+            push_relabel_gap!(residual_graph, height[v], excess, height, active, count, Q)
         else
-            relabel!(
+            push_relabel_relabel!(
                 residual_graph,
                 v,
                 capacity_matrix,

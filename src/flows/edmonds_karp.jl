@@ -1,13 +1,13 @@
 """
-    edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
+    edmonds_karp(residual_graph, source, target, capacity_matrix)
 
 Compute the maximum flow in flow graph `residual_graph` between `source` and
 `target` and capacities defined in `capacity_matrix` using the
 [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmondss%E2%80%93Karp_algorithm).
 Return the value of the maximum flow as well as the final flow matrix.
 """
-function edmonds_karp_impl end
-@traitfn function edmonds_karp_impl(
+function edmonds_karp end
+@traitfn function edmonds_karp(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
@@ -21,7 +21,7 @@ function edmonds_karp_impl end
     while true
         fill!(P, -1)
         fill!(S, -1)
-        v, P, S, flag = fetch_path!(
+        v, P, S, flag = edmonds_karp_fetch_path!(
             residual_graph, source, target, flow_matrix, capacity_matrix, P, S
         )
 
@@ -44,7 +44,7 @@ function edmonds_karp_impl end
                 push!(path, Int(u))
             end
             # augment flow along path
-            flow += augment_path!(path, flow_matrix, capacity_matrix)
+            flow += edmonds_karp_augment_path!(path, flow_matrix, capacity_matrix)
         end
     end
 
@@ -52,12 +52,12 @@ function edmonds_karp_impl end
 end
 
 """
-    augment_path!(path, flow_matrix, capacity_matrix)
+    edmonds_karp_augment_path!(path, flow_matrix, capacity_matrix)
 
 Calculate the amount by which flow can be augmented in the given path.
 Augment the flow and returns the augment value.
 """
-function augment_path!(
+function edmonds_karp_augment_path!(
     path::Vector{Int},                     # input path
     flow_matrix::AbstractMatrix{T},       # the current flow matrix
     capacity_matrix::AbstractMatrix,    # edge flow capacities
@@ -80,13 +80,13 @@ function augment_path!(
 end
 
 """
-    fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P, S)
+    edmonds_karp_fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P, S)
 
 Like `fetch_path`, but requires preallocated parent vector `P` and successor
 vector `S`.
 """
-function fetch_path! end
-@traitfn function fetch_path!(
+function edmonds_karp_fetch_path! end
+@traitfn function edmonds_karp_fetch_path!(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
@@ -138,7 +138,7 @@ function fetch_path! end
 end
 
 """
-    fetch_path(residual_graph, source, target, flow_matrix, capacity_matrix)
+    edmonds_karp_fetch_path(residual_graph, source, target, flow_matrix, capacity_matrix)
 
 
 Use bidirectional BFS to look for augmentable paths from `source` to `target` in
@@ -147,8 +147,8 @@ the parent table of the path, the successor table of the path found, and a
 flag indicating success (0 => success; 1 => no path to target, 2 => no path
 to source).
 """
-function fetch_path end
-@traitfn function fetch_path(
+function edmonds_karp_fetch_path end
+@traitfn function edmonds_karp_fetch_path(
     residual_graph::::IsDirected,               # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
@@ -158,5 +158,7 @@ function fetch_path end
     n = Graphs.nv(residual_graph)
     P = fill(-1, n)
     S = fill(-1, n)
-    return fetch_path!(residual_graph, source, target, flow_matrix, capacity_matrix, P, S)
+    return edmonds_karp_fetch_path!(
+        residual_graph, source, target, flow_matrix, capacity_matrix, P, S
+    )
 end

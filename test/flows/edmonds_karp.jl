@@ -21,8 +21,7 @@
         (7, 8, 10),
     ]
 
-    for fg in
-        (flow_graph, Graphs.DiGraph{UInt8}(flow_graph), Graphs.DiGraph{Int16}(flow_graph))
+    for fg in test_generic_graphs(flow_graph)
         capacity_matrix = zeros(Int, 8, 8)
         for e in flow_edges
             u, v, f = e
@@ -33,18 +32,17 @@
 
         # Test with default distances
         @test @inferred(
-            Graphs.edmonds_karp_impl(
+            Graphs.edmonds_karp(
                 residual_graph, 1, 8, Graphs.DefaultCapacity(residual_graph)
             )
         )[1] == 3
 
         # Test with capacity matrix
-        @test @inferred(Graphs.edmonds_karp_impl(residual_graph, 1, 8, capacity_matrix))[1] ==
-            28
+        @test @inferred(Graphs.edmonds_karp(residual_graph, 1, 8, capacity_matrix))[1] == 28
 
         # Test the types of the values returned by fetch_path
         function test_find_path_types(residual_graph, s, t, flow_matrix, capacity_matrix)
-            v, P, S, flag = Graphs.fetch_path(
+            v, P, S, flag = Graphs.edmonds_karp_fetch_path(
                 residual_graph, s, t, flow_matrix, capacity_matrix
             )
             @test typeof(P) == Vector{Int}
@@ -61,19 +59,23 @@
             for dst in collect(Graphs.neighbors(residual_graph, s))
                 Graphs.rem_edge!(residual_graph, s, dst)
             end
-            v, P, S, flag = Graphs.fetch_path(
+            v, P, S, flag = Graphs.edmonds_karp_fetch_path(
                 residual_graph, s, t, flow_matrix, capacity_matrix
             )
             @test flag == 1
             for dst in collect(Graphs.neighbors(h, t))
                 Graphs.rem_edge!(h, t, dst)
             end
-            v, P, S, flag = Graphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
+            v, P, S, flag = Graphs.edmonds_karp_fetch_path(
+                h, s, t, flow_matrix, capacity_matrix
+            )
             @test flag == 0
             for i in collect(Graphs.inneighbors(h, t))
                 Graphs.rem_edge!(h, i, t)
             end
-            v, P, S, flag = Graphs.fetch_path(h, s, t, flow_matrix, capacity_matrix)
+            v, P, S, flag = Graphs.edmonds_karp_fetch_path(
+                h, s, t, flow_matrix, capacity_matrix
+            )
             @test flag == 2
         end
         flow_matrix = zeros(Int, Graphs.nv(residual_graph), Graphs.nv(residual_graph))

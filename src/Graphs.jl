@@ -430,11 +430,12 @@ export
 
     # flows
     maximum_flow,
+    multiroute_flow,
+    mincut_flow,
     EdmondsKarpAlgorithm,
     DinicAlgorithm,
     BoykovKolmogorovAlgorithm,
     PushRelabelAlgorithm,
-    multiroute_flow,
     KishimotoAlgorithm,
     ExtendedMultirouteFlowAlgorithm
 

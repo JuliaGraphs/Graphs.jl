@@ -1,6 +1,6 @@
 # EMRF (Extended Multiroute Flow) algorithms
 """
-    emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes=0)
+    ext_multiroute_flow(flow_graph, source, target, capacity_matrix, flow_algorithm, routes=0)
 
 Compute the maximum multiroute flow (for any number of `route`s)
 between `source` and `target` in `flow_graph` via flow algorithm `flow_algorithm`.
@@ -14,7 +14,7 @@ multiroute flow function.
 ### References
 - [Extended Multiroute Flow algorithm](http://dx.doi.org/10.1016/j.disopt.2016.05.002)
 """
-function emrf(
+function ext_multiroute_flow(
     flow_graph::Graphs.AbstractGraph,          # the input graph
     source::Integer,                       # the source vertex
     target::Integer,                       # the target vertex
@@ -22,9 +22,11 @@ function emrf(
     flow_algorithm::AbstractFlowAlgorithm, # keyword argument for algorithm
     routes::Real=0,
 )
-    breakingpoints = breakingPoints(flow_graph, source, target, capacity_matrix)
+    breakingpoints = ext_multiroute_flow_breakingPoints(
+        flow_graph, source, target, capacity_matrix
+    )
     if routes > 0
-        x, f = intersection(breakingpoints, routes)
+        x, f = ext_multiroute_flow_intersection(breakingpoints, routes)
         return maximum_flow(
             flow_graph,
             source,
@@ -38,7 +40,7 @@ function emrf(
 end
 
 @doc raw"""
-    auxiliaryPoints(flow_graph, source, target, capacity_matrix)
+    ext_multiroute_flow_auxiliaryPoints(flow_graph, source, target, capacity_matrix)
 
 Output a set of (point, slope) that compose the restricted max-flow function
 of `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
@@ -46,8 +48,8 @@ of `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 ### Performance
 One point by possible slope is enough (hence ``\\mathcal{O}(λ×maximum_flow)`` complexity).
 """
-function auxiliaryPoints end
-@traitfn function auxiliaryPoints(
+function ext_multiroute_flow_auxiliaryPoints end
+@traitfn function ext_multiroute_flow_auxiliaryPoints(
     flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
@@ -56,7 +58,7 @@ function auxiliaryPoints end
     # Problem descriptors
     λ = maximum_flow(flow_graph, source, target)[1] # Connectivity
     n = Graphs.nv(flow_graph) # number of vertices
-    r1, r2 = minmaxCapacity(capacity_matrix) # restriction left (1) and right (2)
+    r1, r2 = ext_multiroute_flow_minmaxCapacity(capacity_matrix) # restriction left (1) and right (2)
     auxpoints = fill((0.0, 0.0), λ + 1)
 
     # Initialisation of left side (1)
@@ -68,7 +70,7 @@ function auxiliaryPoints end
         algorithm=BoykovKolmogorovAlgorithm(),
         restriction=r1,
     )
-    s1 = slope(flow_graph, capacity_matrix, cut1, r1) # left slope
+    s1 = ext_multiroute_flow_slope(flow_graph, capacity_matrix, cut1, r1) # left slope
     auxpoints[λ + 1 - s1] = (r1, f1) # Add left initial auxiliary point
 
     # Initialisation of right side (2)
@@ -80,7 +82,7 @@ function auxiliaryPoints end
         algorithm=BoykovKolmogorovAlgorithm(),
         restriction=r2,
     )
-    s2 = slope(flow_graph, capacity_matrix, cut2, r2) # right slope
+    s2 = ext_multiroute_flow_slope(flow_graph, capacity_matrix, cut2, r2) # right slope
     auxpoints[λ + 1 - s2] = (r2, f2) # Add right initial auxiliary point
 
     # Loop if the slopes are distinct by at least 2
@@ -90,7 +92,7 @@ function auxiliaryPoints end
         while !isempty(queue)
             # Computes an intersection (middle) with a new associated slope
             (f1, s1, r1), (f2, s2, r2) = pop!(queue)
-            r, expectedflow = intersection(r1, f1, s1, r2, f2, s2)
+            r, expectedflow = ext_multiroute_flow_intersection(r1, f1, s1, r2, f2, s2)
             f, F, cut = maximum_flow(
                 flow_graph,
                 source,
@@ -99,19 +101,19 @@ function auxiliaryPoints end
                 algorithm=BoykovKolmogorovAlgorithm(),
                 restriction=r,
             )
-            s = slope(flow_graph, capacity_matrix, max.(cut, 1), r) # current slope
+            s = ext_multiroute_flow_slope(flow_graph, capacity_matrix, max.(cut, 1), r) # current slope
             auxpoints[λ + 1 - s] = (r, f)
             # If the flow at the intersection (middle) is as expected
             if expectedflow ≉ f # approximatively not equal (enforced by floating precision)
                 # if the slope difference between (middle) and left is at least 2
                 # push (left),(middle)
-                if s1 > s + 1 && !approximately_equal((r2, f2), (r, f))
+                if s1 > s + 1 && !ext_multiroute_flow_approximately_equal((r2, f2), (r, f))
                     q = (f1, s1, r1), (f, s, r)
                     push!(queue, q)
                 end
                 # if the slope difference between (middle) and right is at least 2
                 # push (middle),(right)
-                if s > s2 + 1 && !approximately_equal((r1, f1), (r, f))
+                if s > s2 + 1 && !ext_multiroute_flow_approximately_equal((r1, f1), (r, f))
                     q = (f, s, r), (f2, s2, r2)
                     push!(queue, q)
                 end
@@ -122,19 +124,21 @@ function auxiliaryPoints end
 end
 
 """
-    breakingPoints(flow_graph::::IsDirected, source, target, capacity_matrix)
+    ext_multiroute_flow_breakingPoints(flow_graph::::IsDirected, source, target, capacity_matrix)
 
 Calculates the breaking of the restricted max-flow from a set of auxiliary points
 for `flow_graph` from `source to `target` using capacities in `capacity_matrix`.
 """
-function breakingPoints end
-@traitfn function breakingPoints(
+function ext_multiroute_flow_breakingPoints end
+@traitfn function ext_multiroute_flow_breakingPoints(
     flow_graph::::IsDirected,                   # the input graph
     source::Integer,                           # the source vertex
     target::Integer,                           # the target vertex
     capacity_matrix::AbstractMatrix{T},   # edge flow capacities
 ) where {T}
-    auxpoints = auxiliaryPoints(flow_graph, source, target, capacity_matrix)
+    auxpoints = ext_multiroute_flow_auxiliaryPoints(
+        flow_graph, source, target, capacity_matrix
+    )
     λ = length(auxpoints) - 1
     left_index = 1
     breakingpoints = Vector{Tuple{T,T,Int}}()
@@ -145,7 +149,7 @@ function breakingPoints end
         else
             pleft = breakingpoints[left_index]
             if point[1] != 0
-                x, y = intersection(
+                x, y = ext_multiroute_flow_intersection(
                     pleft[1], pleft[2], pleft[3], point[1], point[2], λ + 1 - id
                 )
                 push!(breakingpoints, (x, y, λ + 1 - id))
@@ -160,14 +164,14 @@ end
 # note: this is more efficient than maximum() / minimum() / extrema()
 #       since we have to ignore zero values.
 """
-    minmaxCapacity(capacity_matrix)
+    ext_multiroute_flow_minmaxCapacity(capacity_matrix)
 
 Return the nonzero min and max function of `capacity_matrix`.
 
 Note: this is more efficient than maximum() / minimum() / extrema()
 since we have to ignore zero values.
 """
-function minmaxCapacity(
+function ext_multiroute_flow_minmaxCapacity(
     capacity_matrix::AbstractMatrix{T},    # edge flow capacities
 ) where {T}
     cmin, cmax = typemax(T), typemin(T)
@@ -181,15 +185,15 @@ function minmaxCapacity(
 end
 
 """
-    slope(flow_graph, capacity_matrix, cut, restriction)
+    ext_multiroute_flow_slope(flow_graph, capacity_matrix, cut, restriction)
 
 Return the slope of `flow_graph` using capacities in `capacity_matrix` and
 a cut vector `cut`. The slope is initialized at 0 and is incremented for
 each edge whose capacity does not exceed `restriction`.
 """
-function slope end
+function ext_multiroute_flow_slope end
 # Function to get the slope of the restricted flow
-@traitfn function slope(
+@traitfn function ext_multiroute_flow_slope(
     flow_graph::::IsDirected,      # the input graph
     capacity_matrix::AbstractMatrix,  # edge flow capacities
     cut::Vector,                      # cut information for vertices
@@ -212,7 +216,7 @@ function slope end
 end
 
 """
-        intersection(x1, y1, a1, x2, y2, a2)
+    ext_multiroute_flow_intersection(x1, y1, a1, x2, y2, a2)
 
 Return the intersection of two lines defined by `x` and `y` with slopes `a`.
 2) A set of segments and a linear function of slope k passing by the origin.
@@ -221,7 +225,7 @@ Requires argument:
 2) - points::Vector{Tuple{T, T, Int}}         # vector of points with T<:AbstractFloat
 - k::R<:Real                             # number of routes (slope of the line)
 """
-function intersection(
+function ext_multiroute_flow_intersection(
     x1::T,          # x coordinate of point 1
     y1::T,          # y coordinate of point 1
     a1::Integer,        # slope passing by point 1
@@ -238,12 +242,12 @@ function intersection(
 end
 
 """
-    intersection(points, k)
+    ext_multiroute_flow_intersection(points, k)
 
 Return the intersection of a set of line segments and a line of slope `k`
 passing by the origin. Segments are defined as a triple (x, y, slope).
 """
-function intersection(
+function ext_multiroute_flow_intersection(
     points::Vector{Tuple{T,T,I}},  # vector of breaking points
     k::R,                               # number of routes (slope of the line)
 ) where {T<:AbstractFloat} where {I<:Integer} where {R<:Real}
@@ -254,21 +258,22 @@ function intersection(
         if id == 1
             k ≈ λ && return points[2]
         else
-            x, y = intersection(p[1], p[2], p[3], 0.0, 0.0, k)
+            x, y = ext_multiroute_flow_intersection(p[1], p[2], p[3], 0.0, 0.0, k)
             (p[1] ≤ x ≤ points[id + 1][1]) && return x, y
         end
     end
     p = points[end]
-    return intersection(p[1], p[2], p[3], 0.0, 0.0, k)
+    return ext_multiroute_flow_intersection(p[1], p[2], p[3], 0.0, 0.0, k)
 end
 
 """
-    approximately_equal(a, b)
+    ext_multiroute_flow_approximately_equal(a, b)
 
 Return true if each element in the tuple is approximately equal to its counterpart.
 
 ### Implementation Notes:
 This is a separate function because we don't want to hijack isapprox for tuples.
 """
-approximately_equal(a::Tuple{T,T}, b::Tuple{T,T}) where {T<:AbstractFloat} =
-    a[1] ≈ b[1] && a[2] ≈ b[2]
+ext_multiroute_flow_approximately_equal(
+    a::Tuple{T,T}, b::Tuple{T,T}
+) where {T<:AbstractFloat} = a[1] ≈ b[1] && a[2] ≈ b[2]

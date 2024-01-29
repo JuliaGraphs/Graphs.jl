@@ -107,7 +107,7 @@
 
     for (nvertices, flow_edges, s, t, froutes, breakpts, ffloat) in graphs
         flow_graph = Graphs.DiGraph(nvertices)
-        for g in testdigraphs(flow_graph)
+        for g in test_generic_graphs(flow_graph)
             capacity_matrix = zeros(Int, nvertices, nvertices)
             for e in flow_edges
                 u, v, f = e

@@ -1,5 +1,5 @@
 """
-    boykov_kolmogorov_impl(residual_graph, source, target, capacity_matrix)
+    boykov_kolmogorov(residual_graph, source, target, capacity_matrix)
 
 Compute the max-flow/min-cut between `source` and `target` for `residual_graph`
 using the Boykov-Kolmogorov algorithm.
@@ -14,9 +14,9 @@ Min-Cut/Max-Flow Algorithms for Energy Minimization in Vision.
 ### Author
 - Júlio Hoffimann Mendes (julio.hoffimann@gmail.com)
 """
-function boykov_kolmogorov_impl end
+function boykov_kolmogorov end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function boykov_kolmogorov_impl(
+@traitfn function boykov_kolmogorov(
     residual_graph::AG::IsDirected,    # the input graph
     source::Integer,                      # the source vertex
     target::Integer,                      # the target vertex
@@ -38,17 +38,19 @@ function boykov_kolmogorov_impl end
 
     while true
         # growth stage
-        path = find_path!(
+        path = boykov_kolmogorov_find_path!(
             residual_graph, source, target, flow_matrix, capacity_matrix, PARENT, TREE, A
         )
 
         isempty(path) && break
 
         # augmentation stage
-        flow += augment!(path, flow_matrix, capacity_matrix, PARENT, TREE, O)
+        flow += boykov_kolmogorov_augment!(
+            path, flow_matrix, capacity_matrix, PARENT, TREE, O
+        )
 
         # adoption stage
-        adopt!(
+        boykov_kolmogorov_adopt!(
             residual_graph, source, target, flow_matrix, capacity_matrix, PARENT, TREE, A, O
         )
     end
@@ -57,7 +59,7 @@ function boykov_kolmogorov_impl end
 end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function find_path!(
+@traitfn function boykov_kolmogorov_find_path!(
     residual_graph::AG::IsDirected, # the input graph
     source::Integer,                   # the source vertex
     target::Integer,                   # the target vertex
@@ -115,7 +117,7 @@ end
     return Vector{T}()
 end
 
-function augment!(
+function boykov_kolmogorov_augment!(
     path::AbstractVector,               # path from source to target
     flow_matrix::AbstractMatrix,        # the current flow matrix
     capacity_matrix::AbstractMatrix,    # edge flow capacities
@@ -154,7 +156,7 @@ function augment!(
     return Δ
 end
 
-@traitfn function adopt!(
+@traitfn function boykov_kolmogorov_adopt!(
     residual_graph::AG::IsDirected,  # the input graph
     source::Integer,                    # the source vertex
     target::Integer,                    # the target vertex

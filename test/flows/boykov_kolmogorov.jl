@@ -68,27 +68,31 @@
             C[u, t] = C[t, u] = Inf
         end
 
-        # now we are ready to start the flow
-        flow, _, labels = maximum_flow(G, s, t, C; algorithm=BoykovKolmogorovAlgorithm())
+        for G_gen in test_generic_graphs(G)
+            # now we are ready to start the flow
+            flow, _, labels = maximum_flow(
+                G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
+            )
 
-        # because the two subimages are not connected
-        # we must have zero flow from source to target
-        @test flow == 0
+            # because the two subimages are not connected
+            # we must have zero flow from source to target
+            @test flow == 0
 
-        # the final cut represents the two disconnected
-        # subimages filled with water of different color
-        COLOR = reshape(labels[1:(end - 2)], sz)
-        @test COLOR == [
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 0 0 0 0 0 0 0 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-        ]
+            # the final cut represents the two disconnected
+            # subimages filled with water of different color
+            COLOR = reshape(labels[1:(end - 2)], sz)
+            @test COLOR == [
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 0 0 0 0 0 0 0 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+            ]
+        end
 
         # now let's create a bridge connecting the two
         # subimages to allow flow from source to target
@@ -99,25 +103,29 @@
             C[u, v] = C[v, u] = 1
         end
 
-        flow, _, labels = maximum_flow(G, s, t, C; algorithm=BoykovKolmogorovAlgorithm())
+        for G_gen in test_generic_graphs(G)
+            flow, _, labels = maximum_flow(
+                G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
+            )
 
-        # because there is only one bridge,
-        # the maximum flow allowed is one unit
-        @test flow == 1
+            # because there is only one bridge,
+            # the maximum flow allowed is one unit
+            @test flow == 1
 
-        # the final cut is unchanged compared to the previous one
-        COLOR = reshape(labels[1:(end - 2)], sz)
-        @test COLOR == [
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 0 0 0 0 0 0 0 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-        ]
+            # the final cut is unchanged compared to the previous one
+            COLOR = reshape(labels[1:(end - 2)], sz)
+            @test COLOR == [
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 0 0 0 0 0 0 0 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+            ]
+        end
 
         # finally let's create a second bridge to increase
         # the maximum flow from one to two units
@@ -128,25 +136,29 @@
             C[u, v] = C[v, u] = 1
         end
 
-        flow, _, labels = maximum_flow(G, s, t, C; algorithm=BoykovKolmogorovAlgorithm())
+        for G_gen in test_generic_graphs(G)
+            flow, _, labels = maximum_flow(
+                G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
+            )
 
-        # the maximum flow is now doubled
-        @test flow == 2
+            # the maximum flow is now doubled
+            @test flow == 2
 
-        # the final cut is slightly different
-        # near the corners of the two subimages
-        COLOR = reshape(labels[1:(end - 2)], sz)
-        @test COLOR == [
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 1 0 0 0 0 2
-            1 1 1 0 0 0 0 0 2
-            1 0 0 0 0 0 0 0 2
-            1 0 0 0 0 0 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-            1 0 0 0 0 2 2 2 2
-        ]
+            # the final cut is slightly different
+            # near the corners of the two subimages
+            COLOR = reshape(labels[1:(end - 2)], sz)
+            @test COLOR == [
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 1 0 0 0 0 2
+                1 1 1 0 0 0 0 0 2
+                1 0 0 0 0 0 0 0 2
+                1 0 0 0 0 0 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+                1 0 0 0 0 2 2 2 2
+            ]
+        end
     end
 
     @testset "Find path" begin
@@ -158,7 +170,7 @@
         # source and sink terminals
         source, target = 1, 3
 
-        for g in testdigraphs(gg)
+        for g in test_generic_graphs(gg)
             # default capacity
             capacity_matrix = Graphs.DefaultCapacity(g)
             residual_graph = @inferred(Graphs.residual(g))
@@ -169,7 +181,7 @@
             TREE[target] = T(2)
             PARENT = zeros(T, 3)
             A = [T(source), T(target)]
-            path = Graphs.find_path!(
+            path = Graphs.boykov_kolmogorov_find_path!(
                 residual_graph,
                 source,
                 target,

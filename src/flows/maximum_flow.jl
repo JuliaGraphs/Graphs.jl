@@ -83,7 +83,7 @@ function residual end
     algorithm::EdmondsKarpAlgorithm,        # keyword argument for algorithm
 )
     residual_graph = residual(flow_graph)
-    return edmonds_karp_impl(residual_graph, source, target, capacity_matrix)
+    return edmonds_karp(residual_graph, source, target, capacity_matrix)
 end
 
 # Method for Dinic's algorithm
@@ -96,7 +96,7 @@ end
     algorithm::DinicAlgorithm,          # keyword argument for algorithm
 )
     residual_graph = residual(flow_graph)
-    return dinic_impl(residual_graph, source, target, capacity_matrix)
+    return dinic(residual_graph, source, target, capacity_matrix)
 end
 
 # Method for Boykov-Kolmogorov algorithm
@@ -109,7 +109,7 @@ end
     algorithm::BoykovKolmogorovAlgorithm,   # keyword argument for algorithm
 )
     residual_graph = residual(flow_graph)
-    return boykov_kolmogorov_impl(residual_graph, source, target, capacity_matrix)
+    return boykov_kolmogorov(residual_graph, source, target, capacity_matrix)
 end
 
 # Method for Push-relabel algorithm
@@ -128,7 +128,7 @@ end
 """
     maximum_flow(flow_graph, source, target[, capacity_matrix][, algorithm][, restriction])
 
-Generic maximum_flow function for `flow_graph` from `source` to `target` with
+Generic maximum flow function for `flow_graph` from `source` to `target` with
 capacities in `capacity_matrix`.
 Uses flow algorithm `algorithm` and cutoff restriction `restriction`.
 

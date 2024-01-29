@@ -62,7 +62,9 @@ end
     mrf_algorithm::ExtendedMultirouteFlowAlgorithm, # keyword argument for algorithm
     routes::Real,                                       # keyword argument for routes
 )
-    return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes)
+    return ext_multiroute_flow(
+        flow_graph, source, target, capacity_matrix, flow_algorithm, routes
+    )
 end
 #2 When the breaking points are already known
 #2-a Output: flow value (paired with the associated restriction)
@@ -70,7 +72,7 @@ function multiroute_flow(
     breakingpoints::Vector{Tuple{T,T,Int}},       # vector of breaking points
     routes::R,                                       # keyword argument for routes
 ) where {T<:Real} where {R<:Real}
-    return intersection(breakingpoints, routes)
+    return ext_multiroute_flow_intersection(breakingpoints, routes)
 end
 
 #2-b Output: flow value, flows(, labels)
@@ -83,7 +85,7 @@ function multiroute_flow(
     capacity_matrix::AbstractMatrix{T2}=DefaultCapacity(flow_graph);
     flow_algorithm::AbstractFlowAlgorithm=PushRelabelAlgorithm(),
 ) where {T2} where {T1<:Real} where {R<:Real}
-    x, f = intersection(breakingpoints, routes)
+    x, f = ext_multiroute_flow_intersection(breakingpoints, routes)
     # For other cases, capacities need to be Floats
     if !(T2 <: AbstractFloat)
         capacity_matrix = convert(AbstractMatrix{Float64}, capacity_matrix)
@@ -212,11 +214,13 @@ function multiroute_flow(
     end
 
     # Ask for all possible values (breaking points)
-    (routes == 0) &&
-        return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm)
+    (routes == 0) && return ext_multiroute_flow(
+        flow_graph, source, target, capacity_matrix, flow_algorithm
+    )
     # The number of routes is a float → EMRF
-    (R <: AbstractFloat) &&
-        return emrf(flow_graph, source, target, capacity_matrix, flow_algorithm, routes)
+    (R <: AbstractFloat) && return ext_multiroute_flow(
+        flow_graph, source, target, capacity_matrix, flow_algorithm, routes
+    )
 
     # Other calls
     return multiroute_flow(
