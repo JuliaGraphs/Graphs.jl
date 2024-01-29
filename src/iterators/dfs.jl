@@ -51,9 +51,9 @@ function Base.iterate(t::DFSIterator)
 end
 function Base.iterate(t::DFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
-    reverse!(t.source)
-    visited[last(t.source)] = true
-    return (last(t.source), DFSVertexIteratorState(visited, [t.source...]))
+    source_rev = reverse(t.source)
+    visited[last(source_rev)] = true
+    return (last(source_rev), DFSVertexIteratorState(visited, source_rev))
 end
 
 """
@@ -62,19 +62,20 @@ end
 Iterator to visit each vertex in a graph using depth-first search.
 """
 function Base.iterate(t::DFSIterator, state::DFSVertexIteratorState)
-    while !isempty(state.queue)
-        node_start = last(state.queue)
-        if !state.visited[node_start]
-            state.visited[node_start] = true
+    graph, visited, queue = t.graph, state.visited, state.queue
+    while !isempty(queue)
+        node_start = last(queue)
+        if !visited[node_start]
+            visited[node_start] = true
             return (node_start, state)
         end
-        for node in outneighbors(t.graph, node_start)
-            if !state.visited[node]
-                push!(state.queue, node)
-                state.visited[node] = true
+        for node in outneighbors(graph, node_start)
+            if !visited[node]
+                push!(queue, node)
+                visited[node] = true
                 return (node, state)
             end
         end
-        pop!(state.queue)
+        pop!(queue)
     end
 end
