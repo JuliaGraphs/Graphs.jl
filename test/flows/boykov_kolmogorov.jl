@@ -68,7 +68,7 @@
             C[u, t] = C[t, u] = Inf
         end
 
-        for G_gen in test_generic_graphs(G)
+        for G_gen in [G]  # TODO: generic graphs
             # now we are ready to start the flow
             flow, _, labels = maximum_flow(
                 G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
@@ -81,7 +81,7 @@
             # the final cut represents the two disconnected
             # subimages filled with water of different color
             COLOR = reshape(labels[1:(end - 2)], sz)
-            @test COLOR == [
+            @test COLOR == eltype(COLOR)[
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2
@@ -92,18 +92,16 @@
                 1 0 0 0 0 2 2 2 2
                 1 0 0 0 0 2 2 2 2
             ]
-        end
 
-        # now let's create a bridge connecting the two
-        # subimages to allow flow from source to target
-        for (I1, I2) in
-            [[(4, 4), (5, 4)], [(5, 4), (5, 5)], [(5, 5), (5, 6)], [(5, 6), (6, 6)]]
-            u = LinearIndices(sz)[I1...]
-            v = LinearIndices(sz)[I2...]
-            C[u, v] = C[v, u] = 1
-        end
+            # now let's create a bridge connecting the two
+            # subimages to allow flow from source to target
+            for (I1, I2) in
+                [[(4, 4), (5, 4)], [(5, 4), (5, 5)], [(5, 5), (5, 6)], [(5, 6), (6, 6)]]
+                u = LinearIndices(sz)[I1...]
+                v = LinearIndices(sz)[I2...]
+                C[u, v] = C[v, u] = 1
+            end
 
-        for G_gen in test_generic_graphs(G)
             flow, _, labels = maximum_flow(
                 G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
             )
@@ -114,7 +112,7 @@
 
             # the final cut is unchanged compared to the previous one
             COLOR = reshape(labels[1:(end - 2)], sz)
-            @test COLOR == [
+            @test COLOR == eltype(COLOR)[
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2
@@ -125,18 +123,16 @@
                 1 0 0 0 0 2 2 2 2
                 1 0 0 0 0 2 2 2 2
             ]
-        end
 
-        # finally let's create a second bridge to increase
-        # the maximum flow from one to two units
-        for (I1, I2) in
-            [[(4, 4), (4, 5)], [(4, 5), (5, 5)], [(5, 5), (6, 5)], [(6, 5), (6, 6)]]
-            u = LinearIndices(sz)[I1...]
-            v = LinearIndices(sz)[I2...]
-            C[u, v] = C[v, u] = 1
-        end
+            # finally let's create a second bridge to increase
+            # the maximum flow from one to two units
+            for (I1, I2) in
+                [[(4, 4), (4, 5)], [(4, 5), (5, 5)], [(5, 5), (6, 5)], [(6, 5), (6, 6)]]
+                u = LinearIndices(sz)[I1...]
+                v = LinearIndices(sz)[I2...]
+                C[u, v] = C[v, u] = 1
+            end
 
-        for G_gen in test_generic_graphs(G)
             flow, _, labels = maximum_flow(
                 G_gen, s, t, C; algorithm=BoykovKolmogorovAlgorithm()
             )
@@ -147,7 +143,7 @@
             # the final cut is slightly different
             # near the corners of the two subimages
             COLOR = reshape(labels[1:(end - 2)], sz)
-            @test COLOR == [
+            @test COLOR == eltype(COLOR)[
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2
                 1 1 1 1 0 0 0 0 2

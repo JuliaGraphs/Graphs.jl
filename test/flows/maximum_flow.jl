@@ -54,13 +54,14 @@
 
     for (nvertices, flow_edges, s, t, fdefault, fcustom, frestrict, caprestrict) in graphs
         flow_graph = Graphs.DiGraph(nvertices)
+        capacity_matrix = zeros(Int, nvertices, nvertices)
+        for e in flow_edges
+            u, v, f = e
+            Graphs.add_edge!(flow_graph, u, v)
+            capacity_matrix[u, v] = f
+        end
+
         for g in test_generic_graphs(flow_graph)
-            capacity_matrix = zeros(Int, nvertices, nvertices)
-            for e in flow_edges
-                u, v, f = e
-                Graphs.add_edge!(g, u, v)
-                capacity_matrix[u, v] = f
-            end
 
             # Test DefaultCapacity
             d = @inferred(Graphs.DefaultCapacity(g))

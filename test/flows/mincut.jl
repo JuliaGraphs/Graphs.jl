@@ -1,26 +1,28 @@
 @testset "Mincut" begin
+    cap1 = [
+        0.0 2.0 2.0 0.0 0.0
+        0.0 0.0 0.0 0.0 3.0
+        0.0 1.0 0.0 3.0 0.0
+        0.0 0.0 0.0 0.0 1.0
+        0.0 0.0 0.0 0.0 0.0
+    ]
+    cap2 = [
+        0.0 3.0 2.0 0.0 0.0
+        0.0 0.0 0.0 0.0 3.0
+        0.0 1.0 0.0 3.0 0.0
+        0.0 0.0 0.0 0.0 1.5
+        0.0 0.0 0.0 0.0 0.0
+    ]
+
     g = Graphs.complete_digraph(5)
+
     for g_gen in test_generic_graphs(g)
-        cap1 = [
-            0.0 2.0 2.0 0.0 0.0
-            0.0 0.0 0.0 0.0 3.0
-            0.0 1.0 0.0 3.0 0.0
-            0.0 0.0 0.0 0.0 1.0
-            0.0 0.0 0.0 0.0 0.0
-        ]
         (part1, part2, value) = Graphs.mincut_flow(
             g_gen, 1, 5, cap1, Graphs.PushRelabelAlgorithm()
         )
         @test value ≈ 4.0
         @test part1 == [1]
         @test sort(part2) == collect(2:5)
-        cap2 = [
-            0.0 3.0 2.0 0.0 0.0
-            0.0 0.0 0.0 0.0 3.0
-            0.0 1.0 0.0 3.0 0.0
-            0.0 0.0 0.0 0.0 1.5
-            0.0 0.0 0.0 0.0 0.0
-        ]
         (part1, part2, value) = Graphs.mincut_flow(
             g_gen, 1, 5, cap2, Graphs.PushRelabelAlgorithm()
         )

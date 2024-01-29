@@ -21,13 +21,14 @@
         (7, 8, 10),
     ]
 
+    capacity_matrix = zeros(Int, 8, 8)
+    for e in flow_edges
+        u, v, f = e
+        Graphs.add_edge!(flow_graph, u, v)
+        capacity_matrix[u, v] = f
+    end
+
     for fg in test_generic_graphs(flow_graph)
-        capacity_matrix = zeros(Int, 8, 8)
-        for e in flow_edges
-            u, v, f = e
-            Graphs.add_edge!(fg, u, v)
-            capacity_matrix[u, v] = f
-        end
         residual_graph = @inferred(Graphs.residual(fg))
 
         # Test with default distances
@@ -55,7 +56,7 @@
         function test_find_path_disconnected(
             residual_graph, s, t, flow_matrix, capacity_matrix
         )
-            h = copy(residual_graph)
+            h = SimpleDiGraph(copy(residual_graph))
             for dst in collect(Graphs.neighbors(residual_graph, s))
                 Graphs.rem_edge!(residual_graph, s, dst)
             end

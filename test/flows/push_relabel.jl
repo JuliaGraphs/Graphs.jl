@@ -91,8 +91,9 @@
         count = [0, 1, 2, 2, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
         flow_matrix = zeros(Int, 8, 8)
 
-        @test @inferred(Graphs.gap!(residual_graph, 1, excess, height, active, count, Q)) ==
-            nothing
+        @test @inferred(
+            Graphs.push_relabel_gap!(residual_graph, 1, excess, height, active, count, Q)
+        ) == nothing
         @test length(Q) == 2
 
         # Test relabel
