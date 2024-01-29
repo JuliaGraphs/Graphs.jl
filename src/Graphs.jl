@@ -180,9 +180,9 @@ export
     bipartite_map,
 
     # dfs
-    is_cyclic, 
-    topological_sort_by_dfs, 
-    dfs_tree, 
+    is_cyclic,
+    topological_sort_by_dfs,
+    dfs_tree,
     dfs_parents,
 
     # iterators
