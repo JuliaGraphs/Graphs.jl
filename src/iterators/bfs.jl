@@ -69,4 +69,3 @@ function Base.iterate(t::BFSIterator, state::VertexIteratorState)
         popfirst!(state.queue)
     end
 end
-

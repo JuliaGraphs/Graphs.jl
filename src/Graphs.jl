@@ -186,7 +186,7 @@ export
     dfs_parents,
 
     # iterators
-    DFSIterator, 
+    DFSIterator,
     BFSIterator,
 
     # random
