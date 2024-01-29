@@ -28,12 +28,12 @@ function get_pkg_version(name::AbstractString)
     return error("Dependency not available")
 end
 
-#@testset "Code quality (JET.jl)" begin
-#    if VERSION >= v"1.9"
-#        @assert get_pkg_version("JET") >= v"0.8.4"
-#        JET.test_package(Graphs; target_defined_modules=true, ignore_missing_comparison=true)
-#    end
-#end
+@testset "Code quality (JET.jl)" begin
+    if VERSION >= v"1.9"
+        @assert get_pkg_version("JET") >= v"0.8.4"
+        JET.test_package(Graphs; target_defined_modules=true, ignore_missing_comparison=true)
+    end
+end
 
 @testset verbose = true "Code quality (Aqua.jl)" begin
     Aqua.test_all(Graphs; ambiguities=false)
@@ -43,7 +43,7 @@ end
     @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
-#doctest(Graphs)
+doctest(Graphs)
 
 function testgraphs(g)
     return if is_directed(g)
@@ -83,7 +83,75 @@ test_large_generic_graphs(g; skip_if_too_large::Bool=false) = test_generic_graph
 
 
 tests = [
+    "simplegraphs/runtests",
+    "linalg/runtests",
+    "parallel/runtests",
+    "interface",
+    "core",
+    "operators",
+    "degeneracy",
+    "distance",
+    "digraph/transitivity",
+    "cycles/hawick-james",
+    "cycles/johnson",
+    "cycles/karp",
+    "cycles/basis",
+    "cycles/limited_length",
+    "cycles/incremental",
+    "edit_distance",
+    "connectivity",
+    "persistence/persistence",
+    "shortestpaths/astar",
+    "shortestpaths/bellman-ford",
+    "shortestpaths/desopo-pape",
+    "shortestpaths/dijkstra",
+    "shortestpaths/johnson",
+    "shortestpaths/floyd-warshall",
+    "shortestpaths/yen",
+    "shortestpaths/spfa",
+    "traversals/bfs",
+    "traversals/bipartition",
+    "traversals/greedy_color",
+    "traversals/dfs",
+    "traversals/maxadjvisit",
+    "traversals/randomwalks",
+    "traversals/diffusion",
     "iterators/iterators",
+    "community/cliques",
+    "community/core-periphery",
+    "community/label_propagation",
+    "community/modularity",
+    "community/clustering",
+    "community/clique_percolation",
+    "community/assortativity",
+    "community/rich_club",
+    "centrality/betweenness",
+    "centrality/closeness",
+    "centrality/degree",
+    "centrality/katz",
+    "centrality/pagerank",
+    "centrality/eigenvector",
+    "centrality/stress",
+    "centrality/radiality",
+    "utils",
+    "deprecations",
+    "spanningtrees/boruvka",
+    "spanningtrees/kruskal",
+    "spanningtrees/prim",
+    "steinertree/steiner_tree",
+    "biconnectivity/articulation",
+    "biconnectivity/biconnect",
+    "biconnectivity/bridge",
+    "graphcut/normalized_cut",
+    "graphcut/karger_min_cut",
+    "dominatingset/degree_dom_set",
+    "dominatingset/minimal_dom_set",
+    "independentset/degree_ind_set",
+    "independentset/maximal_ind_set",
+    "vertexcover/degree_vertex_cover",
+    "vertexcover/random_vertex_cover",
+    "trees/prufer",
+    "experimental/experimental",
 ]
 
 @testset verbose = true "Graphs" begin
