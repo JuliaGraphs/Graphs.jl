@@ -53,7 +53,7 @@ function Base.iterate(t::DFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     reverse!(t.source)
     visited[last(t.source)] = true
-    return (last(t.source), DFSVertexIteratorState(visited, t.source))
+    return (last(t.source), DFSVertexIteratorState(visited, [t.source...]))
 end
 
 """
