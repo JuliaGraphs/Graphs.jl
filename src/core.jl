@@ -136,7 +136,6 @@ end
 
 degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
-
 """
     Δout(g)
 

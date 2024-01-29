@@ -50,8 +50,10 @@
         # This is probably because it uses induced_subgraph which fails on that graph type.
         octalengths, _ = simplecycleslength(octadg)
         for k in 1:6
-            @test sum(octalengths[1:k]) == length(simplecycles_limited_length(GenericGraph(octag), k))
-            @test sum(octalengths[1:k]) == length(simplecycles_limited_length(GenericDiGraph(octadg), k))
+            @test sum(octalengths[1:k]) ==
+                length(simplecycles_limited_length(GenericGraph(octag), k))
+            @test sum(octalengths[1:k]) ==
+                length(simplecycles_limited_length(GenericDiGraph(octadg), k))
         end
     end
 end

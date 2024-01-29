@@ -103,12 +103,14 @@
     end
 
     #maximum distance setting limits paths found
-        G = cycle_graph(6)
-        add_edge!(G, 1, 3)
-        m = float([0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0])
+    G = cycle_graph(6)
+    add_edge!(G, 1, 3)
+    m = float(
+        [0 2 2 0 0 1; 2 0 1 0 0 0; 2 1 0 4 0 0; 0 0 4 0 1 0; 0 0 0 1 0 1; 1 0 0 0 1 0]
+    )
 
-        for g in test_generic_graphs(G)
-            ds = @inferred(dijkstra_shortest_paths(g, 3, m;maxdist=3.0))
-            @test ds.dists == [2, 1, 0, Inf, Inf, 3]
-        end
+    for g in test_generic_graphs(G)
+        ds = @inferred(dijkstra_shortest_paths(g, 3, m; maxdist=3.0))
+        @test ds.dists == [2, 1, 0, Inf, Inf, 3]
+    end
 end

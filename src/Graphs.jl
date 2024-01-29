@@ -194,6 +194,9 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
     # coloring
     greedy_color,
 
@@ -201,6 +204,7 @@ export
     connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
+    strongly_connected_components_tarjan,
     weakly_connected_components,
     is_connected,
     is_strongly_connected,
@@ -489,6 +493,7 @@ include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
 include("iterators/iterators.jl")
+include("traversals/eulerian.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")

@@ -31,7 +31,9 @@ end
 @testset "Code quality (JET.jl)" begin
     if VERSION >= v"1.9"
         @assert get_pkg_version("JET") >= v"0.8.4"
-        JET.test_package(Graphs; target_defined_modules=true, ignore_missing_comparison=true)
+        JET.test_package(
+            Graphs; target_defined_modules=true, ignore_missing_comparison=true
+        )
     end
 end
 
@@ -40,7 +42,7 @@ end
 end
 
 @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
+    @test format(Graphs; verbose=false, overwrite=false)
 end
 
 doctest(Graphs)
@@ -70,7 +72,7 @@ function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=
     SG = is_directed(g) ? SimpleDiGraph : SimpleGraph
     GG = is_directed(g) ? GenericDiGraph : GenericGraph
     result = GG[]
-    for T in  eltypes
+    for T in eltypes
         if skip_if_too_large && nv(g) > typemax(T)
             continue
         end
@@ -79,8 +81,15 @@ function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=
     return result
 end
 
-test_large_generic_graphs(g; skip_if_too_large::Bool=false) = test_generic_graphs(g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large)
+function test_generic_graphs(gs...; kwargs...)
+    return vcat((test_generic_graphs(g; kwargs...) for g in gs)...)
+end
 
+function test_large_generic_graphs(g; skip_if_too_large::Bool=false)
+    return test_generic_graphs(
+        g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large
+    )
+end
 
 tests = [
     "simplegraphs/runtests",
@@ -117,6 +126,7 @@ tests = [
     "traversals/randomwalks",
     "traversals/diffusion",
     "iterators/iterators",
+    "traversals/eulerian",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",

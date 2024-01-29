@@ -24,7 +24,6 @@ function SimpleDiGraph(
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
 
-
 # DiGraph{UInt8}(6), DiGraph{Int16}(7), DiGraph{Int8}()
 """
     SimpleDiGraph{T}(n=0)
@@ -280,6 +279,29 @@ function SimpleDiGraph(edge_list::Vector{SimpleDiGraphEdge{T}}) where {T<:Intege
 
     return g
 end
+
+"""
+    SimpleDiGraph{T}(g::AbstractGraph)
+    SimpleDiGraph(g::AbstractGraph)
+
+Construct a `SimpleDiGraph` from any `AbstractGraph` by enumerating edges.
+
+If `g` is undirected, both directed edges `(u, v)` and `(v, u)` are added if undirected edge `{u, v}` exists.
+"""
+function SimpleDiGraph{T}(g::AbstractGraph) where {T}
+    eds = edges(g)
+    srcs = src.(eds)
+    dsts = dst.(eds)
+    if !is_directed(g)
+        append!(srcs, dst.(eds))
+        append!(dsts, src.(eds))
+    end
+    newg = SimpleDiGraph(Edge{T}.(srcs, dsts))
+    add_vertices!(newg, nv(g) - nv(newg))
+    return newg
+end
+
+SimpleDiGraph(g::AbstractGraph{T}) where {T} = SimpleDiGraph{T}(g)
 
 @inbounds function add_to_lists!(
     fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}, s::T, d::T

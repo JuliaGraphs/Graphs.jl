@@ -56,7 +56,7 @@ SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted
 
 ## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
 
-GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem. There are a lot of different recipes and styles to choose from, check out the [examples page](http://docs.juliaplots.org/latest/graphrecipes/examples/) to see more of them.
+GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem. There are a lot of different recipes and styles to choose from, check out the [examples page](https://docs.juliaplots.org/stable/GraphRecipes/examples/) to see more of them.
 
 ```julia
 using Plots, GraphRecipes

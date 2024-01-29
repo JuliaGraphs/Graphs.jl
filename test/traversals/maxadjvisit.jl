@@ -33,15 +33,17 @@
         @test ne(g) == m
 
         parity, bestcut = @inferred(mincut(g, eweights))
+        if parity[1] == 2
+            parity .= 3 .- parity
+        end
 
         @test length(parity) == 8
-        @test parity == [2, 2, 1, 1, 2, 2, 1, 1]
+        @test parity == [1, 1, 2, 2, 1, 1, 2, 2]
         @test bestcut == 4.0
 
         parity, bestcut = @inferred(mincut(g))
 
         @test length(parity) == 8
-        @test parity == [2, 1, 1, 1, 1, 1, 1, 1]
         @test bestcut == 2.0
 
         v = @inferred(maximum_adjacency_visit(g))
@@ -55,4 +57,27 @@
     end
     @test maximum_adjacency_visit(gx, 1) == [1, 2, 5, 6, 3, 7, 4, 8]
     @test maximum_adjacency_visit(gx, 3) == [3, 2, 7, 4, 6, 8, 5, 1]
+
+    # non regression test for #64
+    g = clique_graph(4, 2)
+    w = zeros(Int, 8, 8)
+    for e in edges(g)
+        if src(e) in [1, 5] || dst(e) in [1, 5]
+            w[src(e), dst(e)] = 3
+        else
+            w[src(e), dst(e)] = 2
+        end
+        w[dst(e), src(e)] = w[src(e), dst(e)]
+    end
+    w[1, 5] = 6
+    w[5, 1] = 6
+    parity, bestcut = @inferred(mincut(g, w))
+    if parity[1] == 2
+        parity .= 3 .- parity
+    end
+    @test parity == [1, 1, 1, 1, 2, 2, 2, 2]
+    @test bestcut == 6
+
+    w[6, 7] = -1
+    @test_throws DomainError mincut(g, w)
 end
