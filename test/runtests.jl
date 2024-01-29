@@ -28,25 +28,6 @@ function get_pkg_version(name::AbstractString)
     return error("Dependency not available")
 end
 
-@testset "Code quality (JET.jl)" begin
-    if VERSION >= v"1.9"
-        @assert get_pkg_version("JET") >= v"0.8.4"
-        JET.test_package(
-            Graphs; target_defined_modules=true, ignore_missing_comparison=true
-        )
-    end
-end
-
-@testset verbose = true "Code quality (Aqua.jl)" begin
-    Aqua.test_all(Graphs; ambiguities=false)
-end
-
-@testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false)
-end
-
-doctest(Graphs)
-
 function testgraphs(g)
     return if is_directed(g)
         [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -164,8 +145,29 @@ tests = [
 ]
 
 @testset verbose = true "Graphs" begin
-    for t in tests
-        tp = joinpath(testdir, "$(t).jl")
-        include(tp)
+    @testset "Code quality (JET.jl)" begin
+        if VERSION >= v"1.9"
+            @assert get_pkg_version("JET") >= v"0.8.4"
+            JET.test_package(
+                Graphs; target_defined_modules=true, ignore_missing_comparison=true
+            )
+        end
+    end
+
+    @testset verbose = true "Code quality (Aqua.jl)" begin
+        Aqua.test_all(Graphs; ambiguities=false)
+    end
+
+    @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
+        @test format(Graphs; verbose=false, overwrite=false)
+    end
+
+    doctest(Graphs)
+
+    @testset verbose = true "Actual tests" begin
+        for t in tests
+            tp = joinpath(testdir, "$(t).jl")
+            include(tp)
+        end
     end
 end;
