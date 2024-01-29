@@ -154,11 +154,11 @@ tests = [
         end
     end
 
-    @testset verbose = true "Code quality (Aqua.jl)" begin
+    @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(Graphs; ambiguities=false)
     end
 
-    @testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
+    @testset "Code formatting (JuliaFormatter.jl)" begin
         @test format(Graphs; verbose=false, overwrite=false)
     end
 
