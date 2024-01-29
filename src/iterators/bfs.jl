@@ -57,7 +57,7 @@ end
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     visited[first(t.source)] = true
-    return (first(t.source), BFSVertexIteratorState(visited, t.source, 1, 1))
+    return (first(t.source), BFSVertexIteratorState(visited, [t.source...], 1, 1))
 end
 
 """
