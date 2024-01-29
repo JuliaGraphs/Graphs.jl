@@ -36,6 +36,7 @@ mutable struct BFSVertexIteratorState <: AbstractIteratorState
     visited::BitArray
     queue::Vector{Int}
     neighbor_idx::Int
+    n_visited::Int
 end
 
 BFSIterator(g::AbstractGraph) = BFSIterator(g, one(eltype(g)))
@@ -51,12 +52,12 @@ First iteration to visit each vertex in a graph using breadth-first search.
 function Base.iterate(t::BFSIterator)
     visited = falses(nv(t.graph))
     visited[t.source] = true
-    return (t.source, BFSVertexIteratorState(visited, [t.source], 1))
+    return (t.source, BFSVertexIteratorState(visited, [t.source], 1, 1))
 end
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     visited[first(t.source)] = true
-    return (first(t.source), BFSVertexIteratorState(visited, t.source, 1))
+    return (first(t.source), BFSVertexIteratorState(visited, t.source, 1, 1))
 end
 
 """
@@ -66,9 +67,13 @@ Iterator to visit each vertex in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     while !isempty(state.queue)
+        if state.n_visited == length(state.visited)
+            return nothing
+        end
         node_start = first(state.queue)
         if !state.visited[node_start]
             state.visited[node_start] = true
+            state.n_visited += 1
             return (node_start, state)
         end
         idx = state.neighbor_idx
@@ -79,6 +84,7 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
             if !state.visited[node]
                 push!(state.queue, node)
                 state.visited[node] = true
+                state.n_visited += 1
                 return (node, state)
             end
         else
