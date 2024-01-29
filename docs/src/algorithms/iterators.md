@@ -16,6 +16,5 @@ Pages   = [
     "iterators/iterators.jl",
     "iterators/bfs.jl",
     "iterators/dfs.jl",
-    "iterators/kruskal.jl",
 ]
 ```
