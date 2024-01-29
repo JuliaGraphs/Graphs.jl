@@ -26,6 +26,18 @@ struct BFSIterator{S} <: VertexIterator
     source::S
 end
 
+"""
+    mutable struct BFSVertexIteratorState
+
+`BFSVertexIteratorState` is a struct to hold the current state of iteration
+in BFS which is needed for the Base.iterate() function.
+"""
+mutable struct BFSVertexIteratorState <: AbstractIteratorState
+    visited::BitArray
+    queue::Vector{Int}
+    neighbor_idx::Int
+end
+
 BFSIterator(g::AbstractGraph) = BFSIterator(g, one(eltype(g)))
 
 Base.length(t::BFSIterator) = nv(t.graph)
@@ -39,12 +51,12 @@ First iteration to visit each vertex in a graph using breadth-first search.
 function Base.iterate(t::BFSIterator)
     visited = falses(nv(t.graph))
     visited[t.source] = true
-    return (t.source, VertexIteratorState(visited, [t.source]))
+    return (t.source, BFSVertexIteratorState(visited, [t.source], 1))
 end
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     visited[first(t.source)] = true
-    return (first(t.source), VertexIteratorState(visited, t.source))
+    return (first(t.source), BFSVertexIteratorState(visited, t.source, 1))
 end
 
 """
@@ -52,20 +64,26 @@ end
 
 Iterator to visit each vertex in a graph using breadth-first search.
 """
-function Base.iterate(t::BFSIterator, state::VertexIteratorState)
+function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     while !isempty(state.queue)
         node_start = first(state.queue)
         if !state.visited[node_start]
             state.visited[node_start] = true
             return (node_start, state)
         end
-        for node in outneighbors(t.graph, node_start)
+        idx = state.neighbor_idx
+        neigh = outneighbors(t.graph, node_start)
+        if idx <= length(neigh)
+            node = neigh[idx]
+            state.neighbor_idx += 1
             if !state.visited[node]
                 push!(state.queue, node)
                 state.visited[node] = true
                 return (node, state)
             end
+        else
+            popfirst!(state.queue)
+            state.neighbor_idx = 1
         end
-        popfirst!(state.queue)
     end
 end

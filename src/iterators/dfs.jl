@@ -23,6 +23,17 @@ struct DFSIterator{S} <: VertexIterator
     source::S
 end
 
+"""
+    mutable struct DFSVertexIteratorState
+
+`DFSVertexIteratorState` is a struct to hold the current state of iteration
+in DFS which is needed for the Base.iterate() function.
+"""
+mutable struct DFSVertexIteratorState <: AbstractIteratorState
+    visited::BitArray
+    queue::Vector{Int}
+end
+
 DFSIterator(g::AbstractGraph) = DFSIterator(g, one(eltype(g)))
 
 Base.length(t::DFSIterator) = nv(t.graph)
@@ -36,13 +47,13 @@ First iteration to visit each vertex in a graph using depth-first search.
 function Base.iterate(t::DFSIterator)
     visited = falses(nv(t.graph))
     visited[t.source] = true
-    return (t.source, VertexIteratorState(visited, [t.source]))
+    return (t.source, DFSVertexIteratorState(visited, [t.source]))
 end
 function Base.iterate(t::DFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     reverse!(t.source)
     visited[last(t.source)] = true
-    return (last(t.source), VertexIteratorState(visited, t.source))
+    return (last(t.source), DFSVertexIteratorState(visited, t.source))
 end
 
 """
@@ -50,7 +61,7 @@ end
 
 Iterator to visit each vertex in a graph using depth-first search.
 """
-function Base.iterate(t::DFSIterator, state::VertexIteratorState)
+function Base.iterate(t::DFSIterator, state::DFSVertexIteratorState)
     while !isempty(state.queue)
         node_start = last(state.queue)
         if !state.visited[node_start]
