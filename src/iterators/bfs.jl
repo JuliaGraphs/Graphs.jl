@@ -66,29 +66,30 @@ end
 Iterator to visit each vertex in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
-    while !isempty(state.queue)
-        if state.n_visited == length(state.visited)
+    graph, visited, queue = t.graph, state.visited, state.queue
+    while !isempty(queue)
+        if state.n_visited == nv(graph)
             return nothing
         end
-        node_start = first(state.queue)
-        if !state.visited[node_start]
-            state.visited[node_start] = true
+        node_start = first(queue)
+        if !visited[node_start]
+            visited[node_start] = true
             state.n_visited += 1
             return (node_start, state)
         end
         idx = state.neighbor_idx
-        neigh = outneighbors(t.graph, node_start)
+        neigh = outneighbors(graph, node_start)
         if idx <= length(neigh)
             node = neigh[idx]
             state.neighbor_idx += 1
-            if !state.visited[node]
-                push!(state.queue, node)
+            if !visited[node]
+                push!(queue, node)
                 state.visited[node] = true
                 state.n_visited += 1
                 return (node, state)
             end
         else
-            popfirst!(state.queue)
+            popfirst!(queue)
             state.neighbor_idx = 1
         end
     end
