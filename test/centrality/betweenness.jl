@@ -1,17 +1,15 @@
 @testset "Betweenness" begin
     rng = StableRNG(1)
     # self loops
-    s2 = SimpleDiGraph(3)
-    add_edge!(s2, 1, 2)
-    add_edge!(s2, 2, 3)
-    add_edge!(s2, 3, 3)
-    s1 = SimpleGraph(s2)
-    g3 = path_graph(5)
+    s1 = GenericGraph(SimpleGraph(Edge.([(1, 2), (2, 3), (3, 3)])))
+    s2 = GenericDiGraph(SimpleDiGraph(Edge.([(1, 2), (2, 3), (3, 3)])))
+
+    g3 = GenericGraph(path_graph(5))
 
     gint = loadgraph(joinpath(testdir, "testdata", "graph-50-500.jgz"), "graph-50-500")
 
     c = vec(readdlm(joinpath(testdir, "testdata", "graph-50-500-bc.txt"), ','))
-    for g in testdigraphs(gint)
+    for g in test_generic_graphs(gint)
         z = @inferred(betweenness_centrality(g))
         @test map(Float32, z) == map(Float32, c)
 
@@ -29,25 +27,18 @@
     @test @inferred(betweenness_centrality(s1)) == [0, 1, 0]
     @test @inferred(betweenness_centrality(s2)) == [0, 0.5, 0]
 
-    g = SimpleGraph(2)
-    add_edge!(g, 1, 2)
+    g = GenericGraph(path_graph(2))
     z = @inferred(betweenness_centrality(g; normalize=true))
     @test z[1] == z[2] == 0.0
     z2 = @inferred(betweenness_centrality(g, vertices(g)))
-    z3 = @inferred(betweenness_centrality(g, [vertices(g);]))
+    z3 = @inferred(betweenness_centrality(g, collect(vertices(g))))
     @test z == z2 == z3
 
     z = @inferred(betweenness_centrality(g3; normalize=false))
     @test z[1] == z[5] == 0.0
 
     # Weighted Graph tests
-    g = Graph(6)
-    add_edge!(g, 1, 2)
-    add_edge!(g, 2, 3)
-    add_edge!(g, 3, 4)
-    add_edge!(g, 2, 5)
-    add_edge!(g, 5, 6)
-    add_edge!(g, 5, 4)
+    g = GenericGraph(SimpleGraph(Edge.([(1, 2), (2, 3), (2, 5), (3, 4), (4, 5), (5, 6)])))
 
     distmx = [
         0.0 2.0 0.0 0.0 0.0 0.0
@@ -77,7 +68,7 @@
 
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a2 = SimpleDiGraph(adjmx2)
-    for g in testdigraphs(a2)
+    for g in test_generic_graphs(a2)
         distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
         c2 = [0.24390243902439027, 0.27027027027027023, 0.1724137931034483]
         @test isapprox(
@@ -99,7 +90,7 @@
         )
     end
     # test #1405 / #1406
-    g = grid([50, 50])
+    g = GenericGraph(grid([50, 50]))
     z = betweenness_centrality(g; normalize=false)
     @test maximum(z) < nv(g) * (nv(g) - 1)
 end

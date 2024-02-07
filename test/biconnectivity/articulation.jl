@@ -18,14 +18,14 @@
     add_edge!(gint, 7, 10)
     add_edge!(gint, 7, 12)
 
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         art = @inferred(articulation(g))
         ans = [1, 7, 8, 12]
         @test art == ans
     end
     for level in 1:6
         btree = Graphs.binary_tree(level)
-        for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
+        for tree in test_generic_graphs(btree; eltypes=[Int, UInt8, Int16])
             artpts = @inferred(articulation(tree))
             @test artpts == collect(1:(2^(level - 1) - 1))
         end
@@ -33,7 +33,7 @@
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
-    for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
+    for h in test_generic_graphs(hint; eltypes=[Int, UInt8, Int16])
         @test @inferred(articulation(h)) == [5, 6]
     end
 end

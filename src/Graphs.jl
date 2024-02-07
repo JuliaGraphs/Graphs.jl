@@ -21,7 +21,9 @@ using DataStructures:
     in_same_set,
     peek,
     union!,
-    find_root!
+    find_root!,
+    BinaryMaxHeap,
+    BinaryMinHeap
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
@@ -196,6 +198,9 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
     # coloring
     greedy_color,
 
@@ -203,6 +208,7 @@ export
     connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
+    strongly_connected_components_tarjan,
     weakly_connected_components,
     is_connected,
     is_strongly_connected,
@@ -213,6 +219,7 @@ export
     neighborhood,
     neighborhood_dists,
     isgraphical,
+    isdigraphical,
 
     # cycles
     simplecycles_hawick_james,
@@ -284,6 +291,7 @@ export
     watts_strogatz,
     newman_watts_strogatz,
     random_regular_graph,
+    uniform_tree,
     random_regular_digraph,
     random_configuration_model,
     random_tournament_digraph,
@@ -396,6 +404,11 @@ export
     kruskal_mst,
     prim_mst,
 
+    # trees and prufer
+    is_tree,
+    prufer_encode,
+    prufer_decode,
+
     # steinertree
     steiner_tree,
 
@@ -430,14 +443,13 @@ undirected graphs are supported via separate types, and conversion is available
 from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
-analysis libraries such as NetworkX while being simpler to use and more
-efficient than existing Julian graph libraries such as Graphs.jl. It is an
-explicit design decision that any data not required for graph manipulation
+analysis libraries such as NetworkX while being simple to use and efficient.
+It is an explicit design decision that any data not required for graph manipulation
 (attributes and other information, for example) is expected to be stored
 outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
 
-[Full documentation](http://codecov.io/github/JuliaGraphs/Graphs.jl) is available,
+[Full documentation](https://juliagraphs.org/Graphs.jl/stable/) is available,
 and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
@@ -484,6 +496,7 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("traversals/eulerian.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
@@ -518,6 +531,7 @@ include("community/rich_club.jl")
 include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("trees/prufer.jl")
 include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
@@ -532,6 +546,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("Test/Test.jl")
 
 using .LinAlg
 end # module

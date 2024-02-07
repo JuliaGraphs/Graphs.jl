@@ -182,6 +182,8 @@ algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 # Examples
 
 ```jldoctest
+julia> using Graphs, Graphs.Experimental.ShortestPaths
+
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];

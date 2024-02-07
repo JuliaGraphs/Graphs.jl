@@ -3,6 +3,9 @@
 We welcome all possible contributors and ask that you read these guidelines before starting to work on this project.
 Following these guidelines will reduce friction and improve the speed at which your code gets merged.
 
+A general set of rules that we try to follow can be found at [SciML/ColPrac](https://github.com/SciML/ColPrac).
+Here are a few more specific recommendations.
+
 ## Bug reports
 
 If you notice code that crashes, is incorrect, or is too slow, please file a bug report. The report should be raised as a GitHub issue with a minimal working example that reproduces the condition.

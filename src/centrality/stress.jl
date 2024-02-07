@@ -17,13 +17,13 @@ The stress centrality of a vertex ``n`` is defined as the number of shortest pat
 julia> using Graphs
 
 julia> stress_centrality(star_graph(3))
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  2
  0
  0
 
 julia> stress_centrality(cycle_graph(4))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  2
  2
@@ -51,7 +51,9 @@ function stress_centrality(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    return stress_centrality(g, sample(vertices(g), k; rng=rng, seed=seed))
+    return stress_centrality(
+        g, sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed)
+    )
 end
 
 function _stress_accumulate_basic!(

@@ -1,7 +1,15 @@
+# TODO this algorithm does not work with abitrary AbstractGraph yet,
+# as it relies on rem_edge! and deepcopy
+
 """
     struct YenState{T, U}
 
 Designed for yen k-shortest-paths calculations.
+
+# Fields
+
+- `dists::Vector{T}`: `dists[k]` is the length of the `k`-th shortest path from the source to the target
+- `paths::Vector{Vector{U}}`: `paths[k]` is the description of the `k`-th shortest path (as a sequence of vertices) from the source to the target 
 """
 struct YenState{T,U<:Integer} <: AbstractPathState
     dists::Vector{T}
@@ -9,7 +17,7 @@ struct YenState{T,U<:Integer} <: AbstractPathState
 end
 
 """
-    yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=Inf);
+    yen_k_shortest_paths(g, source, target, distmx=weights(g), K=1; maxdist=typemax(T));
 
 Perform [Yen's algorithm](http://en.wikipedia.org/wiki/Yen%27s_algorithm)
 on a graph, computing k-shortest distances between `source` and `target` other vertices.
@@ -21,11 +29,11 @@ function yen_k_shortest_paths(
     target::U,
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
-    maxdist=Inf,
+    maxdist=typemax(T),
 ) where {T<:Real} where {U<:Integer}
     source == target && return YenState{T,U}([U(0)], [[source]])
 
-    dj = dijkstra_shortest_paths(g, source, distmx)
+    dj = dijkstra_shortest_paths(g, source, distmx; maxdist)
     path = enumerate_paths(dj)[target]
     isempty(path) && return YenState{T,U}(Vector{T}(), Vector{Vector{U}}())
 
@@ -57,7 +65,7 @@ function yen_k_shortest_paths(
             end
 
             # Remove node of root path and calculate dist of it
-            distrootpath = 0.0
+            distrootpath = zero(T)
             for n in 1:(length(rootpath) - 1)
                 u = rootpath[n]
                 nei = copy(neighbors(gcopy, u))

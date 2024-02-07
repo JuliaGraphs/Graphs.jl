@@ -42,11 +42,11 @@ using BenchmarkTools
 
         function comparison(f, g)
             println("Mulithreaded on $(Threads.nthreads())")
-            b1 = @benchmark mapvertices($f, $g)
+            b1 = @benchmarkable mapvertices($f, $g)
             println(b1)
 
             println("singlethreaded")
-            b2 = @benchmark mapvertices_single($f, $g)
+            b2 = @benchmarkable mapvertices_single($f, $g)
             println(b2)
             return println("done")
         end

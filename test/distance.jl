@@ -7,7 +7,7 @@
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
-    @testset "$g" for g in testgraphs(a1)
+    @testset "$(typeof(g))" for g in test_generic_graphs(a1)
         z = @inferred(eccentricity(g, distmx1))
         @testset "eccentricity" begin
             @test z == [6.2, 4.2, 6.2]
@@ -26,7 +26,7 @@
         end
     end
 
-    @testset "$g" for g in testgraphs(a2)
+    @testset "$(typeof(g))" for g in test_generic_graphs(a2)
         z = @inferred(eccentricity(g, distmx2))
         @testset "eccentricity" begin
             @test z == [6.2, 4.2, 6.1]
@@ -58,14 +58,14 @@
 
     @testset "warnings and errors" begin
         # ensures that eccentricity only throws an error if there is more than one component
-        g1 = SimpleGraph(2)
+        g1 = GenericGraph(SimpleGraph(2))
         @test_logs (:warn, "Infinite path length detected for vertex 1") match_mode = :any eccentricity(
             g1
         )
         @test_logs (:warn, "Infinite path length detected for vertex 2") match_mode = :any eccentricity(
             g1
         )
-        g2 = path_graph(2)
+        g2 = GenericGraph(path_graph(2))
         @test_logs eccentricity(g2)
     end
 end

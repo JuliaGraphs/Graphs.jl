@@ -44,6 +44,10 @@ julia> add_vertices!(g, 2)
 """
 add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
 
+# TODO the behaviour of indegree (and as well outdegree and degree) is very
+# badly documented for the case indegree(g, vs) where vs is not a single vertex
+# but rather a collection of vertices
+
 """
     indegree(g[, v])
 
@@ -61,14 +65,14 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> indegree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  0
  1
 ```
 """
 indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [indegree(g, x) for x in v]
+indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
 
 """
     outdegree(g[, v])
@@ -87,14 +91,14 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> outdegree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  0
  1
  1
 ```
 """
 outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [outdegree(g, x) for x in v]
+outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 
 """
     degree(g[, v])
@@ -115,17 +119,22 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> degree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  1
  2
 ```
 """
 function degree end
-@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
 
-degree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [degree(g, x) for x in v]
+function degree(g::AbstractGraph, v::Integer)
+    if !is_directed(g)
+        return outdegree(g, v)
+    end
+    return indegree(g, v) + outdegree(g, v)
+end
+
+degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
 """
     Δout(g)
@@ -226,14 +235,14 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> neighbors(g, 1)
-0-element Array{Int64,1}
+Int64[]
 
 julia> neighbors(g, 2)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> neighbors(g, 3)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 ```
 """
@@ -262,15 +271,15 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> all_neighbors(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> all_neighbors(g, 2)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> all_neighbors(g, 3)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  2
 ```
@@ -308,12 +317,12 @@ julia> add_edge!(g, 4, 1);
 julia> add_edge!(g, 1, 3);
 
 julia> common_neighbors(g, 1, 3)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  2
  4
 
 julia> common_neighbors(g, 1, 4)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 ```
 """

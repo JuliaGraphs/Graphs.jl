@@ -12,7 +12,7 @@ References:
 julia> using Graphs
 
 julia> core_periphery_deg(star_graph(5))
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  2
  2
@@ -20,7 +20,7 @@ julia> core_periphery_deg(star_graph(5))
  2
 
 julia> core_periphery_deg(path_graph(3))
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  2
  1
  2
