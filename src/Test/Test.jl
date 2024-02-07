@@ -56,6 +56,10 @@ function generic_graph(g::Union{SimpleGraph,SimpleDiGraph})
     return is_directed(g) ? GenericDiGraph(g) : GenericGraph(g)
 end
 
+# ensure type stability in conversion
+Graphs.Graph(g::Union{GenericGraph,GenericDiGraph}) = Graph(g.g)
+Graphs.DiGraph(g::Union{GenericGraph,GenericDiGraph}) = DiGraph(g.g)
+
 function GenericDiGraph(elist::Vector{Graphs.SimpleDiGraphEdge{T}}) where {T<:Integer}
     return GenericDiGraph{T}(SimpleDiGraph(elist))
 end
