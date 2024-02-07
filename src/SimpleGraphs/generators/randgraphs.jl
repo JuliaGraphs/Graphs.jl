@@ -127,7 +127,7 @@ function randbn(
 end
 
 """
-    erdos_renyi(n, p)
+    erdos_renyi(n, p::Real)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
@@ -170,7 +170,7 @@ function erdos_renyi(
 end
 
 """
-    erdos_renyi(n, ne)
+    erdos_renyi(n, ne::Integer)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
 graph with `n` vertices and `ne` edges.
