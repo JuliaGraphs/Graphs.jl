@@ -1426,7 +1426,7 @@ end
 """
     bernoulli_graph(Λ; rng = nothing, nodes_type = Int64)
 
-Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}``, return a Bernoulli graph with ``n`` vertices. Each edge ``(i,j)`` exists with probability ``\\Lambda[i,j]``.
+Given the symmetric matrix `Λ ∈ [0,1]^{n × n}`, return a Bernoulli graph with `n` vertices. Each edge `(i,j)` exists with probability `Λ[i,j]`.
 """
 function bernoulli_graph(
     Λ::AbstractMatrix{<:AbstractFloat};
@@ -1449,11 +1449,11 @@ function bernoulli_graph(
 end
 
 """
-rho_correlated_bernoulli_graphs(Λ, ρ; rng = nothing, nodes_type = Int64)
+correlated_bernoulli_graphs(Λ, ρ; rng = nothing, nodes_type = Int64)
 
-Given the symmetric matrix ``\\Lambda \\in [0,1]^{n \\times n}`` and a real number ``\\rho \\in [0,1]`` return a Tuple with two ``\\rho``-correlated Bernoulli graphs with ``n`` vertices. It means that, calling ``A`` and ``B`` the adjacency matrix of the outputed graphs, for ``i,j`` such that ``i``!=``j`` the Pearson correlation coefficient for ``A_{i,j}`` and ``B_{i,j}`` is ``\\rho``.
+Given the symmetric matrix `Λ ∈ [0,1]^{n × n}` and a real number `ρ ∈ [0,1]` return a Tuple with two ρ - correlated Bernoulli graphs with `n` vertices. It means that, calling `A` and `B` the adjacency matrix of the outputed graphs, for `i,j` such that `i!=j` the Pearson correlation coefficient for `A_{i,j}` and `B_{i,j}` is `ρ`.
 """
-function rho_correlated_bernoulli_graphs(
+function correlated_bernoulli_graphs(
     Λ::AbstractMatrix{<:AbstractFloat},
     ρ::Float64;
     rng::Union{Nothing,AbstractRNG}=nothing,
