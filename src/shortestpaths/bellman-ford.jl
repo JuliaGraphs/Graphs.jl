@@ -17,6 +17,11 @@ struct NegativeCycleError <: Exception end
     BellmanFordState{T, U}
 
 An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
+
+# Fields
+
+- `parents::Vector{U}`: `parents[v]` is the predecessor of vertex `v` on the shortest path from the source to `v`
+- `dists::Vector{T}`: `dists[v]` is the length of the shortest path from the source to `v`
 """
 struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
     parents::Vector{U}
@@ -29,7 +34,8 @@ end
 
 Compute shortest paths between a source `s` (or list of sources `ss`) and all
 other nodes in graph `g` using the [Bellman-Ford algorithm](http://en.wikipedia.org/wiki/Bellman–Ford_algorithm).
-Return a [`Graphs.BellmanFordState`](@ref) with relevant traversal information.
+
+Return a [`Graphs.BellmanFordState`](@ref) with relevant traversal information (try querying `state.parents` or `state.dists`).
 """
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
@@ -48,7 +54,8 @@ function bellman_ford_shortest_paths(
     for i in vertices(graph)
         no_changes = true
         new_active .= false
-        for u in vertices(graph)[active]
+        for u in vertices(graph)
+            active[u] || continue
             for v in outneighbors(graph, u)
                 relax_dist = distmx[u, v] + dists[u]
                 if dists[v] > relax_dist
@@ -80,9 +87,10 @@ function has_negative_edge_cycle(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
 ) where {T<:Real} where {U<:Integer}
     try
-        bellman_ford_shortest_paths(g, vertices(g), distmx)
+        bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e
         isa(e, NegativeCycleError) && return true
+        rethrow()
     end
     return false
 end

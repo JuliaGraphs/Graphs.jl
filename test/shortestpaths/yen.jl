@@ -1,3 +1,5 @@
+# TODO yen_k_shortest_paths does not wort for GenericGraph yet
+
 @testset "Yen" begin
     g4 = path_digraph(5)
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
@@ -111,10 +113,16 @@
     w[1, 4] = 3
     w[4, 1] = 3
     for g in testdigraphs(G)
-        ds = @inferred(yen_k_shortest_paths(G, 1, 6, w, 100))
+        ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100))
         @test ds.dists == [4.0, 5.0, 7.0, 7.0, 8.0, 8.0, 8.0, 11.0, 11.0]
 
-        ds = @inferred(yen_k_shortest_paths(G, 1, 6, w, 100, maxdist=7))
+        ds = @inferred(yen_k_shortest_paths(g, 1, 6, w, 100, maxdist=7.0))
         @test ds.dists == [4.0, 5.0, 7.0, 7.0]
+    end
+
+    # Test that no paths are returned if every path is longer than maxdist
+    for g in testdigraphs(cycle_digraph(10))
+        ds = @inferred(yen_k_shortest_paths(g, 2, 1, weights(g), 2, maxdist=2))
+        @test isempty(ds.paths)
     end
 end

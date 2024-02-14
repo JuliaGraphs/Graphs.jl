@@ -127,11 +127,16 @@ function randbn(
 end
 
 """
-    erdos_renyi(n, p)
+    erdos_renyi(n, p::Real)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
-probability `p`.
+probability `p`. 
+
+Note that there exists another definition of the Erdös-Rényi model in which the
+total number of edges is kept constant, rather than the probability `p`.
+To access this definition, use `erdos_renyi(n, ne::Integer)`
+(specifically: `erdos_renyi(n, 1) != erdos_renyi(n, 1.0)`).
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
@@ -170,7 +175,7 @@ function erdos_renyi(
 end
 
 """
-    erdos_renyi(n, ne)
+    erdos_renyi(n, ne::Integer)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
 graph with `n` vertices and `ne` edges.
@@ -443,7 +448,9 @@ function newman_watts_strogatz(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed)
+    return watts_strogatz(
+        n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed
+    )
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}

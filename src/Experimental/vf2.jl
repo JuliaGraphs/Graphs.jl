@@ -658,7 +658,7 @@ function all_isomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
     T = Vector{Tuple{eltype(g1),eltype(g2)}}
-    !could_have_isomorph(g1, g2) && return Channel(_ -> return, ctype = T)  # TODO: fix problem with JuliaFormatter, right now the whole file is ignored
+    !could_have_isomorph(g1, g2) && return Channel(_ -> nothing, ctype = T)
     make_callback(c) = vmap -> (put!(c, collect(zip(vmap, 1:length(vmap)))), return true)
     ch::Channel{T} = Channel(; ctype=T) do c
         vf2(

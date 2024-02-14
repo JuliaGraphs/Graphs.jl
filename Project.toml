@@ -1,6 +1,6 @@
 name = "Graphs"
 uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
-version = "1.8.0"
+version = "1.9.0"
 
 [deps]
 ArnoldiMethod = "ec485272-7323-5ecc-a04f-4719b315124d"
@@ -16,7 +16,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
-Aqua = "0.5"
+Aqua = "0.6"
 ArnoldiMethod = "0.1, 0.2"
 Compat = "3.40, 4"
 DataStructures = "0.17, 0.18"
@@ -25,6 +25,7 @@ Inflate = "0.1.3"
 JuliaFormatter = "1"
 SimpleTraits = "0.9"
 StableRNGs = "1"
+Statistics = "1"
 julia = "1.6"
 
 [extras]
@@ -32,9 +33,15 @@ Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 Base64 = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
 JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Aqua", "Base64", "DelimitedFiles", "Documenter", "JuliaFormatter", "StableRNGs", "Test"]
+test = ["Aqua", "Base64", "DelimitedFiles", "Documenter", "JET", "JuliaFormatter", "LinearAlgebra", "Pkg", "Random", "SparseArrays", "StableRNGs", "Statistics", "Test"]

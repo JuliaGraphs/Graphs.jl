@@ -20,26 +20,32 @@
     add_edge!(gint, 7, 10)
     add_edge!(gint, 7, 12)
 
-    for g in testgraphs(gint)
+    for g in test_generic_graphs(gint)
         brd = @inferred(bridges(g))
         ans = [Edge(1, 2), Edge(8, 9), Edge(7, 8), Edge(11, 12)]
         @test brd == ans
     end
     for level in 1:6
         btree = Graphs.binary_tree(level)
-        for tree in [btree, Graph{UInt8}(btree), Graph{Int16}(btree)]
+        for tree in test_generic_graphs(btree; eltypes=[Int, UInt8, Int16])
             brd = @inferred(bridges(tree))
-            ans = collect(edges(tree))
-            @test Set(brd) == Set(ans)
+            ans = edges(tree)
+
+            # AbstractEdge currently does not implement any comparison operators
+            # so instead we compare tuples of source and target vertices
+            @test sort([(src(e), dst(e)) for e in brd]) == sort([(src(e), dst(e)) for e in ans])
         end
     end
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
-    for h in (hint, Graph{UInt8}(hint), Graph{Int16}(hint))
-        @test @inferred(bridges(h)) == [Edge(5, 6)]
+    for h in test_generic_graphs(hint; eltypes=[Int, UInt8, Int16])
+        brd = @inferred bridges(h)
+        @test length(brd) == 1
+        @test src(brd[begin]) == 5
+        @test dst(brd[begin]) == 6
     end
 
-    dir = SimpleDiGraph(10, 10; rng=rng)
+    dir = GenericDiGraph(SimpleDiGraph(10, 10; rng=rng))
     @test_throws MethodError bridges(dir)
 end

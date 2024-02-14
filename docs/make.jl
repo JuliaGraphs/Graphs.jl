@@ -69,6 +69,7 @@ pages_files = [
     ],
     "For advanced users" => [
         "advanced/errorhandling.md",
+        "advanced/test.md",
         "advanced/experimental.md",
         "advanced/parallel.md",
         "contributing.md",

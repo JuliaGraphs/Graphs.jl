@@ -1,3 +1,7 @@
+# TODO most of the tests here do not work with generic graphs yet
+# as the require the ability to copy or modify graphs, which is not provided
+# by the AbstractGraph interface
+
 @testset "Operators" begin
     rng = StableRNG(1)
 
@@ -176,7 +180,7 @@
     end
 
     px = path_graph(10)
-    @testset "Matrix operations: $p" for p in testgraphs(px)
+    @testset "Matrix operations: $(typeof(p))" for p in test_generic_graphs(px)
         x = @inferred(p * ones(10))
         @test x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
         @test size(p) == (10, 10)
@@ -195,12 +199,21 @@
     add_edge!(gx, 2, 3)
     add_edge!(gx, 1, 3)
     add_edge!(gx, 3, 4)
-    @testset "Matrix operations: $g" for g in testdigraphs(gx)
+    @testset "Matrix operations: $(typeof(g))" for g in test_generic_graphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
         @test sum(g, 1) == [0, 1, 2, 1]
         @test sum(g, 2) == [2, 1, 1, 0]
         @test sum(g) == 4
         @test @inferred(!issymmetric(g))
+    end
+
+    gx = SimpleDiGraph(4)
+    add_edge!(gx, 1, 2)
+    add_edge!(gx, 2, 1)
+    add_edge!(gx, 1, 3)
+    add_edge!(gx, 3, 1)
+    @testset "Matrix operations: $(typeof(g))" for g in test_generic_graphs(gx)
+        @test @inferred(issymmetric(g))
     end
 
     nx = 20
@@ -323,7 +336,7 @@
         @test @inferred(ndims(g)) == 2
     end
 
-    @testset "Length: $g" for g in testgraphs(SimpleGraph(100))
+    @testset "Length: $(typeof(g))" for g in test_generic_graphs(SimpleGraph(100))
         @test length(g) == 10000
     end
 end

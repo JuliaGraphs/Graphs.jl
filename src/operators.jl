@@ -1,3 +1,6 @@
+# TODO most of the operators here do not work with any AbstractGraph yet
+# as they require cloning and modifying graphs.
+
 """
     complement(g)
 
@@ -394,7 +397,7 @@ function crosspath end
     len::Integer, g::AG::(!IsDirected)
 ) where {T,AG<:AbstractGraph{T}}
     p = path_graph(len)
-    h = Graph{T}(p)
+    h = SimpleGraph{T}(p)
     return cartesian_product(h, g)
 end
 
@@ -402,25 +405,16 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize Graphs natively.
 # """
-function *(g::Graph, v::Vector{T}) where {T<:Real}
+function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
         i = src(e)
         j = dst(e)
         y[i] += v[j]
-        y[j] += v[i]
-    end
-    return y
-end
-
-function *(g::DiGraph, v::Vector{T}) where {T<:Real}
-    length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
-    y = zeros(T, nv(g))
-    for e in edges(g)
-        i = src(e)
-        j = dst(e)
-        y[i] += v[j]
+        if !is_directed(g)
+            y[j] += v[i]
+        end
     end
     return y
 end
@@ -481,7 +475,7 @@ julia> size(g, 3)
 1
 ```
 """
-size(g::Graph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
+size(g::AbstractGraph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
 """
     sum(g)
@@ -509,7 +503,19 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 
 length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
-issymmetric(g::AbstractGraph) = !is_directed(g)
+
+@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
+    return true
+end
+
+@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
+    for e in edges(g)
+        if !has_edge(g, reverse(e))
+            return false
+        end
+    end
+    return true
+end
 
 """
     cartesian_product(g, h)

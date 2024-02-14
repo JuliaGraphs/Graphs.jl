@@ -3,6 +3,11 @@
     struct JohnsonState{T, U}
 
 An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
+
+# Fields
+
+- `dists::Matrix{T}`: `dists[u, v]` is the length of the shortest path from `u` to `v` 
+- `parents::Matrix{U}`: `parents[u, v]` is the predecessor of vertex `v` on the shortest path from `u` to `v`
 """
 struct JohnsonState{T<:Real,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
@@ -17,10 +22,10 @@ to compute the shortest paths between all pairs of vertices in graph `g` using a
 optional distance matrix `distmx`.
 
 Return a [`Graphs.JohnsonState`](@ref) with relevant
-traversal information.
+traversal information (try querying `state.parents` or `state.dists`).
 
 ### Performance
-Complexity: O(|V|*|E|)
+Complexity: `O(|V|*|E|)`
 """
 function johnson_shortest_paths(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
@@ -28,7 +33,8 @@ function johnson_shortest_paths(
     nvg = nv(g)
     type_distmx = typeof(distmx)
     # Change when parallel implementation of Bellman Ford available
-    wt_transform = bellman_ford_shortest_paths(g, vertices(g), distmx).dists
+    wt_transform =
+        bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx).dists
 
     @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
         distmx = sparse(distmx) # Change reference, not value

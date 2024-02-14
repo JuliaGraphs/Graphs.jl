@@ -1,3 +1,6 @@
+# TODO we cannot run the test here with GenericGraph yet,
+# as the functions don't work for arbitrary graphs yet.
+
 @testset "Cycles" begin
     rng = StableRNG(1)
     completedg = complete_digraph(4)

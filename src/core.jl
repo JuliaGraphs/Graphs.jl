@@ -44,6 +44,10 @@ julia> add_vertices!(g, 2)
 """
 add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
 
+# TODO the behaviour of indegree (and as well outdegree and degree) is very
+# badly documented for the case indegree(g, vs) where vs is not a single vertex
+# but rather a collection of vertices
+
 """
     indegree(g[, v])
 
@@ -68,7 +72,7 @@ julia> indegree(g)
 ```
 """
 indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [indegree(g, x) for x in v]
+indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
 
 """
     outdegree(g[, v])
@@ -94,7 +98,7 @@ julia> outdegree(g)
 ```
 """
 outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [outdegree(g, x) for x in v]
+outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 
 """
     degree(g[, v])
@@ -122,10 +126,15 @@ julia> degree(g)
 ```
 """
 function degree end
-@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
 
-degree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [degree(g, x) for x in v]
+function degree(g::AbstractGraph, v::Integer)
+    if !is_directed(g)
+        return outdegree(g, v)
+    end
+    return indegree(g, v) + outdegree(g, v)
+end
+
+degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
 """
     Δout(g)

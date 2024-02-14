@@ -3,6 +3,7 @@ using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
+using JET
 using JuliaFormatter
 using Graphs.Test
 using Test
@@ -14,18 +15,18 @@ using Base64
 using Random
 using Statistics: mean, std
 using StableRNGs
+using Pkg
 
 const testdir = dirname(@__FILE__)
 
-@testset verbose = true "Code quality (Aqua.jl)" begin
-    Aqua.test_all(Graphs; ambiguities=false)
+function get_pkg_version(name::AbstractString)
+    for dep in values(Pkg.dependencies())
+        if dep.name == name
+            return dep.version
+        end
+    end
+    return error("Dependency not available")
 end
-
-@testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
-end
-
-doctest(Graphs)
 
 function testgraphs(g)
     return if is_directed(g)
@@ -47,6 +48,29 @@ function testlargegraphs(g)
     end
 end
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
+
+function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=false)
+    SG = is_directed(g) ? SimpleDiGraph : SimpleGraph
+    GG = is_directed(g) ? GenericDiGraph : GenericGraph
+    result = GG[]
+    for T in eltypes
+        if skip_if_too_large && nv(g) > typemax(T)
+            continue
+        end
+        push!(result, GG(SG{T}(g)))
+    end
+    return result
+end
+
+function test_generic_graphs(gs...; kwargs...)
+    return vcat((test_generic_graphs(g; kwargs...) for g in gs)...)
+end
+
+function test_large_generic_graphs(g; skip_if_too_large::Bool=false)
+    return test_generic_graphs(
+        g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large
+    )
+end
 
 tests = [
     "simplegraphs/runtests",
@@ -82,6 +106,7 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "traversals/eulerian",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
@@ -120,8 +145,29 @@ tests = [
 ]
 
 @testset verbose = true "Graphs" begin
-    for t in tests
-        tp = joinpath(testdir, "$(t).jl")
-        include(tp)
+    @testset "Code quality (JET.jl)" begin
+        if VERSION >= v"1.9"
+            @assert get_pkg_version("JET") >= v"0.8.4"
+            JET.test_package(
+                Graphs; target_defined_modules=true, ignore_missing_comparison=true
+            )
+        end
+    end
+
+    @testset "Code quality (Aqua.jl)" begin
+        Aqua.test_all(Graphs; ambiguities=false)
+    end
+
+    @testset "Code formatting (JuliaFormatter.jl)" begin
+        @test format(Graphs; verbose=false, overwrite=false)
+    end
+
+    doctest(Graphs)
+
+    @testset verbose = true "Actual tests" begin
+        for t in tests
+            tp = joinpath(testdir, "$(t).jl")
+            include(tp)
+        end
     end
 end;

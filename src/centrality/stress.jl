@@ -51,7 +51,9 @@ function stress_centrality(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    return stress_centrality(g, sample(vertices(g), k; rng=rng, seed=seed))
+    return stress_centrality(
+        g, sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed)
+    )
 end
 
 function _stress_accumulate_basic!(

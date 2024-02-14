@@ -220,9 +220,49 @@ julia> strongly_connected_components(g)
  [10, 11]
 ```
 """
-function strongly_connected_components end
+strongly_connected_components(g) = strongly_connected_components_tarjan(g)
+
+"""
+    strongly_connected_components_tarjan(g)
+
+Compute the strongly connected components of a directed graph `g` using Tarjan's algorithm.
+
+Return an array of arrays, each of which is the entire connected component.
+
+### Implementation Notes
+The returned components will be ordered reverse topologically.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia> strongly_connected_components_tarjan(g)
+2-element Vector{Vector{Int64}}:
+ [3]
+ [1, 2]
+
+julia> g = SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components_tarjan(g)
+4-element Vector{Vector{Int64}}:
+ [8, 9]
+ [5, 6, 7]
+ [1, 2, 3, 4]
+ [10, 11]
+```
+"""
+function strongly_connected_components_tarjan end
+
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(
+@traitfn function strongly_connected_components_tarjan(
     g::AG::IsDirected
 ) where {T<:Integer,AG<:AbstractGraph{T}}
     zero_t = zero(T)
