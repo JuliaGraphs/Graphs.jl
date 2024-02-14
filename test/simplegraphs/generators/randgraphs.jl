@@ -86,6 +86,33 @@
         @test is_directed(ws) == true
     end
 
+    @testset "Newman-Watts-Strogatz" begin
+        # Each iteration creates, on average, n*k/2*(1+β) edges (if the network is large enough).
+        # As such, we need to average to check if the function works.
+        nsamp = 100
+        n = 1000
+        β = 0.2
+        k = 4
+        mean_num_edges = n * k / 2 * (1 + β)
+        nes = 0
+        for i in 1:nsamp
+            nws = newman_watts_strogatz(n, k, β; rng=rng)
+            nes += ne(nws)
+            @test nv(nws) == n
+            @test is_directed(nws) == false
+        end
+        @test abs(sum(nes) / nsamp - mean_num_edges) / mean_num_edges < 0.01
+
+        nes = 0
+        for i in 1:nsamp
+            nws = newman_watts_strogatz(n, k, β; is_directed=true, rng=rng)
+            nes += ne(nws)
+            @test nv(nws) == n
+            @test is_directed(nws) == true
+        end
+        @test abs(sum(nes) / nsamp - mean_num_edges) / mean_num_edges < 0.01
+    end
+
     @testset "Barabasi-Albert" begin
         ba = barabasi_albert(10, 2; rng=rng)
         @test nv(ba) == 10
@@ -216,6 +243,18 @@
         @test nv(rd) == 10
         @test ne(rd) == 80
         @test is_directed(rd)
+    end
+
+    @testset "uniform trees" begin
+        t = uniform_tree(50; rng=rng)
+        @test nv(t) == 50
+        @test ne(t) == 49
+        @test is_tree(t)
+
+        t2 = uniform_tree(50; rng=StableRNG(4))
+        @test nv(t2) == 50
+        @test ne(t2) == 49
+        @test is_tree(t2)
     end
 
     @testset "random configuration model" begin

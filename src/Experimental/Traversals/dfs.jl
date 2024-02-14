@@ -76,6 +76,7 @@ end
     return true
 end
 
+# TODO this function might return incorrect result (see tests) - use Graphs.topological_sort instead
 @traitfn function topological_sort(g::AG::IsDirected) where {T,AG<:AbstractGraph{T}}
     vcolor = zeros(UInt8, nv(g))
     verts = Vector{T}()

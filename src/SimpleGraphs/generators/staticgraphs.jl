@@ -9,6 +9,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_graph(5)
 {5, 10} undirected simple Int64 graph
 
@@ -37,6 +39,8 @@ with `n1 + n2` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_bipartite_graph(3, 4)
 {7, 12} undirected simple Int64 graph
 
@@ -76,6 +80,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_multipartite_graph([1,2,3])
 {6, 11} undirected simple Int64 graph
 
@@ -121,6 +127,8 @@ multipartite graph with `n` vertices and `r` partitions.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> turan_graph(6, 2)
 {6, 9} undirected simple Int64 graph
 
@@ -152,6 +160,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> complete_digraph(5)
 {5, 20} directed simple Int64 graph
 
@@ -183,6 +193,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> star_graph(3)
 {3, 2} undirected simple Int64 graph
 
@@ -210,6 +222,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> star_digraph(3)
 {3, 2} directed simple Int64 graph
 
@@ -240,6 +254,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> path_graph(5)
 {5, 4} undirected simple Int64 graph
 
@@ -269,6 +285,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> path_digraph(5)
 {5, 4} directed simple Int64 graph
 
@@ -303,6 +321,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> cycle_graph(3)
 {3, 3} undirected simple Int64 graph
 
@@ -333,6 +353,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> cycle_digraph(3)
 {3, 3} directed simple Int64 graph
 
@@ -367,6 +389,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> wheel_graph(5)
 {5, 8} undirected simple Int64 graph
 
@@ -398,6 +422,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> wheel_digraph(5)
 {5, 8} directed simple Int64 graph
 
@@ -438,6 +464,8 @@ condition in each dimension.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> grid([2,3])
 {6, 7} undirected simple Int64 graph
 
@@ -481,6 +509,8 @@ of depth `k`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> binary_tree(4)
 {15, 14} undirected simple Int64 graph
 
@@ -521,6 +551,8 @@ Create a double complete binary tree with `k` levels.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> double_binary_tree(4)
 {30, 29} undirected simple Int64 graph
 
@@ -546,6 +578,8 @@ Create a Roach graph of size `k`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> roach_graph(10)
 {40, 48} undirected simple Int64 graph
 ```
@@ -568,6 +602,8 @@ Create a graph consisting of `n` connected `k`-cliques.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> clique_graph(4, 10)
 {40, 70} undirected simple Int64 graph
 
@@ -604,6 +640,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> ladder_graph(3)
 {6, 7} undirected simple Int64 graph
 
@@ -643,6 +681,8 @@ exceeds the eltype.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> circular_ladder_graph(3)
 {6, 9} undirected simple Int64 graph
 
@@ -671,6 +711,8 @@ The cliques are organized with nodes `1:n1` being the left clique and `n1+1:n1+n
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barbell_graph(3, 4)
 {7, 10} undirected simple Int64 graph
 
@@ -718,6 +760,8 @@ The graph is organized with nodes `1:n1` being the clique and `n1+1:n1+n2` being
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> lollipop_graph(2, 5)
 {7, 6} undirected simple Int64 graph
 

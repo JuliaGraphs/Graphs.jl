@@ -5,7 +5,6 @@ module Traversals
 # to create new graph algorithms that rely on breadth-first or depth-first search traversals.
 
 using Graphs
-import ..Graphs: topological_sort
 using SimpleTraits
 """
     abstract type TraversalAlgorithm
@@ -204,6 +203,6 @@ function tree(
     return tree(p)
 end
 
-export visited_vertices, parents, distances, topological_sort, tree
+export visited_vertices, parents, distances, tree
 
 end  # module

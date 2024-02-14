@@ -49,7 +49,7 @@ julia> using Graphs
 julia> ds = dijkstra_shortest_paths(cycle_graph(5), 2);
 
 julia> ds.dists
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  0
  1
@@ -59,7 +59,7 @@ julia> ds.dists
 julia> ds = dijkstra_shortest_paths(path_graph(5), 2);
 
 julia> ds.dists
-5-element Array{Int64,1}:
+5-element Vector{Int64}:
  1
  0
  1

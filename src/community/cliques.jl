@@ -13,13 +13,20 @@ cliques found in the undirected graph `g`.
 
 ```jldoctest
 julia> using Graphs
+
 julia> g = SimpleGraph(3)
+{3, 0} undirected simple Int64 graph
+
 julia> add_edge!(g, 1, 2)
+true
+
 julia> add_edge!(g, 2, 3)
+true
+
 julia> maximal_cliques(g)
-2-element Array{Array{Int64,N},1}:
- [2,3]
- [2,1]
+2-element Vector{Vector{Int64}}:
+ [2, 3]
+ [2, 1]
 ```
 """
 function maximal_cliques end

@@ -1,6 +1,6 @@
 # Cycles
 
-_Graphs.jl_ contains numerous algorithms related to [cycles](https://en.wikipedia.org/wiki/Cycle_(graph_theory)).
+_Graphs.jl_ contains numerous algorithms related to [cycles](https://en.wikipedia.org/wiki/Cycle_(graph_theory)).
 
 ## Index
 

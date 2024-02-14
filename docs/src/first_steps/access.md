@@ -27,3 +27,42 @@ The following is an overview of functions for accessing graph properties.
 - `src(e)` gives the source vertex `s` of an edge `(s, d)`.
 - `dst(e)` gives the destination vertex `d` of an edge `(s, d)`.
 - `reverse(e)` creates a new edge `(d, s)` from edge `(s, d)`.
+
+## Persistence of vertex indices
+Adding a vertex to the graph with `add_vertex!(g)` adds it (if successful) to the end of the "vertex-list". Therefore, it is possible to access the index of the recently added vertex by using `nv(g)`:
+```julia-repl
+julia> g = SimpleGraph(10)
+{10, 0} undirected simple Int64 graph
+
+julia> add_vertex!(g)
+true
+
+julia> last_added_vertex = nv(g)
+11
+```
+Note that this index is NOT persistent if vertices added earlier are removed. When `rem_vertex!(g, v)` is called, `v` is "switched" with the last vertex before being deleted. As edges are identified by vertex indices, one has to be careful with edges as well. An edge added as `add_edge!(g, 3, 11)` can not be expected to always pass the `has_edge(g, 3, 11)` check:
+```julia-repl
+julia> g = SimpleGraph(10)
+{10, 0} undirected simple Int64 graph
+
+julia> add_vertex!(g)
+true
+
+julia> add_edge!(g, 3, 11)
+true
+
+julia> g
+{11, 1} undirected simple Int64 graph
+
+julia> has_edge(g, 3, 11)
+true
+
+julia> rem_vertex!(g, 7)
+true
+
+julia> has_edge(g, 3, 11)
+false
+
+julia> has_edge(g, 3, 7)  # vertex number 11 "renamed" to vertex number 7
+true
+```

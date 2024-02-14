@@ -42,6 +42,8 @@ if involved costs are equivalent.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g1 = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> g2 = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);

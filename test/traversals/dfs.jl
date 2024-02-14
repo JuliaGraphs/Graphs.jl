@@ -25,28 +25,43 @@
     )
     @testset "dfs_tree" begin
         for g in testdigraphs(g5)
-            z = @inferred(dfs_tree(g, 1))
+            z = @inferred(dfs_tree(GenericDiGraph(g), 1))
             @test ne(z) == 3 && nv(z) == 4
             @test !has_edge(z, 1, 3)
             @test !is_cyclic(g)
         end
     end
 
-    @testset "topological_sort_by_dfs" begin
+    @testset "topological_sort" begin
+        for g in testdigraphs(SimpleDiGraph([Edge(2, 1)]))
+            @test @inferred(topological_sort(g)) == [2, 1]
+        end
+
         for g in testdigraphs(g5)
-            @test @inferred(topological_sort_by_dfs(g)) == [1, 2, 3, 4]
+            @test @inferred(topological_sort(g)) == [1, 2, 3, 4]
         end
 
         for g in testdigraphs(gx)
             @test @inferred(is_cyclic(g))
-            @test_throws ErrorException topological_sort_by_dfs(g)
+            @test_throws ErrorException topological_sort(g)
+        end
+    end
+
+    @testset "topological_sort_by_dfs" begin
+        for g in testdigraphs(g5)
+            @test @inferred(topological_sort_by_dfs(GenericDiGraph(g))) == [1, 2, 3, 4]
+        end
+
+        for g in testdigraphs(gx)
+            @test @inferred(is_cyclic(GenericDiGraph(g)))
+            @test_throws ErrorException topological_sort_by_dfs(GenericDiGraph(g))
         end
     end
 
     @testset "is_cyclic" begin
         for g in testgraphs(path_graph(2))
-            @test !@inferred(is_cyclic(g))
-            @test !@inferred(is_cyclic(zero(g)))
+            @test !@inferred(is_cyclic(GenericGraph(g)))
+            @test !@inferred(is_cyclic(GenericGraph(zero(g))))
         end
         for g in testgraphs(gcyclic)
             @test @inferred(is_cyclic(g))

@@ -112,7 +112,7 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
 
                 ts1 = @inferred LET.topological_sort(dg)
                 @test ts1 == [1, 3, 7, 6, 2, 5, 4]
-                @test_throws LET.CycleError topological_sort(dg2)
+                @test_throws LET.CycleError LET.topological_sort(dg2)
 
                 t1 = @inferred LET.tree(dg, 2, d)
                 t2 = @inferred LET.tree(p1)
@@ -121,6 +121,9 @@ struct DummyTraversalState <: LET.AbstractTraversalState end
                 @test !LET.is_cyclic(dg1)
                 @test LET.is_cyclic(dg2)
             end
+
+            # Currently there is an error in Traverals.topological_sort, so this test fails
+            @test_broken LET.topological_sort(SimpleDiGraph([Edge(2, 1)])) == [2, 1]
         end
     end
 end

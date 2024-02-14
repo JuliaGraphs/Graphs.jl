@@ -29,13 +29,13 @@ bc(v) = \\frac{1}{\\mathcal{N}} \\sum_{s \\neq t \\neq v}
 julia> using Graphs
 
 julia> betweenness_centrality(star_graph(3))
-3-element Array{Float64,1}:
+3-element Vector{Float64}:
  1.0
  0.0
  0.0
 
 julia> betweenness_centrality(path_graph(4))
-4-element Array{Float64,1}:
+4-element Vector{Float64}:
  0.0
  0.6666666666666666
  0.6666666666666666

@@ -4,6 +4,7 @@ using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
 using JuliaFormatter
+using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -24,9 +25,7 @@ end
     @test format(Graphs; verbose=false, overwrite=false, ignore="vf2.jl")  # TODO: remove ignore kwarg once the file is formatted correctly
 end
 
-@testset verbose = true "Doctests (Documenter.jl)" begin
-    # doctest(Graphs)  # TODO: uncomment it when the errors it throws are fixed
-end
+doctest(Graphs)
 
 function testgraphs(g)
     return if is_directed(g)
@@ -116,6 +115,7 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
+    "trees/prufer",
     "experimental/experimental",
 ]
 

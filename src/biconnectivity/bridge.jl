@@ -9,14 +9,14 @@ whose deletion increases the number of connected components of the graph.
 julia> using Graphs
 
 julia> bridges(star_graph(5))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
  Edge 1 => 5
 
 julia> bridges(path_graph(5))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 4 => 5
  Edge 3 => 4
  Edge 2 => 3

@@ -61,7 +61,7 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> indegree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  0
  1
@@ -87,7 +87,7 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> outdegree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  0
  1
  1
@@ -115,7 +115,7 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> degree(g)
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  1
  2
@@ -226,14 +226,14 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> neighbors(g, 1)
-0-element Array{Int64,1}
+Int64[]
 
 julia> neighbors(g, 2)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> neighbors(g, 3)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 ```
 """
@@ -262,15 +262,15 @@ julia> add_edge!(g, 2, 3);
 julia> add_edge!(g, 3, 1);
 
 julia> all_neighbors(g, 1)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> all_neighbors(g, 2)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 
 julia> all_neighbors(g, 3)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  2
 ```
@@ -308,12 +308,12 @@ julia> add_edge!(g, 4, 1);
 julia> add_edge!(g, 1, 3);
 
 julia> common_neighbors(g, 1, 3)
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  2
  4
 
 julia> common_neighbors(g, 1, 4)
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 ```
 """
