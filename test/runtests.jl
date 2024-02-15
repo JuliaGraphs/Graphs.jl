@@ -142,6 +142,7 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "matching/maximum_matching",
 ]
 
 @testset verbose = true "Graphs" begin
