@@ -285,7 +285,6 @@ end
 	buffer_len = 0
 	if p >= 0.75
 		@inbounds for v in sample_from
-			# for v in sample_from
 			if rand(rng) < p
 				buffer_len += 1
 				buffer[buffer_len] = v
@@ -296,9 +295,9 @@ end
 		sample_from_len = length(sample_from)
 		i = 0
 		@inbounds while true
-			# while true
-			i += floor(Int, randexp(rng) * L) + 1
-			i > sample_from_len && return buffer_len
+			s = randexp(rng) * L
+			i + s > sample_from_len && return buffer_len # compare before ceil to avoid overflow
+			i += ceil(Int, s)
 			buffer_len += 1
 			buffer[buffer_len] = sample_from[i]
 		end
