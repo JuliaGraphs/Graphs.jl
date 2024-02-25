@@ -299,6 +299,8 @@ export
     stochastic_block_model,
     barabasi_albert,
     barabasi_albert!,
+    lancichinetti_fortunato_radicchi,
+    lancichinetti_fortunato_radicchi!,
     static_fitness_model,
     static_scale_free,
     kronecker,

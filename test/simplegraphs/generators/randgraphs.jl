@@ -423,4 +423,18 @@
         @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1 # since the stdev of μ1 is around sv1/sqrt(N), this should rarely fail
         @test μ2 - sv2 <= 0.7 * 3 <= μ2 + sv2
     end
+    @testset "Lancichinetti-Fortunato-Radicchi" begin
+        @testset "($n,$k_avg,$k_max,$isdir)" for n in [30, 40],
+            isdir in [false, true],
+            k_avg in (isdir ? [5.5, 6.0, 6.5] : [3.5, 4, 4.5]),
+            k_max in ceil.(Int, [1.5 * k_avg, 2 * k_avg])
+
+            lfr, cid = lancichinetti_fortunato_radicchi(
+                n, k_avg, k_max; seed=1, is_directed=isdir
+            )
+            @test nv(lfr) == n
+            @test is_directed(lfr) == isdir
+            @test length(cid) == nv(lfr)
+        end
+    end
 end
