@@ -52,7 +52,9 @@ function threaded_stress_centrality(g::AbstractGraph, vs=vertices(g))::Vector{In
     @sync for (t, task_range) in enumerate(Iterators.partition(1:k, task_size))
         Threads.@spawn for s in @view(vs[task_range])
             if degree(g, s) > 0  # this might be 1?
-                state = Graphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
+                state = Graphs.dijkstra_shortest_paths(
+                    g, s; allpaths=true, trackvertices=true
+                )
                 Graphs._stress_accumulate_basic!(local_stress[t], state, g, s)
             end
         end

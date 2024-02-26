@@ -22,7 +22,6 @@
             @test @inferred(k_crust(g, 2)) == k_crust(g, 2; corenum=corenum) == [9:21;]
             @test @inferred(k_crust(g, 4, corenum=corenum)) == [1:21;]
         end
-
     end
 
     # TODO k_corona does not work yet with generic graphs

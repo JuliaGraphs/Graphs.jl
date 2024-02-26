@@ -1,7 +1,7 @@
 using BenchmarkTools
 using Graphs
 
-const benchdir = dirname(@__FILE__)
+const BENCHDIR = dirname(@__FILE__)
 
 const DIGRAPHS = Dict{String,DiGraph}(
     "complete100" => complete_digraph(100), "path500" => path_digraph(500)
@@ -33,7 +33,7 @@ parallelbenchmarks = [
 ]
 
 foreach(parallelbenchmarks) do bm
-    include(joinpath(benchdir, bm))
+    include(joinpath(BENCHDIR, bm))
 end
 
 nothing
