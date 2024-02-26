@@ -1,8 +1,8 @@
 @testset "Betweenness" begin
     rng = StableRNG(1)
     # self loops
-    s1 = GenericGraph(SimpleGraph(Edge.([(1,2), (2,3), (3, 3)])))
-    s2 = GenericDiGraph(SimpleDiGraph(Edge.([(1,2), (2,3), (3, 3)])))
+    s1 = GenericGraph(SimpleGraph(Edge.([(1, 2), (2, 3), (3, 3)])))
+    s2 = GenericDiGraph(SimpleDiGraph(Edge.([(1, 2), (2, 3), (3, 3)])))
 
     g3 = GenericGraph(path_graph(5))
 

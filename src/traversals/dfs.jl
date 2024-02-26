@@ -53,7 +53,7 @@ end
                 end
             else
                 pop!(vertex_stack)
-                if vcolor[u] == 1 
+                if vcolor[u] == 1
                     vcolor[u] = 2
                 end
             end
@@ -107,10 +107,10 @@ function topological_sort_by_dfs end
                         push!(vertex_stack, n)
                     end
                 end
-                else
+            else
                 pop!(vertex_stack)
                 # if vcolor[u] == 2, the vertex was already explored and added to verts
-                if vcolor[u] == 1 
+                if vcolor[u] == 1
                     vcolor[u] = 2
                     pushfirst!(verts, u)
                 end

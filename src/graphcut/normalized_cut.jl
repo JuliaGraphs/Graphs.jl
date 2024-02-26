@@ -118,7 +118,7 @@ end
 function _recursive_normalized_cut(W, thres, num_cuts)
     m, n = size(W)
     (m <= 1) && return ones(Int, m) # trivial
-    D = Diagonal(vec(sum(W, dims=2)))
+    D = Diagonal(vec(sum(W; dims=2)))
 
     # check that the diagonal is not degenerated as otherwise invDroot errors
     dnz = abs.(diag(D)) .>= 1E-16
@@ -137,7 +137,7 @@ function _recursive_normalized_cut(W, thres, num_cuts)
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 12
-        _, Q = eigs(invDroot' * (D - W) * invDroot, nev=12, which=SR())
+        _, Q = eigs(invDroot' * (D - W) * invDroot; nev=12, which=SR())
         (size(Q, 2) <= 1) && return collect(1:m) # no 2nd eigenvector
         ret = convert(Vector, real(view(Q, :, 2)))
     else
@@ -149,7 +149,7 @@ function _recursive_normalized_cut(W, thres, num_cuts)
     min_cost = Inf
     best_thres = -1
     vmin, vmax = extrema(v)
-    for t in range(vmin, stop=vmax, length=num_cuts)
+    for t in range(vmin; stop=vmax, length=num_cuts)
         cut = v .> t
         cost = _normalized_cut_cost(cut, W, D)
         if cost < min_cost

@@ -84,7 +84,6 @@ end
 end
 
 @testset "collect_if_not_vector" begin
-
     vectors = [["ab", "cd"], 1:2:9, BitVector([0, 1, 0])]
     not_vectors = [Set([1, 2]), (x for x in Int8[3, 4]), "xyz"]
 
