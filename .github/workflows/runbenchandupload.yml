@@ -2,7 +2,7 @@ name: RunUploadBenchmarks
 env:
   JULIA_NUM_THREADS: 2
 on:
-  pull_request:
+  pull_request_target:
     types: [labeled]
     branches:
      - master
@@ -56,21 +56,21 @@ jobs:
           using BenchmarkCI, PkgBenchmark; 
           jd=BenchmarkCI.judge(baseline=\"origin/${GITHUB_BASE_REF}\"); 
           "
-      # - name: Post results if pull request
-      #   if: github.event_name == 'pull_request'
-      #   run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - name: Add comment
-      #   if: github.event_name == 'pull_request'
-      #   run: gh pr comment "$NUMBER" --body "$BODY"
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     GH_REPO: ${{ github.repository }}
-      #     NUMBER: ${{ github.event.pull_request.number }}
-      #     BODY: >
-      #       This pr comment is testing.
-      #       **This should be bold**
+      - name: Post results if pull request
+        if: github.event_name == 'pull_request'
+        run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Add comment
+        if: github.event_name == 'pull_request'
+        run: gh pr comment "$NUMBER" --body "$BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          BODY: >
+            This pr comment is testing.
+            **This should be bold**
       - name: Run benchmark if push/merge
         if: github.event_name == 'push'
         run: julia --project=benchmark -e "
