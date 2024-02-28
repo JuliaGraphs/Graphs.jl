@@ -4,7 +4,7 @@ using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 using SimpleTraits
 using SparseArrays: SparseMatrixCSC
-import SparseArrays: blockdiag, sparse
+import SparseArrays: blockdiag, sparse, spdiagm
 using LinearAlgebra: I, Symmetric, diagm, dot, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
