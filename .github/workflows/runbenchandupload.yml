@@ -1,4 +1,4 @@
-name: performance tracking
+name: RunUploadBenchmarks
 env:
   JULIA_NUM_THREADS: 2
 on:
@@ -82,8 +82,13 @@ jobs:
           br_median = BenchmarkResults(br.name, br.commit, median(br.benchmarkgroup), br.date, br.julia_commit, br.vinfo, br.benchmarkconfig);
           writeresults(\"medianbenchout.json\", br_median); 
           "
+      - name: Save PR number
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          echo $PR_NUMBER > ./benchmarkci/pr_number
       - uses: actions/upload-artifact@v3
         with: 
-          name: Store benchmark result
+          name: BenchmarkResults
           path: .benchmarkci/
 
