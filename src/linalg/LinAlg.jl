@@ -1,6 +1,6 @@
 module LinAlg
 
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 using SimpleTraits
 using SparseArrays: SparseMatrixCSC
