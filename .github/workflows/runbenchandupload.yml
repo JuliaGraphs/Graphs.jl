@@ -3,7 +3,7 @@ env:
   JULIA_NUM_THREADS: 2
 on:
   pull_request:
-    types: [labeled]
+    # types: [labeled]
     branches:
      - master
      - benchx
@@ -14,7 +14,7 @@ on:
     tags: '*'
 jobs:
   benchmark:
-    if: ${{ github.event.label.name == 'to-benchmark' }}
+    # if: ${{ github.event.label.name == 'to-benchmark' }}
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.allow_failure }}
@@ -56,21 +56,21 @@ jobs:
           using BenchmarkCI, PkgBenchmark; 
           jd=BenchmarkCI.judge(baseline=\"origin/${GITHUB_BASE_REF}\"); 
           "
-      - name: Post results if pull request
-        if: github.event_name == 'pull_request'
-        run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Add comment
-        if: github.event_name == 'pull_request'
-        run: gh pr comment "$NUMBER" --body "$BODY"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.pull_request.number }}
-          BODY: >
-            This pr comment is testing.
-            **This should be bold**
+      # - name: Post results if pull request
+      #   if: github.event_name == 'pull_request'
+      #   run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Add comment
+      #   if: github.event_name == 'pull_request'
+      #   run: gh pr comment "$NUMBER" --body "$BODY"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GH_REPO: ${{ github.repository }}
+      #     NUMBER: ${{ github.event.pull_request.number }}
+      #     BODY: >
+      #       This pr comment is testing.
+      #       **This should be bold**
       - name: Run benchmark if push/merge
         if: github.event_name == 'push'
         run: julia --project=benchmark -e "
