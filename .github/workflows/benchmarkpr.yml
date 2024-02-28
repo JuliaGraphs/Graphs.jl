@@ -2,17 +2,16 @@ name: performance tracking
 env:
   JULIA_NUM_THREADS: 2
 on:
-  label:
-    types: [created]
-#  pull_request:
-#    branches:
-#      - master
-#      - benchx
-#  push:
-#    branches:
-#      - master
-#      - benchx
-#    tags: '*'
+  pull_request:
+    types: [labeled]
+    branches:
+     - master
+     - benchx
+  push:
+    branches:
+     - master
+     - benchx
+    tags: '*'
 jobs:
   benchmark:
     if: ${{ github.event.label.name == 'to-benchmark' }}
