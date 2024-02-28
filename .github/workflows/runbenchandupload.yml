@@ -86,7 +86,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.number }}
         run: |
-          echo $PR_NUMBER > ./benchmarkci/pr_number
+          echo $PR_NUMBER > .benchmarkci/pr_number
       - uses: actions/upload-artifact@v3
         with: 
           name: BenchmarkResults
