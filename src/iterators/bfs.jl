@@ -41,7 +41,7 @@ end
 
 BFSIterator(g::AbstractGraph) = BFSIterator(g, one(eltype(g)))
 
-Base.length(t::BFSIterator) = nv(t.graph)
+Base.length(t::BFSIterator) = Base.SizeUnknown()
 Base.eltype(t::BFSIterator) = eltype(t.graph)
 
 """
