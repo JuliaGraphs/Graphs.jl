@@ -36,7 +36,7 @@ end
 
 DFSIterator(g::AbstractGraph) = DFSIterator(g, one(eltype(g)))
 
-Base.length(t::DFSIterator) = nv(t.graph)
+Base.length(t::DFSIterator) = Base.SizeUnknown()
 Base.eltype(t::DFSIterator) = eltype(t.graph)
 
 """
