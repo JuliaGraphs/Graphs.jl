@@ -1,5 +1,4 @@
-using BenchmarkTools
-using Graphs
+using BenchmarkTools, Graphs
 
 const BENCHDIR = dirname(@__FILE__)
 

@@ -1,21 +1,24 @@
-name: performance tracking
+name: RunUploadBenchmarks
 env:
   JULIA_NUM_THREADS: 2
 on:
   pull_request:
+    # types: [labeled]
     branches:
-      - master
-      - benchx
+     - master
+     - benchx
   push:
     branches:
-      - master
-      - benchx
+     - master
+     - benchx
     tags: '*'
 jobs:
   benchmark:
+    # if: ${{ github.event.label.name == 'to-benchmark' }}
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.allow_failure }}
+    permissions: write-all
     strategy:
       fail-fast: false
       matrix:
@@ -52,14 +55,22 @@ jobs:
         run: julia -e "
           using BenchmarkCI, PkgBenchmark; 
           jd=BenchmarkCI.judge(baseline=\"origin/${GITHUB_BASE_REF}\"); 
-          writeresults(\"targetbenchout.json\", jd.target_results); 
-          writeresults(\"baselinebenchout.json\", jd.baseline_results); 
           "
-      - name: Post results if pull request
-        if: github.event_name == 'pull_request'
-        run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Post results if pull request
+      #   if: github.event_name == 'pull_request'
+      #   run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Add comment
+      #   if: github.event_name == 'pull_request'
+      #   run: gh pr comment "$NUMBER" --body "$BODY"
+      #   env:
+      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     GH_REPO: ${{ github.repository }}
+      #     NUMBER: ${{ github.event.pull_request.number }}
+      #     BODY: >
+      #       This pr comment is testing.
+      #       **This should be bold**
       - name: Run benchmark if push/merge
         if: github.event_name == 'push'
         run: julia --project=benchmark -e "
@@ -71,8 +82,13 @@ jobs:
           br_median = BenchmarkResults(br.name, br.commit, median(br.benchmarkgroup), br.date, br.julia_commit, br.vinfo, br.benchmarkconfig);
           writeresults(\"medianbenchout.json\", br_median); 
           "
+      - name: Save PR number
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+        run: |
+          echo $PR_NUMBER > .benchmarkci/pr_number
       - uses: actions/upload-artifact@v3
         with: 
-          name: Store benchmark result
-          path: ./*benchout.json
+          name: BenchmarkResults
+          path: .benchmarkci/
 
