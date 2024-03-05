@@ -1,7 +1,7 @@
 """
     BFSIterator
 
-`BFSIterator` is a subtype of [`VertexIterator`](@ref) to iterate through graph vertices using a breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+`BFSIterator` is used to iterate through graph vertices using a breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
     
 # Examples
 ```julia-repl
