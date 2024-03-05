@@ -39,7 +39,7 @@ end
 BFSIterator(g::AbstractGraph) = BFSIterator(g, first(vertices(g)))
 
 Base.IteratorSize(::Type{BFSIterator}) = Base.SizeUnknown()
-Base.eltype(::Type{BFSIterator}) = eltype(t.graph)
+Base.eltype(::Type{BFSIterator{S,G}}) where {S,G} = eltype(G)
 
 """
     Base.iterate(t::BFSIterator)

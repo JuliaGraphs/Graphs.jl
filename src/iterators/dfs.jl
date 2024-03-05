@@ -37,7 +37,7 @@ end
 DFSIterator(g::AbstractGraph) = DFSIterator(g, first(vertices(g)))
 
 Base.IteratorSize(::Type{DFSIterator}) = Base.SizeUnknown()
-Base.eltype(::Type{DFSIterator}) = eltype(t.graph)
+Base.eltype(::Type{DFSIterator{S,G}}) where {S,G} = eltype(G)
 
 """
     Base.iterate(t::DFSIterator)
