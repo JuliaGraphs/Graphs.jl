@@ -1,10 +1,7 @@
 """
     BFSIterator
 
-`BFSIterator` is a subtype of [`VertexIterator`](@ref) to iterate through graph vertices using a 
-breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type 
-that can be indexed if supplying multiple sources. If no source is provided, it defaults to the 
-first vertex.
+`BFSIterator` is a subtype of [`VertexIterator`](@ref) to iterate through graph vertices using a breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
     
 # Examples
 ```julia-repl
@@ -21,27 +18,27 @@ julia> for node in BFSIterator(g,3)
 2
 ```
 """
-struct BFSIterator{S} <: VertexIterator
-    graph::AbstractGraph
+struct BFSIterator{S,G<:AbstractGraph}
+    graph::G
     source::S
 end
 
 """
-    mutable struct BFSVertexIteratorState
+    BFSVertexIteratorState
 
 `BFSVertexIteratorState` is a struct to hold the current state of iteration
-in BFS which is needed for the Base.iterate() function.
+in BFS which is needed for the `Base.iterate()` function.
 """
-mutable struct BFSVertexIteratorState <: AbstractIteratorState
-    visited::BitArray
+mutable struct BFSVertexIteratorState
+    visited::BitVector
     queue::Vector{Int}
     neighbor_idx::Int
     n_visited::Int
 end
 
-BFSIterator(g::AbstractGraph) = BFSIterator(g, one(eltype(g)))
+BFSIterator(g::AbstractGraph) = BFSIterator(g, first(vertices(g)))
 
-Base.length(t::BFSIterator) = Base.SizeUnknown()
+Base.length(t::BFSIterator) = nv(t.graph)
 Base.eltype(t::BFSIterator) = eltype(t.graph)
 
 """
@@ -49,15 +46,17 @@ Base.eltype(t::BFSIterator) = eltype(t.graph)
 
 First iteration to visit each vertex in a graph using breadth-first search.
 """
-function Base.iterate(t::BFSIterator)
+function Base.iterate(t::BFSIterator{<:Integer})
     visited = falses(nv(t.graph))
     visited[t.source] = true
     return (t.source, BFSVertexIteratorState(visited, [t.source], 1, 1))
 end
+
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     visited[first(t.source)] = true
-    return (first(t.source), BFSVertexIteratorState(visited, [t.source...], 1, 1))
+    state = BFSVertexIteratorState(visited, copy(t.source), 1, 1)
+    return (first(t.source), state)
 end
 
 """
