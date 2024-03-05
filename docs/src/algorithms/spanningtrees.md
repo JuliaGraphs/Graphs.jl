@@ -16,6 +16,8 @@ Pages = [
     "spanningtrees/boruvka.jl",
     "spanningtrees/kruskal.jl",
     "spanningtrees/prim.jl",
+    "planarity.jl",
+    "spanningtrees/planar_maximally_filtered_graph.jl",
 ]
 
 ```

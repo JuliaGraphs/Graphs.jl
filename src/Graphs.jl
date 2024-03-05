@@ -426,8 +426,11 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
 
+    # planarity
+    is_planar,
+    planar_maximally_filtered_graph
 """
     Graphs
 
@@ -542,6 +545,8 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("planarity.jl")
+include("spanningtrees/planar_maximally_filtered_graph.jl")
 include("Test/Test.jl")
 
 using .LinAlg
