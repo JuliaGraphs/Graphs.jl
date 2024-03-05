@@ -304,6 +304,8 @@ export
     kronecker,
     dorogovtsev_mendes,
     random_orientation_dag,
+    bernoulli_graph,
+    correlated_bernoulli_graphs,
 
     # community
     modularity,
