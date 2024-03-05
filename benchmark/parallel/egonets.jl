@@ -1,13 +1,9 @@
 using Graphs
 using BenchmarkTools
 
-SUITE["parallel"] = BenchmarkGroup([],
-                                   "egonet" => BenchmarkGroup([])
-                                   )
+SUITE["parallel"] = BenchmarkGroup([], "egonet" => BenchmarkGroup([]))
 
-SUITE["serial"] = BenchmarkGroup([],
-                                   "egonet" => BenchmarkGroup([])
-                                   )
+SUITE["serial"] = BenchmarkGroup([], "egonet" => BenchmarkGroup([]))
 
 function vertex_function(g::Graph, i::Int)
     a = 0
@@ -49,9 +45,13 @@ let
     nv_ = 10000
     g = SimpleGraph(nv_, 64 * nv_)
 
-    SUITE["parallel"]["egonet"]["vertexfunction"] = @benchmarkable mapvertices($vertex_function, $g)
+    SUITE["parallel"]["egonet"]["vertexfunction"] = @benchmarkable mapvertices(
+        $vertex_function, $g
+    )
     SUITE["parallel"]["egonet"]["twohop"] = @benchmarkable mapvertices($twohop, $g)
 
-    SUITE["serial"]["egonet"]["vertexfunction"] = @benchmarkable mapvertices_single($vertex_function, $g)
+    SUITE["serial"]["egonet"]["vertexfunction"] = @benchmarkable mapvertices_single(
+        $vertex_function, $g
+    )
     SUITE["serial"]["egonet"]["twohop"] = @benchmarkable mapvertices_single($twohop, $g)
 end

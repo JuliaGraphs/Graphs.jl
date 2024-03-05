@@ -27,9 +27,7 @@ foreach(serialbenchmarks) do bm
     include(bm)
 end
 
-parallelbenchmarks = [
-    "parallel/egonets.jl",
-]
+parallelbenchmarks = ["parallel/egonets.jl"]
 
 foreach(parallelbenchmarks) do bm
     include(joinpath(BENCHDIR, bm))

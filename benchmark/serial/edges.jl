@@ -30,7 +30,7 @@ function tsum(t)
     return x
 end
 
-let 
+let
     n = 10_000
 
     SUITE["edges"] = BenchmarkGroup([])
