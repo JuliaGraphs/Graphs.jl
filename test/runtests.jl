@@ -103,6 +103,7 @@ tests = [
     "edit_distance",
     "connectivity",
     "persistence/persistence",
+    "shortestpaths/utils",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/desopo-pape",
@@ -111,6 +112,7 @@ tests = [
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
     "shortestpaths/spfa",
+    "shortestpaths/longest_path",
     "traversals/bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
@@ -152,7 +154,6 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
-    "longestpaths/longest_path",
     "trees/prufer",
     "experimental/experimental",
 ]

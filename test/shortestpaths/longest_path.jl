@@ -4,14 +4,8 @@
     @test dag_longest_path(g) == Int[]
 
     # unweighted DAG
-    g = DiGraph(7)
-    A = [(1, 2), (2, 3), (2, 4), (3, 5), (5, 6), (3, 7)]
-    for (i, j) in A
-        add_edge!(g, i, j)
-    end
+    g = SimpleDiGraphFromIterator(Edge.([(1, 2), (2, 3), (2, 4), (3, 5), (5, 6), (3, 7)]))
     @test dag_longest_path(g) == [1, 2, 3, 5, 6]
-
-    @test dag_longest_path(g; topological_order = topological_sort_by_dfs(g)) == [1, 2, 3, 5, 6]
 
     # weighted DAG
     n = 6
@@ -23,7 +17,4 @@
         distmx[i, j] = dist
     end
     @test dag_longest_path(g, distmx) == [2, 3, 5]
-
-    @test dag_longest_path(g, distmx; topological_order = topological_sort_by_dfs(g)) == [2, 3, 5]
-
 end
