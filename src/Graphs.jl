@@ -426,7 +426,10 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # longestpaths
+    dag_longest_path
 
 """
     Graphs
@@ -496,6 +499,7 @@ include("traversals/eulerian.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
+include("shortestpaths/utils.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
@@ -504,6 +508,7 @@ include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("shortestpaths/spfa.jl")
+include("shortestpaths/longest_path.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
