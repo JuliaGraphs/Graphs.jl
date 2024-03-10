@@ -23,7 +23,8 @@ using DataStructures:
     union!,
     find_root!,
     BinaryMaxHeap,
-    BinaryMinHeap
+    BinaryMinHeap,
+    DefaultDict
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
@@ -307,6 +308,8 @@ export
 
     # community
     modularity,
+    community_detection_greedy_modularity,
+    community_detection_greedy_modularity_fast,
     core_periphery_deg,
     local_clustering,
     local_clustering_coefficient,
@@ -523,6 +526,8 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/greedy_modularity.jl")
+include("community/greedy_modularity_fast.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
