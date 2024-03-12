@@ -171,5 +171,3 @@ tests = [
         end
     end
 end;
-
-nothing;

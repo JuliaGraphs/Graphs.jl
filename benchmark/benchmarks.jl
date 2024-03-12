@@ -32,5 +32,3 @@ parallelbenchmarks = ["parallel/egonets.jl"]
 foreach(parallelbenchmarks) do bm
     include(joinpath(BENCHDIR, bm))
 end
-
-nothing

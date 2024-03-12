@@ -10,7 +10,6 @@ benchmark/Manifest.toml
 .benchmarkci
 *.cov
 /Manifest.toml
-notes
 /docs/Manifest.toml
 /docs/src/index.md
 /docs/src/contributing.md

@@ -1,6 +1,6 @@
 name: RunUploadBenchmarks
 env:
-  JULIA_NUM_THREADS: 1
+  JULIA_NUM_THREADS: auto
 on:
   pull_request:
     types: [labeled]
@@ -13,7 +13,6 @@ jobs:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.allow_failure }}
-    permissions: write-all
     strategy:
       fail-fast: false
       matrix:
