@@ -1,0 +1,588 @@
+[
+  {
+    "Julia": "1.10.1",
+    "BenchmarkTools": "1.0.0"
+  },
+  [
+    [
+      "BenchmarkGroup",
+      {
+        "data": {
+          "centrality": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "graphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "closeness_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "betweenness_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "katz_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "degree_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 28,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ],
+                "digraphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "closeness_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "betweenness_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "katz_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "degree_centrality": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 10,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "pagerank": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "parallel": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "egonet": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "vertexfunction": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "twohop": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "core": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "nv": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "graphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 807,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "digraphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 846,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ],
+                "edges": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "graphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 7,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "digraphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 7,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ],
+                "has_edge": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "graphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 8,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "digraphs": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 8,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "connectivity": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "graphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "connected_components": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ],
+                "digraphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "strongly_connected_components": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "insertions": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "SG(n,e) Generation": [
+                  "Parameters",
+                  {
+                    "gctrial": true,
+                    "time_tolerance": 0.05,
+                    "evals_set": false,
+                    "samples": 10000,
+                    "evals": 1,
+                    "gcsample": false,
+                    "seconds": 5,
+                    "overhead": 0,
+                    "memory_tolerance": 0.01
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "traversals": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "graphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "bfs_tree": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "dfs_tree": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ],
+                "digraphs": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "bfs_tree": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "dfs_tree": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "serial": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "egonet": [
+                  "BenchmarkGroup",
+                  {
+                    "data": {
+                      "vertexfunction": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ],
+                      "twohop": [
+                        "Parameters",
+                        {
+                          "gctrial": true,
+                          "time_tolerance": 0.05,
+                          "evals_set": false,
+                          "samples": 10000,
+                          "evals": 1,
+                          "gcsample": false,
+                          "seconds": 5,
+                          "overhead": 0,
+                          "memory_tolerance": 0.01
+                        }
+                      ]
+                    },
+                    "tags": []
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ],
+          "edges": [
+            "BenchmarkGroup",
+            {
+              "data": {
+                "fillp": [
+                  "Parameters",
+                  {
+                    "gctrial": true,
+                    "time_tolerance": 0.05,
+                    "evals_set": false,
+                    "samples": 10000,
+                    "evals": 1,
+                    "gcsample": false,
+                    "seconds": 5,
+                    "overhead": 0,
+                    "memory_tolerance": 0.01
+                  }
+                ],
+                "fille": [
+                  "Parameters",
+                  {
+                    "gctrial": true,
+                    "time_tolerance": 0.05,
+                    "evals_set": false,
+                    "samples": 10000,
+                    "evals": 1,
+                    "gcsample": false,
+                    "seconds": 5,
+                    "overhead": 0,
+                    "memory_tolerance": 0.01
+                  }
+                ],
+                "tsume": [
+                  "Parameters",
+                  {
+                    "gctrial": true,
+                    "time_tolerance": 0.05,
+                    "evals_set": false,
+                    "samples": 10000,
+                    "evals": 1,
+                    "gcsample": false,
+                    "seconds": 5,
+                    "overhead": 0,
+                    "memory_tolerance": 0.01
+                  }
+                ],
+                "tsump": [
+                  "Parameters",
+                  {
+                    "gctrial": true,
+                    "time_tolerance": 0.05,
+                    "evals_set": false,
+                    "samples": 10000,
+                    "evals": 1,
+                    "gcsample": false,
+                    "seconds": 5,
+                    "overhead": 0,
+                    "memory_tolerance": 0.01
+                  }
+                ]
+              },
+              "tags": []
+            }
+          ]
+        },
+        "tags": []
+      }
+    ]
+  ]
+]
