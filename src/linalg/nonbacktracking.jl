@@ -26,17 +26,22 @@ function non_backtracking_matrix(g::AbstractGraph)
         end
     end
 
-    B = zeros(Float64, m, m)
-
+    nz = if is_directed(g)
+        sum(indegree(g) .* outdegree(g))
+    else
+        sum(degree(g) .* (degree(g) .- 1))
+    end
+    rowidx = sizehint!(Vector{Int}(), nz)
+    colidx = sizehint!(Vector{Int}(), nz)
     for (e, u) in edgeidmap
         i, j = src(e), dst(e)
-        for k in inneighbors(g, i)
-            k == j && continue
-            v = edgeidmap[Edge(k, i)]
-            B[v, u] = 1
-        end
+
+        rows = [edgeidmap[Edge(k, i)] for k in inneighbors(g, i) if k != j]
+        append!(rowidx, rows)
+        append!(colidx, fill(u, length(rows)))
     end
 
+    B = sparse(rowidx, colidx, ones(Int, length(rowidx)), m, m)
     return B, edgeidmap
 end
 
