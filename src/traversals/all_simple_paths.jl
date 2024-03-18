@@ -43,12 +43,8 @@ function all_simple_paths(g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g)) where 
     return SimplePathIterator(g, u, vs, cutoff)
 end
 
-"""
-    SimplePathIterator{T <: Integer}
-
-Iterator that generates all simple paths in `g` from `u` to `vs` of a length at most
-`cutoff`.
-"""
+# Iterator that generates all simple paths in `g` from `u` to `vs` of a length at most
+# `cutoff`.
 struct SimplePathIterator{T<:Integer,G<:AbstractGraph{T}}
     g::G
     u::T       # start vertex
@@ -92,11 +88,7 @@ function _stepback!(state::SimplePathIteratorState) # updates iterator state.
     return nothing
 end
 
-"""
-    Base.iterate(spi::SimplePathIterator{T}, state=nothing)
-
-Returns the next simple path in `spi`, according to a depth-first search.
-"""
+# Returns the next simple path in `spi`, according to a depth-first search
 function Base.iterate(
     spi::SimplePathIterator{T}, state::SimplePathIteratorState=SimplePathIteratorState(spi)
 ) where {T<:Integer}
