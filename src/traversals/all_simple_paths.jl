@@ -1,6 +1,6 @@
 """
     all_simple_paths(g, u, v; cutoff=nv(g)) --> Graphs.SimplePathIterator
-    
+
 Returns an iterator that generates all simple paths in the graph `g` from a source vertex
 `u` to a target vertex `v` or iterable of target vertices `vs`.
 
@@ -13,30 +13,32 @@ The maximum path length (i.e., number of edges) is limited by the keyword argume
 omitted.
 
 ## Examples
-```jldoctest
-julia> using Graphs
-julia> g = complete_graph(4)
+```jldoctest allsimplepaths; setup = :(using Graphs)
+julia> g = complete_graph(4);
+
 julia> spi = all_simple_paths(g, 1, 4)
- Graphs.SimplePathIterator(1 → 4)
+SimplePathIterator{SimpleGraph{Int64}}(1 → 4)
+
 julia> collect(spi)
 5-element Vector{Vector{Int64}}:
- [1, 4]
- [1, 3, 4]
- [1, 3, 2, 4]
- [1, 2, 4]
  [1, 2, 3, 4]
+ [1, 2, 4]
+ [1, 3, 2, 4]
+ [1, 3, 4]
+ [1, 4]
 ```
 We can restrict the search to paths of length less than a specified cut-off (here, 2 edges):
-```jldoctest
+```jldoctest allsimplepaths; setup = :(using Graphs)
 julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
+3-element Vector{Vector{Int64}}:
  [1, 2, 4]
  [1, 3, 4]
  [1, 4]
 ```
 """
 function all_simple_paths(
-            g::AbstractGraph{T}, 
-            u::T, 
+            g::AbstractGraph{T},
+            u::T,
             vs;
             cutoff::T=nv(g)
             ) where T <: Integer
@@ -99,7 +101,7 @@ end
 Returns the next simple path in `spi`, according to a depth-first search.
 """
 function Base.iterate(
-            spi::SimplePathIterator{T}, 
+            spi::SimplePathIterator{T},
             state::SimplePathIteratorState=SimplePathIteratorState(spi)
             ) where T <: Integer
 
@@ -121,7 +123,7 @@ function Base.iterate(
             continue
         end
 
-        child = children[next_childe_index]    
+        child = children[next_childe_index]
         first(state.stack)[2] += 1 # move child index forward
         child in state.visited && continue
 
