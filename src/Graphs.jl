@@ -197,7 +197,7 @@ export
 
     # eulerian
     eulerian,
-    
+
     # all simple paths
     all_simple_paths,
 
