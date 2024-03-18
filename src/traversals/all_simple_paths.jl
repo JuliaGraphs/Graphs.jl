@@ -1,8 +1,10 @@
 """
     all_simple_paths(g, u, v; cutoff=nv(g)) --> Graphs.SimplePathIterator
 
-Returns an iterator that generates all simple paths in the graph `g` from a source vertex
-`u` to a target vertex `v` or iterable of target vertices `vs`.
+Returns an iterator that generates all 
+[simple paths](https://en.wikipedia.org/wiki/Path_(graph_theory)#Walk,_trail,_and_path) in 
+the graph `g` from a source vertex `u` to a target vertex `v` or iterable of target vertices
+`vs`. A simple path has no repeated vertices.
 
 The iterator's elements (i.e., the paths) can be materialized via `collect` or `iterate`.
 Paths are iterated in the order of a depth-first search.
