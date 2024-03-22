@@ -1,5 +1,6 @@
 """
-    all_simple_paths(g, u, v; cutoff=nv(g)) --> Graphs.SimplePathIterator
+    all_simple_paths(g, u, v; cutoff)  --> Graphs.SimplePathIterator
+    all_simple_paths(g, u, vs; cutoff) --> Graphs.SimplePathIterator
 
 Returns an iterator that generates all 
 [simple paths](https://en.wikipedia.org/wiki/Path_(graph_theory)#Walk,_trail,_and_path) in 
@@ -11,7 +12,7 @@ Paths are iterated in the order of a depth-first search.
 
 ## Keyword arguments
 The maximum path length (i.e., number of edges) is limited by the keyword argument `cutoff`
-(default, `nv(g)`). If a path's path length is greater than or equal to `cutoff`, it is
+(default, `nv(g)-1`). If a path's path length is greater than or equal to `cutoff`, it is
 omitted.
 
 ## Examples
@@ -38,7 +39,9 @@ julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
  [1, 4]
 ```
 """
-function all_simple_paths(g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g)) where {T<:Integer}
+function all_simple_paths(
+    g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g)-1
+) where {T<:Integer}
     vs = vs isa Set{T} ? vs : Set{T}(vs)
     return SimplePathIterator(g, u, vs, cutoff)
 end
@@ -68,17 +71,17 @@ Base.IteratorSize(::Type{<:SimplePathIterator}) = Base.SizeUnknown()
 Base.eltype(::SimplePathIterator{T}) where {T} = Vector{T}
 
 mutable struct SimplePathIteratorState{T<:Integer}
-    stack::Stack{Vector{T}} # used to restore iteration of child vertices; each vector has
-    # two elements: a parent vertex and an index of children
+    stack::Stack{Tuple{T, T}} # used to restore iteration of child vertices: elements are
+    # (parent vertex, index of children)
     visited::Stack{T}       # current path candidate
     queued::Vector{T}       # remaining targets if path length reached cutoff
 end
 function SimplePathIteratorState(spi::SimplePathIterator{T}) where {T<:Integer}
-    stack = Stack{Vector{T}}()
+    stack = Stack{Tuple{T, T}}()
     visited = Stack{T}()
     queued = Vector{T}()
     push!(visited, spi.u)    # add a starting vertex to the path candidate
-    push!(stack, [spi.u, 1]) # add a child node with index 1
+    push!(stack, (spi.u, 1)) # add a child node with index 1
     return SimplePathIteratorState{T}(stack, visited, queued)
 end
 
@@ -102,21 +105,22 @@ function Base.iterate(
             return result, state
         end
 
-        parent_node, next_childe_index = first(state.stack)
+        parent_node, next_child_index = first(state.stack)
         children = outneighbors(spi.g, parent_node)
-        if length(children) < next_childe_index
+        if length(children) < next_child_index
             # all children have been checked, step back.
             _stepback!(state)
             continue
         end
 
-        child = children[next_childe_index]
-        first(state.stack)[2] += 1 # move child index forward
+        child = children[next_child_index]
+        next_child_index′ = pop!(state.stack)[2]                # move child index forward
+        push!(state.stack, (parent_node, next_child_index′+1))  # ↩
         child in state.visited && continue
 
         if length(state.visited) == spi.cutoff
             # collect adjacent targets if more exist and add them to queue
-            rest_children = Set(children[next_childe_index:end])
+            rest_children = Set(children[next_child_index:end])
             state.queued = collect(
                 setdiff(intersect(spi.vs, rest_children), Set(state.visited))
             )
@@ -134,7 +138,7 @@ function Base.iterate(
             # update state variables
             push!(state.visited, child) # move to child vertex
             if !isempty(setdiff(spi.vs, state.visited)) # expand stack until all targets are found
-                push!(state.stack, [child, 1]) # add the child node as a parent for next iteration
+                push!(state.stack, (child, 1)) # add the child node as a parent for next iteration
             else
                 pop!(state.visited) # step back and explore the remaining child nodes
             end
