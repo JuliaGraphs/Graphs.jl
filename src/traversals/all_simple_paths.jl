@@ -10,6 +10,9 @@ the graph `g` from a source vertex `u` to a target vertex `v` or iterable of tar
 The iterator's elements (i.e., the paths) can be materialized via `collect` or `iterate`.
 Paths are iterated in the order of a depth-first search.
 
+If the requested path has identical source and target vertices, i.e., if `u = v`, a
+zero-length path `[u]` is included among the iterates.
+
 ## Keyword arguments
 The maximum path length (i.e., number of edges) is limited by the keyword argument `cutoff`
 (default, `nv(g)-1`). If a path's path length is greater than or equal to `cutoff`, it is
@@ -74,6 +77,7 @@ mutable struct SimplePathIteratorState{T<:Integer}
     # (parent vertex, index of children)
     visited::Stack{T}         # current path candidate
     queued::Vector{T}         # remaining targets if path length reached cutoff
+    self_visited::Bool        # in case `u ∈ vs`, we want to return a `[u]` path once only
 end
 function SimplePathIteratorState(spi::SimplePathIterator{T}) where {T<:Integer}
     stack = Stack{Tuple{T,T}}()
@@ -81,7 +85,7 @@ function SimplePathIteratorState(spi::SimplePathIterator{T}) where {T<:Integer}
     queued = Vector{T}()
     push!(visited, spi.u)    # add a starting vertex to the path candidate
     push!(stack, (spi.u, 1)) # add a child node with index 1
-    return SimplePathIteratorState{T}(stack, visited, queued)
+    return SimplePathIteratorState{T}(stack, visited, queued, false)
 end
 
 function _stepback!(state::SimplePathIteratorState) # updates iterator state.
@@ -112,7 +116,7 @@ function Base.iterate(
         end
 
         child = children[next_child_index]
-        next_child_index′ = pop!(state.stack)[2]               # move child index forward
+        next_child_index′ = pop!(state.stack)[2]                 # move child index forward
         push!(state.stack, (parent_node, next_child_index′ + 1)) # ↩
         child in state.visited && continue
 
@@ -145,5 +149,11 @@ function Base.iterate(
                 return result, state
             end
         end
+    end
+
+    # special-case: when `vs` includes `u`, return also a 1-vertex, 0-length path `[u]`
+    if spi.u in spi.vs && !state.self_visited
+        state.self_visited = true
+        return [spi.u], state
     end
 end

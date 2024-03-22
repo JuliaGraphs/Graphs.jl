@@ -8,7 +8,6 @@
     # printing
     @test sprint(show, paths) == "SimplePathIterator{SimpleGraph{Int64}}(1 → 4)"
 
-
     # single path with cutoff
     g = complete_graph(4)
     @test collect(all_simple_paths(g, 1, 4; cutoff=2)) == [[1, 2, 4], [1, 3, 4], [1, 4]]
@@ -82,12 +81,14 @@
     paths′ = all_simple_paths(g, 1, 6; cutoff=typemax(Int))
     @test Set(paths) == Set(paths′) == Set([[1, 2, 3, 4, 5, 6]])
 
-    # source equals targets
-    g = SimpleGraph(4)
-    paths = all_simple_paths(g, 1, 1)
-    @test Set(paths) == Set{Int}()
+    # same source and target vertex
+    g = path_graph(4)
+    @test Set(all_simple_paths(g, 1, 1)) == Set([[1]])
+    @test Set(all_simple_paths(g, 3, 3)) == Set([[3]])
+    @test Set(all_simple_paths(g, 1, [1, 1])) == Set([[1]])
+    @test Set(all_simple_paths(g, 1, [1, 4])) == Set([[1], [1, 2, 3, 4]])
 
-    # cutoff prunes paths (note: path length is node - 1)
+    # cutoff prunes paths (note: maximum path length below is `nv(g) - 1`)
     g = complete_graph(4)
     paths = all_simple_paths(g, 1, 2; cutoff=1)
     @test Set(paths) == Set([[1, 2]])
