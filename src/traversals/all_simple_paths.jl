@@ -40,14 +40,13 @@ julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
 ```
 """
 function all_simple_paths(
-    g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g)-1
+    g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g) - 1
 ) where {T<:Integer}
     vs = vs isa Set{T} ? vs : Set{T}(vs)
     return SimplePathIterator(g, u, vs, cutoff)
 end
 
-# Iterator that generates all simple paths in `g` from `u` to `vs` of a length at most
-# `cutoff`.
+# iterator over all simple paths from `u` to `vs` in `g` of length less than `cutoff`
 struct SimplePathIterator{T<:Integer,G<:AbstractGraph{T}}
     g::G
     u::T       # start vertex
@@ -71,13 +70,13 @@ Base.IteratorSize(::Type{<:SimplePathIterator}) = Base.SizeUnknown()
 Base.eltype(::SimplePathIterator{T}) where {T} = Vector{T}
 
 mutable struct SimplePathIteratorState{T<:Integer}
-    stack::Stack{Tuple{T, T}} # used to restore iteration of child vertices: elements are
+    stack::Stack{Tuple{T,T}} # used to restore iteration of child vertices: elements are
     # (parent vertex, index of children)
-    visited::Stack{T}       # current path candidate
-    queued::Vector{T}       # remaining targets if path length reached cutoff
+    visited::Stack{T}         # current path candidate
+    queued::Vector{T}         # remaining targets if path length reached cutoff
 end
 function SimplePathIteratorState(spi::SimplePathIterator{T}) where {T<:Integer}
-    stack = Stack{Tuple{T, T}}()
+    stack = Stack{Tuple{T,T}}()
     visited = Stack{T}()
     queued = Vector{T}()
     push!(visited, spi.u)    # add a starting vertex to the path candidate
@@ -91,7 +90,7 @@ function _stepback!(state::SimplePathIteratorState) # updates iterator state.
     return nothing
 end
 
-# Returns the next simple path in `spi`, according to a depth-first search
+# iterates to the next simple path in `spi`, according to a depth-first search
 function Base.iterate(
     spi::SimplePathIterator{T}, state::SimplePathIteratorState=SimplePathIteratorState(spi)
 ) where {T<:Integer}
@@ -108,14 +107,13 @@ function Base.iterate(
         parent_node, next_child_index = first(state.stack)
         children = outneighbors(spi.g, parent_node)
         if length(children) < next_child_index
-            # all children have been checked, step back.
-            _stepback!(state)
+            _stepback!(state) # all children have been checked, step back
             continue
         end
 
         child = children[next_child_index]
-        next_child_index′ = pop!(state.stack)[2]                # move child index forward
-        push!(state.stack, (parent_node, next_child_index′+1))  # ↩
+        next_child_index′ = pop!(state.stack)[2]               # move child index forward
+        push!(state.stack, (parent_node, next_child_index′ + 1)) # ↩
         child in state.visited && continue
 
         if length(state.visited) == spi.cutoff
