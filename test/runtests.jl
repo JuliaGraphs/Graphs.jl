@@ -109,6 +109,7 @@ tests = [
     "traversals/randomwalks",
     "traversals/diffusion",
     "traversals/eulerian",
+    "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
