@@ -1,6 +1,6 @@
 import Base: Matrix
 import Base: size
-using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
+using ArnoldiMethod: partialschur, partialeigen
 
 # using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices
@@ -152,7 +152,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         B, emap = non_backtracking_matrix(g)
         Bs = sparse(nbt)
         @test sparse(B) == Bs
-        @test eigs(nbt; which=LR(), nev=1)[1] ≈ eigs(B; which=LR(), nev=1)[1] atol = 1e-5
+        @test eigs(nbt; which=:LR, nev=1)[1] ≈ eigs(B; which=:LR, nev=1)[1] atol = 1e-5
 
         # check that matvec works
         x = ones(Float64, nbt.m)

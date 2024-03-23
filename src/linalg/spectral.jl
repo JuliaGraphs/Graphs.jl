@@ -185,12 +185,12 @@ function spectral_distance end
     A₂ = adjacency_matrix(G₂)
 
     λ₁ = if k < nv(G₁) - 1
-        eigs(A₁; nev=k, which=LR())[1]
+        eigs(A₁; nev=k, which=:LR)[1]
     else
         eigvals(Matrix(A₁))[end:-1:(end - (k - 1))]
     end
     λ₂ = if k < nv(G₂) - 1
-        eigs(A₂; nev=k, which=LR())[1]
+        eigs(A₂; nev=k, which=:LR)[1]
     else
         eigvals(Matrix(A₂))[end:-1:(end - (k - 1))]
     end

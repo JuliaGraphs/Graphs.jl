@@ -3,7 +3,7 @@ module Graphs
 using SimpleTraits
 
 ### Remove the following line once #915 is closed
-using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
+using ArnoldiMethod: partialschur, partialeigen
 using Statistics: mean
 
 # Currently used to support the ismutable function that is not available in Julia < v1.7

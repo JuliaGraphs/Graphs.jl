@@ -1,6 +1,6 @@
 module LinAlg
 
-using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
+using ArnoldiMethod: partialschur, partialeigen
 
 using SimpleTraits
 using SparseArrays: SparseMatrixCSC
@@ -50,7 +50,7 @@ export convert,
 function eigs(A; kwargs...)
     schr = partialschur(A; kwargs...)
     vals, vectors = partialeigen(schr[1])
-    reved = (kwargs[:which] == LR() || kwargs[:which] == LM())
+    reved = (kwargs[:which] == :LR || kwargs[:which] == :LM)
     k = min(get(kwargs, :nev, length(vals))::Int, length(vals))
     perm = sortperm(vals; by=real, rev=reved)[1:k]
     λ = vals[perm]

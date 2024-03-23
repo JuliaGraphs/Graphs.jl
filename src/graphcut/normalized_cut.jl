@@ -132,11 +132,11 @@ function _recursive_normalized_cut(W, thres, num_cuts)
     end
 
     # get eigenvector corresponding to the second smallest generalized eigenvalue:
-    # v = eigs(D-W, D, nev=2, which=SR())[2][:,2]
+    # v = eigs(D-W, D, nev=2, which=:SR)[2][:,2]
     # At least some versions of ARPACK have a bug, this is a workaround
     invDroot = sqrt.(inv(D)) # equal to Cholesky factorization for diagonal D
     if n > 12
-        _, Q = eigs(invDroot' * (D - W) * invDroot; nev=12, which=SR())
+        _, Q = eigs(invDroot' * (D - W) * invDroot; nev=12, which=:SR)
         (size(Q, 2) <= 1) && return collect(1:m) # no 2nd eigenvector
         ret = convert(Vector, real(view(Q, :, 2)))
     else
