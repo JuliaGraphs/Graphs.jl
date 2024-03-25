@@ -1,6 +1,6 @@
 import Base: Matrix
 import Base: size
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 # using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices

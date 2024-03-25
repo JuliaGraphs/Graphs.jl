@@ -6,8 +6,6 @@
 #
 ###################################################################
 
-using Base.Threads
-
 """
     spfa_shortest_paths(g, s, distmx=weights(g))
 

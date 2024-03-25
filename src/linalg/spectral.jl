@@ -1,8 +1,5 @@
 # This file provides reexported functions.
 
-using ArnoldiMethod
-using SparseArrays
-
 """
     adjacency_matrix(g[, T=Int; dir=:out])
 

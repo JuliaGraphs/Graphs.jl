@@ -8,7 +8,6 @@
 #   The type that encapsulates the state of Bellman Ford algorithm
 #
 ###################################################################
-using Base.Threads
 
 struct NegativeCycleError <: Exception end
 
