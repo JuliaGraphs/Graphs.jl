@@ -1,7 +1,6 @@
 using BenchmarkTools, Graphs
 
 const BENCHDIR = dirname(@__FILE__)
-
 const DIGRAPHS = Dict{String,DiGraph}(
     "complete100" => complete_digraph(100), "path500" => path_digraph(500)
 )
