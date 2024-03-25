@@ -108,6 +108,8 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "iterators/bfs",
+    "iterators/dfs",
     "traversals/eulerian",
     "community/cliques",
     "community/core-periphery",
