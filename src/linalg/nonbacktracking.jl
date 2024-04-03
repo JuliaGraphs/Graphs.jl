@@ -27,9 +27,9 @@ function non_backtracking_matrix(g::AbstractGraph)
     end
 
     nz = if is_directed(g)
-        sum(indegree(g) .* outdegree(g))
+        sum(indegree(g, v) * outdegree(g, v) for v in vertices(g))
     else
-        sum(degree(g) .* (degree(g) .- 1))
+        sum(degree(g, v) * (degree(g, v) - 1) for v in vertices(g))
     end
     rowidx = sizehint!(Vector{Int}(), nz)
     colidx = sizehint!(Vector{Int}(), nz)
