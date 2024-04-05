@@ -117,7 +117,7 @@ function Base.iterate(
 
         child = children[next_child_index]
         next_child_index′ = pop!(state.stack)[2]                 # move child index forward
-        push!(state.stack, (parent_node, next_child_index′ + 1)) # ↩
+        push!(state.stack, (parent_node, next_child_index′ + one(T))) # ↩
         child in state.visited && continue
 
         if length(state.visited) == spi.cutoff
