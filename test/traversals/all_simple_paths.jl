@@ -2,15 +2,14 @@
     # single path
     g = path_graph(4)
     paths = all_simple_paths(g, 1, 4)
-    @test Set(paths) == Set([[1, 2, 3, 4]])
-    @test Set(collect(paths)) == Set([[1, 2, 3, 4]])
+    @test Set(paths) == Set(collect(paths)) == Set([[1, 2, 3, 4]]) 
 
     # printing
     @test sprint(show, paths) == "SimplePathIterator{SimpleGraph{Int64}}(1 → 4)"
 
-    # single path with cutoff
+    # complete graph with cutoff
     g = complete_graph(4)
-    @test collect(all_simple_paths(g, 1, 4; cutoff=2)) == [[1, 2, 4], [1, 3, 4], [1, 4]]
+    @test Set(all_simple_paths(g, 1, 4; cutoff=2)) == Set([[1, 2, 4], [1, 3, 4], [1, 4]])
 
     # two paths
     g = path_graph(4)
@@ -18,14 +17,18 @@
     add_edge!(g, 3, 5)
     paths = all_simple_paths(g, 1, [4, 5])
     @test Set(paths) == Set([[1, 2, 3, 4], [1, 2, 3, 5]])
-    @test Set(collect(paths)) == Set([[1, 2, 3, 4], [1, 2, 3, 5]])
+    @test Set(collect(paths)) == Set([[1, 2, 3, 4], [1, 2, 3, 5]]) # check `collect` also
 
-    # two paths with cutoff
+    # two paths, with one beyond a cut-off
     g = path_graph(4)
     add_vertex!(g)
     add_edge!(g, 3, 5)
-    paths = all_simple_paths(g, 1, [4, 5]; cutoff=3)
-    @test Set(paths) == Set([[1, 2, 3, 4], [1, 2, 3, 5]])
+    add_vertex!(g)
+    add_edge!(g, 5, 6)
+    paths = all_simple_paths(g, 1, [4, 6])
+    @test Set(paths) == Set([[1, 2, 3, 4], [1, 2, 3, 5, 6]])
+    paths = all_simple_paths(g, 1, [4, 6]; cutoff=3)
+    @test Set(paths) == Set([[1, 2, 3, 4]])
 
     # two targets in line emits two paths
     g = path_graph(4)
