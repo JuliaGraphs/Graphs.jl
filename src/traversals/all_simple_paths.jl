@@ -140,7 +140,7 @@ function Base.iterate(
             # update state variables
             push!(state.visited, child) # move to child vertex
             if !isempty(setdiff(spi.vs, state.visited)) # expand stack until all targets are found
-                push!(state.stack, (child, 1)) # add the child node as a parent for next iteration
+                push!(state.stack, (child, one(T))) # add the child node as a parent for next iteration
             else
                 pop!(state.visited) # step back and explore the remaining child nodes
             end
