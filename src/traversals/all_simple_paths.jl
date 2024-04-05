@@ -33,7 +33,8 @@ julia> collect(spi)
  [1, 3, 4]
  [1, 4]
 ```
-We can restrict the search to paths of length less than or equal to a specified cut-off (here, 2 edges):
+We can restrict the search to path lengths less than or equal to a specified cut-off (here, 
+2 edges):
 ```jldoctest allsimplepaths; setup = :(using Graphs)
 julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
 3-element Vector{Vector{Int64}}:
@@ -43,7 +44,7 @@ julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
 ```
 """
 function all_simple_paths(
-    g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g) - 1
+    g::AbstractGraph{T}, u::T, vs; cutoff::T=nv(g) - one(T)
 ) where {T<:Integer}
     vs = vs isa Set{T} ? vs : Set{T}(vs)
     return SimplePathIterator(g, u, vs, cutoff)
@@ -73,7 +74,7 @@ Base.IteratorSize(::Type{<:SimplePathIterator}) = Base.SizeUnknown()
 Base.eltype(::SimplePathIterator{T}) where {T} = Vector{T}
 
 mutable struct SimplePathIteratorState{T<:Integer}
-    stack::Stack{Tuple{T,T}} # used to restore iteration of child vertices: elements are
+    stack::Stack{Tuple{T,T}} # used to restore iteration of child vertices: elements are ↩
     # (parent vertex, index of children)
     visited::Stack{T}         # current path candidate
     queued::Vector{T}         # remaining targets if path length reached cutoff
@@ -116,8 +117,8 @@ function Base.iterate(
         end
 
         child = children[next_child_index]
-        next_child_index′ = pop!(state.stack)[2]                 # move child index forward
-        push!(state.stack, (parent_node, next_child_index′ + one(T))) # ↩
+        next_child_index_tmp = pop!(state.stack)[2]                      # move child ↩ 
+        push!(state.stack, (parent_node, next_child_index_tmp + one(T))) # index forward
         child in state.visited && continue
 
         if length(state.visited) == spi.cutoff
