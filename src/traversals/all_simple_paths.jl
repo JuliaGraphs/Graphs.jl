@@ -15,7 +15,7 @@ zero-length path `[u]` is included among the iterates.
 
 ## Keyword arguments
 The maximum path length (i.e., number of edges) is limited by the keyword argument `cutoff`
-(default, `nv(g)-1`). If a path's path length is greater than or equal to `cutoff`, it is
+(default, `nv(g)-1`). If a path's path length is greater than `cutoff`, it is
 omitted.
 
 ## Examples
@@ -33,7 +33,7 @@ julia> collect(spi)
  [1, 3, 4]
  [1, 4]
 ```
-We can restrict the search to paths of length less than a specified cut-off (here, 2 edges):
+We can restrict the search to paths of length less than or equal to a specified cut-off (here, 2 edges):
 ```jldoctest allsimplepaths; setup = :(using Graphs)
 julia> collect(all_simple_paths(g, 1, 4; cutoff=2))
 3-element Vector{Vector{Int64}}:
