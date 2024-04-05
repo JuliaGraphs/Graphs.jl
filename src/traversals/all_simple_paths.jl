@@ -84,7 +84,7 @@ function SimplePathIteratorState(spi::SimplePathIterator{T}) where {T<:Integer}
     visited = Stack{T}()
     queued = Vector{T}()
     push!(visited, spi.u)    # add a starting vertex to the path candidate
-    push!(stack, (spi.u, 1)) # add a child node with index 1
+    push!(stack, (spi.u, one(T))) # add a child node with index 1
     return SimplePathIteratorState{T}(stack, visited, queued, false)
 end
 
