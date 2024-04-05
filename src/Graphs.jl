@@ -23,7 +23,8 @@ using DataStructures:
     union!,
     find_root!,
     BinaryMaxHeap,
-    BinaryMinHeap
+    BinaryMinHeap,
+    Stack
 using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
@@ -196,6 +197,9 @@ export
 
     # eulerian
     eulerian,
+
+    # all simple paths
+    all_simple_paths,
 
     # coloring
     greedy_color,
@@ -496,6 +500,7 @@ include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
 include("traversals/eulerian.jl")
+include("traversals/all_simple_paths.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
