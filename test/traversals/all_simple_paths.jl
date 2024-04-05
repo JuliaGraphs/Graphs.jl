@@ -2,7 +2,7 @@
     # single path
     g = path_graph(4)
     paths = all_simple_paths(g, 1, 4)
-    @test Set(paths) == Set(collect(paths)) == Set([[1, 2, 3, 4]]) 
+    @test Set(paths) == Set(collect(paths)) == Set([[1, 2, 3, 4]])
 
     # printing
     @test sprint(show, paths) == "SimplePathIterator{SimpleGraph{Int64}}(1 → 4)"
