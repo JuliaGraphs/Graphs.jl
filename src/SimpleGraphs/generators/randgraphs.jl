@@ -972,10 +972,10 @@ function random_regular_graph(
 end
 
 """
-    random_configuration_model(n, ks)
+    random_configuration_model(n, k)
 
 Create a random undirected graph according to the [configuration model]
-(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
+(https://sites.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
 containing `n` vertices, with each node `i` having degree `k[i]`.
 
 ### Optional Arguments
