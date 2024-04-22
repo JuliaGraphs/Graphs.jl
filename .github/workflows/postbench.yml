@@ -33,6 +33,8 @@ jobs:
 
       - name: 'Unzip artifact'
         run: unzip BenchmarkResults.zip -d .benchmarkci/
+      - name: install dependencies
+        run: julia -e 'using Pkg; pkg"add PkgBenchmark BenchmarkCI@0.1"'
       - name: 'Post results test 1'
         run: julia -e 'using BenchmarkCI; BenchmarkCI.postjudge()'
         env:
