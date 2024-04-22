@@ -12,7 +12,7 @@ const GRAPHS = Dict{String,Graph}(
     "path500" => path_graph(500),
 )
 
-const serialbenchmarks = [
+serialbenchmarks = [
     "serial/core.jl",
     "serial/connectivity.jl",
     "serial/centrality.jl",
