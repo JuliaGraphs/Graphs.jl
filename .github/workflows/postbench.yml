@@ -2,8 +2,8 @@ name: PostBenchmarks
 on:
   workflow_run:
     workflows: [RunUploadBenchmarks]
-    types: [completed]
-    branches: [master, benchx]
+    # types: [completed]
+    # branches: [master, benchx]
 jobs:
   on-success:
     runs-on: ubuntu-latest
