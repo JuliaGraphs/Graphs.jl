@@ -3,7 +3,6 @@ on:
   workflow_run:
     workflows: [RunUploadBenchmarks]
     types: [completed]
-    branches: [master]
 jobs:
   on-success:
     runs-on: ubuntu-latest
