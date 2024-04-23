@@ -2,8 +2,8 @@ name: PostBenchmarks
 on:
   workflow_run:
     workflows: [RunUploadBenchmarks]
-    # types: [completed]
-    # branches: [master, benchx]
+    types: [completed]
+    branches: [master]
 jobs:
   on-success:
     runs-on: ubuntu-latest
@@ -52,12 +52,14 @@ jobs:
               issue_number: issue_number,
               body: 'Thank you for the PR!'
             });
+      - name: 'Read PR number'
+        run: echo "{MY_PR_NUMBER}=$(cat .benchmarkci/pr_number)" >> $GITHUB_ENV
       - name: 'Comment on PR test 3'
-        run: gh pr comment "$NUMBER" --body "$BODY"
+        run: gh pr comment "$MY_PR_NUMBER" --body "$BODY"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.pull_request.number }}
+          # NUMBER: ${{ github.event.pull_request.number }}
           BODY: >
             This pr comment is testing.
             **This should be bold**
