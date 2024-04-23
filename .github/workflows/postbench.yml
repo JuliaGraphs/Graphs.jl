@@ -52,7 +52,7 @@ jobs:
               issue_number: issue_number,
               body: 'Thank you for the PR!'
             });
-      - name: `Read PR number`
+      - name: 'Read PR number'
         run: echo "{MY_PR_NUMBER}=$(cat .benchmarkci/pr_number)" >> $GITHUB_ENV
       - name: 'Comment on PR test 3'
         run: gh pr comment "$MY_PR_NUMBER" --body "$BODY"
