@@ -121,10 +121,12 @@ function topological_sort_by_dfs end
 end
 
 """
-    dfs_tree(g, s)
+    dfs_tree(g, s[;dir=:out])
 
-Return an ordered vector of vertices representing a directed acyclic graph based on
-depth-first traversal of the graph `g` starting with source vertex `s`.
+Provide a depth-first traversal of the graph `g` starting with source vertex `s`,
+and return a directed acyclic graph of vertices in the order they were discovered.
+If `dir` is specified, use the corresponding edge direction (`:in` and `:out` are
+acceptable values).
 """
 dfs_tree(g::AbstractGraph, s::Integer; dir=:out) = tree(dfs_parents(g, s; dir=dir))
 
