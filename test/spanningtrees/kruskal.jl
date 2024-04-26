@@ -44,4 +44,9 @@
         @test sort([(src(e), dst(e)) for e in mst2]) == sort([(src(e), dst(e)) for e in vec2])
         @test sort([(src(e), dst(e)) for e in max_mst2]) == sort([(src(e), dst(e)) for e in max_vec2])
     end
+
+    # non regression test for #362
+    g = Graph()
+    mst = @inferred(kruskal_mst(g))
+    @test isempty(mst)
 end

@@ -19,6 +19,11 @@
         g_copy = SimpleGraph(g)
         Graphs.filter_non_term_leaves!(g_copy, [2, 5])
         @test ne(g_copy) == 2 # [Edge(2, 1), Edge(1, 5)]
+
+        # non regression test for #362
+        g_st = @inferred(steiner_tree(g, [2]))
+        @test ne(g_st) == 0
+
     end
 
     g4 = path_graph(11)

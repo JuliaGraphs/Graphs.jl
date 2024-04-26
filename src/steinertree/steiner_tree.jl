@@ -44,6 +44,8 @@ function steiner_tree end
     g::AG::(!IsDirected), term_vert::Vector{<:Integer}, distmx::AbstractMatrix{U}=weights(g)
 ) where {U<:Real,T,AG<:AbstractGraph{T}}
     nvg = nv(g)
+    length(term_vert) == 0 && return SimpleGraph()
+    length(term_vert) == 1 && return SimpleGraph(first(term_vert))
     term_to_actual = T.(term_vert)
     unique!(term_to_actual)
 
