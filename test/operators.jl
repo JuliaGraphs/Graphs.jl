@@ -54,88 +54,86 @@
 			@test has_edge(z, e)
 			@test z == path_graph(6)
 		end
+    
+        @testset "merge vertices" begin
+            # Check merge_vertices function.
+            h1 = Graph{T}(7)
+            add_edge!(h1, 2, 5)
+            add_edge!(h1, 3, 6)
+            add_edge!(h1, 1, 7)
+            add_edge!(h1, 6, 5)
+            vs = [2, 3, 7, 3, 3, 2]
+            hmerged = @inferred merge_vertices(h1, vs)
+            @test neighbors(hmerged, 1) == [2]
+            @test neighbors(hmerged, 2) == [1, 4, 5]
+            @test neighbors(hmerged, 3) == []
+            @test neighbors(hmerged, 4) == [2, 5]
+            @test eltype(hmerged) == eltype(g)
+    
+            new_map = @inferred(merge_vertices!(h1, vs))
+            @test new_map == [1, 2, 2, 3, 4, 5, 2]
+            @test neighbors(h1, 1) == [2]
+            @test neighbors(h1, 2) == [1, 4, 5]
+            @test neighbors(h1, 3) == []
+            @test neighbors(h1, 4) == [2, 5]
+            @test hmerged == h1
+            
+            h2 = path_digraph(4)
+            h2 = DiGraph{T}(h2)
+            hmerged = @inferred merge_vertices(h2, [2, 3])
+            @test is_directed(hmerged)
+            @test inneighbors(hmerged, 1) == []
+            @test inneighbors(hmerged, 2) == [1]
+            @test inneighbors(hmerged, 3) == [2]
+            @test outneighbors(hmerged, 1) == [2]
+            @test outneighbors(hmerged, 2) == [3]
+            @test outneighbors(hmerged, 3) == []
+            @test eltype(hmerged) == eltype(h2)
+    
+            
+            h3 = Graph{T}(7)
+            add_edge!(h3, 1, 2)
+            add_edge!(h3, 2, 3)
+            add_edge!(h3, 2, 4)
+            add_edge!(h3, 3, 4)
+            add_edge!(h3, 3, 7)
+            new_map = @inferred(merge_vertices!(h3, [2, 3, 2, 2]))
+            @test new_map == [1, 2, 2, 3, 4, 5, 6]
+            @test neighbors(h3, 2) == [1, 3, 6]
+            @test neighbors(h3, 1) == [2]
+            @test neighbors(h3, 3) == [2]
+            @test neighbors(h3, 4) == Int[]
+            @test neighbors(h3, 6) == [2]
+            @test ne(h3) == 3
+            @test nv(h3) == 6
+            
+            h4 = Graph{T}(7)
+            add_edge!(h4, 1, 2)
+            add_edge!(h4, 2, 3)
+            add_edge!(h4, 2, 4)
+            add_edge!(h4, 3, 4)
+            add_edge!(h4, 3, 7)
+            add_edge!(h4, 6, 7)
+            new_map = @inferred(merge_vertices!(h4, [2, 7, 3, 2]))
+            @test new_map == [1, 2, 2, 3, 4, 5, 2]
+            @test neighbors(h4, 2) == [1, 3, 5]
+            @test neighbors(h4, 1) == [2]
+            @test neighbors(h4, 3) == [2]
+            @test neighbors(h4, 4) == Int[]
+            @test neighbors(h4, 5) == [2]
+            @test ne(h4) == 3
+            @test nv(h4) == 5
+            
+            h5 = star_graph(5)
+            h5 = Graph{T}(h5)
+            h5merged = merge_vertices(h5, [1, 2])
+            @test neighbors(h5merged, 1) == [2, 3, 4]
+            @test neighbors(h5merged, 2) == [1]
+            @test neighbors(h5merged, 3) == [1]
+            @test neighbors(h5merged, 4) == [1]
+        end
 	end
-
-	@testset "merge vertices" begin
-		# Check merge_vertices function.
-		h1 = Graph{T}(7)
-		add_edge!(h1, 2, 5)
-		add_edge!(h1, 3, 6)
-		add_edge!(h1, 1, 7)
-		add_edge!(h1, 6, 5)
-		@testset "$g" for g in testlargegraphs(h1)
-			vs = [2, 3, 7, 3, 3, 2]
-			hmerged = @inferred merge_vertices(g, vs)
-			@test neighbors(hmerged, 1) == [2]
-			@test neighbors(hmerged, 2) == [1, 4, 5]
-			@test neighbors(hmerged, 3) == []
-			@test neighbors(hmerged, 4) == [2, 5]
-			@test eltype(hmerged) == eltype(g)
-
-			new_map = @inferred(merge_vertices!(g, vs))
-			@test new_map == [1, 2, 2, 3, 4, 5, 2]
-			@test neighbors(g, 1) == [2]
-			@test neighbors(g, 2) == [1, 4, 5]
-			@test neighbors(g, 3) == []
-			@test neighbors(hmerged, 4) == [2, 5]
-			@test hmerged == g
-		end
-
-		h2 = path_digraph(4)
-		@testset "$g" for g in testlargegraphs(h2)
-			hmerged = @inferred merge_vertices(g, [2, 3])
-			@test is_directed(hmerged)
-			@test inneighbors(hmerged, 1) == []
-			@test inneighbors(hmerged, 2) == [1]
-			@test inneighbors(hmerged, 3) == [2]
-			@test outneighbors(hmerged, 1) == [2]
-			@test outneighbors(hmerged, 2) == [3]
-			@test outneighbors(hmerged, 3) == []
-			@test eltype(hmerged) == eltype(g)
-		end
-
-
-		h3 = Graph{T}(7)
-		add_edge!(h3, 1, 2)
-		add_edge!(h3, 2, 3)
-		add_edge!(h3, 2, 4)
-		add_edge!(h3, 3, 4)
-		add_edge!(h3, 3, 7)
-		new_map = @inferred(merge_vertices!(h3, [2, 3, 2, 2]))
-		@test new_map == [1, 2, 2, 3, 4, 5, 6]
-		@test neighbors(h3, 2) == [1, 3, 6]
-		@test neighbors(h3, 1) == [2]
-		@test neighbors(h3, 3) == [2]
-		@test neighbors(h3, 4) == Int[]
-		@test neighbors(h3, 6) == [2]
-		@test ne(h3) == 3
-		@test nv(h3) == 6
-
-		h4 = Graph{T}(7)
-		add_edge!(h4, 1, 2)
-		add_edge!(h4, 2, 3)
-		add_edge!(h4, 2, 4)
-		add_edge!(h4, 3, 4)
-		add_edge!(h4, 3, 7)
-		add_edge!(h4, 6, 7)
-		new_map = @inferred(merge_vertices!(h4, [2, 7, 3, 2]))
-		@test new_map == [1, 2, 2, 3, 4, 5, 2]
-		@test neighbors(h4, 2) == [1, 3, 5]
-		@test neighbors(h4, 1) == [2]
-		@test neighbors(h4, 3) == [2]
-		@test neighbors(h4, 4) == Int[]
-		@test neighbors(h4, 5) == [2]
-		@test ne(h4) == 3
-		@test nv(h4) == 5
-
-		h5 = star_graph(5)
-		h5merged = merge_vertices(h5, [1, 2])
-		@test neighbors(h5merged, 1) == [2, 3, 4]
-		@test neighbors(h5merged, 2) == [1]
-		@test neighbors(h5merged, 3) == [1]
-		@test neighbors(h5merged, 4) == [1]
-	end
-
+    
 	@testset "$g" for g in testlargegraphs(g4)
 		T = eltype(g)
 		@testset "complement" begin
