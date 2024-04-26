@@ -2,7 +2,7 @@
 # as they require cloning and modifying graphs.
 
 """
-    complement(g)
+	complement(g)
 
 Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
 of a graph
@@ -34,31 +34,31 @@ Edge 5 => 3
 ```
 """
 function complement(g::Graph)
-    gnv = nv(g)
-    h = SimpleGraph(gnv)
-    for i in 1:gnv
-        for j in (i + 1):gnv
-            if !has_edge(g, i, j)
-                add_edge!(h, i, j)
-            end
-        end
-    end
-    return h
+	gnv = nv(g)
+	h = SimpleGraph(gnv)
+	for i in 1:gnv
+		for j in (i+1):gnv
+			if !has_edge(g, i, j)
+				add_edge!(h, i, j)
+			end
+		end
+	end
+	return h
 end
 
 function complement(g::DiGraph)
-    gnv = nv(g)
-    h = SimpleDiGraph(gnv)
-    for i in vertices(g), j in vertices(g)
-        if i != j && !has_edge(g, i, j)
-            add_edge!(h, i, j)
-        end
-    end
-    return h
+	gnv = nv(g)
+	h = SimpleDiGraph(gnv)
+	for i in vertices(g), j in vertices(g)
+		if i != j && !has_edge(g, i, j)
+			add_edge!(h, i, j)
+		end
+	end
+	return h
 end
 
 """
-    reverse(g)
+	reverse(g)
 
 Return a directed graph where all edges are reversed from the
 original directed graph.
@@ -82,30 +82,30 @@ Edge 5 => 4
 ```
 """
 function reverse end
-@traitfn function reverse(g::G::IsDirected) where {G<:AbstractSimpleGraph}
-    gnv = nv(g)
-    gne = ne(g)
-    h = SimpleDiGraph(gnv)
-    h.fadjlist = deepcopy_adjlist(g.badjlist)
-    h.badjlist = deepcopy_adjlist(g.fadjlist)
-    h.ne = gne
-    return h
+@traitfn function reverse(g::G::IsDirected) where {G <: AbstractSimpleGraph}
+	gnv = nv(g)
+	gne = ne(g)
+	h = SimpleDiGraph(gnv)
+	h.fadjlist = deepcopy_adjlist(g.badjlist)
+	h.badjlist = deepcopy_adjlist(g.fadjlist)
+	h.ne = gne
+	return h
 end
 
 """
-    reverse!(g)
+	reverse!(g)
 
 In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
 """
 function reverse! end
-@traitfn function reverse!(g::G::IsDirected) where {G<:AbstractSimpleGraph}
-    g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
-    return g
+@traitfn function reverse!(g::G::IsDirected) where {G <: AbstractSimpleGraph}
+	g.fadjlist, g.badjlist = g.badjlist, g.fadjlist
+	return g
 end
 
 """
-    blockdiag(g, h)
+	blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
 edges where the vertices and edges from graph `h` are appended to graph `g`.
@@ -137,20 +137,20 @@ Edge 7 => 8
 Edge 8 => 6
 ```
 """
-function blockdiag(g::T, h::T) where {T<:AbstractGraph}
-    gnv = nv(g)
-    r = T(gnv + nv(h))
-    for e in edges(g)
-        add_edge!(r, e)
-    end
-    for e in edges(h)
-        add_edge!(r, gnv + src(e), gnv + dst(e))
-    end
-    return r
+function blockdiag(g::T, h::T) where {T <: AbstractGraph}
+	gnv = nv(g)
+	r = T(gnv + nv(h))
+	for e in edges(g)
+		add_edge!(r, e)
+	end
+	for e in edges(h)
+		add_edge!(r, gnv + src(e), gnv + dst(e))
+	end
+	return r
 end
 
 """
-    intersect(g, h)
+	intersect(g, h)
 
 Return a graph with edges that are only in both graph `g` and graph `h`.
 
@@ -172,19 +172,19 @@ Edge 2 => 3
 Edge 3 => 1
 ```
 """
-function intersect(g::T, h::T) where {T<:AbstractGraph}
-    gnv = nv(g)
-    hnv = nv(h)
+function intersect(g::T, h::T) where {T <: AbstractGraph}
+	gnv = nv(g)
+	hnv = nv(h)
 
-    r = T(min(gnv, hnv))
-    for e in intersect(edges(g), edges(h))
-        add_edge!(r, e)
-    end
-    return r
+	r = T(min(gnv, hnv))
+	for e in intersect(edges(g), edges(h))
+		add_edge!(r, e)
+	end
+	return r
 end
 
 """
-    difference(g, h)
+	difference(g, h)
 
 Return a graph with edges in graph `g` that are not in graph `h`.
 
@@ -206,19 +206,19 @@ Edge 4 => 5
 Edge 5 => 4
 ```
 """
-function difference(g::T, h::T) where {T<:AbstractGraph}
-    gnv = nv(g)
-    hnv = nv(h)
+function difference(g::T, h::T) where {T <: AbstractGraph}
+	gnv = nv(g)
+	hnv = nv(h)
 
-    r = T(gnv)
-    for e in edges(g)
-        !has_edge(h, e) && add_edge!(r, e)
-    end
-    return r
+	r = T(gnv)
+	for e in edges(g)
+		!has_edge(h, e) && add_edge!(r, e)
+	end
+	return r
 end
 
 """
-    symmetric_difference(g, h)
+	symmetric_difference(g, h)
 
 Return a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
@@ -249,22 +249,22 @@ julia> collect(edges(f))
  Edge 2 => 3
 ```
 """
-function symmetric_difference(g::T, h::T) where {T<:AbstractGraph}
-    gnv = nv(g)
-    hnv = nv(h)
+function symmetric_difference(g::T, h::T) where {T <: AbstractGraph}
+	gnv = nv(g)
+	hnv = nv(h)
 
-    r = T(max(gnv, hnv))
-    for e in edges(g)
-        !has_edge(h, e) && add_edge!(r, e)
-    end
-    for e in edges(h)
-        !has_edge(g, e) && add_edge!(r, e)
-    end
-    return r
+	r = T(max(gnv, hnv))
+	for e in edges(g)
+		!has_edge(h, e) && add_edge!(r, e)
+	end
+	for e in edges(h)
+		!has_edge(g, e) && add_edge!(r, e)
+	end
+	return r
 end
 
 """
-    union(g, h)
+	union(g, h)
 
 Return a graph that combines graphs `g` and `h` by taking the set union
 of all vertices and edges.
@@ -300,26 +300,26 @@ julia> collect(edges(f))
  Edge 4 => 5
 ```
 """
-function union(g::T, h::T) where {T<:AbstractSimpleGraph}
-    gnv = nv(g)
-    hnv = nv(h)
+function union(g::T, h::T) where {T <: AbstractSimpleGraph}
+	gnv = nv(g)
+	hnv = nv(h)
 
-    r = T(max(gnv, hnv))
-    r.ne = ne(g)
-    for i in vertices(g)
-        r.fadjlist[i] = deepcopy(g.fadjlist[i])
-        if is_directed(g)
-            r.badjlist[i] = deepcopy(g.badjlist[i])
-        end
-    end
-    for e in edges(h)
-        add_edge!(r, e)
-    end
-    return r
+	r = T(max(gnv, hnv))
+	r.ne = ne(g)
+	for i in vertices(g)
+		r.fadjlist[i] = deepcopy(g.fadjlist[i])
+		if is_directed(g)
+			r.badjlist[i] = deepcopy(g.badjlist[i])
+		end
+	end
+	for e in edges(h)
+		add_edge!(r, e)
+	end
+	return r
 end
 
 """
-    join(g, h)
+	join(g, h)
 
 Return a graph that combines graphs `g` and `h` using `blockdiag` and then
 adds all the edges between the vertices in `g` and those in `h`.
@@ -348,18 +348,18 @@ julia> collect(edges(g))
  Edge 4 => 5
 ```
 """
-function join(g::T, h::T) where {T<:AbstractGraph}
-    r = blockdiag(g, h)
-    for i in vertices(g)
-        for j in (nv(g) + 1):(nv(g) + nv(h))
-            add_edge!(r, i, j)
-        end
-    end
-    return r
+function join(g::T, h::T) where {T <: AbstractGraph}
+	r = blockdiag(g, h)
+	for i in vertices(g)
+		for j in (nv(g)+1):(nv(g)+nv(h))
+			add_edge!(r, i, j)
+		end
+	end
+	return r
 end
 
 """
-    crosspath(len::Integer, g::Graph)
+	crosspath(len::Integer, g::Graph)
 
 Return a graph that duplicates `g` `len` times and connects each vertex
 with its copies in a path.
@@ -394,33 +394,33 @@ julia> collect(edges(g))
 function crosspath end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function crosspath(
-    len::Integer, g::AG::(!IsDirected)
-) where {T,AG<:AbstractGraph{T}}
-    p = path_graph(len)
-    h = SimpleGraph{T}(p)
-    return cartesian_product(h, g)
+	len::Integer, g::AG::(!IsDirected),
+) where {T, AG <: AbstractGraph{T}}
+	p = path_graph(len)
+	h = SimpleGraph{T}(p)
+	return cartesian_product(h, g)
 end
 
 # The following operators allow one to use a Graphs.Graph as a matrix in eigensolvers for spectral ranking and partitioning.
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize Graphs natively.
 # """
-function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
-    length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
-    y = zeros(T, nv(g))
-    for e in edges(g)
-        i = src(e)
-        j = dst(e)
-        y[i] += v[j]
-        if !is_directed(g)
-            y[j] += v[i]
-        end
-    end
-    return y
+function *(g::AbstractGraph, v::Vector{T}) where {T <: Real}
+	length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
+	y = zeros(T, nv(g))
+	for e in edges(g)
+		i = src(e)
+		j = dst(e)
+		y[i] += v[j]
+		if !is_directed(g)
+			y[j] += v[i]
+		end
+	end
+	return y
 end
 
 """
-    sum(g, i)
+	sum(g, i)
 
 Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 
@@ -448,14 +448,14 @@ julia> sum(g, 1)
 ```
 """
 function sum(g::AbstractGraph, dim::Int)
-    dim == 1 && return indegree(g, vertices(g))
-    dim == 2 && return outdegree(g, vertices(g))
-    throw(ArgumentError("dimension must be <= 2"))
+	dim == 1 && return indegree(g, vertices(g))
+	dim == 2 && return outdegree(g, vertices(g))
+	throw(ArgumentError("dimension must be <= 2"))
 end
 
 size(g::AbstractGraph) = (nv(g), nv(g))
 """
-    size(g, i)
+	size(g, i)
 
 Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
 
@@ -478,7 +478,7 @@ julia> size(g, 3)
 size(g::AbstractGraph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
 """
-    sum(g)
+	sum(g)
 
 Return the number of edges in `g`.
 
@@ -495,7 +495,7 @@ julia> sum(g)
 sum(g::AbstractGraph) = ne(g)
 
 """
-    sparse(g)
+	sparse(g)
 
 Return the default adjacency matrix of `g`.
 """
@@ -505,20 +505,20 @@ length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
 @traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
-    return true
+	return true
 end
 
 @traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
-    for e in edges(g)
-        if !has_edge(g, reverse(e))
-            return false
-        end
-    end
-    return true
+	for e in edges(g)
+		if !has_edge(g, reverse(e))
+			return false
+		end
+	end
+	return true
 end
 
 """
-    cartesian_product(g, h)
+	cartesian_product(g, h)
 
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
@@ -550,27 +550,27 @@ julia> collect(edges(g))
  Edge 8 => 9
 ```
 """
-function cartesian_product(g::G, h::G) where {G<:AbstractGraph}
-    z = G(nv(g) * nv(h))
-    id(i, j) = (i - 1) * nv(h) + j
-    for e in edges(g)
-        i1, i2 = Tuple(e)
-        for j in 1:nv(h)
-            add_edge!(z, id(i1, j), id(i2, j))
-        end
-    end
+function cartesian_product(g::G, h::G) where {G <: AbstractGraph}
+	z = G(nv(g) * nv(h))
+	id(i, j) = (i - 1) * nv(h) + j
+	for e in edges(g)
+		i1, i2 = Tuple(e)
+		for j in 1:nv(h)
+			add_edge!(z, id(i1, j), id(i2, j))
+		end
+	end
 
-    for e in edges(h)
-        j1, j2 = Tuple(e)
-        for i in vertices(g)
-            add_edge!(z, id(i, j1), id(i, j2))
-        end
-    end
-    return z
+	for e in edges(h)
+		j1, j2 = Tuple(e)
+		for i in vertices(g)
+			add_edge!(z, id(i, j1), id(i, j2))
+		end
+	end
+	return z
 end
 
 """
-    tensor_product(g, h)
+	tensor_product(g, h)
 
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
@@ -598,28 +598,28 @@ julia> collect(edges(g))
  Edge 3 => 8
 ```
 """
-function tensor_product(g::G, h::G) where {G<:AbstractGraph}
-    z = G(nv(g) * nv(h))
-    id(i, j) = (i - 1) * nv(h) + j
-    undirected = !is_directed(g)
-    for e1 in edges(g)
-        i1, i2 = Tuple(e1)
-        for e2 in edges(h)
-            j1, j2 = Tuple(e2)
-            add_edge!(z, id(i1, j1), id(i2, j2))
-            if undirected
-                add_edge!(z, id(i1, j2), id(i2, j1))
-            end
-        end
-    end
-    return z
+function tensor_product(g::G, h::G) where {G <: AbstractGraph}
+	z = G(nv(g) * nv(h))
+	id(i, j) = (i - 1) * nv(h) + j
+	undirected = !is_directed(g)
+	for e1 in edges(g)
+		i1, i2 = Tuple(e1)
+		for e2 in edges(h)
+			j1, j2 = Tuple(e2)
+			add_edge!(z, id(i1, j1), id(i2, j2))
+			if undirected
+				add_edge!(z, id(i1, j2), id(i2, j1))
+			end
+		end
+	end
+	return z
 end
 
 ## subgraphs ###
 
 """
-    induced_subgraph(g, vlist)
-    induced_subgraph(g, elist)
+	induced_subgraph(g, vlist)
+	induced_subgraph(g, elist)
 
 Return the subgraph of `g` induced by the vertices in  `vlist` or edges in `elist`
 along with a vector mapping the new vertices to the old ones
@@ -655,58 +655,58 @@ julia> @assert sg == g[elist]
 ```
 """
 function induced_subgraph(
-    g::T, vlist::AbstractVector{U}
-) where {T<:AbstractGraph} where {U<:Integer}
-    allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
-    h = T(length(vlist))
-    newvid = Dict{U,U}()
-    vmap = Vector{U}(undef, length(vlist))
-    for (i, v) in enumerate(vlist)
-        newvid[v] = U(i)
-        vmap[i] = v
-    end
+	g::T, vlist::AbstractVector{U},
+) where {T <: AbstractGraph} where {U <: Integer}
+	allunique(vlist) || throw(ArgumentError("Vertices in subgraph list must be unique"))
+	h = T(length(vlist))
+	newvid = Dict{U, U}()
+	vmap = Vector{U}(undef, length(vlist))
+	for (i, v) in enumerate(vlist)
+		newvid[v] = U(i)
+		vmap[i] = v
+	end
 
-    vset = Set(vlist)
-    for s in vlist
-        for d in outneighbors(g, s)
-            # println("s = $s, d = $d")
-            if d in vset && has_edge(g, s, d)
-                newe = Edge(newvid[s], newvid[d])
-                add_edge!(h, newe)
-            end
-        end
-    end
-    return h, vmap
+	vset = Set(vlist)
+	for s in vlist
+		for d in outneighbors(g, s)
+			# println("s = $s, d = $d")
+			if d in vset && has_edge(g, s, d)
+				newe = Edge(newvid[s], newvid[d])
+				add_edge!(h, newe)
+			end
+		end
+	end
+	return h, vmap
 end
 
 function induced_subgraph(g::AbstractGraph, vlist::AbstractVector{Bool})
-    length(vlist) == length(g) || throw(BoundsError(g, vlist))
-    return induced_subgraph(g, findall(vlist))
+	length(vlist) == length(g) || throw(BoundsError(g, vlist))
+	return induced_subgraph(g, findall(vlist))
 end
 
 function induced_subgraph(
-    g::AG, elist::AbstractVector{U}
-) where {AG<:AbstractGraph{T}} where {T} where {U<:AbstractEdge}
-    h = zero(g)
-    newvid = Dict{T,T}()
-    vmap = Vector{T}()
+	g::AG, elist::AbstractVector{U},
+) where {AG <: AbstractGraph{T}} where {T} where {U <: AbstractEdge}
+	h = zero(g)
+	newvid = Dict{T, T}()
+	vmap = Vector{T}()
 
-    for e in elist
-        u, v = Tuple(e)
-        for i in (u, v)
-            if !haskey(newvid, i)
-                add_vertex!(h)
-                newvid[i] = nv(h)
-                push!(vmap, i)
-            end
-        end
-        add_edge!(h, newvid[u], newvid[v])
-    end
-    return h, vmap
+	for e in elist
+		u, v = Tuple(e)
+		for i in (u, v)
+			if !haskey(newvid, i)
+				add_vertex!(h)
+				newvid[i] = nv(h)
+				push!(vmap, i)
+			end
+		end
+		add_edge!(h, newvid[u], newvid[v])
+	end
+	return h, vmap
 end
 
 """
-    g[iter]
+	g[iter]
 
 Return the subgraph induced by `iter`.
 Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
@@ -714,7 +714,7 @@ Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 """
-    egonet(g, v, d, distmx=weights(g))
+	egonet(g, v, d, distmx=weights(g))
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
 `d`, using weights (optionally) provided by `distmx`.
@@ -725,28 +725,28 @@ This is equivalent to [`induced_subgraph`](@ref)`(g, neighborhood(g, v, d, dir=d
 with respect to `v` (i.e. `:in` or `:out`).
 """
 function egonet(
-    g::AbstractGraph{T},
-    v::Integer,
-    d::Integer,
-    distmx::AbstractMatrix{U}=weights(g);
-    dir=:out,
-) where {T<:Integer} where {U<:Real}
-    return g[neighborhood(g, v, d, distmx; dir=dir)]
+	g::AbstractGraph{T},
+	v::Integer,
+	d::Integer,
+	distmx::AbstractMatrix{U} = weights(g);
+	dir = :out,
+) where {T <: Integer} where {U <: Real}
+	return g[neighborhood(g, v, d, distmx; dir = dir)]
 end
 
 """
-    compute_shifts(n::Int, x::AbstractArray)
+	compute_shifts(n::Int, x::AbstractArray)
 
 Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
 function compute_shifts(n::Integer, x::AbstractArray)
-    tmp = zeros(eltype(x), n)
-    tmp[x] .= 1
-    return cumsum!(tmp, tmp)
+	tmp = zeros(eltype(x), n)
+	tmp[x] .= 1
+	return cumsum!(tmp, tmp)
 end
 
 """
-    merge_vertices(g::AbstractGraph, vs)
+	merge_vertices(g::AbstractGraph, vs)
 
 Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
 
@@ -772,34 +772,34 @@ julia> collect(edges(h))
  Edge 3 => 4
 ```
 """
-function merge_vertices(g::AbstractSimpleGraph, vs)
-    # Use lowest value as new vertex id.
-    vs = unique!(sort(vs))
-    merged_vertex = popfirst!(vs)
+function merge_vertices(g::G, vs) where {G <: AbstractSimpleGraph}
+	# Use lowest value as new vertex id.
+	vs = unique!(sort(vs))
+	merged_vertex = popfirst!(vs)
 
-    nvnew = nv(g) - length(vs)
-    nvnew <= nv(g) || return g
-    merged_vertex > 0 || throw(
-        ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
-    )
-    vs[end] <= nv(g) || throw(ArgumentError("vertex $(vs[end]) not found in graph")) # TODO 0.7: change to DomainError?
+	nvnew = nv(g) - length(vs)
+	nvnew <= nv(g) || return g
+	merged_vertex > 0 || throw(
+		ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
+	)
+	vs[end] <= nv(g) || throw(ArgumentError("vertex $(vs[end]) not found in graph")) # TODO 0.7: change to DomainError?
 
-    new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs)
-    new_vertex_ids[vs] .= merged_vertex
+	new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs)
+	new_vertex_ids[vs] .= merged_vertex
 
-    # if v in vs then labels[v] == v0 else labels[v] == v
-    newg = SimpleGraph(nvnew)
-    for e in edges(g)
-        u, w = src(e), dst(e)
-        if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
-            add_edge!(newg, new_vertex_ids[u], new_vertex_ids[w])
-        end
-    end
-    return newg
+	# if v in vs then labels[v] == v0 else labels[v] == v
+	newg = G(nvnew)
+	for e in edges(g)
+		u, w = src(e), dst(e)
+		if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
+			add_edge!(newg, new_vertex_ids[u], new_vertex_ids[w])
+		end
+	end
+	return newg
 end
 
 """
-    merge_vertices!(g, vs)
+	merge_vertices!(g, vs)
 
 Combine vertices specified in `vs` into single vertex whose
 index will be the lowest value in `vs`. All edges connected to vertices in `vs`
@@ -838,44 +838,44 @@ julia> collect(edges(g))
  Edge 3 => 4
 ```
 """
-function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T}
-    vs = unique!(sort(vs))
-    (merged_vertex, vm) = extrema(vs)
+function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U <: Integer}) where {T}
+	vs = unique!(sort(vs))
+	(merged_vertex, vm) = extrema(vs)
 
-    merged_vertex > 0 || throw(
-        ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
-    )
-    vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
+	merged_vertex > 0 || throw(
+		ArgumentError("invalid vertex ID: $merged_vertex in list of vertices to be merged"),
+	)
+	vm <= nv(g) || throw(ArgumentError("vertex $vm not found in graph")) # TODO 0.7: change to DomainError?
 
-    new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs[2:end])
-    new_vertex_ids[vs] .= merged_vertex
+	new_vertex_ids = collect(vertices(g)) .- compute_shifts(nv(g), vs[2:end])
+	new_vertex_ids[vs] .= merged_vertex
 
-    for i in vertices(g)
-        # Adjust connections to merged vertices
-        if new_vertex_ids[i] != merged_vertex
-            nbrs_to_rewire = Set{T}()
-            for j in outneighbors(g, i)
-                push!(nbrs_to_rewire, new_vertex_ids[j])
-            end
-            g.fadjlist[new_vertex_ids[i]] = sort!(collect(nbrs_to_rewire))
+	for i in vertices(g)
+		# Adjust connections to merged vertices
+		if new_vertex_ids[i] != merged_vertex
+			nbrs_to_rewire = Set{T}()
+			for j in outneighbors(g, i)
+				push!(nbrs_to_rewire, new_vertex_ids[j])
+			end
+			g.fadjlist[new_vertex_ids[i]] = sort!(collect(nbrs_to_rewire))
 
-            # Collect connections to new merged vertex
-        else
-            nbrs_to_merge = Set{T}()
-            for j in vs, e in outneighbors(g, j)
-                if new_vertex_ids[e] != merged_vertex
-                    push!(nbrs_to_merge, new_vertex_ids[e])
-                end
-            end
-            g.fadjlist[i] = sort(collect(nbrs_to_merge))
-        end
-    end
+			# Collect connections to new merged vertex
+		else
+			nbrs_to_merge = Set{T}()
+			for j in vs, e in outneighbors(g, j)
+				if new_vertex_ids[e] != merged_vertex
+					push!(nbrs_to_merge, new_vertex_ids[e])
+				end
+			end
+			g.fadjlist[i] = sort(collect(nbrs_to_merge))
+		end
+	end
 
-    # Drop excess vertices
-    g.fadjlist = g.fadjlist[firstindex(g.fadjlist):(end - length(vs) + 1)]
+	# Drop excess vertices
+	g.fadjlist = g.fadjlist[firstindex(g.fadjlist):(end-length(vs)+1)]
 
-    # Correct edge counts
-    g.ne = sum(degree(g, i) for i in vertices(g)) / 2
+	# Correct edge counts
+	g.ne = sum(degree(g, i) for i in vertices(g)) / 2
 
-    return new_vertex_ids
+	return new_vertex_ids
 end
