@@ -1494,24 +1494,29 @@ function dorogovtsev_mendes(
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = rng_from_rng_or_seed(rng, seed)
     g = cycle_graph(3)
+    bag_of_edges = Vector{SimpleEdge{Int}}(undef, 2*n - 3)
 
-    for iteration in 1:(n - 3)
-        chosenedge = rand(rng, 1:(2 * ne(g))) # undirected so each edge is listed twice in adjlist
-        u, v = -1, -1
-        for i in 1:nv(g)
-            edgelist = outneighbors(g, i)
-            if chosenedge > length(edgelist)
-                chosenedge -= length(edgelist)
-            else
-                u = i
-                v = edgelist[chosenedge]
-                break
-            end
-        end
+    bag_of_edges[1] = SimpleEdge(1, 2)
+    bag_of_edges[2] = SimpleEdge(1, 3)
+    bag_of_edges[3] = SimpleEdge(2, 3)
+    index = 3
+   
+    for _ in 1:n-3
+        # Choose random edge from bag
+        edge = bag_of_edges[rand(rng, 1:index)]
+        u, v = edge.src, edge.dst
 
-        add_vertex!(g)
-        add_edge!(g, nv(g), u)
-        add_edge!(g, nv(g), v)
+        # Add new vertex
+        add_vertex!(g) || throw(DomainError("Failed to add vertex. One possible explanation is that type $(eltype(g)) cannot represent enough vertices"))
+
+        # Add new edges
+        add_edge!(g, nv(g), u) || println("Failed to add edge $(nv(g)) -> $u")
+        add_edge!(g, nv(g), v) || println("Failed to add edge $(nv(g)) -> $v")
+
+        # Add new edges to bag
+        bag_of_edges[index] = SimpleEdge(nv(g), edge.src)
+        bag_of_edges[index + 1] = SimpleEdge(nv(g), edge.dst)
+    
     end
     return g
 end
