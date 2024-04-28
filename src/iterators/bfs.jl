@@ -1,7 +1,9 @@
 """
     BFSIterator
 
-`BFSIterator` is used to iterate through graph vertices using a breadth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+`BFSIterator` is used to iterate through graph vertices using a breadth-first search. 
+A source node(s) is optionally supplied as an `Int` or an array-like type that can be 
+indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
     
 # Examples
 ```julia-repl
@@ -21,13 +23,22 @@ julia> for node in BFSIterator(g,3)
 struct BFSIterator{S,G<:AbstractGraph}
     graph::G
     source::S
+    function BFSIterator(graph::G, source::S) where {S,G}
+        if any(node -> !has_vertex(graph, node), source)
+            error("Some source nodes for the iterator are not in the graph")
+        end
+        return new{S,G}(graph, source)
+    end
 end
 
 """
     BFSVertexIteratorState
 
 `BFSVertexIteratorState` is a struct to hold the current state of iteration
-in BFS which is needed for the `Base.iterate()` function.
+in BFS which is needed for the `Base.iterate()` function. A queue is used to
+keep track of the vertices which will be visited during BFS. Since the queue
+can contains repetitions of already visited nodes, we also keep track of that
+in a `BitVector` so that to skip those nodes.
 """
 mutable struct BFSVertexIteratorState
     visited::BitVector
@@ -38,13 +49,13 @@ end
 
 BFSIterator(g::AbstractGraph) = BFSIterator(g, first(vertices(g)))
 
-Base.IteratorSize(::Type{BFSIterator}) = Base.SizeUnknown()
+Base.IteratorSize(::BFSIterator) = Base.SizeUnknown()
 Base.eltype(::Type{BFSIterator{S,G}}) where {S,G} = eltype(G)
 
 """
     Base.iterate(t::BFSIterator)
 
-First iteration to visit each vertex in a graph using breadth-first search.
+First iteration to visit vertices in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator{<:Integer})
     visited = falses(nv(t.graph))
@@ -62,7 +73,7 @@ end
 """
     Base.iterate(t::BFSIterator, state::VertexIteratorState)
 
-Iterator to visit each vertex in a graph using breadth-first search.
+Iterator to visit vertices in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     graph, visited, queue = t.graph, state.visited, state.queue
@@ -76,6 +87,8 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
             state.n_visited += 1
             return (node_start, state)
         end
+        # we keep track of the idx of the neighbor we will visit
+        # not to repeatedly visiting the same neighbor when iterating
         idx = state.neighbor_idx
         neigh = outneighbors(graph, node_start)
         if idx <= length(neigh)

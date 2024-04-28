@@ -1,7 +1,9 @@
 """
     DFSIterator
 
-`DFSIterator` is used to iterate through graph vertices using a depth-first search. A source node(s) is optionally supplied as an `Int` or an array-like type that can be indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+`DFSIterator` is used to iterate through graph vertices using a depth-first search. 
+A source node(s) is optionally supplied as an `Int` or an array-like type that can be 
+indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
     
 # Examples
 ```julia-repl
@@ -21,13 +23,22 @@ julia> for node in DFSIterator(g, 3)
 struct DFSIterator{S,G<:AbstractGraph}
     graph::G
     source::S
+    function DFSIterator(graph::G, source::S) where {S,G}
+        if any(node -> !has_vertex(graph, node), source)
+            error("Some source nodes for the iterator are not in the graph")
+        end
+        return new{S,G}(graph, source)
+    end
 end
 
 """
     DFSVertexIteratorState
 
 `DFSVertexIteratorState` is a struct to hold the current state of iteration
-in DFS which is needed for the `Base.iterate()` function.
+in DFS which is needed for the `Base.iterate()` function. A queue is used to
+keep track of the vertices which will be visited during DFS. Since the queue
+can contains repetitions of already visited nodes, we also keep track of that
+in a `BitVector` so that to skip those nodes.
 """
 mutable struct DFSVertexIteratorState
     visited::BitVector
@@ -36,13 +47,13 @@ end
 
 DFSIterator(g::AbstractGraph) = DFSIterator(g, first(vertices(g)))
 
-Base.IteratorSize(::Type{DFSIterator}) = Base.SizeUnknown()
+Base.IteratorSize(::DFSIterator) = Base.SizeUnknown()
 Base.eltype(::Type{DFSIterator{S,G}}) where {S,G} = eltype(G)
 
 """
     Base.iterate(t::DFSIterator)
 
-First iteration to visit each vertex in a graph using depth-first search.
+First iteration to visit vertices in a graph using depth-first search.
 """
 function Base.iterate(t::DFSIterator{<:Integer})
     visited = falses(nv(t.graph))
@@ -61,7 +72,7 @@ end
 """
     Base.iterate(t::DFSIterator, state::VertexIteratorState)
 
-Iterator to visit each vertex in a graph using depth-first search.
+Iterator to visit vertices in a graph using depth-first search.
 """
 function Base.iterate(t::DFSIterator, state::DFSVertexIteratorState)
     graph, visited, queue = t.graph, state.visited, state.queue

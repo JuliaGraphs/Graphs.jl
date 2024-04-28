@@ -1,4 +1,7 @@
 @testset "BFSIterator" begin
+    g = Graph()
+    error_str = "Some source nodes for the iterator are not in the graph"
+    @test_throws error_str BFSIterator(g, 3)
     g = path_graph(7)
     add_edge!(g, 6, 3)
     add_edge!(g, 3, 1)
@@ -31,14 +34,8 @@
             @test nodes_visited[6:7] == [1, 2] || nodes_visited[6:7] == [2, 1]
         end
     end
-    nodes_visited = Int[]
-    for (i, node) in enumerate(BFSIterator(g2, [1, 6]))
-        push!(nodes_visited, node)
-    end
+    nodes_visited = collect(BFSIterator(g2, [1, 6]))
     @test nodes_visited == [1, 2, 3, 6, 5, 7, 4]
-    nodes_visited = Int[]
-    for (i, node) in enumerate(BFSIterator(g2, [8, 1, 6]))
-        push!(nodes_visited, node)
-    end
+    nodes_visited = collect(BFSIterator(g2, [8, 1, 6]))
     @test nodes_visited == [8, 9, 1, 2, 3, 6, 5, 7, 4]
 end
