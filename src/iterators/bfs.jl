@@ -81,18 +81,20 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
         if state.n_visited == nv(graph)
             return nothing
         end
+        # we visit the first node in the queue
         node_start = first(queue)
         if !visited[node_start]
             visited[node_start] = true
             state.n_visited += 1
             return (node_start, state)
         end
-        # we keep track of the idx of the neighbor we will visit
-        # not to repeatedly visiting the same neighbor when iterating
+        # which means we arrive here when the first node was visited.
         idx = state.neighbor_idx
         neigh = outneighbors(graph, node_start)
         if idx <= length(neigh)
             node = neigh[idx]
+            # we update the idx of the neighbor we will visit,
+            # if it is already visited, we repeat
             state.neighbor_idx += 1
             if !visited[node]
                 push!(queue, node)
@@ -101,6 +103,8 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
                 return (node, state)
             end
         else
+            # when the first node and its neighbors are visited
+            # we remove the first node of the queue
             popfirst!(queue)
             state.neighbor_idx = 1
         end
