@@ -98,4 +98,3 @@ function Base.iterate(t::DFSIterator, state::DFSVertexIteratorState)
         pop!(queue)
     end
 end
-
