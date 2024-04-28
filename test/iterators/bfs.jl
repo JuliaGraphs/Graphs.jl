@@ -1,7 +1,7 @@
 @testset "BFSIterator" begin
     g = Graph()
-    error_str = "Some source nodes for the iterator are not in the graph"
-    @test_throws error_str BFSIterator(g, 3)
+    error_exc = ErrorException("Some source nodes for the iterator are not in the graph")
+    @test_throws error_exc BFSIterator(g, 3)
     g = path_graph(7)
     add_edge!(g, 6, 3)
     add_edge!(g, 3, 1)
