@@ -1494,7 +1494,7 @@ function dorogovtsev_mendes(
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = rng_from_rng_or_seed(rng, seed)
     g = cycle_graph(3)
-    bag_of_edges = Vector{SimpleEdge{Int}}(undef, 2 * n - 3)
+    bag_of_edges = Vector{SimpleEdge{Int}}(undef, 2 * n - 3) # Caching edges as they are added to avoid costly lookups
 
     bag_of_edges[1] = SimpleEdge(1, 2)
     bag_of_edges[2] = SimpleEdge(1, 3)
@@ -1512,14 +1512,14 @@ function dorogovtsev_mendes(
                 "Failed to add vertex. One possible explanation is that type $(eltype(g)) cannot represent enough vertices",
             ),
         )
-
         # Add new edges
-        add_edge!(g, nv(g), u) || println("Failed to add edge $(nv(g)) -> $u")
-        add_edge!(g, nv(g), v) || println("Failed to add edge $(nv(g)) -> $v")
+        add_edge!(g, nv(g), u)
+        add_edge!(g, nv(g), v)
 
         # Add new edges to bag
-        bag_of_edges[index] = SimpleEdge(nv(g), edge.src)
-        bag_of_edges[index + 1] = SimpleEdge(nv(g), edge.dst)
+        bag_of_edges[index + 1] = SimpleEdge(nv(g), edge.src)
+        bag_of_edges[index + 2] = SimpleEdge(nv(g), edge.dst)
+        index += 2
     end
     return g
 end
