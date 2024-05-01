@@ -1504,7 +1504,7 @@ function dorogovtsev_mendes(
     for _ in 1:(n - 3)
         # Choose random edge from bag
         edge = bag_of_edges[rand(rng, 1:index)]
-        u, v = edge.src, edge.dst
+        u, v = src(edge), dst(edge)
 
         # Add new vertex
         add_vertex!(g) || throw(
