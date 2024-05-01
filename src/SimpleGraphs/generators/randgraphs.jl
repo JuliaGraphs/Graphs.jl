@@ -1507,11 +1507,7 @@ function dorogovtsev_mendes(
         u, v = src(edge), dst(edge)
 
         # Add new vertex
-        add_vertex!(g) || throw(
-            DomainError(
-                "Failed to add vertex. One possible explanation is that type $(eltype(g)) cannot represent enough vertices",
-            ),
-        )
+        add_vertex!(g)
         # Add new edges
         add_edge!(g, nv(g), u)
         add_edge!(g, nv(g), v)
