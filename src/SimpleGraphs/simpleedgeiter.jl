@@ -32,16 +32,15 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
     eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1)
 ) where {G <: AbstractSimpleGraph; !IsDirected{G}}
     g = eit.g
-    fadjlist = fadj(g)
     T = eltype(g)
     n = T(nv(g))
     u, i = state
 
     @inbounds while u < n
-        list_u = fadjlist[u]
+        list_u = fadj(g, u)
         if i > length(list_u)
             u += one(u)
-            i = searchsortedfirst(fadjlist[u], u)
+            i = searchsortedfirst(fadj(g, u), u)
             continue
         end
         e = SimpleEdge(u, list_u[i])
