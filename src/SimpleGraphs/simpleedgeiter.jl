@@ -48,7 +48,7 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
         return e, state
     end
 
-    @inbounds (n == 0 || i > length(fadjlist[n])) && return nothing
+    @inbounds (n == 0 || i > length(fadj(g, n))) && return nothing
 
     e = SimpleEdge(n, n)
     state = (u, i + 1)
