@@ -60,7 +60,6 @@ end
     eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1)
 ) where {G <: AbstractSimpleGraph; IsDirected{G}}
     g = eit.g
-    fadjlist = fadj(g)
     T = eltype(g)
     n = T(nv(g))
     u, i = state
@@ -68,12 +67,12 @@ end
     n == 0 && return nothing
 
     @inbounds while true
-        list_u = fadjlist[u]
+        list_u = fadj(g, u)
         if i > length(list_u)
             u == n && return nothing
 
             u += one(u)
-            list_u = fadjlist[u]
+            list_u = fadj(g, u)
             i = 1
             continue
         end
