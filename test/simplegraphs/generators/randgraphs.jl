@@ -4,12 +4,30 @@
     @testset "(Int, Int)" begin
         r1 = SimpleGraph(10, 20; rng=rng)
         r2 = SimpleDiGraph(5, 10; rng=rng)
+        r3 = SimpleGraph(10, 20; self_loops=true, rng=rng)
+        r4 = SimpleDiGraph(5, 10; self_loops=true, rng=rng)
+        @test isvalid_simplegraph(r1)
+        @test isvalid_simplegraph(r2)
+        @test isvalid_simplegraph(r3)
+        @test isvalid_simplegraph(r4)
+        @test has_self_loops(r1) == false
+        @test has_self_loops(r2) == false
+        @test is_directed(r1) == false
+        @test is_directed(r2) == true
+        @test is_directed(r3) == false
+        @test is_directed(r4) == true
         @test nv(r1) == 10
         @test ne(r1) == 20
         @test nv(r2) == 5
         @test ne(r2) == 10
+        @test nv(r3) == 10
+        @test ne(r3) == 20
+        @test nv(r4) == 5
+        @test ne(r4) == 10
         @test eltype(r1) == Int
         @test eltype(r2) == Int
+        @test eltype(r3) == Int
+        @test eltype(r4) == Int
 
         @test SimpleGraph(10, 20; rng=StableRNG(3)) == SimpleGraph(10, 20; rng=StableRNG(3))
         @test SimpleGraph(10, 40; rng=StableRNG(3)) == SimpleGraph(10, 40; rng=StableRNG(3))
@@ -40,7 +58,16 @@
         er = erdos_renyi(10, 0.5; rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == false
+        @test has_self_loops(er) == false
         er = erdos_renyi(10, 0.5; is_directed=true, rng=rng)
+        @test nv(er) == 10
+        @test has_self_loops(er) == false
+        @test is_directed(er) == true
+
+        er = erdos_renyi(10, 0.5; has_self_loops=true, rng=rng)
+        @test nv(er) == 10
+        @test is_directed(er) == false
+        er = erdos_renyi(10, 0.5; is_directed=true, has_self_loops=true, rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == true
 
