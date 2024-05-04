@@ -3,7 +3,7 @@
 
 `DFSIterator` is used to iterate through graph vertices using a depth-first search. 
 A source node(s) is optionally supplied as an `Int` or an array-like type that can be 
-indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+indexed if supplying multiple sources.
     
 # Examples
 ```julia-repl
@@ -44,8 +44,6 @@ mutable struct DFSVertexIteratorState
     visited::BitVector
     queue::Vector{Int}
 end
-
-DFSIterator(g::AbstractGraph) = DFSIterator(g, first(vertices(g)))
 
 Base.IteratorSize(::DFSIterator) = Base.SizeUnknown()
 Base.eltype(::Type{DFSIterator{S,G}}) where {S,G} = eltype(G)

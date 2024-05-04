@@ -3,7 +3,7 @@
 
 `BFSIterator` is used to iterate through graph vertices using a breadth-first search. 
 A source node(s) is optionally supplied as an `Int` or an array-like type that can be 
-indexed if supplying multiple sources. If no source is provided, it defaults to the first vertex.
+indexed if supplying multiple sources.
     
 # Examples
 ```julia-repl
@@ -47,8 +47,6 @@ mutable struct BFSVertexIteratorState
     n_visited::Int
 end
 
-BFSIterator(g::AbstractGraph) = BFSIterator(g, first(vertices(g)))
-
 Base.IteratorSize(::BFSIterator) = Base.SizeUnknown()
 Base.eltype(::Type{BFSIterator{S,G}}) where {S,G} = eltype(G)
 
@@ -89,10 +87,9 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
             return (node_start, state)
         end
         # which means we arrive here when the first node was visited.
-        idx = state.neighbor_idx
         neigh = outneighbors(graph, node_start)
-        if idx <= length(neigh)
-            node = neigh[idx]
+        if state.neighbor_idx <= length(neigh)
+            node = neigh[state.neighbor_idx]
             # we update the idx of the neighbor we will visit,
             # if it is already visited, we repeat
             state.neighbor_idx += 1
