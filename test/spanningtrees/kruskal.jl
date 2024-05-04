@@ -49,4 +49,8 @@
     g = Graph()
     mst = @inferred(kruskal_mst(g))
     @test isempty(mst)
+
+    g = Graph(1)
+    mst = @inferred(kruskal_mst(g))
+    @test isempty(mst)
 end
