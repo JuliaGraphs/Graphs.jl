@@ -25,9 +25,8 @@ using SparseArrays
         0 0 0 0 0 0 1 0
     ]
     egs = Edge.([(1, 2), (2, 3), (3, 4), (4, 5), (2, 1), (3, 2), (4, 3), (5, 4)])
-    indices = getindex.(Ref(edgemap), egs)
     @test typeof(B) <: SparseMatrixCSC
-    @test all(B[indices, indices] .== B_)
+    @test B == B_
 
     # Case: simple directed
     dg = SimpleDiGraph(5)
@@ -55,7 +54,6 @@ using SparseArrays
         0 0 0 0 1 0
     ]
     egs = Edge.([(1, 2), (1, 3), (2, 3), (3, 4), (3, 5), (4, 3)])
-    indices = getindex.(Ref(edgemap), egs)
     @test typeof(B) <: SparseMatrixCSC
-    @test all(B[indices, indices] .== B_)
+    @test B == B_
 end
