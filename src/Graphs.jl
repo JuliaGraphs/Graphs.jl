@@ -186,6 +186,10 @@ export
     dfs_tree,
     dfs_parents,
 
+    # iterators
+    DFSIterator,
+    BFSIterator,
+
     # random
     randomwalk,
     self_avoiding_walk,
@@ -499,6 +503,8 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("iterators/bfs.jl")
+include("iterators/dfs.jl")
 include("traversals/eulerian.jl")
 include("traversals/all_simple_paths.jl")
 include("connectivity.jl")
