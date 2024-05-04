@@ -1,6 +1,6 @@
 # Shortest paths
 
-*Graphs.jl* includes standard algorithms for [shortest paths](https://en.wikipedia.org/wiki/Shortest_path_problem).
+*Graphs.jl* includes standard algorithms for [shortest paths](https://en.wikipedia.org/wiki/Shortest_path_problem) and longest paths.
 
 ## Index
 
@@ -19,6 +19,7 @@ Pages = [
     "shortestpaths/dijkstra.jl",
     "shortestpaths/floyd-warshall.jl",
     "shortestpaths/johnson.jl",
+    "shortestpaths/longest_path.jl",
     "shortestpaths/spfa.jl",
     "shortestpaths/yen.jl",
 ]
