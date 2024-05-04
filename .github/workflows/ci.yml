@@ -13,12 +13,10 @@ jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.allow_failure }}
     strategy:
       fail-fast: false
       matrix:
         version:
-          - 'nightly'
           - '1'
           - '1.6'
         os:
@@ -27,13 +25,6 @@ jobs:
           - windows-latest
         arch:
           - x64
-        include:
-          - version: 'nightly'
-            allow_failure: true
-          - version: '1'
-            allow_failure: false
-          - version: '1.6'
-            allow_failure: false
     steps:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
