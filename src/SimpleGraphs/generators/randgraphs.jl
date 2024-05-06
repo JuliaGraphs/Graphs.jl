@@ -15,7 +15,7 @@ function _d_sample!(rng, buffer, N, n)
     nreal = n
     ninv = 1.0 / nreal
     Nreal = N
-    Vprime = exp(log(rand(rng)) * ninv)
+    Vprime = exp(-randexp(rng) * ninv)
     qu1 = -n + 1 + N
     qu1real = -nreal + 1.0 + Nreal
     negalphainv = -13
@@ -29,7 +29,7 @@ function _d_sample!(rng, buffer, N, n)
                 X = Nreal * (-Vprime + 1.0)
                 S = trunc(Int, X)
                 S < qu1 && break
-                Vprime = exp(log(rand(rng)) * ninv)
+                Vprime = exp(-randexp(rng) * ninv)
             end
             U = rand(rng)
             negSreal = -S
@@ -51,10 +51,10 @@ function _d_sample!(rng, buffer, N, n)
                 bottom -= 1.0
             end
             if Nreal / (-X + Nreal) >= y1 * exp(log(y2) * nmin1inv)
-                Vprime = exp(log(rand(rng)) * nmin1inv)
+                Vprime = exp(-randexp(rng) * nmin1inv)
                 break
             end
-            Vprime = exp(log(rand(rng)) * ninv)
+            Vprime = exp(-randexp(rng) * ninv)
         end
         # Skip over the next S records and select the following one for the sample
         current_sample += S + 1
@@ -135,7 +135,6 @@ function SimpleGraph{T}(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-
     ne == 0 && return Graph{T}(nv)
 
     maxe = self_loops ? div(Int(nv) * (nv + 1), 2) : div(Int(nv) * (nv - 1), 2)
@@ -230,7 +229,6 @@ function SimpleDiGraph{T}(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    
     ne == 0 && return DiGraph{T}(nv)
 
     maxd = self_loops ? Int(nv) : nv - 1
@@ -375,7 +373,6 @@ function _erdos_renyi_undirected(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    
     rng = rng_from_rng_or_seed(rng, seed)
 
     fadjlist = Vector{Vector{T}}(undef, nv)
@@ -454,7 +451,7 @@ function erdos_renyi(
     seed::Union{Nothing,Integer}=nothing,
 )
     p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
-    
+
     @assert p >= 0
 
     if is_directed
@@ -567,7 +564,7 @@ function expected_degree_graph!(
         p = min(ω[π[u]] * ω[π[v]] / S, one(T))
         while v <= n && p > zero(p)
             if p != one(T)
-                v += floor(Int, log(rand(rng)) / log(one(T) - p))
+                v += floor(Int, -randexp(rng) / log(one(T) - p))
             end
             if v <= n
                 q = min(ω[π[u]] * ω[π[v]] / S, one(T))
@@ -1438,7 +1435,7 @@ function randbn(
     x = 0
     sum = 0.0
     for _ in 1:n
-        sum += log(rand(rng)) / (n - x)
+        sum += -randexp(rng) / (n - x)
         sum < log_q && break
         x += 1
     end
