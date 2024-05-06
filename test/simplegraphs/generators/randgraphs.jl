@@ -66,22 +66,30 @@
 
     @testset "Erdös-Renyí" begin
         er = erdos_renyi(10, 0.5; rng=rng)
+        @test isvalid_simplegraph(er)
         @test nv(er) == 10
         @test is_directed(er) == false
         @test has_self_loops(er) == false
         er = erdos_renyi(10, 0.5; is_directed=true, rng=rng)
+        @test isvalid_simplegraph(er)
         @test nv(er) == 10
         @test has_self_loops(er) == false
         @test is_directed(er) == true
 
         er = erdos_renyi(10, 0.5; self_loops=true, rng=rng)
+        @test isvalid_simplegraph(er)
         @test nv(er) == 10
         @test is_directed(er) == false
         er = erdos_renyi(10, 0.5; is_directed=true, self_loops=true, rng=rng)
+        @test isvalid_simplegraph(er)
         @test nv(er) == 10
         @test is_directed(er) == true
 
         er = erdos_renyi(10, 0.5; rng=StableRNG(17))
+        @test nv(er) == 10
+        @test is_directed(er) == false
+
+        er = erdos_renyi(10, 0.8; rng=StableRNG(17))
         @test nv(er) == 10
         @test is_directed(er) == false
 
