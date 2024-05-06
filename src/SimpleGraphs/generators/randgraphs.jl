@@ -135,6 +135,9 @@ function SimpleGraph{T}(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
+
+    ne == 0 && return Graph{T}(nv)
+
     maxe = self_loops ? div(Int(nv) * (nv + 1), 2) : div(Int(nv) * (nv - 1), 2)
 
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
@@ -227,6 +230,9 @@ function SimpleDiGraph{T}(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
+    
+    ne == 0 && return DiGraph{T}(nv)
+
     maxd = self_loops ? Int(nv) : nv - 1
     maxe = self_loops ? (Int(nv) * nv) : (Int(nv) * (nv - 1))
 
@@ -322,8 +328,6 @@ function _erdos_renyi_directed(
 ) where {T<:Integer}
     rng = rng_from_rng_or_seed(rng, seed)
 
-    @assert 0 <= p <= 1
-
     fadjlist = Vector{Vector{T}}(undef, nv)
 
     ne = 0
@@ -371,9 +375,8 @@ function _erdos_renyi_undirected(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
+    
     rng = rng_from_rng_or_seed(rng, seed)
-
-    @assert 0 <= p <= 1
 
     fadjlist = Vector{Vector{T}}(undef, nv)
 
@@ -439,7 +442,7 @@ julia> erdos_renyi(10, 0.5)
 julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
-{10, 49} directed simple Int64 graph
+{10, 47} directed simple Int64 graph
 ```
 """
 function erdos_renyi(
@@ -450,6 +453,10 @@ function erdos_renyi(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
+    p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
+    
+    @assert p >= 0
+
     if is_directed
         return _erdos_renyi_directed(n, p; self_loops=self_loops, rng=rng, seed=seed)
     else

@@ -29,6 +29,16 @@
         @test eltype(r3) == Int
         @test eltype(r4) == Int
 
+        er = Graph(0, 0; rng=rng)
+        @test er == Graph()
+        er = DiGraph(0, 0; rng=rng)
+        @test er == DiGraph()
+
+        er = Graph(3, 0; rng=rng)
+        @test er == Graph(3)
+        er = DiGraph(3, 0; rng=rng)
+        @test er == DiGraph(3)
+
         @test SimpleGraph(10, 20; rng=StableRNG(3)) == SimpleGraph(10, 20; rng=StableRNG(3))
         @test SimpleGraph(10, 40; rng=StableRNG(3)) == SimpleGraph(10, 40; rng=StableRNG(3))
         @test SimpleDiGraph(10, 20; rng=StableRNG(3)) ==
@@ -64,10 +74,10 @@
         @test has_self_loops(er) == false
         @test is_directed(er) == true
 
-        er = erdos_renyi(10, 0.5; has_self_loops=true, rng=rng)
+        er = erdos_renyi(10, 0.5; self_loops=true, rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == false
-        er = erdos_renyi(10, 0.5; is_directed=true, has_self_loops=true, rng=rng)
+        er = erdos_renyi(10, 0.5; is_directed=true, self_loops=true, rng=rng)
         @test nv(er) == 10
         @test is_directed(er) == true
 
@@ -79,6 +89,16 @@
         @test erdos_renyi(5, 1.0; is_directed=true, rng=rng) == complete_digraph(5)
         @test erdos_renyi(5, 2.1; rng=rng) == complete_graph(5)
         @test erdos_renyi(5, 2.1; is_directed=true, rng=rng) == complete_digraph(5)
+
+        er = erdos_renyi(0, 0.0; rng=rng)
+        @test er == Graph()
+        er = erdos_renyi(0, 0.0; is_directed=true, rng=rng)
+        @test er == DiGraph()
+
+        er = erdos_renyi(3, 0.0; rng=rng)
+        @test er == Graph(3)
+        er = erdos_renyi(3, 0.0; is_directed=true, rng=rng)
+        @test er == DiGraph(3)
 
         # issue #173
         er = erdos_renyi(4, 6; seed=1)
