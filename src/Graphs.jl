@@ -121,6 +121,11 @@ export
     squash,
     weights,
 
+    # wrapped graphs
+    AbstractWrappedGraph,
+    ReverseView,
+    UndirectedView,
+
     # simplegraphs
     add_edge!,
     add_vertex!,
@@ -462,6 +467,8 @@ include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
+include("wrappedGraphs/wrappedGraph.jl")
+include("wrappedGraphs/graphviews.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
 """

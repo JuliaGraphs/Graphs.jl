@@ -27,22 +27,22 @@ Graphs.dst(e::GenericEdge) = Graphs.dst(e.e)
 Base.reverse(e::GenericEdge) = GenericEdge(reverse(e.e))
 
 """
-    GenericGraph{T} <: Graphs.AbstractGraph{T}
+    GenericGraph{T} <: Graphs.AbstractWrappedGraph{T, SimpleGraph{T}}
 
 An undirected graph type that can  be used to tests functions that relay on the Graphs.jl interface.
 
 """
-struct GenericGraph{T} <: Graphs.AbstractGraph{T}
+struct GenericGraph{T} <: Graphs.AbstractWrappedGraph{T, SimpleGraph{T}}
     g::SimpleGraph{T}
 end
 
 """
-    GenericDiGraph{T} <: Graphs.AbstractGraph{T}
+    GenericDiGraph{T} <: Graphs.AbstractWrappedGraph{T, SimpleDiGraph{T}}
 
 A directed graph type that can  be used to tests functions that relay on the Graphs.jl interface.
 
 """
-struct GenericDiGraph{T} <: Graphs.AbstractGraph{T}
+struct GenericDiGraph{T} <: Graphs.AbstractWrappedGraph{T, SimpleDiGraph{T}}
     g::SimpleDiGraph{T}
 end
 
@@ -60,8 +60,8 @@ function GenericDiGraph(elist::Vector{Graphs.SimpleDiGraphEdge{T}}) where {T<:In
     return GenericDiGraph{T}(SimpleDiGraph(elist))
 end
 
-Graphs.is_directed(::Type{<:GenericGraph}) = false
-Graphs.is_directed(::Type{<:GenericDiGraph}) = true
+Graphs.wrapped_graph(g::GenericGraph) = g.g
+Graphs.wrapped_graph(g::GenericDiGraph) = g.g
 
 Graphs.edges(g::GenericGraph) = (GenericEdge(e) for e in Graphs.edges(g.g))
 Graphs.edges(g::GenericDiGraph) = (GenericEdge(e) for e in Graphs.edges(g.g))
@@ -69,25 +69,12 @@ Graphs.edges(g::GenericDiGraph) = (GenericEdge(e) for e in Graphs.edges(g.g))
 Graphs.edgetype(g::GenericGraph) = GenericEdge{eltype(g)}
 Graphs.edgetype(g::GenericDiGraph) = GenericEdge{eltype(g)}
 
-Graphs.has_edge(g::GenericGraph, s, d) = Graphs.has_edge(g.g, s, d)
-Graphs.has_edge(g::GenericDiGraph, s, d) = Graphs.has_edge(g.g, s, d)
-
-Graphs.has_vertex(g::GenericGraph, v) = Graphs.has_vertex(g.g, v)
-Graphs.has_vertex(g::GenericDiGraph, v) = Graphs.has_vertex(g.g, v)
-
 Graphs.inneighbors(g::GenericGraph, v) = (u for u in Graphs.inneighbors(g.g, v))
 Graphs.inneighbors(g::GenericDiGraph, v) = (u for u in Graphs.inneighbors(g.g, v))
 
 Graphs.outneighbors(g::GenericGraph, v) = (u for u in Graphs.outneighbors(g.g, v))
 Graphs.outneighbors(g::GenericDiGraph, v) = (u for u in Graphs.outneighbors(g.g, v))
 
-Graphs.ne(g::GenericGraph) = Graphs.ne(g.g)
-Graphs.ne(g::GenericDiGraph) = Graphs.ne(g.g)
-
-Graphs.nv(g::GenericGraph) = Graphs.nv(g.g)
-Graphs.nv(g::GenericDiGraph) = Graphs.nv(g.g)
-
 Graphs.vertices(g::GenericGraph) = (v for v in Graphs.vertices(g.g))
 Graphs.vertices(g::GenericDiGraph) = (v for v in Graphs.vertices(g.g))
-
 end # module
