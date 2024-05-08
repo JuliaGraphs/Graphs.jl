@@ -1,7 +1,7 @@
 """
     ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
-A wrapper on a graph that reverse the direction of every edge.
+A graph view that wraps a directed graph and reverse the direction of every edge.
 
 # Examples
 ```jldoctest
@@ -50,7 +50,7 @@ Graphs.outneighbors(g::ReverseView, v) = Graphs.inneighbors(g.g, v)
 """
     UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
-A wrapper on a graph that consider every edge as undirected.
+A graph view that wraps a directed graph and consider every edge as undirected.
 
 # Examples
 ```jldoctest
