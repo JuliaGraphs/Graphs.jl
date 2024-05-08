@@ -122,7 +122,6 @@ export
     weights,
 
     # wrapped graphs
-    AbstractWrappedGraph,
     ReverseView,
     UndirectedView,
 
