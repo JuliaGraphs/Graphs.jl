@@ -467,7 +467,6 @@ include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
-include("wrappedGraphs/wrappedGraph.jl")
 include("wrappedGraphs/graphviews.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
