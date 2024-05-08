@@ -7,11 +7,11 @@ A graph view that wraps a directed graph and reverse the direction of every edge
 ```jldoctest
 julia> using Graphs
 
-julia> g = SimpleDiGraph(2)
+julia> g = SimpleDiGraph(2);
 
-julia> add_edge!(g, 1, 2)
+julia> add_edge!(g, 1, 2);
 
-julia> rg = ReverseView(g)
+julia> rg = ReverseView(g);
 
 julia> neighbors(rg, 1)
 Int64[]
@@ -56,11 +56,11 @@ A graph view that wraps a directed graph and consider every edge as undirected.
 ```jldoctest
 julia> using Graphs
 
-julia> g = SimpleDiGraph(2)
+julia> g = SimpleDiGraph(2);
 
-julia> add_edge!(g, 1, 2)
+julia> add_edge!(g, 1, 2);
 
-julia> ug = UndirectedView(g)
+julia> ug = UndirectedView(g);
 
 julia> neighbors(ug, 1)
 1-element Vector{Int64}:
