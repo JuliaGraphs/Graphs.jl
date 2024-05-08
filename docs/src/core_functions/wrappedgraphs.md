@@ -13,6 +13,7 @@ Pages = ["wrappedgraphs.md"]
 ## Full docs
 
 ```@autodocs
+Modules = [Graphs]
 Pages = [
     "wrappedgraphs/graphviews.jl",
 ]
