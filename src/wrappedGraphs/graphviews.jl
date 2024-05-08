@@ -1,9 +1,26 @@
 """
-    ReverseView{G} <: ReverseView{G} where {G <: AbstractGraph}
+    ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
 A wrapper on a graph that reverse the direction of every edge.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = SimpleDiGraph(2)
+
+julia> add_edge!(g, 1, 2)
+
+julia> rg = ReverseView(g)
+
+julia> neighbors(rg, 1)
+Int64[]
+
+julia> neighbors(rg, 2)
+1-element Vector{Int64}:
+ 1
+```
 """
-# @traitfn struct ReverseView{G<:AbstractGraph{T}::IsDirected} <: ReverseView{T, G}
 struct ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     g::G
 
@@ -31,9 +48,28 @@ Graphs.inneighbors(g::ReverseView, v) = Graphs.outneighbors(g.g, v)
 Graphs.outneighbors(g::ReverseView, v) = Graphs.inneighbors(g.g, v)
 
 """
-    UndirectedView{G} <: ReverseView{G} where {G <: AbstractGraph}
+    UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
-A wrapper on a graph that consider every edges as undirected.
+A wrapper on a graph that consider every edge as undirected.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = SimpleDiGraph(2)
+
+julia> add_edge!(g, 1, 2)
+
+julia> ug = UndirectedView(g)
+
+julia> neighbors(ug, 1)
+1-element Vector{Int64}:
+ 2
+
+julia> neighbors(ug, 2)
+1-element Vector{Int64}:
+ 1
+```
 """
 struct UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     g::G
