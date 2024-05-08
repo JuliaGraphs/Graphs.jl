@@ -4,20 +4,21 @@
 A wrapper on a graph that reverse the direction of every edge.
 """
 # @traitfn struct ReverseView{G<:AbstractGraph{T}::IsDirected} <: ReverseView{T, G}
-struct ReverseView{T<:Integer, G<:AbstractGraph} <: AbstractGraph{T}
+struct ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     g::G
-    
-    @traitfn ReverseView{T, G}(g::::(IsDirected)) where {T<:Integer, G<:AbstractGraph{T}} =  new(g)
-    @traitfn ReverseView{T, G}(g::::(!IsDirected)) where {T<:Integer, G<:AbstractGraph{T}} =  "Your graph needs to be directed"
+
+    @traitfn ReverseView{T,G}(g::::(IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
+        new(g)
+    @traitfn ReverseView{T,G}(g::::(!IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
+        "Your graph needs to be directed"
 end
 
-ReverseView(g::G) where {T<:Integer, G<:AbstractGraph{T}} = ReverseView{T, G}(g)
+ReverseView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = ReverseView{T,G}(g)
 
 wrapped_graph(g::ReverseView) = g.g
 
-
-Graphs.is_directed(::ReverseView{T, G}) where {T, G} = true
-Graphs.is_directed(::Type{<:ReverseView{T, G}}) where {T, G} = true
+Graphs.is_directed(::ReverseView{T,G}) where {T,G} = true
+Graphs.is_directed(::Type{<:ReverseView{T,G}}) where {T,G} = true
 
 Graphs.edgetype(g::ReverseView) = Graphs.edgetype(g.g)
 Graphs.has_vertex(g::ReverseView, v) = Graphs.has_vertex(g.g, v)
@@ -34,19 +35,22 @@ Graphs.outneighbors(g::ReverseView, v) = Graphs.inneighbors(g.g, v)
 
 A wrapper on a graph that consider every edges as undirected.
 """
-struct UndirectedView{T<:Integer, G<:AbstractGraph} <: AbstractGraph{T}
+struct UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     g::G
     ne::Int
-    @traitfn function UndirectedView{T, G}(g::::(IsDirected)) where {T<:Integer, G<:AbstractGraph{T}}
+    @traitfn function UndirectedView{T,G}(
+        g::::(IsDirected)
+    ) where {T<:Integer,G<:AbstractGraph{T}}
         ne = count(e -> src(e) <= dst(e) || !has_edge(g, dst(e), src(e)), Graphs.edges(g))
-        new(g, ne)
+        return new(g, ne)
     end
-    
-    @traitfn UndirectedView{T, G}(g::::(!IsDirected)) where {T<:Integer, G<:AbstractGraph{T}} =  error("Your graph need to be directed")
+
+    @traitfn UndirectedView{T,G}(
+        g::::(!IsDirected)
+    ) where {T<:Integer,G<:AbstractGraph{T}} = error("Your graph need to be directed")
 end
 
-UndirectedView(g::G) where {T<:Integer, G<:AbstractGraph{T}} = UndirectedView{T, G}(g)
-
+UndirectedView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = UndirectedView{T,G}(g)
 
 wrapped_graph(g::UndirectedView) = g.g
 
@@ -58,24 +62,20 @@ Graphs.has_vertex(g::UndirectedView, v) = Graphs.has_vertex(g.g, v)
 Graphs.ne(g::UndirectedView) = g.ne
 Graphs.nv(g::UndirectedView) = Graphs.nv(g.g)
 Graphs.vertices(g::UndirectedView) = Graphs.vertices(g.g)
-Graphs.has_edge(g::UndirectedView, s, d) = Graphs.has_edge(g.g, s, d) || Graphs.has_edge(g.g, d, s)
+function Graphs.has_edge(g::UndirectedView, s, d)
+    return Graphs.has_edge(g.g, s, d) || Graphs.has_edge(g.g, d, s)
+end
 Graphs.inneighbors(g::UndirectedView, v) = Graphs.all_neighbors(g.g, v)
 Graphs.outneighbors(g::UndirectedView, v) = Graphs.all_neighbors(g.g, v)
-Graphs.edges(g::UndirectedView) = (
-    begin 
-        (u, v) = src(e), dst(e);
-        if (v < u)
-            (u, v) = (v, u)
-        end;
-        Edge(u, v)
-    end
-    for e in Graphs.edges(g.g) 
-    if (src(e) <= dst(e) || !has_edge(g.g, dst(e), src(e)))
-)
-
-
-
-
-
-
-
+function Graphs.edges(g::UndirectedView)
+    return (
+        begin
+            (u, v) = src(e), dst(e)
+            if (v < u)
+                (u, v) = (v, u)
+            end
+            Edge(u, v)
+        end for
+        e in Graphs.edges(g.g) if (src(e) <= dst(e) || !has_edge(g.g, dst(e), src(e)))
+    )
+end

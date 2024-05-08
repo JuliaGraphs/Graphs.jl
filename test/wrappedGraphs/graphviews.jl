@@ -8,10 +8,10 @@
             Edge(2, 2),
             Edge(2, 4),
             Edge(3, 1),
-            Edge(4, 3)
+            Edge(4, 3),
         ])
 
-        gr = erdos_renyi(20, 0.1; is_directed = true)
+        gr = erdos_renyi(20, 0.1; is_directed=true)
 
         for g in hcat(test_generic_graphs(gx), test_generic_graphs(gr))
             rg = ReverseView(g)
@@ -24,11 +24,13 @@
             @test is_directed(rg) == true
             @test nv(rg) == nv(g) == nv(allocated_rg)
             @test ne(rg) == ne(g) == ne(allocated_rg)
-            @test sort(collect(inneighbors(rg, 2))) == sort(collect(inneighbors(allocated_rg, 2)))
-            @test sort(collect(outneighbors(rg, 2))) == sort(collect(outneighbors(allocated_rg, 2)))
+            @test sort(collect(inneighbors(rg, 2))) ==
+                sort(collect(inneighbors(allocated_rg, 2)))
+            @test sort(collect(outneighbors(rg, 2))) ==
+                sort(collect(outneighbors(allocated_rg, 2)))
             @test indegree(rg, 3) == indegree(allocated_rg, 3)
             @test degree(rg, 1) == degree(allocated_rg, 1)
-            @test has_edge(rg, 1, 3) == has_edge(allocated_rg, 1, 3) 
+            @test has_edge(rg, 1, 3) == has_edge(allocated_rg, 1, 3)
             @test has_edge(rg, 1, 4) == has_edge(allocated_rg, 1, 4)
 
             rg_res = @inferred(dijkstra_shortest_paths(rg, 3))
@@ -51,10 +53,10 @@
             Edge(2, 2),
             Edge(2, 4),
             Edge(3, 1),
-            Edge(4, 3)
+            Edge(4, 3),
         ])
 
-        gr = erdos_renyi(20, 0.05; is_directed = true)
+        gr = erdos_renyi(20, 0.05; is_directed=true)
 
         for g in test_generic_graphs(gx)
             ug = UndirectedView(g)
@@ -64,16 +66,18 @@
         for g in hcat(test_generic_graphs(gx), test_generic_graphs(gr))
             ug = UndirectedView(g)
             allocated_ug = Graph(g)
-            
+
             @test eltype(ug) == eltype(g)
             @test is_directed(ug) == false
             @test nv(ug) == nv(g) == nv(allocated_ug)
             @test ne(ug) == ne(allocated_ug)
-            @test sort(collect(inneighbors(ug, 2))) == sort(collect(inneighbors(allocated_ug, 2)))
-            @test sort(collect(outneighbors(ug, 2))) == sort(collect(outneighbors(allocated_ug, 2)))
+            @test sort(collect(inneighbors(ug, 2))) ==
+                sort(collect(inneighbors(allocated_ug, 2)))
+            @test sort(collect(outneighbors(ug, 2))) ==
+                sort(collect(outneighbors(allocated_ug, 2)))
             @test indegree(ug, 3) == indegree(allocated_ug, 3)
             @test degree(ug, 1) == degree(allocated_ug, 1)
-            @test has_edge(ug, 1, 3) == has_edge(allocated_ug, 1, 3) 
+            @test has_edge(ug, 1, 3) == has_edge(allocated_ug, 1, 3)
             @test has_edge(ug, 1, 4) == has_edge(allocated_ug, 1, 4)
 
             ug_res = @inferred(dijkstra_shortest_paths(ug, 3))
