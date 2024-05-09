@@ -27,7 +27,7 @@ struct ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     @traitfn ReverseView{T,G}(g::::(IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
         new(g)
     @traitfn ReverseView{T,G}(g::::(!IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
-        "Your graph needs to be directed"
+        throw(ArgumentError("Your graph needs to be directed"))
 end
 
 ReverseView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = ReverseView{T,G}(g)
@@ -83,10 +83,18 @@ struct UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
     @traitfn UndirectedView{T,G}(
         g::::(!IsDirected)
-    ) where {T<:Integer,G<:AbstractGraph{T}} = error("Your graph need to be directed")
+    ) where {T<:Integer,G<:AbstractGraph{T}} =
+        throw(ArgumentError("Your graph needs to be directed"))
 end
 
 UndirectedView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = UndirectedView{T,G}(g)
+
+"""
+    wrapped_graph(g)
+
+Return the graph wrapped by `g`
+"""
+function wrapped_graph end
 
 wrapped_graph(g::UndirectedView) = g.g
 

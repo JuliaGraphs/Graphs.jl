@@ -20,10 +20,13 @@
                 add_edge!(allocated_rg, Edge(dst(e), src(e)))
             end
 
-            @test eltype(rg) == eltype(g)
+            @test wrapped_graph(rg) == g
             @test is_directed(rg) == true
+            @test eltype(rg) == eltype(g)
+            @test has_vertex(rg, 4) == has_vertex(g, 4)
             @test nv(rg) == nv(g) == nv(allocated_rg)
             @test ne(rg) == ne(g) == ne(allocated_rg)
+            @test all(adjacency_matrix(rg) .== adjacency_matrix(allocated_rg))
             @test sort(collect(inneighbors(rg, 2))) ==
                 sort(collect(inneighbors(allocated_rg, 2)))
             @test sort(collect(outneighbors(rg, 2))) ==
@@ -42,6 +45,8 @@
             @test length(rg_res) == length(allocated_rg_res)
             @test sort(length.(rg_res)) == sort(length.(allocated_rg_res))
         end
+
+        @test_throws ArgumentError ReverseView(path_graph(5))
     end
 
     @testset "UndirectedView" begin
@@ -67,10 +72,13 @@
             ug = UndirectedView(g)
             allocated_ug = Graph(g)
 
-            @test eltype(ug) == eltype(g)
+            @test wrapped_graph(ug) == g
             @test is_directed(ug) == false
+            @test eltype(ug) == eltype(g)
+            @test has_vertex(ug, 4) == has_vertex(g, 4)
             @test nv(ug) == nv(g) == nv(allocated_ug)
             @test ne(ug) == ne(allocated_ug)
+            @test all(adjacency_matrix(ug) .== adjacency_matrix(allocated_ug))
             @test sort(collect(inneighbors(ug, 2))) ==
                 sort(collect(inneighbors(allocated_ug, 2)))
             @test sort(collect(outneighbors(ug, 2))) ==
@@ -89,5 +97,7 @@
             @test length(ug_res) == length(allocated_ug_res)
             @test sort(length.(ug_res)) == sort(length.(allocated_ug_res))
         end
+
+        @test_throws ArgumentError UndirectedView(path_graph(5))
     end
 end

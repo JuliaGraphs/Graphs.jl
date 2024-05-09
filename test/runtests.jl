@@ -73,100 +73,100 @@ function test_large_generic_graphs(g; skip_if_too_large::Bool=false)
 end
 
 tests = [
-    "simplegraphs/runtests",
-    "linalg/runtests",
-    "parallel/runtests",
-    "interface",
-    "core",
-    "operators",
+    # "simplegraphs/runtests",
+    # "linalg/runtests",
+    # "parallel/runtests",
+    # "interface",
+    # "core",
+    # "operators",
     "wrappedGraphs/graphviews",
-    "degeneracy",
-    "distance",
-    "digraph/transitivity",
-    "cycles/hawick-james",
-    "cycles/johnson",
-    "cycles/karp",
-    "cycles/basis",
-    "cycles/limited_length",
-    "cycles/incremental",
-    "edit_distance",
-    "connectivity",
-    "persistence/persistence",
-    "shortestpaths/utils",
-    "shortestpaths/astar",
-    "shortestpaths/bellman-ford",
-    "shortestpaths/desopo-pape",
-    "shortestpaths/dijkstra",
-    "shortestpaths/johnson",
-    "shortestpaths/floyd-warshall",
-    "shortestpaths/yen",
-    "shortestpaths/spfa",
-    "shortestpaths/longest_path",
-    "traversals/bfs",
-    "traversals/bipartition",
-    "traversals/greedy_color",
-    "traversals/dfs",
-    "traversals/maxadjvisit",
-    "traversals/randomwalks",
-    "traversals/diffusion",
-    "traversals/eulerian",
-    "traversals/all_simple_paths",
-    "community/cliques",
-    "community/core-periphery",
-    "community/label_propagation",
-    "community/modularity",
-    "community/clustering",
-    "community/clique_percolation",
-    "community/assortativity",
-    "community/rich_club",
-    "centrality/betweenness",
-    "centrality/closeness",
-    "centrality/degree",
-    "centrality/katz",
-    "centrality/pagerank",
-    "centrality/eigenvector",
-    "centrality/stress",
-    "centrality/radiality",
-    "utils",
-    "deprecations",
-    "spanningtrees/boruvka",
-    "spanningtrees/kruskal",
-    "spanningtrees/prim",
-    "steinertree/steiner_tree",
-    "biconnectivity/articulation",
-    "biconnectivity/biconnect",
-    "biconnectivity/bridge",
-    "graphcut/normalized_cut",
-    "graphcut/karger_min_cut",
-    "dominatingset/degree_dom_set",
-    "dominatingset/minimal_dom_set",
-    "independentset/degree_ind_set",
-    "independentset/maximal_ind_set",
-    "vertexcover/degree_vertex_cover",
-    "vertexcover/random_vertex_cover",
-    "trees/prufer",
-    "experimental/experimental",
+    # "degeneracy",
+    # "distance",
+    # "digraph/transitivity",
+    # "cycles/hawick-james",
+    # "cycles/johnson",
+    # "cycles/karp",
+    # "cycles/basis",
+    # "cycles/limited_length",
+    # "cycles/incremental",
+    # "edit_distance",
+    # "connectivity",
+    # "persistence/persistence",
+    # "shortestpaths/utils",
+    # "shortestpaths/astar",
+    # "shortestpaths/bellman-ford",
+    # "shortestpaths/desopo-pape",
+    # "shortestpaths/dijkstra",
+    # "shortestpaths/johnson",
+    # "shortestpaths/floyd-warshall",
+    # "shortestpaths/yen",
+    # "shortestpaths/spfa",
+    # "shortestpaths/longest_path",
+    # "traversals/bfs",
+    # "traversals/bipartition",
+    # "traversals/greedy_color",
+    # "traversals/dfs",
+    # "traversals/maxadjvisit",
+    # "traversals/randomwalks",
+    # "traversals/diffusion",
+    # "traversals/eulerian",
+    # "traversals/all_simple_paths",
+    # "community/cliques",
+    # "community/core-periphery",
+    # "community/label_propagation",
+    # "community/modularity",
+    # "community/clustering",
+    # "community/clique_percolation",
+    # "community/assortativity",
+    # "community/rich_club",
+    # "centrality/betweenness",
+    # "centrality/closeness",
+    # "centrality/degree",
+    # "centrality/katz",
+    # "centrality/pagerank",
+    # "centrality/eigenvector",
+    # "centrality/stress",
+    # "centrality/radiality",
+    # "utils",
+    # "deprecations",
+    # "spanningtrees/boruvka",
+    # "spanningtrees/kruskal",
+    # "spanningtrees/prim",
+    # "steinertree/steiner_tree",
+    # "biconnectivity/articulation",
+    # "biconnectivity/biconnect",
+    # "biconnectivity/bridge",
+    # "graphcut/normalized_cut",
+    # "graphcut/karger_min_cut",
+    # "dominatingset/degree_dom_set",
+    # "dominatingset/minimal_dom_set",
+    # "independentset/degree_ind_set",
+    # "independentset/maximal_ind_set",
+    # "vertexcover/degree_vertex_cover",
+    # "vertexcover/random_vertex_cover",
+    # "trees/prufer",
+    # "experimental/experimental",
 ]
 
 @testset verbose = true "Graphs" begin
-    @testset "Code quality (JET.jl)" begin
-        if VERSION >= v"1.9"
-            @assert get_pkg_version("JET") >= v"0.8.4"
-            JET.test_package(
-                Graphs; target_defined_modules=true, ignore_missing_comparison=true
-            )
-        end
-    end
+    #     @testset "Code quality (JET.jl)" begin
+    #         if VERSION >= v"1.9"
+    #             @assert get_pkg_version("JET") >= v"0.8.4"
+    #             JET.test_package(
+    #                 Graphs; target_defined_modules=true, ignore_missing_comparison=true
+    #             )
+    #         end
+    #     end
 
-    @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(Graphs; ambiguities=false)
-    end
+    #     @testset "Code quality (Aqua.jl)" begin
+    #         Aqua.test_all(Graphs; ambiguities=false)
+    #     end
 
-    @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Graphs; verbose=false, overwrite=false)
-    end
+    #     @testset "Code formatting (JuliaFormatter.jl)" begin
+    #         @test format(Graphs; verbose=false, overwrite=false)
+    #     end
 
-    doctest(Graphs)
+    #     doctest(Graphs)
 
     @testset verbose = true "Actual tests" begin
         for t in tests

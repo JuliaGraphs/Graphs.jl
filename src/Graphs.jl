@@ -124,6 +124,7 @@ export
     # wrapped graphs
     ReverseView,
     UndirectedView,
+    wrapped_graph,
 
     # simplegraphs
     add_edge!,
