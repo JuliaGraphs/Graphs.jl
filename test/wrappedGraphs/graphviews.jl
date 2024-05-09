@@ -23,6 +23,7 @@
             @test wrapped_graph(rg) == g
             @test is_directed(rg) == true
             @test eltype(rg) == eltype(g)
+            @test edgetype(rg) == edgetype(g)
             @test has_vertex(rg, 4) == has_vertex(g, 4)
             @test nv(rg) == nv(g) == nv(allocated_rg)
             @test ne(rg) == ne(g) == ne(allocated_rg)
@@ -36,8 +37,8 @@
             @test has_edge(rg, 1, 3) == has_edge(allocated_rg, 1, 3)
             @test has_edge(rg, 1, 4) == has_edge(allocated_rg, 1, 4)
 
-            rg_res = @inferred(dijkstra_shortest_paths(rg, 3))
-            allocated_rg_res = dijkstra_shortest_paths(allocated_rg, 3)
+            rg_res = @inferred(floyd_warshall_shortest_paths(rg))
+            allocated_rg_res = floyd_warshall_shortest_paths(allocated_rg)
             @test rg_res.dists == allocated_rg_res.dists # parents may not be the same
 
             rg_res = @inferred(strongly_connected_components(rg))
@@ -75,6 +76,7 @@
             @test wrapped_graph(ug) == g
             @test is_directed(ug) == false
             @test eltype(ug) == eltype(g)
+            @test edgetype(ug) == edgetype(g)
             @test has_vertex(ug, 4) == has_vertex(g, 4)
             @test nv(ug) == nv(g) == nv(allocated_ug)
             @test ne(ug) == ne(allocated_ug)
@@ -88,8 +90,8 @@
             @test has_edge(ug, 1, 3) == has_edge(allocated_ug, 1, 3)
             @test has_edge(ug, 1, 4) == has_edge(allocated_ug, 1, 4)
 
-            ug_res = @inferred(dijkstra_shortest_paths(ug, 3))
-            allocated_ug_res = dijkstra_shortest_paths(allocated_ug, 3)
+            ug_res = @inferred(floyd_warshall_shortest_paths(ug))
+            allocated_ug_res = floyd_warshall_shortest_paths(allocated_ug)
             @test ug_res.dists == allocated_ug_res.dists # parents may not be the same
 
             ug_res = @inferred(biconnected_components(ug))
