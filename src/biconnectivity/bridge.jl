@@ -1,7 +1,7 @@
 """
     bridges(g)
 
-Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
+Compute the [bridges](https://en.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges, i.e edges
 whose deletion increases the number of connected components of the graph.
 # Examples
