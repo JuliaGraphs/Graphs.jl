@@ -23,7 +23,7 @@ function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T<:Integer}
 
     has_self_loops(g) && throw(ArgumentError("graph must not have self loops"))
 
-    colors_used = BitSet()
+    colors_used = Set{T}()
 
     for v in seq
         empty!(colors_used)
