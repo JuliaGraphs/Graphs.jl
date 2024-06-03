@@ -58,7 +58,8 @@ First iteration to visit vertices in a graph using breadth-first search.
 function Base.iterate(t::BFSIterator{<:Integer})
     visited = falses(nv(t.graph))
     visited[t.source] = true
-    return (t.source, BFSVertexIteratorState(visited, [t.source], 1, 1))
+    state = BFSVertexIteratorState(visited, [t.source], 1, 1)
+    return (t.source, state)
 end
 
 function Base.iterate(t::BFSIterator{<:AbstractArray})
@@ -75,35 +76,33 @@ Iterator to visit vertices in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     graph, visited, queue = t.graph, state.visited, state.queue
-    while !isempty(queue)
-        if state.n_visited == nv(graph)
-            return nothing
-        end
+    @inbounds while !isempty(queue) && state.n_visited != nv(graph)
         # we visit the first node in the queue
-        node_start = first(queue)
-        if !visited[node_start]
-            visited[node_start] = true
+        curr_node = first(queue)
+        if !visited[curr_node]
+            visited[curr_node] = true
             state.n_visited += 1
-            return (node_start, state)
+            return (curr_node, state)
         end
         # which means we arrive here when the first node was visited.
-        neigh = outneighbors(graph, node_start)
-        if state.neighbor_idx <= length(neigh)
-            node = neigh[state.neighbor_idx]
+        neigh = outneighbors(graph, curr_node)
+        neighbor_idx = state.neighbor_idx
+        while neighbor_idx <= length(neigh)
+            adj_node = neigh[neighbor_idx]
             # we update the idx of the neighbor we will visit,
             # if it is already visited, we repeat
-            state.neighbor_idx += 1
-            if !visited[node]
-                push!(queue, node)
-                state.visited[node] = true
+            neighbor_idx += 1
+            if !visited[adj_node]
+                push!(queue, adj_node)
+                state.visited[adj_node] = true
                 state.n_visited += 1
-                return (node, state)
+                state.neighbor_idx = neighbor_idx
+                return (adj_node, state)
             end
-        else
-            # when the first node and its neighbors are visited
-            # we remove the first node of the queue
-            popfirst!(queue)
-            state.neighbor_idx = 1
         end
+        # when the first node and its neighbors are visited
+        # we remove the first node of the queue
+        popfirst!(queue)
+        state.neighbor_idx = 1
     end
 end
