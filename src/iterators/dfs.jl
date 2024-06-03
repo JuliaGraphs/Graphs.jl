@@ -74,21 +74,21 @@ Iterator to visit vertices in a graph using depth-first search.
 """
 function Base.iterate(t::DFSIterator, state::DFSVertexIteratorState)
     graph, visited, queue = t.graph, state.visited, state.queue
-    while !isempty(queue)
+    @inbounds while !isempty(queue)
         # we take the last node in the queue
-        node_start = last(queue)
+        curr_node = last(queue)
         # we first return it
-        if !visited[node_start]
-            visited[node_start] = true
-            return (node_start, state)
+        if !visited[curr_node]
+            visited[curr_node] = true
+            return (curr_node, state)
         end
         # and then we visit a neighbor and push it at the
         # end of the queue
-        for node in outneighbors(graph, node_start)
-            if !visited[node]
-                push!(queue, node)
-                visited[node] = true
-                return (node, state)
+        for adj_node in outneighbors(graph, curr_node)
+            if !visited[adj_node]
+                push!(queue, adj_node)
+                visited[adj_node] = true
+                return (adj_node, state)
             end
         end
         # we pop the last node in the queue
