@@ -90,7 +90,7 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
             end
         end
         length(state.next_level) == 0 && return nothing
-        state.curr_level, state.next_level = state.next_level, Int[]
+        state.curr_level, state.next_level = state.next_level, empty!(state.curr_level)
         state.node_idx = 0
     end
     # we visit all nodes in this level
