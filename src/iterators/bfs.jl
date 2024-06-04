@@ -77,9 +77,10 @@ end
 Iterator to visit vertices in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
-    state.n_visited == nv(t.graph) && return nothing
     # we fill nodes in this level
     if state.node_idx == length(state.curr_level)
+        state.n_visited += length(state.curr_level)
+        state.n_visited == nv(t.graph) && return nothing
         @inbounds for node in state.curr_level
             for adj_node in outneighbors(t.graph, node)
                 if !state.visited[adj_node]
@@ -93,7 +94,6 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
         state.node_idx = 0
     end
     # we visit all nodes in this level
-    state.n_visited += 1
     state.node_idx += 1
     @inbounds node = state.curr_level[state.node_idx]
     return (node, state)
