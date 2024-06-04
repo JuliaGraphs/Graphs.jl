@@ -35,7 +35,7 @@
         end
     end
     nodes_visited = collect(BFSIterator(g2, [1, 6]))
-    @test nodes_visited == [1, 2, 3, 6, 5, 7, 4]
+    @test nodes_visited == [1, 6, 2, 3, 5, 7, 4]
     nodes_visited = collect(BFSIterator(g2, [8, 1, 6]))
-    @test nodes_visited == [8, 9, 1, 2, 3, 6, 5, 7, 4]
+    @test nodes_visited == [8, 1, 6, 9, 2, 3, 5, 7, 4]
 end
