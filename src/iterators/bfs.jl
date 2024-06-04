@@ -67,7 +67,8 @@ end
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited, added = falses(nv(t.graph)), falses(nv(t.graph))
     visited[first(t.source)] = false
-    state = BFSVertexIteratorState(visited, added, [s for s in t.source], Int[], 0, 0)
+    curr_level = unique(s for s in t.source)
+    state = BFSVertexIteratorState(visited, added, curr_level, Int[], 0, 0)
     return Base.iterate(t, state)
 end
 
@@ -95,11 +96,9 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     @inbounds while state.node_idx < length(state.curr_level)
         state.node_idx += 1
         node = state.curr_level[state.node_idx]
-        if !state.visited[node]
-            state.visited[node] = true
-            state.n_visited += 1
-            return (node, state)
-        end
+        state.n_visited += 1
+        state.visited[node] = true
+        return (node, state)
     end
     return nothing
 end
