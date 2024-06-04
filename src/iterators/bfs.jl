@@ -42,7 +42,6 @@ in a `BitVector` so that to skip those nodes.
 """
 mutable struct BFSVertexIteratorState
     visited::BitVector
-    added::BitVector
     curr_level::Vector{Int}
     next_level::Vector{Int}
     node_idx::Int
@@ -58,17 +57,17 @@ Base.eltype(::Type{BFSIterator{S,G}}) where {S,G} = eltype(G)
 First iteration to visit vertices in a graph using breadth-first search.
 """
 function Base.iterate(t::BFSIterator{<:Integer})
-    visited, added = falses(nv(t.graph)), falses(nv(t.graph))
-    visited[t.source] = false
-    state = BFSVertexIteratorState(visited, added, [t.source], Int[], 0, 0)
+    visited = falses(nv(t.graph))
+    visited[t.source] = true
+    state = BFSVertexIteratorState(visited, [t.source], Int[], 0, 0)
     return Base.iterate(t, state)
 end
 
 function Base.iterate(t::BFSIterator{<:AbstractArray})
-    visited, added = falses(nv(t.graph)), falses(nv(t.graph))
-    visited[first(t.source)] = false
+    visited = falses(nv(t.graph))
     curr_level = unique(s for s in t.source)
-    state = BFSVertexIteratorState(visited, added, curr_level, Int[], 0, 0)
+    visited[curr_level] .= true
+    state = BFSVertexIteratorState(visited, curr_level, Int[], 0, 0)
     return Base.iterate(t, state)
 end
 
@@ -83,9 +82,9 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
     if state.node_idx == length(state.curr_level)
         @inbounds for node in state.curr_level
             for adj_node in outneighbors(t.graph, node)
-                if !state.visited[adj_node] && !state.added[adj_node]
+                if !state.visited[adj_node]
                     push!(state.next_level, adj_node)
-                    state.added[adj_node] = true
+                    state.visited[adj_node] = true
                 end
             end
         end
@@ -97,7 +96,6 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
         state.node_idx += 1
         node = state.curr_level[state.node_idx]
         state.n_visited += 1
-        state.visited[node] = true
         return (node, state)
     end
     return nothing
