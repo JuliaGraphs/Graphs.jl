@@ -88,15 +88,13 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
                 end
             end
         end
+        length(state.next_level) == 0 && return nothing
         state.curr_level, state.next_level = state.next_level, Int[]
         state.node_idx = 0
     end
     # we visit all nodes in this level
-    @inbounds while state.node_idx < length(state.curr_level)
-        state.node_idx += 1
-        node = state.curr_level[state.node_idx]
-        state.n_visited += 1
-        return (node, state)
-    end
-    return nothing
+    state.n_visited += 1
+    state.node_idx += 1
+    @inbounds node = state.curr_level[state.node_idx]
+    return (node, state)
 end
