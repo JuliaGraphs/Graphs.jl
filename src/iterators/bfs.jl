@@ -37,7 +37,7 @@ end
 `BFSVertexIteratorState` is a struct to hold the current state of iteration
 in BFS which is needed for the `Base.iterate()` function. We use two vectors,
 one for the current level nodes and one from the next level nodes to visit 
-the graph. Since the queue can contains repetitions of already visited nodes, 
+the graph. Since new levels can contains repetitions of already visited nodes, 
 we also keep track of that in a `BitVector` so as to skip those nodes.
 """
 mutable struct BFSVertexIteratorState
