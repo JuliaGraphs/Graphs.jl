@@ -22,18 +22,22 @@
         art = @inferred(articulation(g))
         ans = [1, 7, 8, 12]
         @test art == ans
+        @test art == findall(is_articulation.(Ref(g), vertices(g)))
     end
     for level in 1:6
         btree = Graphs.binary_tree(level)
         for tree in test_generic_graphs(btree; eltypes=[Int, UInt8, Int16])
             artpts = @inferred(articulation(tree))
             @test artpts == collect(1:(2^(level - 1) - 1))
+            @test artpts == findall(is_articulation.(Ref(tree), vertices(tree)))
         end
     end
 
     hint = blockdiag(wheel_graph(5), wheel_graph(5))
     add_edge!(hint, 5, 6)
     for h in test_generic_graphs(hint; eltypes=[Int, UInt8, Int16])
-        @test @inferred(articulation(h)) == [5, 6]
+        art = @inferred(articulation(h))
+        @test art == [5, 6]
+        @test art == findall(is_articulation.(Ref(h), vertices(h)))
     end
 end
