@@ -38,7 +38,7 @@ end
 in BFS which is needed for the `Base.iterate()` function. We use two vectors,
 one for the current level nodes and one from the next level nodes to visit 
 the graph. Since the queue can contains repetitions of already visited nodes, 
-we also keep track of that in a `BitVector` so that to skip those nodes.
+we also keep track of that in a `BitVector` so as to skip those nodes.
 """
 mutable struct BFSVertexIteratorState
     visited::BitVector
