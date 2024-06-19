@@ -40,4 +40,12 @@
         @test art == [5, 6]
         @test art == findall(is_articulation.(Ref(h), vertices(h)))
     end
+
+    # graph with disconnected components
+    g = path_graph(5)
+    es = collect(edges(g))
+    g2 = Graph(vcat(es, [Edge(e.src+nv(g), e.dst+nv(g)) for e in es]))
+    @test articulation(g) == [2,3,4] # a single connected component
+    @test articulation(g2) == [2,3,4,7,8,9] # two identical connected components
+    @test articulation(g2) == findall(is_articulation.(Ref(g2), vertices(g2)))
 end
