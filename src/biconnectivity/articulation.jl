@@ -25,7 +25,7 @@ function articulation end
     s = Vector{Tuple{T,T,T}}()
     low = zeros(T, nv(g))
     pre = zeros(T, nv(g))
-    
+
     is_articulation_pt = falses(nv(g))
     @inbounds for u in vertices(g)
         articulation_dfs!(is_articulation_pt, g, u, s, low, pre)
@@ -66,11 +66,7 @@ false
 ```
 """
 function is_articulation end
-@traitfn function is_articulation(
-    g::AG::(!IsDirected),
-    v::T
-    ) where {T,AG<:AbstractGraph{T}}
-
+@traitfn function is_articulation(g::AG::(!IsDirected), v::T) where {T,AG<:AbstractGraph{T}}
     s = Vector{Tuple{T,T,T}}()
     low = zeros(T, nv(g))
     pre = zeros(T, nv(g))
@@ -79,14 +75,13 @@ function is_articulation end
 end
 
 @traitfn function articulation_dfs!(
-    is_articulation_pt::Union{Nothing, BitVector},
+    is_articulation_pt::Union{Nothing,BitVector},
     g::AG::(!IsDirected),
     u::T,
     s::Vector{Tuple{T,T,T}},
     low::Vector{T},
     pre::Vector{T},
-    ) where {T,AG<:AbstractGraph{T}}
-
+) where {T,AG<:AbstractGraph{T}}
     if !isnothing(is_articulation_pt)
         if pre[u] != 0
             return is_articulation_pt
