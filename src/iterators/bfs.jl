@@ -66,6 +66,7 @@ end
 function Base.iterate(t::BFSIterator{<:AbstractArray})
     visited = falses(nv(t.graph))
     curr_level = unique(s for s in t.source)
+    sort!(curr_level)
     visited[curr_level] .= true
     state = BFSVertexIteratorState(visited, curr_level, Int[], 0, 0)
     return Base.iterate(t, state)
