@@ -164,7 +164,7 @@ tests = [
     end
 
     @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Graphs; verbose=false, overwrite=true)
+        @test format(Graphs; verbose=false, overwrite=false)
     end
 
     doctest(Graphs)
