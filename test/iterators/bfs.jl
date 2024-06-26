@@ -51,6 +51,6 @@
     @test sort(nodes_visited[4:end]) == sort(levels[2])
 
     g = path_digraph(7)
-    nodes_visited = collect(BFSIterator(g, 7; neighbor_func=inneighbors))
+    nodes_visited = collect(BFSIterator(g, 7; neighbors_type=inneighbors))
     @test nodes_visited == collect(7:-1:1)
 end
