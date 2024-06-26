@@ -1,10 +1,10 @@
 """
-    BFSIterator(graph::G, source::S; depth_limit=nothing, neighbor_func=outneighbors)
+    BFSIterator(graph::G, source::S; depth_limit=nothing, neighbors_type=outneighbors)
 
 `BFSIterator` is used to iterate through graph vertices using a breadth-first search. 
 A source node(s) must be supplied as an `Int` or an array-like type that can be 
 indexed if supplying multiple sources. It is also possible to specify a `depth_limit`
-which will stop the search after it is reached and a `neighbor_func` which specifies
+which will stop the search after it is reached and a `neighbors_type` which specifies
 what kind of neighbors of a node should be considered when exploring the graph.
     
 # Examples
@@ -26,14 +26,14 @@ struct BFSIterator{S,G<:AbstractGraph,F<:Function}
     graph::G
     source::S
     depth_limit::Int
-    neighbor_func::F
+    neighbors_type::F
     function BFSIterator(
-        graph::G, source::S; depth_limit=typemax(Int64), neighbor_func::F=outneighbors
+        graph::G, source::S; depth_limit=typemax(Int64), neighbors_type::F=outneighbors
     ) where {S,G,F}
         if any(node -> !has_vertex(graph, node), source)
             error("Some source nodes for the iterator are not in the graph")
         end
-        return new{S,G,F}(graph, source, depth_limit, neighbor_func)
+        return new{S,G,F}(graph, source, depth_limit, neighbors_type)
     end
 end
 
@@ -91,9 +91,9 @@ function Base.iterate(t::BFSIterator, state::BFSVertexIteratorState)
         state.n_level += 1
         state.n_visited += length(state.curr_level)
         state.n_visited == nv(t.graph) && return nothing
-        neighbor_func = t.neighbor_func
+        neighbors_type = t.neighbors_type
         @inbounds for node in state.curr_level
-            for adj_node in neighbor_func(t.graph, node)
+            for adj_node in neighbors_type(t.graph, node)
                 if !state.visited[adj_node]
                     push!(state.next_level, adj_node)
                     state.visited[adj_node] = true
