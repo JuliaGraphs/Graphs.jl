@@ -1,5 +1,5 @@
 # export test_adjacency, test_laplacian, test_accessors, test_arithmetic, test_other
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 @testset "Graph matrices" begin
 

@@ -6,6 +6,8 @@ docs/build/
 docs/site/
 benchmark/.results/*
 benchmark/.tune.jld
+benchmark/Manifest.toml
+.benchmarkci
 *.cov
 /Manifest.toml
 /docs/Manifest.toml
