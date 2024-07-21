@@ -648,7 +648,7 @@ julia> g == union(cartesian_product(a, b), tensor_product(a, b))
 true
 ```
 """
-function strong_product(g::G, h::G) where {G<:AbstractGraph}
+function strong_product(g::G, h::G) where {G<:AbstractSimpleGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
@@ -704,7 +704,7 @@ julia> complement(g) == strong_product(complement(a), complement(b))
 true
 ```
 """
-function disjunctive_product(g::G, h::G) where {G<:AbstractGraph}
+function disjunctive_product(g::G, h::G) where {G<:AbstractSimpleGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
@@ -758,7 +758,7 @@ julia> adjacency_matrix(g)
  1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
 ```
 """
-function lexicographic_product(g::G, h::G) where {G<:AbstractGraph}
+function lexicographic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     for e in edges(g)
@@ -811,7 +811,7 @@ julia> adjacency_matrix(g)
  1  ⋅  1  ⋅  ⋅  ⋅  1  1  ⋅
 ```
 """
-function homomorphic_product(g::G, h::G) where {G<:AbstractGraph}
+function homomorphic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
     z = G(nv(g) * nv(h))
     id(i, j) = (i - 1) * nv(h) + j
     undirected = !is_directed(g)
