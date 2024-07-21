@@ -192,6 +192,8 @@ end
 Return a vector of vectors representing the node indices in each of the maximal
 independent sets found in the undirected graph `g`.
 
+The graph will be converted to SimpleGraph at the start of the computation.
+
 ```jldoctest
 julia> using Graphs
 
@@ -218,6 +220,8 @@ end
 
 Return a vector representing the node indices of a maximum independent set
 of the undirected graph `g`.
+
+The graph will be converted to SimpleGraph at the start of the computation.
 
 ### See also
 [`independent_set`](@ref)
@@ -246,6 +250,8 @@ end
     independence_number(g)
 
 Returns the size of the largest independent set of the undirected graph `g`.
+
+The graph will be converted to SimpleGraph at the start of the computation.
 
 ```jldoctest
 julia> using Graphs
