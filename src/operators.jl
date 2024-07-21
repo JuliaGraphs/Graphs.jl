@@ -637,12 +637,12 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using Graphs
 
-julia> a = star_graph(3)
+julia> a = star_graph(3);
 
-julia> b = path_graph(3)
+julia> b = path_graph(3);
 
 julia> g = strong_product(a, b)
-{9, 8} undirected simple Int64 graph
+{9, 20} undirected simple Int64 graph
 
 julia> g == union(cartesian_product(a, b), tensor_product(a, b))
 true
@@ -693,12 +693,12 @@ in the generated graph exceeds the eltype.
 ```jldoctest
 julia> using Graphs
 
-julia> a = star_graph(3)
+julia> a = star_graph(3);
 
-julia> b = path_graph(3)
+julia> b = path_graph(3);
 
 julia> g = disjunctive_product(a, b)
-{9, 8} undirected simple Int64 graph
+{9, 28} undirected simple Int64 graph
 
 julia> complement(g) == strong_product(complement(a), complement(b))
 true
@@ -743,7 +743,7 @@ in the generated graph exceeds the eltype.
 julia> using Graphs
 
 julia> g = lexicographic_product(star_graph(3), path_graph(3))
-{9, 8} undirected simple Int64 graph
+{9, 24} undirected simple Int64 graph
 
 julia> adjacency_matrix(g)
 9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 48 stored entries:
@@ -796,7 +796,7 @@ in the generated graph exceeds the eltype.
 julia> using Graphs
 
 julia> g = homomorphic_product(star_graph(3), path_graph(3))
-{9, 8} undirected simple Int64 graph
+{9, 19} undirected simple Int64 graph
 
 julia> adjacency_matrix(g)
 9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 38 stored entries:
