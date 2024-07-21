@@ -162,7 +162,7 @@ ne(g::AbstractGraph) = _NI("ne")
 Return (an iterator to or collection of) the vertices of a graph.
 
 ### Implementation Notes
-A returned iterator is valid for one pass over the edges, and
+A returned iterator is valid for one pass over the vertices, and
 is invalidated by changes to `g`.
 
 # Examples

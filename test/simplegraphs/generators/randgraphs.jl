@@ -382,6 +382,19 @@
         @test δ(g) == 2
         g = dorogovtsev_mendes(3; rng=rng)
         @test nv(g) == 3 && ne(g) == 3
+        @test δ(g) == 2 && Δ(g) == 2
+
+        # Testing that n=4 graph is one on the possible graphs
+        g = dorogovtsev_mendes(4; rng=rng)
+        @test has_edge(g, 1, 2) &&
+            has_edge(g, 1, 3) &&
+            has_edge(g, 2, 3) &&
+            (
+                has_edge(g, 1, 4) && has_edge(g, 2, 4) ||
+                has_edge(g, 2, 4) && has_edge(g, 3, 4) ||
+                has_edge(g, 1, 4) && has_edge(g, 3, 4)
+            )
+
         # testing domain errors
         @test_throws DomainError dorogovtsev_mendes(2, rng=rng)
         @test_throws DomainError dorogovtsev_mendes(-1, rng=rng)

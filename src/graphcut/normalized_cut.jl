@@ -1,4 +1,3 @@
-using ArnoldiMethod
 # computes normalized cut cost for partition `cut`
 function _normalized_cut_cost(cut, W::AbstractMatrix, D)
     cut_cost = zero(eltype(W))
