@@ -39,8 +39,8 @@ end
 """
     is_articulation(g, v)
 
-Determine whether `v` is an 
-[articulation points](https://en.wikipedia.org/wiki/Biconnected_component) of a undirected
+Determine whether `v` is an
+[articulation point](https://en.wikipedia.org/wiki/Biconnected_component) of an undirected
 graph `g`, returning `true` if so and `false` otherwise.
 
 See also [`articulation`].
