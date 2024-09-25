@@ -22,7 +22,7 @@ julia> for node in BFSIterator(g,3)
 2
 ```
 """
-struct BFSIterator{S,G<:AbstractGraph,F<:Function}
+struct BFSIterator{S,G<:AbstractGraph,F}
     graph::G
     source::S
     depth_limit::Int
