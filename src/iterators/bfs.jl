@@ -1,8 +1,8 @@
 """
     BFSIterator(graph, source; depth_limit=nothing, neighbors_type=outneighbors)
 
-`BFSIterator` is used to iterate through graph vertices using a breadth-first search. 
-A source node(s) must be supplied as an `Int` or an array-like type that can be 
+`BFSIterator` is used to iterate through graph vertices using a breadth-first search.
+A source node(s) must be supplied as an `Int` or an array-like type that can be
 indexed if supplying multiple sources. It is also possible to specify a `depth_limit`
 which will stop the search once all nodes at that depth are visited and a `neighbors_type`
 which specifies what kind of neighbors of a node should be considered when exploring the graph.
