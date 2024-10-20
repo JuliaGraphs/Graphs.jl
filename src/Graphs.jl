@@ -437,7 +437,13 @@ export
     vertex_cover,
 
     # longestpaths
-    dag_longest_path
+    dag_longest_path,
+    
+    # distance-regular
+    is_distance_regular,
+    intersection_array,
+    global_parameters,
+    is_strongly_regular
 
 """
     Graphs
@@ -490,6 +496,7 @@ const Edge = Graphs.SimpleGraphs.SimpleEdge
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
+include("distance_regular/distance_regular.jl")
 include("cycles/johnson.jl")
 include("cycles/hawick-james.jl")
 include("cycles/karp.jl")
