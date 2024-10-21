@@ -62,7 +62,7 @@ end
 
 
 function _intersection_array(G::AbstractGraph; check::Bool=true)
-    if check && (!allequal(degree(G)) || isempty(vertices(G)) || is_connected(G))
+    if check && (!allequal(degree(G)) || isempty(vertices(G)) || !is_connected(G))
         return (false, (Int[], Int[]))
     end
     paths_matrix = mapreduce(hcat, vertices(G)) do vertex
