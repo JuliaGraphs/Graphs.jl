@@ -84,7 +84,7 @@ function _intersection_array(G::AbstractGraph; check::Bool=true)
         # hence if any of bv[i+1] or cv[i+1]
         # is not zero nor corresponding b, c
         # the graph is not distance-regular
-        if check && (bv[i+1] != 0 || bv[i+1] != b || cv[i+1] != 0 || cv[i+1] != c)
+        if check && (bv[i+1] != 0 && bv[i+1] != b || cv[i+1] != 0 && cv[i+1] != c)
             return (false, (Int[], Int[]))
         end
         bv[i+1] = b
