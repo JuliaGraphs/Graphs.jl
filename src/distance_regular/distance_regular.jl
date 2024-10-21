@@ -65,22 +65,18 @@ function _intersection_array(G::AbstractGraph; check::Bool=true)
     if check && (!allequal(degree(G)) || isempty(vertices(G)) || !is_connected(G))
         return (false, (Int[], Int[]))
     end
-    paths_matrix = mapreduce(hcat, vertices(G)) do vertex
+    dist_matrix = mapreduce(hcat, vertices(G)) do vertex
         dijkstra_shortest_paths(G, vertex).dists
     end
-    diameter = maximum(paths_matrix)
+    diameter = maximum(dist_matrix)
     bv = zeros(Int, diameter+1)  # b intersection array
     cv = copy(bv)  # c intersection array
-    for u in vertices(G), v in vertices(G)
-        i = paths_matrix[u, v]
-        # number of neighbors of v at a distance of i-1 from u
-        c = count(neighbors(G, v)) do n
-            paths_matrix[n, u] == i - 1
-        end
-        # number of neighbors of v at a distance of i+1 from u
-        b = count(neighbors(G, v)) do n
-            paths_matrix[n, u] == i + 1
-        end
+    @inbounds @views for u in vertices(G), v in vertices(G)
+        i = dist_matrix[u, v]
+        # number of neighbors of v at a distance i-1 from u
+        c = count(==(i-1), dist_matrix[neighbors(G, v), u]) 
+        # number of neighbors of v at a distance i+1 from u
+        b = count(==(i+1), dist_matrix[neighbors(G, v), u]) 
         # b and c cannot be zero
         # hence if any of bv[i+1] or cv[i+1]
         # is not zero nor corresponding b, c
