@@ -2,7 +2,7 @@
     articulation(g)
 
 Compute the [articulation points](https://en.wikipedia.org/wiki/Biconnected_component) (also
-known as cut or seperating vertices) of an undirected graph `g` and return an array
+known as cut or seperating vertices) of an undirected graph `g` and return a vector
 containing all the vertices of `g` that are articulation points.
 
 # Examples
@@ -43,7 +43,7 @@ Determine whether `v` is an
 [articulation point](https://en.wikipedia.org/wiki/Biconnected_component) of an undirected
 graph `g`, returning `true` if so and `false` otherwise.
 
-See also [`articulation`].
+See also [`articulation`](@ref).
 
 # Examples
 ```jldoctest
