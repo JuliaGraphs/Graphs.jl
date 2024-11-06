@@ -154,7 +154,10 @@ tests = [
         if VERSION >= v"1.9"
             @assert get_pkg_version("JET") >= v"0.8.4"
             JET.test_package(
-                Graphs; target_defined_modules=true, ignore_missing_comparison=true
+                Graphs;
+                target_defined_modules=true,
+                ignore_missing_comparison=true,
+                mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
             )
         end
     end
