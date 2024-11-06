@@ -18,7 +18,7 @@ jobs:
       matrix:
         version:
           - '1'
-          - 'lts'
+          - '1.6'
           - 'pre'
         os:
           - ubuntu-latest
