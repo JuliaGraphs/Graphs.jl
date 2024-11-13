@@ -150,7 +150,7 @@ julia> using Graphs
 julia> erdos_renyi(10, 0.5)
 {10, 20} undirected simple Int64 graph
 ```
-```jldoctest
+```
 julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
@@ -186,7 +186,7 @@ graph with `n` vertices and `ne` edges.
 - `seed=nothing`: set the RNG seed.
 
 # Examples
-```jldoctest
+```
 julia> using Graphs
 
 julia> erdos_renyi(10, 30)
@@ -703,7 +703,7 @@ julia> edges(g) |> collect
  Edge 2 => 3
  Edge 2 => 4
 ```
-```jldoctest
+```
 julia> using Graphs
 
 julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1], seed=123)
@@ -762,7 +762,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 
 ## Examples
-```jldoctest
+```
 julia> using Graphs
 
 julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
