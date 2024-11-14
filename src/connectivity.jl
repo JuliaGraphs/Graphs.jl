@@ -15,7 +15,7 @@ If not provided, it is automatically instantiated.
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components!(
-    label::AbstractVector, g::AbstractGraph{T}, search_queue::Vector{T}=Vector{T}()
+    label::AbstractVector{T}, g::AbstractGraph{T}, search_queue::Vector{T}=Vector{T}()
 ) where {T}
     isempty(search_queue) || error("provided `search_queue` is not empty")
     for u in vertices(g)
@@ -178,11 +178,11 @@ julia> count_connected_components(g)
 """
 function count_connected_components(
     g::AbstractGraph{T},
-    label::AbstractVector=zeros(T, nv(g)),
+    label::AbstractVector{T}=zeros(T, nv(g)),
     search_queue::Vector{T}=Vector{T}();
     reset_label::Bool=false
 ) where T
-    _connected_components!(label, g, search_queue)
+    connected_components!(label, g, search_queue)
     c = count_unique(label)
     reset_label && fill!(label, zero(eltype(label)))
     return c
