@@ -135,7 +135,7 @@ julia> is_connected(g)
 true
 ```
 """
-function is_connected(g::AbstractGraph{T}) where T
+function is_connected(g::AbstractGraph{T}) where {T}
     mult = is_directed(g) ? 2 : 1
     if mult * ne(g) + 1 >= nv(g)
         label = zeros(T, nv(g))
@@ -180,15 +180,15 @@ function count_connected_components(
     g::AbstractGraph{T},
     label::AbstractVector{T}=zeros(T, nv(g)),
     search_queue::Vector{T}=Vector{T}();
-    reset_label::Bool=false
-) where T
+    reset_label::Bool=false,
+) where {T}
     connected_components!(label, g, search_queue)
     c = count_unique(label)
     reset_label && fill!(label, zero(eltype(label)))
     return c
 end
 
-function count_unique(label::Vector{T}) where T
+function count_unique(label::Vector{T}) where {T}
     seen = Set{T}()
     c = 0
     for l in label
