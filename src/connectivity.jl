@@ -147,15 +147,20 @@ function is_connected(g::AbstractGraph{T}) where T
 end
 
 """
-    count_connected_components( g, [label, search_queue])
+    count_connected_components( g, [label, search_queue]; reset_label::Bool=false)
 
 Return the number of connected components in `g`.
 
 Equivalent to `length(connected_components(g))` but uses fewer allocations by not
 materializing the component vectors explicitly. Additionally, mutated work-arrays `label`
 and `search_queue` can be provided to reduce allocations further (see
-[`connected_components!`](@ref)).
+[`_connected_components!`](@ref)).
 
+## Keyword arguments
+- `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to zero before
+  returning.
+
+## Example
 ```
 julia> using Graphs
 
@@ -174,10 +179,13 @@ julia> count_connected_components(g)
 function count_connected_components(
     g::AbstractGraph{T},
     label::AbstractVector=zeros(T, nv(g)),
-    search_queue::Vector{T}=Vector{T}()
+    search_queue::Vector{T}=Vector{T}();
+    reset_label::Bool=false
 ) where T
-    connected_components!(label, g, search_queue)
-    return count_unique(label)
+    _connected_components!(label, g, search_queue)
+    c = count_unique(label)
+    reset_label && fill!(label, zero(eltype(label)))
+    return c
 end
 
 function count_unique(label::Vector{T}) where T
