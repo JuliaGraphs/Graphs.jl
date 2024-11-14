@@ -210,6 +210,7 @@ export
 
     # connectivity
     connected_components,
+    connected_components!,
     count_connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
