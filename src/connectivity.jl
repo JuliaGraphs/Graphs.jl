@@ -154,7 +154,7 @@ Return the number of connected components in `g`.
 Equivalent to `length(connected_components(g))` but uses fewer allocations by not
 materializing the component vectors explicitly. Additionally, mutated work-arrays `label`
 and `search_queue` can be provided to reduce allocations further (see
-[`_connected_components!`](@ref)).
+[`connected_components!`](@ref)).
 
 ## Keyword arguments
 - `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to zero before
