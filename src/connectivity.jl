@@ -194,11 +194,14 @@ function count_connected_components(
 end
 
 function count_unique(label::Vector{T}) where {T}
-    # effectively does `length(Set(label))` but slightly faster since `Set(label)`
-    # sizehints too aggressively for the use case of having relatively few unique elements
+    # effectively does `length(Set(label))` but faster, since `Set(label)` sizehints
+    # aggressively and assumes that most elements of `label` will be unique, which very
+    # rarely will be the case for caller `count_connected_components!`
     seen = Set{T}()
     for l in label
-        l ∉ seen && push!(seen, l) # currently faster than direct `push!(seen, l)`
+        # faster than direct `push!(seen, l)` when `label` has few unique elements relative
+        # to `length(label)`
+        l ∉ seen && push!(seen, l)
     end
     return length(seen)
 end
