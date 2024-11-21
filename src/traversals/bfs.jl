@@ -182,15 +182,18 @@ function has_path(
     end
     (seen[u] || seen[v]) && return false
     u == v && return true # cannot be separated
-    next = Vector{T}()
-    push!(next, u)
+    next = Vector{T}(undef, nv(g))
+    front = back = 1
+    next[front] = u
     seen[u] = true
-    while !isempty(next)
-        src = popfirst!(next) # get new element from queue
+    while front <= back
+        src = next[front]
+        front += 1 # dequeue; pop from queue
         for vertex in outneighbors(g, src)
             vertex == v && return true
             if !seen[vertex]
-                push!(next, vertex) # push onto queue
+                back += 1
+                next[back] = vertex # enqueue; push onto queue
                 seen[vertex] = true
             end
         end
