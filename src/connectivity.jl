@@ -7,17 +7,18 @@ Fill `label` with the `id` of the connected component in the undirected graph
 `g` to which it belongs. Return a vector representing the component assigned
 to each vertex. The component value is the smallest vertex ID in the component.
 
-A `search_queue`, an empty `Vector{eltype(edgetype(g))}`, can be provided to reduce
-allocations if `connected_components!` is intended to be called multiple times sequentially.
-If not provided, it is automatically instantiated.
+## Optional arguments
+- `search_queue`, an empty `Vector{eltype(edgetype(g))}`, can be provided to avoid
+   reallocating this work array repeatedly on repeated calls of `connected_components!`.
+   If not provided, it is automatically instantiated.
 
-### Performance
+## Performance
 This algorithm is linear in the number of edges of the graph.
 """
 function connected_components!(
     label::AbstractVector{T}, g::AbstractGraph{T}, search_queue::Vector{T}=Vector{T}()
 ) where {T}
-    isempty(search_queue) || error("provided `search_queue` is not empty")
+    empty!(search_queue)
     for u in vertices(g)
         label[u] != zero(T) && continue
         label[u] = u
@@ -152,13 +153,17 @@ end
 Return the number of connected components in `g`.
 
 Equivalent to `length(connected_components(g))` but uses fewer allocations by not
-materializing the component vectors explicitly. Additionally, mutated work-arrays `label`
-and `search_queue` can be provided to reduce allocations further (see
-[`connected_components!`](@ref)).
+materializing the component vectors explicitly. 
+
+## Optional arguments
+Mutated work arrays, `label` and `search_queue` can be provided to avoid allocating these
+arrays repeatedly on repeated calls of `count_connected_components`. 
+For `g :: AbstractGraph{T}`, `label` must be a zero-initialized `Vector{T}` of length
+`nv(g)` and `search_queue` a `Vector{T}`. See also [`connected_components!`](@ref).
 
 ## Keyword arguments
-- `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to zero before
-  returning.
+- `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to a zero-vector
+  before returning.
 
 ## Example
 ```
