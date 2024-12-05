@@ -40,8 +40,8 @@ julia> SimpleDiGraph(UInt8(10))
 ```
 """
 function SimpleDiGraph{T}(n::Integer=0) where {T<:Integer}
-    fadjlist = [Vector{T}() for _ in one(T):n]
-    badjlist = [Vector{T}() for _ in one(T):n]
+    fadjlist = [Vector{T}() for _ in 1:n]
+    badjlist = [Vector{T}() for _ in 1:n]
     return SimpleDiGraph(0, fadjlist, badjlist)
 end
 
