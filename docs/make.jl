@@ -59,6 +59,7 @@ pages_files = [
         "algorithms/dominatingset.md",
         "algorithms/editdist.md",
         "algorithms/independentset.md",
+        "algorithms/iterators.md",
         "algorithms/linalg.md",
         "algorithms/shortestpaths.md",
         "algorithms/spanningtrees.md",
