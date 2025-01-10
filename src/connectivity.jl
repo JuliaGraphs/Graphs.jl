@@ -805,17 +805,12 @@ function isgraphical(degs::AbstractVector{<:Integer})
     sorted_degs = sort(degs; rev=true)
     # Compute the length of the degree sequence
     cur_sum = zero(UInt64)
-    # Compute the minimum of each degree and the corresponding index
-    mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i in 1:n
-        mindeg[i] = min(i, sorted_degs[i])
-    end
     # Check if the degree sequence satisfies the Erdös-Gallai condition
-    cum_min = sum(mindeg)
     @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
-        cum_min -= mindeg[r]
-        cond = cur_sum <= (r * (r - 1) + cum_min)
+        # Calculate the sum of the minimum of r and the degrees of the vertices
+        mid_deg_sum = sum([min(r, sorted_degs[i]) for i in (r + 1):n])
+        cond = cur_sum <= (r * (r - 1) + mid_deg_sum)
         cond || return false
     end
     return true
