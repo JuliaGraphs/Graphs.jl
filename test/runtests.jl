@@ -16,8 +16,10 @@ using Random
 using Statistics: mean, std
 using StableRNGs
 using Pkg
+using Unitful
 
 const testdir = dirname(@__FILE__)
+const KMf = typeof(u"1.0km")
 
 function get_pkg_version(name::AbstractString)
     for dep in values(Pkg.dependencies())

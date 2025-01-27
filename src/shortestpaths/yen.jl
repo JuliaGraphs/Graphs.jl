@@ -30,7 +30,7 @@ function yen_k_shortest_paths(
     distmx::AbstractMatrix{T}=weights(g),
     K::Int=1;
     maxdist=typemax(T),
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     source == target && return YenState{T,U}([U(0)], [[source]])
 
     dj = dijkstra_shortest_paths(g, source, distmx; maxdist)

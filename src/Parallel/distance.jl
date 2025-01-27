@@ -2,7 +2,7 @@
 
 function eccentricity(
     g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real}
+) where {T<:Number}
     vlen = length(vs)
     eccs = SharedVector{T}(vlen)
     @sync @distributed for i in 1:vlen

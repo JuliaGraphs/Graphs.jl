@@ -51,6 +51,20 @@
         1.0 0.0 3.0 0.0
     ]
 
+    w_km = KMf.(w)
+    for g in testgraphs(G)
+        ds = @inferred(yen_k_shortest_paths(g, 2, 4, w_km))
+        @test ds.paths == [[2, 1, 4]]
+        ds = @inferred(yen_k_shortest_paths(g, 2, 1, w_km))
+        @test ds.paths == [[2, 1]]
+        ds = @inferred(yen_k_shortest_paths(g, 2, 3, w_km))
+        @test ds.paths == [[2, 3]]
+
+        # Test with multiple paths
+        ds = @inferred(yen_k_shortest_paths(g, 2, 4, w_km, 2))
+        @test ds.paths == [[2, 1, 4], [2, 3, 4]]
+    end
+
     for g in testgraphs(G)
         ds = @inferred(yen_k_shortest_paths(g, 2, 4, w))
         @test ds.paths == [[2, 1, 4]]

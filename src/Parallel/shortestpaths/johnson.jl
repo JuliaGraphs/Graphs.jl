@@ -4,7 +4,7 @@ using Compat
 
 function johnson_shortest_paths(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     # Change when parallel implementation of Bellman Ford available

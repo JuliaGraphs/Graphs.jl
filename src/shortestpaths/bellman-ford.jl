@@ -22,7 +22,7 @@ An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 - `parents::Vector{U}`: `parents[v]` is the predecessor of vertex `v` on the shortest path from the source to `v`
 - `dists::Vector{T}`: `dists[v]` is the length of the shortest path from the source to `v`
 """
-struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
+struct BellmanFordState{T<:Number,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -40,7 +40,7 @@ function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T}=weights(graph),
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(graph)
     active = falses(nvg)
     active[sources] .= true
@@ -76,7 +76,7 @@ end
 
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U}, v::Integer, distmx::AbstractMatrix{T}=weights(graph);
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     return bellman_ford_shortest_paths(graph, [v], distmx)
 end
 
@@ -84,7 +84,7 @@ has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     try
         bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e

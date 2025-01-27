@@ -18,7 +18,7 @@ assumed to be 1.
 """
 @traitfn function mincut(
     g::::(!IsDirected), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real}
+) where {T<:Number}
     nvg = nv(g)
     U = eltype(g)
 
@@ -140,7 +140,7 @@ function maximum_adjacency_visit(
     log::Bool=false,
     io::IO=stdout,
     s::U=one(U),
-) where {U,T<:Real}
+) where {U,T<:Number}
     pq = PriorityQueue{U,T}(Base.Order.Reverse)
     vertices_order = Vector{U}()
     has_key = ones(Bool, nv(g))
