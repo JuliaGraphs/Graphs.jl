@@ -3,7 +3,7 @@
 # Discrete Mathematics, 1978, 23, 309 - 311
 function _karp_minimum_cycle_mean(
     g::AbstractGraph, distmx::AbstractMatrix{T}, component::Vector{U}
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     v2j = Dict{U,Int}()
     for (j, v) in enumerate(component)
         v2j[v] = j

@@ -11,7 +11,7 @@ function kruskal_mst end
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
 @traitfn function kruskal_mst(
     g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T<:Number,U,AG<:AbstractGraph{U}}
     connected_vs = IntDisjointSets(nv(g))
 
     mst = Vector{edgetype(g)}()

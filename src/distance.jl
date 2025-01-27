@@ -73,7 +73,7 @@ julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
 """
 function eccentricity(
     g::AbstractGraph, v::Integer, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real}
+) where {T<:Number}
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && @warn("Infinite path length detected for vertex $v")
 

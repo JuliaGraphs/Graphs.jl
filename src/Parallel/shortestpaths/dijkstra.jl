@@ -3,7 +3,7 @@
 
 An [`AbstractPathState`](@ref) designed for Parallel.dijkstra_shortest_paths calculation.
 """
-struct MultipleDijkstraState{T<:Real,U<:Integer} <: AbstractPathState
+struct MultipleDijkstraState{T<:Number,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -18,7 +18,7 @@ traversal information.
 """
 function dijkstra_shortest_paths(
     g::AbstractGraph{U}, sources=vertices(g), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real} where {U}
+) where {T<:Number} where {U}
     n_v = nv(g)
     r_v = length(sources)
 

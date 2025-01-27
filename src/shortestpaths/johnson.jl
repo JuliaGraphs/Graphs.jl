@@ -9,7 +9,7 @@ An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 - `dists::Matrix{T}`: `dists[u, v]` is the length of the shortest path from `u` to `v` 
 - `parents::Matrix{U}`: `parents[u, v]` is the predecessor of vertex `v` on the shortest path from `u` to `v`
 """
-struct JohnsonState{T<:Real,U<:Integer} <: AbstractPathState
+struct JohnsonState{T<:Number,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -29,7 +29,7 @@ Complexity: `O(|V|*|E|)`
 """
 function johnson_shortest_paths(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     # Change when parallel implementation of Bellman Ford available
@@ -71,7 +71,7 @@ end
 
 function enumerate_paths(
     s::JohnsonState{T,U}, v::Integer
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

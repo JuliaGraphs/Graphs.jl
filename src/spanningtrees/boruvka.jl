@@ -14,7 +14,7 @@ function boruvka_mst end
 
 @traitfn function boruvka_mst(
     g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T<:Number,U,AG<:AbstractGraph{U}}
     djset = IntDisjointSets(nv(g))
     # maximizing Z is the same as minimizing -Z
     # mode will indicate the need for the -1 multiplication
