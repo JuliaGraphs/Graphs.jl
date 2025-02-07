@@ -523,6 +523,9 @@ end
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
 
+The cartesian product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂).
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -575,6 +578,8 @@ end
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
+The tensor product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∧ h₁ ∼ h₂.
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -610,6 +615,227 @@ function tensor_product(g::G, h::G) where {G<:AbstractGraph}
             if undirected
                 add_edge!(z, id(i1, j2), id(i2, j1))
             end
+        end
+    end
+    return z
+end
+
+"""
+    strong_product(g, h)
+
+Return the [strong product](https://en.wikipedia.org/wiki/Strong_product_of_graphs)
+of `g` and `h`.
+
+The strong product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂) ∨ (g₁ ∼ g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = strong_product(a, b)
+{9, 20} undirected simple Int64 graph
+
+julia> g == union(cartesian_product(a, b), tensor_product(a, b))
+true
+```
+"""
+function strong_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for e1 in edges(g)
+        i1, i2 = Tuple(e1)
+        for e2 in edges(h)
+            j1, j2 = Tuple(e2)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+    end
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    disjunctive_product(g, h)
+
+Return the [disjunctive product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The disjunctive product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∨ h₁ ∼ h₂.
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = disjunctive_product(a, b)
+{9, 28} undirected simple Int64 graph
+
+julia> complement(g) == strong_product(complement(a), complement(b))
+true
+```
+"""
+function disjunctive_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            for k in vertices(g)
+                add_edge!(z, id(i, j1), id(k, j2))
+            end
+        end
+    end
+    return z
+end
+
+"""
+    lexicographic_product(g, h)
+
+Return the [lexicographic product](https://en.wikipedia.org/wiki/Lexicographic_product_of_graphs)
+of `g` and `h`.
+
+The lexicographic product has edges (g₁, h₁) ∼ (g₂, h₂) when (g₁ ∼ g₂) ∨ (g₁ = g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = lexicographic_product(star_graph(3), path_graph(3))
+{9, 24} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 48 stored entries:
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  ⋅  1  1  1  1  1  1  1
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+```
+"""
+function lexicographic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    homomorphic_product(g, h)
+
+Return the [homomorphic product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The homomorphic product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂) ∨ (g₁ ∼ g₂ ∧ h₁ ≁ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = homomorphic_product(star_graph(3), path_graph(3))
+{9, 19} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 38 stored entries:
+ ⋅  1  1  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  ⋅  ⋅  1  ⋅
+ 1  1  ⋅  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  1  ⋅  ⋅  ⋅
+ ⋅  1  ⋅  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  ⋅  1  1  1  ⋅  ⋅  ⋅  ⋅
+ 1  ⋅  1  ⋅  ⋅  ⋅  ⋅  1  1
+ ⋅  1  ⋅  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  ⋅  1  ⋅  ⋅  ⋅  1  1  ⋅
+```
+"""
+function homomorphic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for i in vertices(g)
+        for j in vertices(h)
+            for k in vertices(h)
+                if k != j
+                    add_edge!(z, id(i, j), id(i, k))
+                end
+            end
+        end
+    end
+    cmpl_h = complement(h)
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for f in edges(cmpl_h)
+            j1, j2 = Tuple(f)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
         end
     end
     return z
