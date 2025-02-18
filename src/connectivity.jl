@@ -820,7 +820,7 @@ function isgraphical(degs::AbstractVector{<:Integer})
                 right_deg_sum += sorted_degs[ptr]
                 # move pointer to the 1-slot left
                 ptr -= 1
-            else 
+            else
                 # the ptr points to the degree greater than r
                 break
             end
