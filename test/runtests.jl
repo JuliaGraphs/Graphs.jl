@@ -91,6 +91,7 @@ tests = [
     "cycles/limited_length",
     "cycles/incremental",
     "edit_distance",
+    "ext/nautygraphs/nautygraphs",
     "connectivity",
     "persistence/persistence",
     "shortestpaths/utils",

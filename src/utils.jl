@@ -300,3 +300,20 @@ end
 
 collect_if_not_vector(xs::AbstractVector) = xs
 collect_if_not_vector(xs) = collect(xs)
+
+"""
+    permute_adjlist!(adjlist::Vector{Vector{<:Integer}}, p::AbstractVector)
+
+Internal utility function to permute adjacency lists. No checking is done to verify that p is a permutation.
+"""
+function permute_adjlist!(adjlist::Vector{<:Vector{<:Integer}}, p::AbstractVector)
+    pinv = invperm(p)
+    relabel(i) = pinv[i]
+
+    for adj in adjlist
+        adj .= relabel.(adj)
+        sort!(adj)
+    end
+    permute!(adjlist, p)
+    return
+end

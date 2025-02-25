@@ -105,6 +105,18 @@ function reverse! end
 end
 
 """
+    permute!(g, p)
+
+Permute the vertices of graph `g` in-place, according to permutation `p`. No checking is done to verify that p is a permutation.
+"""
+function permute! end
+function permute!(g::AbstractSimpleGraph, p::AbstractVector)
+    permute_adjlist!(g.fadjlist, p)
+    is_directed(g) && permute_adjlist!(g.badjlist, p)
+    return g
+end
+
+"""
 	blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``

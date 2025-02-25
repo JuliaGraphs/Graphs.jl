@@ -52,6 +52,7 @@ import Base:
     intersect,
     reverse,
     reverse!,
+    permute!,
     isassigned,
     getindex,
     setindex!,
@@ -155,6 +156,7 @@ export
     complement,
     reverse,
     reverse!,
+    permute!,
     blockdiag,
     union,
     intersect,
@@ -487,6 +489,36 @@ A datastruture representing an edge between two vertices in
 a `Graph` or `DiGraph`.
 """
 const Edge = Graphs.SimpleGraphs.SimpleEdge
+
+function __init__()
+    if isdefined(Base.Experimental, :register_error_hint)
+        Base.Experimental.register_error_hint(MethodError) do io, exc, argtypes, kwargs
+            if exc.f == Graphs.Experimental.canonize!
+                printstyled(io, "\nHint: "; color=:yellow, bold=true)
+                println(
+                    io,
+                    "Canonization algorithms are implemented in dependencies like NautyGraphs.jl. Please make sure you first install and import `NautyGraphs`.",
+                )
+            elseif exc.f ∈ (
+                Graphs.Experimental.has_induced_subgraphisomorph,
+                Graphs.Experimental.has_subgraphisomorph,
+                Graphs.Experimental.has_isomorph,
+                Graphs.Experimental.count_induced_subgraphisomorph,
+                Graphs.Experimental.count_subgraphisomorph,
+                Graphs.Experimental.count_isomorph,
+                Graphs.Experimental.all_induced_subgraphisomorph,
+                Graphs.Experimental.all_subgraphisomorph,
+                Graphs.Experimental.all_isomorph,
+            ) && argtypes[3] == Graphs.Experimental.AlgNautyGraphs
+                printstyled(io, "\nHint: "; color=:yellow, bold=true)
+                println(
+                    io,
+                    "Using `AlgNautyGraphs` for isomorphism checking requires NautyGraphs.jl. Please make sure you first install and import `NautyGraphs`.",
+                )
+            end
+        end
+    end
+end
 
 include("degeneracy.jl")
 include("digraph/transitivity.jl")
