@@ -315,5 +315,5 @@ function permute_adjlist!(adjlist::Vector{<:Vector{<:Integer}}, p::AbstractVecto
         sort!(adj)
     end
     permute!(adjlist, p)
-    return
+    return nothing
 end
