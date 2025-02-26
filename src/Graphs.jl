@@ -495,7 +495,7 @@ function __init__()
         Base.Experimental.register_error_hint(MethodError) do io, exc, argtypes, kwargs
             if exc.f == Graphs.Experimental.canonize!
                 printstyled(io, "\nHint: "; color=:yellow, bold=true)
-                println(
+                print(
                     io,
                     "Canonization algorithms are implemented in dependencies like NautyGraphs.jl. Please make sure you first install and import `NautyGraphs`.",
                 )
@@ -511,7 +511,7 @@ function __init__()
                 Graphs.Experimental.all_isomorph,
             ) && argtypes[3] == Graphs.Experimental.AlgNautyGraphs
                 printstyled(io, "\nHint: "; color=:yellow, bold=true)
-                println(
+                print(
                     io,
                     "Using `AlgNautyGraphs` for isomorphism checking requires NautyGraphs.jl. Please make sure you first install and import `NautyGraphs`.",
                 )
