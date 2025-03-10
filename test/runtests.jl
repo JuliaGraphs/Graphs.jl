@@ -90,6 +90,7 @@ tests = [
     "cycles/basis",
     "cycles/limited_length",
     "cycles/incremental",
+    "cycles/mincyclebasis",
     "edit_distance",
     "connectivity",
     "persistence/persistence",
