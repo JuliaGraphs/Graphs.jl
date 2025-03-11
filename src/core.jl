@@ -1,12 +1,12 @@
 """
-    AbstractPathState
+	AbstractPathState
 
 An abstract type that provides information from shortest paths calculations.
 """
 abstract type AbstractPathState end
 
 """
-    is_ordered(e)
+	is_ordered(e)
 
 Return true if the source vertex of edge `e` is less than or equal to
 the destination vertex.
@@ -26,7 +26,7 @@ false
 is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
-    add_vertices!(g, n)
+	add_vertices!(g, n)
 
 Add `n` new vertices to the graph `g`.
 Return the number of vertices that were added successfully.
@@ -44,9 +44,8 @@ julia> add_vertices!(g, 2)
 """
 add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
 
-
 """
-    indegree(g[, v])
+	indegree(g[, v])
 
 Return a vector containing the indegrees of every vertex of the graph `g`, where
 the indegree of a vertex is defined as the number of edges which end at that 
@@ -83,7 +82,7 @@ indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
 indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
 
 """
-    outdegree(g[, v])
+	outdegree(g[, v])
 
 Return a vector containing the outdegrees of every vertex of the graph `g`, where
 the outdegree of a vertex is defined as the number of edges which start at that 
@@ -120,7 +119,7 @@ outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
 outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 
 """
-    degree(g[, v])
+	degree(g[, v])
 
 Return a vector containing the degrees of every vertex of the graph `g`, where
 the degree of a vertex is defined as the number of edges which start or end at
@@ -166,48 +165,48 @@ end
 degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
 """
-    Δout(g)
+	Δout(g)
 
 Return the maximum [`outdegree`](@ref) of vertices in `g`.
 """
 Δout(g) = noallocextreme(outdegree, (>), typemin(Int), g)
 """
-    δout(g)
+	δout(g)
 
 Return the minimum [`outdegree`](@ref) of vertices in `g`.
 """
 δout(g) = noallocextreme(outdegree, (<), typemax(Int), g)
 
 """
-    Δin(g)
+	Δin(g)
 
 Return the maximum [`indegree`](@ref) of vertices in `g`.
 """
 Δin(g) = noallocextreme(indegree, (>), typemin(Int), g)
 
 """
-    δin(g)
+	δin(g)
 
 Return the minimum [`indegree`](@ref) of vertices in `g`.
 """
 δin(g) = noallocextreme(indegree, (<), typemax(Int), g)
 
 """
-    Δ(g)
+	Δ(g)
 
 Return the maximum [`degree`](@ref) of vertices in `g`.
 """
 Δ(g) = noallocextreme(degree, (>), typemin(Int), g)
 
 """
-    δ(g)
+	δ(g)
 
 Return the minimum [`degree`](@ref) of vertices in `g`.
 """
 δ(g) = noallocextreme(degree, (<), typemax(Int), g)
 
 """
-    noallocextreme(f, comparison, initial, g)
+	noallocextreme(f, comparison, initial, g)
 
 Compute the extreme value of `[f(g,i) for i=i:nv(g)]` without gathering them all
 """
@@ -223,7 +222,7 @@ function noallocextreme(f, comparison, initial, g)
 end
 
 """
-    degree_histogram(g, degfn=degree)
+	degree_histogram(g, degfn=degree)
 
 Return a `Dict` with values representing the number of vertices that have degree
 represented by the key.
@@ -242,7 +241,7 @@ function degree_histogram(g::AbstractGraph{T}, degfn=degree) where {T}
 end
 
 """
-    neighbors(g, v)
+	neighbors(g, v)
 
 Return a list of all neighbors reachable from vertex `v` in `g`.
 For directed graphs, the default is equivalent to [`outneighbors`](@ref);
@@ -278,7 +277,7 @@ julia> neighbors(g, 3)
 neighbors(g::AbstractGraph, v::Integer) = outneighbors(g, v)
 
 """
-    all_neighbors(g, v)
+	all_neighbors(g, v)
 
 Return a list of all inbound and outbound neighbors of `v` in `g`.
 For undirected graphs, this is equivalent to both [`outneighbors`](@ref)
@@ -320,7 +319,7 @@ end
 @traitfn all_neighbors(g::::(!IsDirected), v::Integer) = neighbors(g, v)
 
 """
-    common_neighbors(g, u, v)
+	common_neighbors(g, u, v)
 
 Return the neighbors common to vertices `u` and `v` in `g`.
 
@@ -360,7 +359,7 @@ function common_neighbors(g::AbstractGraph, u::Integer, v::Integer)
 end
 
 """
-    has_self_loops(g)
+	has_self_loops(g)
 
 Return true if `g` has any self loops.
 
@@ -386,7 +385,7 @@ function has_self_loops(g::AbstractGraph)
 end
 
 """
-    num_self_loops(g)
+	num_self_loops(g)
 
 Return the number of self loops in `g`.
 
@@ -410,7 +409,7 @@ julia> num_self_loops(g)
 num_self_loops(g::AbstractGraph) = nv(g) == 0 ? 0 : sum(v -> has_edge(g, v, v), vertices(g))
 
 """
-    density(g)
+	density(g)
 
 Return the density of `g`.
 Density is defined as the ratio of the number of actual edges to the
@@ -422,7 +421,7 @@ function density end
 @traitfn density(g::::(!IsDirected)) = (2 * ne(g)) / (nv(g) * (nv(g) - 1))
 
 """
-    squash(g)
+	squash(g)
 
 Return a copy of a graph with the smallest practical eltype that
 can accommodate all vertices.
@@ -448,7 +447,7 @@ function squash(g::AbstractGraph)
 end
 
 """
-    weights(g)
+	weights(g)
 
 Return the weights of the edges of a graph `g` as a matrix. Defaults
 to [`Graphs.DefaultDistance`](@ref).
