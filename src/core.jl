@@ -79,7 +79,7 @@ julia> indegree(g,2)
 ```
 """
 indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGraph, vs = vertices(g)) = [indegree(g, x) for x in vs]
+indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
 
 """
     outdegree(g[, v])
@@ -116,7 +116,7 @@ julia> outdegree(g,2)
 ```
 """
 outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGraph, vs = vertices(g)) = [outdegree(g, x) for x in vs]
+outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 
 """
     degree(g[, v])
@@ -162,7 +162,7 @@ function degree(g::AbstractGraph, v::Integer)
     return indegree(g, v) + outdegree(g, v)
 end
 
-degree(g::AbstractGraph, vs = vertices(g)) = [degree(g, x) for x in vs]
+degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
 """
     Δout(g)
@@ -230,8 +230,8 @@ represented by the key.
 Degree function (for example, [`indegree`](@ref) or [`outdegree`](@ref)) may be specified by
 overriding `degfn`.
 """
-function degree_histogram(g::AbstractGraph{T}, degfn = degree) where {T}
-    hist = Dict{T, Int}()
+function degree_histogram(g::AbstractGraph{T}, degfn=degree) where {T}
+    hist = Dict{T,Int}()
     for v in vertices(g)        # minimize allocations by
         for d in degfn(g, v)    # iterating over vertices
             hist[d] = get(hist, d, 0) + 1
@@ -433,7 +433,7 @@ function squash(g::AbstractGraph)
     # TODO this version check can be removed when we increase the required Julia version
     deprecation_msg = "squash(::AbstractGraph) is deprecated in favor of methods that specialize on the graph type."
     if VERSION >= v"1.5.2"
-        Base.depwarn(deprecation_msg, :squash; force = true)
+        Base.depwarn(deprecation_msg, :squash; force=true)
     else
         Base.depwarn(deprecation_msg, :squash)
     end
