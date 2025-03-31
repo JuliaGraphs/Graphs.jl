@@ -316,7 +316,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)

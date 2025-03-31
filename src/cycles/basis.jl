@@ -36,7 +36,7 @@ function cycle_basis(g::AbstractGraph, root=nothing)
     nv(g) == 0 && return cycles
 
     gnodes = Set(vertices(g))
-    r::T = (root == nothing) ? pop!(gnodes) : T(root)
+    r::T = isnothing(root) ? pop!(gnodes) : T(root)
     while true
         stack = [r]
         pred = Dict(r => r)

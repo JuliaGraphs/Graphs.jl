@@ -42,7 +42,7 @@ function dominating_set(
         # Check if any vertex is depending on v to be dominated
         dependent = findfirst(u -> !in_dom_set[u] && dom_degree[u] <= 1, neighbors(g, v))
 
-        (dependent != nothing) && continue
+        !isnothing(dependent) && continue
         in_dom_set[v] = false
         length_ds -= 1
         dom_degree[neighbors(g, v)] .-= 1

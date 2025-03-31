@@ -278,10 +278,10 @@ function vf2check_feasibility(
         vf2rule_self_loops(u, v, state, problemtype)
     syntactic_feasability || return false
 
-    if vertex_relation != nothing
+    if !isnothing(vertex_relation)
         vertex_relation(u, v) || return false
     end
-    if edge_relation != nothing
+    if !isnothing(edge_relation)
         E1 = edgetype(state.g1)
         E2 = edgetype(state.g2)
         for u2 in outneighbors(state.g1, u)

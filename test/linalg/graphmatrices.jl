@@ -200,7 +200,7 @@ using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
         abs(l1 - 1) < 1e-8 || error("failed to compute stationary distribution") # TODO 0.7: should we change the error type to InexactError?
         p = real(er[2][:, 1])
         if p[1] < 0
-            for i in 1:length(p)
+            for i in eachindex(p)
                 p[i] = -p[i]
             end
         end

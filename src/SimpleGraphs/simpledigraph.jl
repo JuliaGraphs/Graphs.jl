@@ -335,7 +335,7 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     fadjlist = Vector{Vector{T}}()
     badjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)
