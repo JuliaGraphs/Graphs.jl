@@ -21,14 +21,18 @@
         g1t = GenericGraph(SimpleGraph(edges1))
         @test res1.weight == cost_mst
         # acyclic graphs have n - c edges
-        @test nv(g1t) - length(connected_components(g1t)) == ne(g1t)
+        @test nv(g1t) - ne(g1t) ==
+            length(connected_components(g1t)) ==
+            count_connected_components(g1t)
         @test nv(g1t) == nv(g)
 
         res2 = boruvka_mst(g, distmx; minimize=false)
         edges2 = [Edge(src(e), dst(e)) for e in res2.mst]
         g2t = GenericGraph(SimpleGraph(edges2))
         @test res2.weight == cost_max_vec_mst
-        @test nv(g2t) - length(connected_components(g2t)) == ne(g2t)
+        @test nv(g2t) - ne(g2t) ==
+            length(connected_components(g2t)) ==
+            count_connected_components(g2t)
         @test nv(g2t) == nv(g)
     end
     # second test
@@ -60,14 +64,18 @@
         edges3 = [Edge(src(e), dst(e)) for e in res3.mst]
         g3t = GenericGraph(SimpleGraph(edges3))
         @test res3.weight == weight_vec2
-        @test nv(g3t) - length(connected_components(g3t)) == ne(g3t)
+        @test nv(g3t) - ne(g3t) ==
+            length(connected_components(g3t)) ==
+            count_connected_components(g3t)
         @test nv(g3t) == nv(gx)
 
         res4 = boruvka_mst(g, distmx_sec; minimize=false)
         edges4 = [Edge(src(e), dst(e)) for e in res4.mst]
         g4t = GenericGraph(SimpleGraph(edges4))
         @test res4.weight == weight_max_vec2
-        @test nv(g4t) - length(connected_components(g4t)) == ne(g4t)
+        @test nv(g4t) - ne(g4t) ==
+            length(connected_components(g4t)) ==
+            count_connected_components(g4t)
         @test nv(g4t) == nv(gx)
     end
 
@@ -123,14 +131,18 @@
         edges5 = [Edge(src(e), dst(e)) for e in res5.mst]
         g5t = GenericGraph(SimpleGraph(edges5))
         @test res5.weight == weight_vec3
-        @test nv(g5t) - length(connected_components(g5t)) == ne(g5t)
+        @test nv(g5t) - ne(g5t) ==
+            length(connected_components(g5t)) ==
+            count_connected_components(g5t)
         @test nv(g5t) == nv(gd)
 
         res6 = boruvka_mst(g, distmx_third; minimize=false)
         edges6 = [Edge(src(e), dst(e)) for e in res6.mst]
         g6t = GenericGraph(SimpleGraph(edges6))
         @test res6.weight == weight_max_vec3
-        @test nv(g6t) - length(connected_components(g6t)) == ne(g6t)
+        @test nv(g6t) - ne(g6t) ==
+            length(connected_components(g6t)) ==
+            count_connected_components(g6t)
         @test nv(g6t) == nv(gd)
     end
 end
