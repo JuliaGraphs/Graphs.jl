@@ -120,7 +120,6 @@ function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer}
     all_paths = Vector{T}[Vector{eltype(state.parents)}() for _ in 1:length(vs)]
     enumerate_paths!(all_paths, state, vs)
 end
-
 enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, v:v)[1]
 function enumerate_paths(state::AbstractPathState)
     return enumerate_paths(state, 1:length(state.parents))
