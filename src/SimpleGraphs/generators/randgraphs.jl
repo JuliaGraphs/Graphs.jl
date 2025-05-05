@@ -1041,6 +1041,7 @@ function uniform_tree(n::Integer; rng::Union{Nothing,AbstractRNG}=nothing)
     return prufer_decode(random_code)
 end
 
+
 """
     random_regular_digraph(n, k)
 
