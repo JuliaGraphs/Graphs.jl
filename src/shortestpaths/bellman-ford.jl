@@ -118,7 +118,7 @@ a vector representing the path from vertex `v` to vertex `d`.
 function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer})
     T = eltype(state.parents)
     all_paths = Vector{T}[Vector{eltype(state.parents)}() for _ in 1:length(vs)]
-    enumerate_paths!(all_paths, state, vs)
+    return enumerate_paths!(all_paths, state, vs)
 end
 enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, v:v)[1]
 function enumerate_paths(state::AbstractPathState)
@@ -137,8 +137,8 @@ as the same memory can be used for each iteration.
 """
 function enumerate_paths!(
     all_paths::AbstractVector{<:AbstractVector},
-    state::AbstractPathState, 
-    vs::AbstractVector{<:Integer}
+    state::AbstractPathState,
+    vs::AbstractVector{<:Integer},
 )
     Base.require_one_based_indexing(all_paths)
     Base.require_one_based_indexing(vs)
