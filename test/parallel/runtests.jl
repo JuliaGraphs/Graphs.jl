@@ -1,5 +1,6 @@
 using Graphs
 using Graphs.Parallel
+using SharedArrays
 using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 
