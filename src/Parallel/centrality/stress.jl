@@ -1,4 +1,4 @@
-function stress_centrality(g::AbstractGraph, vs=vertices(g); parallel=:distributed)
+function stress_centrality(g::AbstractGraph, vs=vertices(g); parallel=:threads)
     return if parallel == :distributed
         distr_stress_centrality(g, vs)
     else
@@ -9,7 +9,7 @@ end
 function stress_centrality(
     g::AbstractGraph,
     k::Integer;
-    parallel=:distributed,
+    parallel=:threads,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )

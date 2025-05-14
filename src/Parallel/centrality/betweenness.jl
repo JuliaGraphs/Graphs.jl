@@ -4,7 +4,7 @@ function betweenness_centrality(
     distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false,
-    parallel=:distributed,
+    parallel=:threads,
 )
     return if parallel == :distributed
         distr_betweenness_centrality(
@@ -23,7 +23,7 @@ function betweenness_centrality(
     distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false,
-    parallel=:distributed,
+    parallel=:threads,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )

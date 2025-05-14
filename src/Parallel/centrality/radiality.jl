@@ -1,4 +1,4 @@
-function radiality_centrality(g::AbstractGraph; parallel=:distributed)
+function radiality_centrality(g::AbstractGraph; parallel=:threads)
     return if parallel == :distributed
         distr_radiality_centrality(g)
     else

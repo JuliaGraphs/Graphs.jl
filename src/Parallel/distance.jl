@@ -4,7 +4,7 @@ function eccentricity(
     g::AbstractGraph,
     vs=vertices(g),
     distmx::AbstractMatrix{T}=weights(g);
-    parallel=:distributed,
+    parallel=:threads,
 ) where {T<:Number}
     return if parallel === :threads
         threaded_eccentricity(g, vs, distmx)
@@ -36,7 +36,7 @@ function threaded_eccentricity(
     return eccs
 end
 
-function eccentricity(g::AbstractGraph, distmx::AbstractMatrix; parallel=:distributed)
+function eccentricity(g::AbstractGraph, distmx::AbstractMatrix; parallel=:threads)
     return eccentricity(g, vertices(g), distmx; parallel)
 end
 

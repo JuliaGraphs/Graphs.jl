@@ -1,5 +1,5 @@
 function random_greedy_color(
-    g::AbstractGraph{T}, reps::Integer; parallel=:distributed
+    g::AbstractGraph{T}, reps::Integer; parallel=:threads
 ) where {T<:Integer}
     return if parallel === :threads
         threaded_random_greedy_color(g, reps)
@@ -30,7 +30,7 @@ function distr_random_greedy_color(args...; kwargs...)
 end
 
 function greedy_color(
-    g::AbstractGraph{U}; sort_degree::Bool=false, reps::Integer=1, parallel=:distributed
+    g::AbstractGraph{U}; sort_degree::Bool=false, reps::Integer=1, parallel=:threads
 ) where {U<:Integer}
     return if sort_degree
         Graphs.degree_greedy_color(g)
