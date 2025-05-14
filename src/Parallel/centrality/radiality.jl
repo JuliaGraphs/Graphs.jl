@@ -6,22 +6,10 @@ function radiality_centrality(g::AbstractGraph; parallel=:distributed)
     end
 end
 
-function distr_radiality_centrality(g::AbstractGraph)::Vector{Float64}
-    n_v = nv(g)
-    vs = vertices(g)
-    n = ne(g)
-    meandists = SharedVector{Float64}(Int(n_v))
-    maxdists = SharedVector{Float64}(Int(n_v))
-
-    @sync @distributed for i in 1:n_v
-        d = Graphs.dijkstra_shortest_paths(g, vs[i])
-        maxdists[i] = maximum(d.dists)
-        meandists[i] = sum(d.dists) / (n_v - 1)
-        nothing
-    end
-    dmtr = maximum(maxdists)
-    radialities = collect(meandists)
-    return ((dmtr + 1) .- radialities) ./ dmtr
+function distr_radiality_centrality(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 function threaded_radiality_centrality(g::AbstractGraph)::Vector{Float64}

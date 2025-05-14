@@ -1,5 +1,6 @@
 using Graphs
 using Graphs.Parallel
+using SharedArrays # to trigger extension loading
 using Base.Threads: @threads, Atomic
 @test length(description()) > 1
 
