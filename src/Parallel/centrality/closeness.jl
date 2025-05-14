@@ -1,8 +1,5 @@
 function closeness_centrality(
-    g::AbstractGraph,
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    parallel=:distributed,
+    g::AbstractGraph, distmx::AbstractMatrix=weights(g); normalize=true, parallel=:threads
 )
     return if parallel == :distributed
         distr_closeness_centrality(g, distmx; normalize=normalize)

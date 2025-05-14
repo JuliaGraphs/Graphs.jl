@@ -21,7 +21,7 @@ function dijkstra_shortest_paths(
     g::AbstractGraph{U},
     sources=vertices(g),
     distmx::AbstractMatrix{T}=weights(g);
-    parallel::Symbol=:distributed,
+    parallel::Symbol=:threads,
 ) where {T<:Number} where {U}
     return if parallel === :threads
         threaded_dijkstra_shortest_paths(g, sources, distmx)
