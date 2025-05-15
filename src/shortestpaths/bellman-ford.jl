@@ -107,6 +107,7 @@ single destinations, the path is represented by a single vector of vertices,
 and will be length 0 if the path does not exist.
 
 ### Implementation Notes
+
 For Floyd-Warshall path states, please note that the output is a bit different,
 since this algorithm calculates all shortest paths for all pairs of vertices:
 `enumerate_paths(state)` will return a vector (indexed by source vertex) of
@@ -130,7 +131,10 @@ end
 
 In-place version of [`enumerate_paths`](@ref).
 
-`paths` must be a `Vector{Vectors{eltype(state.parents)}}`
+`paths` must be a `Vector{Vectors{eltype(state.parents)}}`, `state` an `AbstractPathState`, 
+and `vs`` an AbstractRange or other AbstractVector of `Int`. 
+
+See the `enumerate_paths` documentation for details.
 
 `enumerate_paths!` should be more efficient when used in a loop,
 as the same memory can be used for each iteration.
@@ -142,7 +146,8 @@ function enumerate_paths!(
 )
     Base.require_one_based_indexing(all_paths)
     Base.require_one_based_indexing(vs)
-    @assert length(all_paths) == length(vs)
+    length(all_paths) == length(vs) || 
+        throw(ArgumentError("length of destination paths $(length(vs)) deos not match length of vs $(length(all_paths))"))
 
     parents = state.parents
     T = eltype(state.parents)
