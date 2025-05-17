@@ -1,4 +1,4 @@
-@testset "Bellman Ford" begin
+# @testset "Bellman Ford" begin
     g4 = path_digraph(5)
 
     d1 = float([0 1 2 3 4; 5 0 6 7 8; 9 10 0 11 12; 13 14 15 0 16; 17 18 19 20 0])
@@ -56,12 +56,15 @@
 
     d3 = [CustomReal(i, 3) for i in d1]
     d4 = sparse(d3)
+    g = first(test_generic_graphs(g4))
     for g in test_generic_graphs(g4)
         y = @inferred(bellman_ford_shortest_paths(g, 2, d3))
         z = @inferred(bellman_ford_shortest_paths(g, 2, d4))
         @test getfield.(y.dists, :val) == getfield.(z.dists, :val) == [Inf, 0, 6, 17, 33]
         @test @inferred(enumerate_paths(z))[2] == []
         @test @inferred(enumerate_paths(z))[4] == enumerate_paths(z, 4) == [2, 3, 4]
+        @test @inferred(enumerate_paths!([[0]], z, 4:4))[1]  == [2, 3, 4]
+        @test_throws ArgumentError enumerate_paths!([[0, 0], [0, 0]], z, 4:4)
         @test @inferred(!has_negative_edge_cycle(g))
         @test @inferred(!has_negative_edge_cycle(g, d3))
 
