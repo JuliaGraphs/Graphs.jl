@@ -87,9 +87,7 @@ function has_induced_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
-    return has_induced_subgraphisomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(has_induced_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -130,9 +128,7 @@ function has_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
-    return has_subgraphisomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(has_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -141,12 +137,14 @@ end
 Return `true` if the graph `g1` is isomorphic to `g2`.
 
 ### Optional Arguments
-- `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be only
-    `VF2()` at the moment.
+- `alg`: The algorithm that is used to find the induced subgraph isomorphism. Can be
+    `VF2()` or `AlgNautyGraphs()`, if `NautyGraphs` is installed and imported.
 - `vertex_relation`: A binary function that takes a vertex from `g1` and one from `g2`. An
-    isomorphism only exists if this function returns `true` for all matched vertices.
+    isomorphism only exists if this function returns `true` for all matched vertices. Only
+    works with `VF2()` at the moment.
 - `edge_relation`: A binary function that takes an edge from `g1` and one from `g2`. An
-    isomorphism only exists if this function returns `true` for all matched edges.
+    isomorphism only exists if this function returns `true` for all matched edges. Only
+    works with `VF2()` at the moment.
 
 ### Examples
 ```doctest.jl
@@ -173,9 +171,40 @@ function has_isomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
-    return has_isomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(has_isomorph, (g1, g2, alg)))
+end
+
+"""
+    canonize!(g, alg::IsomorphismAlgorithm=AlgNautyGraphs())
+
+Permute the vertices of graph `g` into the canonical order defined by the algorithm `alg` and return the permutation. 
+If graphs `g1` and `g2` are isomorphic, the orders of their vertices will be equal after canonizing them with the same algorithm.
+
+### Optional Arguments
+- `alg`: The algorithm that is used to canonize the graph. Can be only be `AlgNautyGraphs()`
+   at this moment, which requires `NautyGraphs` to be installed and imported.
+
+### Examples
+```doctest.jl
+julia> canonize!(path_graph(3))
+[1, 3, 2]
+
+julia> g1 = path_digraph(4)
+julia> g2 = path_digraph(4)[[2, 3, 1, 4]]
+julia> g1 == g2
+false
+julia> canonize!(g1)
+[4, 2, 3, 1]
+julia> canonize!(g2)
+[4, 1, 2, 3]
+julia> g1 == g2
+true
+```
+### See also 
+[`has_isomorph`](@ref)
+"""
+function canonize!(g::AbstractGraph, alg::IsomorphismAlgorithm=AlgNautyGraphs())
+    throw(MethodError(canonize!, (g, alg)))
 end
 
 """
@@ -214,9 +243,7 @@ function count_induced_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Int
-    return count_induced_subgraphisomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(count_induced_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -257,13 +284,7 @@ function count_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Int
-    return count_subgraphisomorph(
-        g1::AbstractGraph,
-        g2::AbstractGraph,
-        VF2();
-        vertex_relation=vertex_relation,
-        edge_relation=edge_relation,
-    )
+    throw(MethodError(count_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -304,9 +325,7 @@ function count_isomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Int
-    return count_isomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(count_isomorph, (g1, g2, alg)))
 end
 
 """
@@ -353,9 +372,7 @@ function all_induced_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    return all_induced_subgraphisomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(all_induced_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -404,9 +421,7 @@ function all_subgraphisomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    return all_subgraphisomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(all_subgraphisomorph, (g1, g2, alg)))
 end
 
 """
@@ -458,7 +473,5 @@ function all_isomorph(
     vertex_relation::Union{Nothing,Function}=nothing,
     edge_relation::Union{Nothing,Function}=nothing,
 )::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
-    return all_isomorph(
-        g1, g2, alg; vertex_relation=vertex_relation, edge_relation=edge_relation
-    )
+    throw(MethodError(all_isomorph, (g1, g2, alg)))
 end
