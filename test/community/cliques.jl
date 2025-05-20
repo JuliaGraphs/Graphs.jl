@@ -12,7 +12,12 @@
 
     function test_cliques(graph, expected)
         # Make test results insensitive to ordering
-        return setofsets(@inferred(maximal_cliques(graph))) == setofsets(expected)
+        okay_maximal = setofsets(@inferred(maximal_cliques(graph))) == setofsets(expected)
+        okay_maximum = Set(@inferred(maximum_clique(graph))) in setofsets(expected)
+        okay_maximum2 =
+            length(@inferred(maximum_clique(graph))) == maximum(length.(expected))
+        okay_number = @inferred(clique_number(graph)) == maximum(length.(expected))
+        return okay_maximal && okay_maximum && okay_maximum2 && okay_number
     end
 
     gx = SimpleGraph(3)
