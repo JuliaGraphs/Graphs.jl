@@ -38,7 +38,7 @@
         @test Graphs.rng_from_rng_or_seed(nothing, nothing) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, -10) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, 456) == Graphs.getRNG(456)
-        @compat if ismutable(Random.GLOBAL_RNG)
+        if ismutable(Random.GLOBAL_RNG)
             @test Graphs.rng_from_rng_or_seed(nothing, 456) !== Random.GLOBAL_RNG
         end
         rng = Random.MersenneTwister(789)

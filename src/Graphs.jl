@@ -6,9 +6,6 @@ using SimpleTraits
 using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 using Statistics: mean
 
-# Currently used to support the ismutable function that is not available in Julia < v1.7
-using Compat
-
 using Inflate: InflateGzipStream
 using DataStructures:
     IntDisjointSets,
