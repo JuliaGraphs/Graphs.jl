@@ -1,7 +1,5 @@
 
 # Currently used to support the ismutable function that is not available in Julia < v1.7
-using Compat
-
 """
     struct Johnson <: ShortestPathAlgorithm
 
@@ -34,7 +32,7 @@ function shortest_paths(
         shortest_paths(g, vertices(g), distmx, BellmanFord())
     )
 
-    @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
+    if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
         distmx = sparse(distmx) # Change reference, not value
     end
 
@@ -58,7 +56,7 @@ function shortest_paths(
         dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
-    @compat if ismutable(distmx)
+    if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end

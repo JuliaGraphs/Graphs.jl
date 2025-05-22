@@ -36,7 +36,7 @@ function johnson_shortest_paths(
     wt_transform =
         bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx).dists
 
-    @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
+    if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
         distmx = sparse(distmx) # Change reference, not value
     end
 
@@ -60,7 +60,7 @@ function johnson_shortest_paths(
         dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
-    @compat if ismutable(distmx)
+    if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end
