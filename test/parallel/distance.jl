@@ -7,31 +7,43 @@
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
-    for g in testgraphs(a1)
-        z = @inferred(Graphs.eccentricity(g, distmx1))
-        y = @inferred(Parallel.eccentricity(g, distmx1))
-        @test isapprox(y, z)
-        @test @inferred(Graphs.diameter(y)) ==
-            @inferred(Parallel.diameter(g, distmx1)) ==
-            6.2
-        @test @inferred(Graphs.periphery(y)) ==
-            @inferred(Parallel.periphery(g, distmx1)) ==
-            [1, 3]
-        @test @inferred(Graphs.radius(y)) == @inferred(Parallel.radius(g, distmx1)) == 4.2
-        @test @inferred(Graphs.center(y)) == @inferred(Parallel.center(g, distmx1)) == [2]
+    for parallel in [:threads, :distributed]
+        for g in testgraphs(a1)
+            z = @inferred(Graphs.eccentricity(g, distmx1))
+            y = @inferred(Parallel.eccentricity(g, distmx1; parallel))
+            @test isapprox(y, z)
+            @test @inferred(Graphs.diameter(y)) ==
+                @inferred(Parallel.diameter(g, distmx1)) ==
+                6.2
+            @test @inferred(Graphs.periphery(y)) ==
+                @inferred(Parallel.periphery(g, distmx1)) ==
+                [1, 3]
+            @test @inferred(Graphs.radius(y)) ==
+                @inferred(Parallel.radius(g, distmx1)) ==
+                4.2
+            @test @inferred(Graphs.center(y)) ==
+                @inferred(Parallel.center(g, distmx1)) ==
+                [2]
+        end
     end
 
-    for g in testdigraphs(a2)
-        z = @inferred(Graphs.eccentricity(g, distmx2))
-        y = @inferred(Parallel.eccentricity(g, distmx2))
-        @test isapprox(y, z)
-        @test @inferred(Graphs.diameter(y)) ==
-            @inferred(Parallel.diameter(g, distmx2)) ==
-            6.2
-        @test @inferred(Graphs.periphery(y)) ==
-            @inferred(Parallel.periphery(g, distmx2)) ==
-            [1]
-        @test @inferred(Graphs.radius(y)) == @inferred(Parallel.radius(g, distmx2)) == 4.2
-        @test @inferred(Graphs.center(y)) == @inferred(Parallel.center(g, distmx2)) == [2]
+    for parallel in [:threads, :distributed]
+        for g in testdigraphs(a2)
+            z = @inferred(Graphs.eccentricity(g, distmx2))
+            y = @inferred(Parallel.eccentricity(g, distmx2; parallel))
+            @test isapprox(y, z)
+            @test @inferred(Graphs.diameter(y)) ==
+                @inferred(Parallel.diameter(g, distmx2)) ==
+                6.2
+            @test @inferred(Graphs.periphery(y)) ==
+                @inferred(Parallel.periphery(g, distmx2)) ==
+                [1]
+            @test @inferred(Graphs.radius(y)) ==
+                @inferred(Parallel.radius(g, distmx2)) ==
+                4.2
+            @test @inferred(Graphs.center(y)) ==
+                @inferred(Parallel.center(g, distmx2)) ==
+                [2]
+        end
     end
 end
