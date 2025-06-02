@@ -93,6 +93,7 @@ tests = [
     "cycles/limited_length",
     "cycles/incremental",
     "edit_distance",
+    "chordality",
     "connectivity",
     "persistence/persistence",
     "shortestpaths/utils",
