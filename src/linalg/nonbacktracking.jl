@@ -118,16 +118,15 @@ function mul!(C, nbt::Nonbacktracking, B)
 end
 
 function coo_sparse(nbt::Nonbacktracking)
-    m = nbt.m
-    #= I,J = zeros(Int, m), zeros(Int, m) =#
+    m = nbt.m#= I,J = zeros(Int, m), zeros(Int, m) =#
+
     I, J = zeros(Int, 0), zeros(Int, 0)
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
         for k in inneighbors(nbt.g, i)
             k == j && continue
-            v = nbt.edgeidmap[Edge(k, i)]
-            #= J[u] = v =#
-            #= I[u] = u =#
+            v = nbt.edgeidmap[Edge(k, i)]#= J[u] = v =##= I[u] = u =#
+
             push!(I, v)
             push!(J, u)
         end
