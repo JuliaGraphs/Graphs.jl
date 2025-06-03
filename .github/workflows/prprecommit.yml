@@ -22,6 +22,7 @@ jobs:
       uses: julia-actions/setup-julia@v2
       with:
         version: '1'
+    - uses: julia-actions/cache@v2
     - name: Setup JuliaFormatter
       run: |
         julia -e '
