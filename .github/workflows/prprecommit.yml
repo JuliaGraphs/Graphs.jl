@@ -1,0 +1,32 @@
+name: PR Pre-Commit Bot
+env:
+  JULIA_NUM_THREADS: 2
+on:
+  pull_request:
+    branches: ["master", "main"]
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+    - name: Setup Julia
+      uses: julia-actions/setup-julia@v2
+      with:
+        version: '1'
+    - name: Setup JuliaFormatter
+      run: |
+        julia -e '
+          using Pkg
+          Pkg.add(name="JuliaFormatter", version="1.0.62")'
+    - name: Setup Python
+      uses: actions/setup-python@v3
+    - name: Run pre-commit
+      uses: pre-commit/action@v3.0.1
+      continue-on-error: true
+    - name: Potentially commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      with:
+        commit_message: linter bot commit -- feel free to overwrite
