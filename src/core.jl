@@ -23,7 +23,7 @@ julia> is_ordered(first(edges(g)))
 false
 ```
 """
-is_ordered(e::AbstractEdge) = src(e) <= dst(e)
+is_ordered(e::AbstractEdge )   = src(e) <= dst(e)
 
 """
     add_vertices!(g, n)
@@ -48,7 +48,7 @@ add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
     indegree(g[, v])
 
 Return a vector containing the indegrees of every vertex of the graph `g`, where
-the indegree of a vertex is defined as the number of edges which end at that 
+the indegree of a vertex is defined as the number of edges which end at that
 vertex. If `v` is specified and is a single vertex, only return the indegree of
 `v`. If `v` is specified and is a vector of vertices, only return the indegrees
 of the vertices in `v`.
@@ -85,7 +85,7 @@ indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
     outdegree(g[, v])
 
 Return a vector containing the outdegrees of every vertex of the graph `g`, where
-the outdegree of a vertex is defined as the number of edges which start at that 
+the outdegree of a vertex is defined as the number of edges which start at that
 vertex. If `v` is specified and is a single vertex, only return the outdegree of
 `v`. If `v` is specified and is a vector of vertices, only return the outdegrees
 of the vertices in `v`.
@@ -124,7 +124,7 @@ outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 Return a vector containing the degrees of every vertex of the graph `g`, where
 the degree of a vertex is defined as the number of edges which start or end at
 that vertex. For directed graphs, the degree of a vertex is equal to the sum of
-its indegree and outdegree. If `v` is specified and is a single vertex, only 
+its indegree and outdegree. If `v` is specified and is a single vertex, only
 return the degree of `v`. If `v` is specified and is a vector of vertices, only
 return the degrees of the vertices in `v`.
 
