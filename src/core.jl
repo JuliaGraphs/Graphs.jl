@@ -23,7 +23,7 @@ julia> is_ordered(first(edges(g)))
 false
 ```
 """
-is_ordered(e::AbstractEdge )   = src(e) <= dst(e)
+is_ordered(e::AbstractEdge) = src(e) <= dst(e)
 
 """
     add_vertices!(g, n)
