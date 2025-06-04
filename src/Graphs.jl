@@ -253,6 +253,7 @@ export
     has_negative_edge_cycle_spfa,
     has_negative_edge_cycle,
     enumerate_paths,
+    enumerate_paths!,
     johnson_shortest_paths,
     floyd_warshall_shortest_paths,
     transitiveclosure!,
