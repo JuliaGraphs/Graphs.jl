@@ -530,12 +530,12 @@ function binary_tree(k::T) where {T<:Integer}
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = T[2, 3]
     @inbounds for i in 1:(k - 2)
-        @simd for j in (2^i):(2^(i + 1) - 1)
+        @simd for j in (2 ^ i):(2 ^ (i + 1) - 1)
             fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]
         end
     end
     i = k - 1
-    @inbounds @simd for j in (2^i):(2^(i + 1) - 1)
+    @inbounds @simd for j in (2 ^ i):(2 ^ (i + 1) - 1)
         fadjlist[j] = T[j ÷ 2]
     end
     return SimpleGraph(ne, fadjlist)

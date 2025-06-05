@@ -322,8 +322,9 @@ using Graphs.Test
             SimpleGraph(0)
         )
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([
+                (4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)
+            ])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -352,8 +353,9 @@ using Graphs.Test
             SimpleDiGraph(0)
         )
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([
+                (4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)
+            ])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
