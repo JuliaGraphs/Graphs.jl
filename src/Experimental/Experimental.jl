@@ -7,6 +7,7 @@ export description,
     # isomorphism
     VF2,
     vf2,
+    AlgNautyGraphs,
     IsomorphismProblem,
     SubGraphIsomorphismProblem,
     InducedSubGraphIsomorphismProblem,
@@ -14,6 +15,7 @@ export description,
     has_isomorph,
     all_isomorph,
     count_isomorph,
+    canonize!,
     has_induced_subgraphisomorph,
     count_induced_subgraphisomorph,
     all_induced_subgraphisomorph,
@@ -25,6 +27,7 @@ description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
 include("vf2.jl") # Julian implementation of VF2 algorithm
+include("nautygraphs.jl")
 include("Parallel/Parallel.jl")
 include("Traversals/Traversals.jl")
 include("ShortestPaths/ShortestPaths.jl")
