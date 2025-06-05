@@ -558,5 +558,9 @@ include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")
 
+if !isdefined(Base, :get_extension)
+    include("../ext/GraphsSharedArraysExt.jl")
+end
+
 using .LinAlg
 end # module
