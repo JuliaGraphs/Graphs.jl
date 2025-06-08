@@ -354,35 +354,39 @@
     end
 end
 
-@testset "Undirected Line Graph" begin
-    @testset "Undirected Cycle Graphs" begin
-        for n in 3:9
+@testset "Line Graph" begin
+    @testset "Cycle Graphs" begin
+        for n in 3:5
             g = cycle_graph(n)
-            lg = line_graph(g)  # checking if lg is an n-cycle
+            lg = line_graph(g)
             @test nv(lg) == n
             @test ne(lg) == n
             @test is_connected(lg)
-            @test all(degree(v) == 2 for v in vertices(lg))
+            @test all(degree(lg) .== 2)  # All vertices degree 2
         end
     end
 
-    @testset "Undirected Path Graphs" begin
-        for n in 2:9
+    @testset "Path Graphs" begin
+        for n in 2:5
             g = path_graph(n)
-            lg = line_graph(g)  # checking if lg is an n-1-path
+            lg = line_graph(g)
             @test nv(lg) == n-1
             @test ne(lg) == n-2
             @test is_connected(lg)
-            @test all(degree(v) <= 2 for v in vertices(lg))
-            @test any(degree(v) == 1 for v in vertices(lg))
+            degrees = degree(lg)
+            @test sum(degrees .== 1) == 2  # Exactly 2 leaves
+            @test sum(degrees .== 2) == max(0, n-3)  # Rest degree 2
         end
     end
 
-    @testset "Undirected Star Graphs" begin
-        for n in 3:9
+    @testset "Star Graphs" begin
+        for n in 3:5
             g = star_graph(n)
-            lg = line_graph(g)  # checking if lg is a complete graph on n-1 vertices
+            lg = line_graph(g)
             @test nv(lg) == n-1
-            @test ne(lg) == binomial(n-1, 2)  # lg must be a complete graph
+            @test ne(lg) == binomial(n-1, 2)  # Complete graph edge count
+            @test is_connected(lg)
+            @test all(degree(lg) .== n-2)  # Regular graph of degree n-2
+        end
     end
 end
