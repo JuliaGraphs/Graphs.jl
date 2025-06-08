@@ -34,8 +34,8 @@ parallel edges.
 # Examples
 TODO: Add examples
 """
-function is_chordal(g::AbstractSimpleGraph)
-    # The possibility of self-loops is already ruled out by the `AbstractSimpleGraph` type
+function is_chordal(g::AbstractGraph)
+    # The `AbstractGraph` interface does not support parallel edges, so no need to check
     is_directed(g) && throw(ArgumentError("Graph must be undirected"))
     has_self_loops(g) && throw(ArgumentError("Graph must not have self-loops"))
 
@@ -69,10 +69,10 @@ function is_chordal(g::AbstractSimpleGraph)
 end
 
 function _max_cardinality_node(
-    g::AbstractSimpleGraph, unnumbered::Set{T}, numbered::Set{T}
+    g::AbstractGraph, unnumbered::Set{T}, numbered::Set{T}
 ) where {T}
     cardinality(v::T) = count(in(numbered), neighbors(g, v))
     return argmax(cardinality, unnumbered)
 end
 
-_is_complete_graph(g::AbstractSimpleGraph) = density(g) == 1
+_is_complete_graph(g::AbstractGraph) = density(g) == 1
