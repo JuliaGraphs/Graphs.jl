@@ -387,7 +387,7 @@ end
         end
     end
 
-    @testset "Self-loops" begin
+    @testset "Undirected Self-loops" begin
         g = SimpleGraph(2, [[2], [1, 2], Int[]])
         lg = line_graph(g)
         @test nv(lg) == 2  # only 2 edges (self-loop counts once)                                                                                                                                                                           
