@@ -1,11 +1,11 @@
 using Aqua
 using Documenter
 using Graphs
-using Graphs.SimpleGraphs
 using Graphs.Experimental
+using Graphs.SimpleGraphs
+using Graphs.Test
 using JET
 using JuliaFormatter
-using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
@@ -150,31 +150,42 @@ tests = [
     "experimental/experimental",
 ]
 
+args = lowercase.(ARGS)
+
 @testset verbose = true "Graphs" begin
-    @testset "Code quality (JET.jl)" begin
-        @assert get_pkg_version("JET") >= v"0.8.4"
-        JET.test_package(
-            Graphs;
-            target_defined_modules=true,
-            ignore_missing_comparison=true,
-            mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
-        )
+    if "jet" in args || isempty(args)
+        @testset "Code quality (JET.jl)" begin
+            @assert get_pkg_version("JET") >= v"0.8.4"
+            JET.test_package(
+                Graphs;
+                target_defined_modules=true,
+                ignore_missing_comparison=true,
+                mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+            )
+        end
     end
 
-    @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(Graphs; ambiguities=false)
+    if "aqua" in args || isempty(args)
+        @testset "Code quality (Aqua.jl)" begin
+            Aqua.test_all(Graphs; ambiguities=false)
+        end
     end
 
-    @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Graphs; verbose=false, overwrite=false)
+    if "juliaformatter" in args || isempty(args)
+        @testset "Code formatting (JuliaFormatter.jl)" begin
+            @test format(Graphs; verbose=false, overwrite=false)
+        end
     end
 
-    doctest(Graphs)
+    if "doctest" in args || isempty(args)
+        doctest(Graphs)
+    end
 
     @testset verbose = true "Actual tests" begin
         for t in tests
-            tp = joinpath(testdir, "$(t).jl")
-            include(tp)
+            if t in args || isempty(args)
+                include(joinpath(testdir, "$(t).jl"))
+            end
         end
     end
 end;

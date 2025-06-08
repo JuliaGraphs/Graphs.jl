@@ -879,3 +879,88 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T
 
     return new_vertex_ids
 end
+
+"""
+	line_graph(g::SimpleGraph)
+Given a graph `g`, return the graph `lg`, whose vertices are integers that enumerate the 
+edges in `g`, and two vertices in `lg` form an edge iff the corresponding edges in `g` 
+share a common endpoint. In other words, edges in `lg` are length-2 paths in `g`. 
+Note that `i ∈ vertices(lg)` corresponds to `collect(edges(g))[i]`. 
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(5);
+
+julia> lg = line_graph(g)
+{4, 3} undirected simple Int64 graph
+```
+"""
+function line_graph(g::SimpleGraph)::SimpleGraph
+    vertex_to_edges = [Int[] for _ in 1:nv(g)]
+    for (i, e) in enumerate(edges(g))
+        s, d = src(e), dst(e)
+        push!(vertex_to_edges[s], i)
+        s == d && continue  # do not push self-loops twice
+        push!(vertex_to_edges[d], i)
+    end
+
+    edge_to_neighbors = [Int[] for _ in 1:ne(g)]
+    m = 0  # number of edges in the line-graph
+    for es in vertex_to_edges
+        n = length(es)
+        for i in 1:(n - 1), j in (i + 1):n  # iterate through pairs of edges with same endpoint
+            ei, ej = es[i], es[j]
+            m += 1
+            push!(edge_to_neighbors[ei], ej)
+            push!(edge_to_neighbors[ej], ei)
+        end
+    end
+
+    foreach(sort!, edge_to_neighbors)
+    return SimpleGraph(m, edge_to_neighbors)
+end
+
+"""
+	line_graph(g::SimpleDiGraph)
+Given a digraph `g`, return the digraph `lg`, whose vertices are integers that enumerate 
+the edges in `g`, and there is an edge in `lg` from `Edge(a,b)` to `Edge(c,d)` iff b==c.
+In other words, edges in `lg` are length-2 directed paths in `g`. 
+Note that `i ∈ vertices(lg)` corresponds to `collect(edges(g))[i]`. 
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = cycle_digraph(5);
+
+julia> lg = line_graph(g)
+{5, 5} directed simple Int64 graph
+```
+"""
+function line_graph(g::SimpleDiGraph)::SimpleDiGraph
+    vertex_to_edgesout = [Int[] for _ in 1:nv(g)]
+    vertex_to_edgesin = [Int[] for _ in 1:nv(g)]
+    for (i, e) in enumerate(edges(g))
+        s, d = src(e), dst(e)
+        push!(vertex_to_edgesout[s], i)
+        push!(vertex_to_edgesin[d], i)
+    end
+
+    edge_to_neighborsout = [Int[] for _ in 1:ne(g)]
+    edge_to_neighborsin = [Int[] for _ in 1:ne(g)]
+    m = 0  # number of edges in the line-graph
+    for (e_i, e_o) in zip(vertex_to_edgesin, vertex_to_edgesout)
+        for ei in e_i, eo in e_o  # iterate through length-2 directed paths
+            ei == eo && continue  # a self-loop in g does not induce a self-loop in lg
+            m += 1
+            push!(edge_to_neighborsout[ei], eo)
+            push!(edge_to_neighborsin[eo], ei)
+        end
+    end
+
+    foreach(sort!, edge_to_neighborsout)
+    foreach(sort!, edge_to_neighborsin)
+    return SimpleDiGraph(m, edge_to_neighborsout, edge_to_neighborsin)
+end
