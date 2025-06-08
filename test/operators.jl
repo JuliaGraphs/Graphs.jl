@@ -352,6 +352,71 @@
     @testset "Length: $(typeof(g))" for g in test_generic_graphs(SimpleGraph(100))
         @test length(g) == 10000
     end
+    @testset "Directed Line Graph" begin
+        @testset "Directed Cycle Graphs" begin
+            for n in 3:9
+                g = cycle_digraph(n)
+                lg = line_graph(g)
+                @test nv(lg) == n
+                @test ne(lg) == n
+                @test is_directed(lg)
+                @test all(outdegree(lg, v) == 1 for v in vertices(lg))
+                @test all(indegree(lg, v) == 1 for v in vertices(lg))
+            end
+        end
+
+        @testset "Directed Path Graphs" begin
+            for n in 2:9
+                g = path_digraph(n)
+                lg = line_graph(g)
+                @test nv(lg) == n - 1
+                @test ne(lg) == n - 2
+                @test is_directed(lg)
+                @test is_connected(lg)
+                @test all(outdegree(lg, v) <= 1 for v in vertices(lg))
+                @test all(indegree(lg, v) <= 1 for v in vertices(lg))
+                if n > 2
+                    @test indegree(lg, 1) == 0
+                    @test outdegree(lg, 1) == 1
+                    @test indegree(lg, nv(lg)) == 1
+                    @test outdegree(lg, nv(lg)) == 0
+                end
+            end
+        end
+
+        @testset "Directed Star Graphs" begin
+            for n in 3:9
+                g = star_digraph(n)
+                lg = line_graph(g)
+                @test nv(lg) == n - 1
+                @test ne(lg) == 0
+            end
+
+            for n in 3:9
+                g = SimpleDiGraph(n)
+                for i in 2:n
+                    add_edge!(g, 1, i)
+                    add_edge!(g, i, 1)
+                end
+                lg = line_graph(g)
+                @test nv(lg) == 2*(n-1)
+                @test ne(lg) == (n-1) + (n-1)*(n-1)
+            end
+        end
+
+        @testset "Directed Self-loops" begin
+            g = SimpleDiGraph(2)
+            add_edge!(g, 1, 1)
+            add_edge!(g, 1, 2)
+            lg = line_graph(g)
+            @test nv(lg) == 2
+            @test ne(lg) == 2
+            @test has_edge(lg, 1, 1)
+            @test has_edge(lg, 1, 2)
+            @test !has_edge(lg, 2, 1)
+            @test !has_edge(lg, 2, 2)
+        end
+    end
 end
 
 @testset "Undirected Line Graph" begin
@@ -393,4 +458,6 @@ end
         @test nv(lg) == 2  # only 2 edges (self-loop counts once)                                                                                                                                                                           
         @test ne(lg) == 1  # only connection between edge 1-2 and self-loop 2-2                                                                                                                                                               
     end
+
+    
 end
