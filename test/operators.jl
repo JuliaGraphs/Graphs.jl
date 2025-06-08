@@ -353,3 +353,40 @@
         @test length(g) == 10000
     end
 end
+
+@testset "Line Graph" begin
+    @testset "Cycle Graphs" begin
+        for n in 3:5
+            g = cycle_graph(n)
+            lg = line_graph(g)
+            @test nv(lg) == n
+            @test ne(lg) == n
+            @test is_connected(lg)
+            @test all(degree(lg) .== 2)  # All vertices degree 2
+        end
+    end
+
+    @testset "Path Graphs" begin
+        for n in 2:5
+            g = path_graph(n)
+            lg = line_graph(g)
+            @test nv(lg) == n-1
+            @test ne(lg) == n-2
+            @test is_connected(lg)
+            degrees = degree(lg)
+            @test sum(degrees .== 1) == 2  # Exactly 2 leaves
+            @test sum(degrees .== 2) == max(0, n-3)  # Rest degree 2
+        end
+    end
+
+    @testset "Star Graphs" begin
+        for n in 3:5
+            g = star_graph(n)
+            lg = line_graph(g)
+            @test nv(lg) == n-1
+            @test ne(lg) == binomial(n-1, 2)  # Complete graph edge count
+            @test is_connected(lg)
+            @test all(degree(lg) .== n-2)  # Regular graph of degree n-2
+        end
+    end
+end
