@@ -387,10 +387,13 @@
         end
 
         @testset "Undirected Self-loops" begin
-            g = SimpleGraph(2, [[2], [1, 2], Int[]])
-            lg = line_graph(g)
-            @test nv(lg) == 2  # only 2 edges (self-loop counts once)                                                                                                                                                                           
-            @test ne(lg) == 1  # only connection between edge 1-2 and self-loop 2-2                                                                                                                                                               
+            for T in
+                (Int8, Int16, Int32, Int64, Int128, UInt8, UInt16, UInt32, UInt64, UInt128)
+                g = SimpleGraph{T}(2, [T[2], T[1, 2], T[]])
+                lg = line_graph(g)
+                @test nv(lg) == 2  # only 2 edges (self-loop counts once)                                                                                                                                                                           
+                @test ne(lg) == 1  # only connection between edge 1-2 and self-loop 2-2 
+            end
         end
     end
 
@@ -437,11 +440,14 @@
         end
 
         @testset "Directed Self-loops" begin
-            g = SimpleDiGraph(2, [[1, 2], Int[], Int[]], [[1], [1], Int[]])
-            lg = line_graph(g)
-            @test nv(lg) == 2
-            @test ne(lg) == 1
-            @test has_edge(lg, 1, 2)
+            for T in
+                (Int8, Int16, Int32, Int64, Int128, UInt8, UInt16, UInt32, UInt64, UInt128)
+                g = SimpleDiGraph{T}(2, [T[1, 2], T[], T[]], [T[1], T[1], T[]])
+                lg = line_graph(g)
+                @test nv(lg) == 2
+                @test ne(lg) == 1
+                @test has_edge(lg, 1, 2)
+            end
         end
     end
 end
