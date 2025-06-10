@@ -7,9 +7,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main') || github.run_number }}
   # Cancel intermediate builds, but only if it is a pull request build.
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
-on:
-  pull_request:
-    branches: ["master", "main"]
+#on:
+#  pull_request:
+#    branches: ["master", "main"]
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
