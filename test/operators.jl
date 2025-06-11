@@ -160,6 +160,17 @@
         @test g == DiGraph{T}(g4)
     end
 
+    gp = SimpleDiGraph(20, 50; rng=rng)
+    @testset "Permute $g" for g in testlargegraphs(gp)
+        for _ in 1:10
+            perm = randperm(rng, nv(g))
+            h = copy(g)
+            permute!(g, perm)
+
+            @test g == h[perm]
+        end
+    end
+
     gx = complete_graph(2)
 
     @testset "Blockdiag $g" for g in testlargegraphs(gx)
