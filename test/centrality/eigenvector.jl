@@ -4,8 +4,7 @@
 
     for g in test_generic_graphs(g1)
         y = @inferred(eigenvector_centrality(g))
-        @test round.(y, digits=3) ==
-            round.(
+        @test round.(y, digits=3) == round.(
             [
                 0.3577513877490464,
                 0.3577513877490464,
