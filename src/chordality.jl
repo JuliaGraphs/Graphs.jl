@@ -4,7 +4,7 @@
 Check whether a graph is chordal.
 
 A graph is said to be *chordal* if every cycle of length `≥ 4` has a chord
-(i.e., an edge between two nodes not adjacent in the cycle).
+(i.e., an edge between two vertices not adjacent in the cycle).
 
 ### Performance
 This algorithm is linear in the number of vertices and edges of the graph (i.e.,
@@ -47,32 +47,36 @@ function is_chordal(g::AbstractGraph)
     numbered = Set(start_vertex)
 
     #= Searching by maximum cardinality ensures that in any possible perfect elimination
-    ordering of `g`, `purported_clique_nodes` is precisely the set of neighbors of `v` that
-    come later in the ordering. Hence, if the subgraph induced by `purported_clique_nodes`
+    ordering of `g`, `subsequent_neighbors` is precisely the set of neighbors of `v` that
+    come later in the ordering. Therefore, if the subgraph induced by `subsequent_neighbors`
     in any iteration is not complete, `g` cannot be chordal. =#
     while !isempty(unnumbered)
         # `v` is the vertex in `unnumbered` with the most neighbors in `numbered`
-        v = _max_cardinality_node(g, unnumbered, numbered)
+        v = _max_cardinality_vertex(g, unnumbered, numbered)
         delete!(unnumbered, v)
         push!(numbered, v)
+        subsequent_neighbors = intersect(neighbors(g, v), numbered)
 
-        # A complete subgraph of a larger graph is called a "clique," hence the naming here
-        purported_clique_nodes = intersect(neighbors(g, v), numbered)
-        purported_clique = induced_subgraph(g, purported_clique_nodes)
-
-        _is_complete_graph(purported_clique) || return false
+        # A complete subgraph is also called a "clique," hence the naming here
+        _induces_clique(subsequent_neighbors, g) || return false
     end
 
-    #= That `g` admits a perfect elimination ordering is an "if and only if" condition for
-    chordality, so if every `purported_clique` was indeed complete, `g` must be chordal. =#
+    #= A perfect elimination ordering is an "if and only if" condition for chordality, so if
+    every `subsequent_neighbors` set induced a complete subgraph, `g` must be chordal. =#
     return true
 end
 
-function _max_cardinality_node(
-    g::AbstractGraph, unnumbered::Set{T}, numbered::Set{T}
+function _max_cardinality_vertex(
+    g::AbstractGraph{T}, unnumbered::Set{T}, numbered::Set{T}
 ) where {T}
     cardinality(v::T) = count(in(numbered), neighbors(g, v))
     return argmax(cardinality, unnumbered)
 end
 
-_is_complete_graph(g::AbstractGraph) = density(g) == 1
+function _induces_clique(vertex_subset::Vector{T}, g::AbstractGraph{T}) where {T}
+    for (i, u) in enumerate(vertex_subset), v in Iterators.drop(vertex_subset, i)
+        has_edge(g, u, v) || return false
+    end
+
+    return true
+end
