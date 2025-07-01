@@ -34,6 +34,6 @@ jobs:
       uses: pre-commit/action@v3.0.1
       continue-on-error: true
     - name: Potentially commit changes
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@v6
       with:
         commit_message: linter bot commit -- feel free to overwrite
