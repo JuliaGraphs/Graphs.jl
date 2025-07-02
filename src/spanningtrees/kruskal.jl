@@ -25,7 +25,7 @@ function kruskal_mst end
         push!(weights, distmx[src(e), dst(e)])
     end
 
-    for e in edge_list[sortperm(weights; rev=!minimize)]
+    for e in edge_list[sortperm(weights; rev=(!minimize))]
         if !in_same_set(connected_vs, src(e), dst(e))
             union!(connected_vs, src(e), dst(e))
             push!(mst, e)

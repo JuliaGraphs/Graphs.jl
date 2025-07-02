@@ -1,7 +1,8 @@
 using Graphs.SimpleGraphs
 
 import Graphs.SimpleGraphs: fadj, badj, adj
-import Graphs.edgetype, Graphs.has_edge
+using Graphs.edgetype: edgetype
+using Graphs.has_edge: has_edge
 using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
