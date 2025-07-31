@@ -557,6 +557,8 @@ include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")
+include("LEMON/LEMON.jl")
 
 using .LinAlg
+using .LEMON
 end # module
