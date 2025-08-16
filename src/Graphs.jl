@@ -205,6 +205,9 @@ export
     # coloring
     greedy_color,
 
+    # chordality
+    is_chordal,
+
     # connectivity
     connected_components,
     strongly_connected_components,
@@ -505,6 +508,7 @@ include("iterators/bfs.jl")
 include("iterators/dfs.jl")
 include("traversals/eulerian.jl")
 include("traversals/all_simple_paths.jl")
+include("chordality.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
