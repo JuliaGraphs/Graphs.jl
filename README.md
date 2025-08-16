@@ -90,3 +90,18 @@ _LightGraphs.jl_ and _Graphs.jl_ are functionally identical, still there are som
 - There was also an older package also called _Graphs.jl_ (git tags `v0.2.5` through `v0.10.3`), but the current code base here is a fork of _LightGraphs.jl_ v1.3.5.
 - All older _LightGraphs.jl_ versions are tagged using the naming scheme `lg-vX.Y.Z` rather than plain `vX.Y.Z`, which is used for old _Graphs.jl_ versions (≤ v0.10) and newer versions derived from _LightGraphs.jl_ but released with the _Graphs.jl_ name (≥ v1.4).
 - If you are using a version of Julia prior to 1.x, then you should use _LightGraphs.jl_ at `lg-v.12.*` or _Graphs.jl_ at `v0.10.3`
+
+## Graphs.jl + igraph support
+
+Graphs.jl now works with the igraph C library through the IGraphs.jl package.
+Just load the compatibility layer:
+
+```julia
+using Graphs, IGraphs
+using IGraphs.GraphsCompat  # enable Graphs.jl interface for igraph
+
+g = Graphs.grid([5,5])                # Graphs.jl graph
+ig = GraphsCompat.IGSimpleGraph(g)    # igraph-backed graph
+
+Graphs.nv(ig)                         # number of vertices
+Graphs.connected_components(ig)      # runs igraph’s fast implementation
