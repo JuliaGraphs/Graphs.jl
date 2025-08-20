@@ -80,6 +80,7 @@ tests = [
     "interface",
     "core",
     "operators",
+    "wrappedGraphs/graphviews",
     "degeneracy",
     "distance",
     "digraph/transitivity",
