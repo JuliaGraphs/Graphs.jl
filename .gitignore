@@ -12,3 +12,4 @@ Manifest.toml
 /docs/src/index.md
 /docs/src/contributing.md
 /docs/src/license.md
+.aider*
