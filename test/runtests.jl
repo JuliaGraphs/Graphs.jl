@@ -83,6 +83,7 @@ tests = [
     "degeneracy",
     "distance",
     "digraph/transitivity",
+    "distance_regular/distance_regular",
     "cycles/hawick-james",
     "cycles/johnson",
     "cycles/karp",
