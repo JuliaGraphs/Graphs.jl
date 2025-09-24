@@ -463,7 +463,7 @@ include("interface.jl")
 include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
-
+include("igraph_stubs.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
 """
