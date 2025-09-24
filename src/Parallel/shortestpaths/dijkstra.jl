@@ -21,7 +21,7 @@ function dijkstra_shortest_paths(
     g::AbstractGraph{U},
     sources=vertices(g),
     distmx::AbstractMatrix{T}=weights(g);
-    parallel::Symbol=:distributed,
+    parallel::Symbol=:threads,
 ) where {T<:Number} where {U}
     return if parallel === :threads
         threaded_dijkstra_shortest_paths(g, sources, distmx)
@@ -56,22 +56,8 @@ function threaded_dijkstra_shortest_paths(
     return result
 end
 
-function distr_dijkstra_shortest_paths(
-    g::AbstractGraph{U}, sources=vertices(g), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Number} where {U}
-    n_v = nv(g)
-    r_v = length(sources)
-
-    # TODO: remove `Int` once julialang/#23029 / #23032 are resolved
-    dists = SharedMatrix{T}(Int(r_v), Int(n_v))
-    parents = SharedMatrix{U}(Int(r_v), Int(n_v))
-
-    @sync @distributed for i in 1:r_v
-        state = Graphs.dijkstra_shortest_paths(g, sources[i], distmx)
-        dists[i, :] = state.dists
-        parents[i, :] = state.parents
-    end
-
-    result = MultipleDijkstraState(sdata(dists), sdata(parents))
-    return result
+function distr_dijkstra_shortest_paths(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
