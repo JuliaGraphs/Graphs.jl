@@ -69,6 +69,7 @@ import Base:
     Pair,
     Tuple,
     zero
+using GraphProperties: GraphProperties, GraphProperty
 
 export
     # Interface
@@ -434,6 +435,9 @@ export
     # vertexcover
     vertex_cover,
 
+    # graphproperties
+    graph_property,
+
     # longestpaths
     dag_longest_path
 
@@ -548,6 +552,7 @@ include("biconnectivity/biconnect.jl")
 include("biconnectivity/bridge.jl")
 include("graphcut/normalized_cut.jl")
 include("graphcut/karger_min_cut.jl")
+include("graphproperties.jl")
 include("dominatingset/degree_dom_set.jl")
 include("dominatingset/minimal_dom_set.jl")
 include("independentset/degree_ind_set.jl")
