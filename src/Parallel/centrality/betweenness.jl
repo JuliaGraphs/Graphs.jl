@@ -4,7 +4,7 @@ function betweenness_centrality(
     distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false,
-    parallel=:distributed,
+    parallel=:threads,
 )
     return if parallel == :distributed
         distr_betweenness_centrality(
@@ -23,7 +23,7 @@ function betweenness_centrality(
     distmx::AbstractMatrix=weights(g);
     normalize=true,
     endpoints=false,
-    parallel=:distributed,
+    parallel=:threads,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
@@ -39,37 +39,10 @@ function betweenness_centrality(
     end
 end
 
-function distr_betweenness_centrality(
-    g::AbstractGraph,
-    vs=vertices(g),
-    distmx::AbstractMatrix=weights(g);
-    normalize=true,
-    endpoints=false,
-)::Vector{Float64}
-    n_v = nv(g)
-    k = length(vs)
-    isdir = is_directed(g)
-
-    # Parallel reduction
-
-    betweenness = @distributed (+) for s in vs
-        temp_betweenness = zeros(n_v)
-        if degree(g, s) > 0  # this might be 1?
-            state = Graphs.dijkstra_shortest_paths(
-                g, s, distmx; allpaths=true, trackvertices=true
-            )
-            if endpoints
-                Graphs._accumulate_endpoints!(temp_betweenness, state, g, s)
-            else
-                Graphs._accumulate_basic!(temp_betweenness, state, g, s)
-            end
-        end
-        temp_betweenness
-    end
-
-    Graphs._rescale!(betweenness, n_v, normalize, isdir, k)
-
-    return betweenness
+function distr_betweenness_centrality(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 function distr_betweenness_centrality(
