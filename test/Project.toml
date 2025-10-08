@@ -23,3 +23,6 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 JuliaFormatter = "1"
+
+[sources]
+GraphProperties = {url = "https://github.com/JuliaGraphs/GraphProperties.jl"}
