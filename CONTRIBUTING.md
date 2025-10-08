@@ -70,6 +70,8 @@ This gives users the option of reusing memory and improving performance.
 
 - If the algorithm was presented in a paper, include a reference to the paper (_e.g._, a proper academic citation along with an eprint link).
 
+- When implementing a new graph invariant, just add a method to `graph_property`, instead of exporting a new function. If necessary, also add the property to GraphProperties.jl.
+
 ## Git(Hub) usage
 
 ### Getting started on a package contribution

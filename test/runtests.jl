@@ -16,6 +16,7 @@ using Statistics: mean, std
 using StableRNGs
 using Pkg
 using Unitful
+using GraphProperties: GraphProperties, graph_property_type
 
 const testdir = dirname(@__FILE__)
 const KMf = typeof(u"1.0km")
@@ -80,6 +81,7 @@ tests = [
     "interface",
     "core",
     "operators",
+    "graphproperties",
     "degeneracy",
     "distance",
     "digraph/transitivity",
