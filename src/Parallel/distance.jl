@@ -4,7 +4,7 @@ function eccentricity(
     g::AbstractGraph,
     vs=vertices(g),
     distmx::AbstractMatrix{T}=weights(g);
-    parallel::Symbol=:distributed,
+    parallel::Symbol=:threads,
 ) where {T<:Number}
     return if parallel === :threads
         threaded_eccentricity(g, vs, distmx)
@@ -19,18 +19,10 @@ function eccentricity(
     end
 end
 
-function distr_eccentricity(
-    g::AbstractGraph, vs=vertices(g), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Number}
-    vlen = length(vs)
-    eccs = SharedVector{T}(vlen)
-    @sync @distributed for i in 1:vlen
-        local d = Graphs.dijkstra_shortest_paths(g, vs[i], distmx)
-        eccs[i] = maximum(d.dists)
-    end
-    d = sdata(eccs)
-    maximum(d) == typemax(T) && @warn("Infinite path length detected")
-    return d
+function distr_eccentricity(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 function threaded_eccentricity(
@@ -46,9 +38,7 @@ function threaded_eccentricity(
     return eccs
 end
 
-function eccentricity(
-    g::AbstractGraph, distmx::AbstractMatrix; parallel::Symbol=:distributed
-)
+function eccentricity(g::AbstractGraph, distmx::AbstractMatrix; parallel::Symbol=:threads)
     return eccentricity(g, vertices(g), distmx; parallel)
 end
 
