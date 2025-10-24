@@ -12,7 +12,7 @@ function kruskal_mst end
 @traitfn function kruskal_mst(
     g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Number,U,AG<:AbstractGraph{U}}
-    connected_vs = IntDisjointSets(nv(g))
+    connected_vs = IntDisjointSet(nv(g))
 
     mst = Vector{edgetype(g)}()
     nv(g) <= 1 && return mst

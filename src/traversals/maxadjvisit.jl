@@ -30,7 +30,7 @@ assumed to be 1.
     # still appearing in fadjlist. When iterating neighbors, is_merged makes sure we
     # don't consider them
     is_merged = falses(nvg)
-    merged_vertices = IntDisjointSets(U(nvg))
+    merged_vertices = IntDisjointSet(U(nvg))
     graph_size = nvg
     # We need to mutate the weight matrix,
     # and we need it clean (0 for non edges)

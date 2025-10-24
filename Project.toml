@@ -22,7 +22,7 @@ GraphsSharedArraysExt = "SharedArrays"
 [compat]
 ArnoldiMethod = "0.4"
 Distributed = "1"
-DataStructures = "0.18, 0.19"
+DataStructures = "0.19"
 Inflate = "0.1.3"
 LinearAlgebra = "1"
 Random = "1"
