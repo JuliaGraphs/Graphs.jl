@@ -504,11 +504,11 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;!IsDirected{AG}}
     return true
 end
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;IsDirected{AG}}
     for e in edges(g)
         if !has_edge(g, reverse(e))
             return false

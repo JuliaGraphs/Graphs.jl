@@ -489,7 +489,7 @@ function has_induced_subgraphisomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -509,7 +509,7 @@ function has_subgraphisomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -531,7 +531,7 @@ function has_isomorph(
     !could_have_isomorph(g1, g2) && return false
 
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -648,8 +648,6 @@ function all_subgraphisomorph(
 end
 
 #! format: off
-# Turns off formatting from this point onwards
-
 function all_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
@@ -672,6 +670,4 @@ function all_isomorph(
     end
     return ch
 end
-
 #! format: on
-# Turns on formatting from this point onwards
