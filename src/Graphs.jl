@@ -8,7 +8,7 @@ using Statistics: mean
 
 using Inflate: InflateGzipStream
 using DataStructures:
-    IntDisjointSets,
+    IntDisjointSet,
     PriorityQueue,
     dequeue!,
     dequeue_pair!,

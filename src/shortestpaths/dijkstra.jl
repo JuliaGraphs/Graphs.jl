@@ -95,7 +95,7 @@ function dijkstra_shortest_paths(
     sizehint!(closest_vertices, nvg)
 
     while !isempty(H)
-        u = dequeue!(H)
+        u = popfirst!(H).first
 
         if trackvertices
             push!(closest_vertices, u)
