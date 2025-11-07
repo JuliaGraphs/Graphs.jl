@@ -73,7 +73,7 @@ assumed to be 1.
         local cutweight
         while true
             last_vertex = u
-            u, cutweight = dequeue_pair!(pq)
+            u, cutweight = popfirst!(pq)
             isempty(pq) && break
             for v in fadjlist[u]
                 (is_processed[v] || is_merged[v] || u == v) && continue
@@ -158,7 +158,7 @@ function maximum_adjacency_visit(
 
     # start traversing the graph
     while !isempty(pq)
-        u = dequeue!(pq)
+        u = popfirst!(pq).first
         has_key[u] = false
         push!(vertices_order, u)
         log && println(io, "discover vertex: $u")

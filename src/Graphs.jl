@@ -10,13 +10,9 @@ using Inflate: InflateGzipStream
 using DataStructures:
     IntDisjointSet,
     PriorityQueue,
-    dequeue!,
-    dequeue_pair!,
-    enqueue!,
     heappop!,
     heappush!,
     in_same_set,
-    peek,
     union!,
     find_root!,
     BinaryMaxHeap,

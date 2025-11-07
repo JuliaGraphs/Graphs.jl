@@ -26,7 +26,7 @@ function independent_set(g::AbstractGraph{T}, alg::DegreeIndependentSet) where {
     degree_queue = PriorityQueue(enumerate(degree(g)))
 
     while !isempty(degree_queue)
-        v = dequeue!(degree_queue)
+        v = popfirst!(degree_queue).first
         (deleted[v] || has_edge(g, v, v)) && continue
         deleted[v] = true
         push!(ind_set, v)
