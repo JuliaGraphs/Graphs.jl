@@ -20,7 +20,7 @@ function prim_mst end
     wt[1] = typemin(T)
 
     while !isempty(pq)
-        v = dequeue!(pq)
+        v = popfirst!(pq).first
         finished[v] = true
 
         for u in neighbors(g, v)

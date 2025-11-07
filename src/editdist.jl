@@ -212,7 +212,7 @@ function _edit_distance(
                         end
                     end
                 end
-                enqueue!(OPEN, λ⁺, new_cost + h(λ⁺) - h(λ))
+                push!(OPEN, λ⁺ => new_cost + h(λ⁺) - h(λ))
             end
         end
     end
