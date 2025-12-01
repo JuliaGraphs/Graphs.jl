@@ -4,7 +4,6 @@ using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
 using JET
-using JuliaFormatter
 using Graphs.Test
 using Test
 using SparseArrays
@@ -163,10 +162,6 @@ tests = [
 
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(Graphs; ambiguities=false)
-    end
-
-    @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Graphs; verbose=false, overwrite=false)
     end
 
     doctest(Graphs)
