@@ -44,6 +44,7 @@ pages_files = [
         "core_functions/persistence.md",
         "core_functions/simplegraphs_generators.md",
         "core_functions/simplegraphs.md",
+        "core_functions/wrappedgraphs.md",
     ],
     "Algorithms API" => [
         "algorithms/biconnectivity.md",
