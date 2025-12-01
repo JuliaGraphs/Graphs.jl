@@ -9,13 +9,13 @@ mutable struct SimpleGraph{T<:Integer} <: AbstractSimpleGraph{T}
     ne::Int
     fadjlist::Vector{Vector{T}} # [src]: (dst, dst, dst)
 
-    function SimpleGraph{T}(ne::Int, fadjlist::Vector{Vector{T}}) where {T}
+    function SimpleGraph{T}(ne::Integer, fadjlist::Vector{Vector{T}}) where {T}
         throw_if_invalid_eltype(T)
         return new{T}(ne, fadjlist)
     end
 end
 
-function SimpleGraph(ne, fadjlist::Vector{Vector{T}}) where {T}
+function SimpleGraph(ne::Integer, fadjlist::Vector{Vector{T}}) where {T}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
