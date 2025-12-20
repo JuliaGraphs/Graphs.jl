@@ -91,11 +91,23 @@ end
 """
     diameter(eccentricities)
     diameter(g, distmx=weights(g))
+    diameter(g::Union{SimpleGraph, SimpleDiGraph})
 
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
+For unweighted `SimpleGraph` and `SimpleDiGraph`, an optimized BFS algorithm
+(iFUB) is used to avoid computing eccentricities for all vertices.
+
 # Examples
+```jldoctest
+julia> using Graphs
+
+julia> diameter(star_graph(5))
+2
+
+julia> diameter(path_graph(5))
+4
 ```jldoctest
 julia> using Graphs
 
@@ -107,8 +119,115 @@ julia> diameter(path_graph(5))
 ```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
+
 function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
     return maximum(eccentricity(g, distmx))
+end
+
+function diameter(g::Union{SimpleGraph,SimpleDiGraph})
+    if nv(g) <= 1
+        return 0
+    end
+    return _diameter_ifub(g)
+end
+
+function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
+    nvg = nv(g)
+    out_list = [outneighbors(g, v) for v in vertices(g)]
+
+    if is_directed(g)
+        in_list = [inneighbors(g, v) for v in vertices(g)]
+    else
+        in_list = out_list
+    end
+
+    # Data structures
+    active = trues(nvg)
+    visited = falses(nvg)
+    queue = Vector{T}(undef, nvg)
+    distbuf = fill(typemax(T), nvg)
+    diam = 0
+
+    # Sort vertices by total degree (descending) to maximize pruning potential
+    vs = collect(vertices(g))
+    sort!(vs; by=v -> -(length(out_list[v]) + length(in_list[v])))
+
+    for u in vs
+        if !active[u]
+            continue
+        end
+
+        # --- Forward BFS from u ---
+        fill!(visited, false)
+        visited[u] = true
+        queue[1] = u
+        front = 1
+        back = 2
+        level_end = 1
+        e = 0
+
+        while front < back
+            v = queue[front]
+            front += 1
+
+            @inbounds for w in out_list[v]
+                if !visited[w]
+                    visited[w] = true
+                    queue[back] = w
+                    back += 1
+                end
+            end
+
+            if front > level_end && front < back
+                e += 1
+                level_end = back - 1
+            end
+        end
+        diam = max(diam, e)
+
+        # --- Backward BFS (Pruning) ---
+        dmax = diam - e
+
+        # Only prune if we have a chance to exceed the current diameter
+        if dmax >= 0
+            fill!(distbuf, typemax(T))
+            distbuf[u] = 0
+            queue[1] = u
+            front = 1
+            back = 2
+
+            while front < back
+                v = queue[front]
+                front += 1
+
+                # If current distance >= dmax, we cannot close the loop to beat diam
+                if distbuf[v] >= dmax
+                    continue
+                end
+
+                @inbounds for w in in_list[v]
+                    if distbuf[w] == typemax(T)
+                        distbuf[w] = distbuf[v] + 1
+                        queue[back] = w
+                        back += 1
+                    end
+                end
+            end
+
+            # Prune vertices that cannot possibly be part of a diametral path > diam
+            @inbounds for v in vertices(g)
+                if active[v] && distbuf[v] != typemax(T) && (distbuf[v] + e <= diam)
+                    active[v] = false
+                end
+            end
+        end
+
+        if !any(active)
+            break
+        end
+    end
+
+    return diam
 end
 
 """
