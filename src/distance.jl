@@ -108,14 +108,6 @@ julia> diameter(star_graph(5))
 
 julia> diameter(path_graph(5))
 4
-```jldoctest
-julia> using Graphs
-
-julia> diameter(star_graph(5))
-2
-
-julia> diameter(path_graph(5))
-4
 ```
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
