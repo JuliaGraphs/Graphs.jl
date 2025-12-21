@@ -4,7 +4,8 @@
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a1 = SimpleGraph(adjmx1)
     a2 = SimpleDiGraph(adjmx2)
-    a3 = blockdiag(complete_graph(5), complete_graph(5));add_edge!(a3, 1, 6)
+    a3 = blockdiag(complete_graph(5), complete_graph(5));
+    add_edge!(a3, 1, 6)
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
@@ -93,7 +94,7 @@
             sccs = strongly_connected_components(g_dir)
             largest_component_directed = sccs[argmax(length.(sccs))]
             g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
-            
+
             if nv(g_dir_lscc) > 1
                 d_new_dir = @inferred diameter(g_dir_lscc)
                 d_ref_dir = diameter_naive(g_dir_lscc)
