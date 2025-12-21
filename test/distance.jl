@@ -4,6 +4,7 @@
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
     a1 = SimpleGraph(adjmx1)
     a2 = SimpleDiGraph(adjmx2)
+    a3 = blockdiag(complete_graph(5), complete_graph(5));add_edge!(a3, 1, 6)
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
@@ -44,6 +45,63 @@
             @test @inferred(center(z)) == center(g, distmx2) == [2]
         end
     end
+
+    @testset "$(typeof(g))" for g in test_generic_graphs(a3)
+        @test @inferred(diameter(g)) == 3
+    end
+
+    @testset "iFUB diameter" begin
+
+        # 1. Tests comparing against large graphs with known diameters  
+        n_large = 5000
+        g_path = path_graph(n_large)
+        @test diameter(g_path) == n_large - 1
+
+        g_cycle = cycle_graph(n_large)
+        @test diameter(g_cycle) == floor(Int, n_large / 2)
+
+        g_star = star_graph(n_large)
+        @test diameter(g_star) == 2
+
+        # 2. Tests comparing against the old slow implementation for random graphs
+        function diameter_naive(g)
+            return maximum(eccentricity(g))
+        end
+
+        NUM_SAMPLES = 50 # Adjust this to change test duration
+
+        Random.seed!(42)
+        for i in 1:NUM_SAMPLES
+            # Random unweighted Graphs
+            n = rand(10:1000) # Small to Medium size graphs
+            p = rand() * 0.1 + 0.005 # Sparse to medium density
+
+            # Undirected Graphs
+            g = erdos_renyi(n, p)
+            ccs = connected_components(g)
+            largest_component = ccs[argmax(length.(ccs))]
+            g_lscc, _ = induced_subgraph(g, largest_component)
+
+            if nv(g_lscc) > 1
+                d_new = @inferred diameter(g_lscc)
+                d_ref = diameter_naive(g_lscc)
+                @test d_new == d_ref
+            end
+
+            # Directed Graphs
+            g_dir = erdos_renyi(n, p, is_directed=true)
+            sccs = strongly_connected_components(g_dir)
+            largest_component_directed = sccs[argmax(length.(sccs))]
+            g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
+            
+            if nv(g_dir_lscc) > 1
+                d_new_dir = @inferred diameter(g_dir_lscc)
+                d_ref_dir = diameter_naive(g_dir_lscc)
+                @test d_new_dir == d_ref_dir
+            end
+        end
+    end
+
     @testset "DefaultDistance" begin
         @test size(Graphs.DefaultDistance()) == (typemax(Int), typemax(Int))
         d = @inferred(Graphs.DefaultDistance(3))
