@@ -96,8 +96,9 @@ end
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
-For unweighted `SimpleGraph` and `SimpleDiGraph`, an optimized BFS algorithm
-(iFUB) is used to avoid computing eccentricities for all vertices.
+An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both [undirected](https://semeval.inria.fr/2012/printemps/theme1/teams/gang/62.pdf) 
+`SimpleGraph` and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) `SimpleDiGraph`
+is used to avoid computing eccentricities for all vertices.
 
 # Examples
 ```jldoctest
@@ -117,9 +118,16 @@ function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
 end
 
 function diameter(g::Union{SimpleGraph,SimpleDiGraph})
-    if nv(g) <= 1
+    if nv(g) == 0
         return 0
     end
+
+    connected = is_directed(g) ? is_strongly_connected(g) : is_connected(g)
+
+    if !connected
+        return typemax(eltype(g))
+    end
+
     return _diameter_ifub(g)
 end
 
@@ -133,7 +141,6 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
         in_list = out_list
     end
 
-    # Data structures
     active = trues(nvg)
     visited = falses(nvg)
     queue = Vector{T}(undef, nvg)
@@ -149,7 +156,7 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
             continue
         end
 
-        # --- Forward BFS from u ---
+        # Forward BFS from u
         fill!(visited, false)
         visited[u] = true
         queue[1] = u
@@ -177,7 +184,7 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
         end
         diam = max(diam, e)
 
-        # --- Backward BFS (Pruning) ---
+        # Backward BFS (Pruning)
         dmax = diam - e
 
         # Only prune if we have a chance to exceed the current diameter
@@ -192,7 +199,6 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
                 v = queue[front]
                 front += 1
 
-                # If current distance >= dmax, we cannot close the loop to beat diam
                 if distbuf[v] >= dmax
                     continue
                 end
@@ -206,7 +212,7 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
                 end
             end
 
-            # Prune vertices that cannot possibly be part of a diametral path > diam
+            # Prune vertices that cannot lead to a longer diameter
             @inbounds for v in vertices(g)
                 if active[v] && distbuf[v] != typemax(T) && (distbuf[v] + e <= diam)
                     active[v] = false
