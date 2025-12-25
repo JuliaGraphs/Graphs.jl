@@ -2,10 +2,12 @@
     g4 = path_digraph(5)
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
+    adjmx3 = [0 1 0; 0 0 0; 0 0 0]
     a1 = SimpleGraph(adjmx1)
     a2 = SimpleDiGraph(adjmx2)
-    a3 = blockdiag(complete_graph(5), complete_graph(5));
-    add_edge!(a3, 1, 6)
+    a3 = SimpleDiGraph(adjmx3)
+    a4 = blockdiag(complete_graph(5), complete_graph(5));
+    add_edge!(a4, 1, 6)
     distmx1 = [Inf 2.0 Inf; 2.0 Inf 4.2; Inf 4.2 Inf]
     distmx2 = [Inf 2.0 Inf; 3.2 Inf 4.2; 5.5 6.1 Inf]
 
@@ -47,13 +49,21 @@
         end
     end
 
-    @testset "$(typeof(g))" for g in test_generic_graphs(a3)
+    @testset "Disconnected graph diameter" for g in test_generic_graphs(a3)
+        @test @inferred(diameter(g)) == typemax(Int)
+    end
+
+    @testset "simplegraph diameter" for g in test_generic_graphs(a4)
         @test @inferred(diameter(g)) == 3
     end
 
-    @testset "iFUB diameter" begin
+    @testset "Empty graph diameter" begin
+        @test @inferred(diameter(SimpleGraph(0))) == 0
+        @test @inferred(diameter(SimpleDiGraph(0))) == 0
+    end
 
-        # 1. Tests comparing against large graphs with known diameters  
+    @testset "iFUB diameter" begin
+        # 1. Comparing against large graphs with known diameters  
         n_large = 5000
         g_path = path_graph(n_large)
         @test diameter(g_path) == n_large - 1
@@ -64,7 +74,7 @@
         g_star = star_graph(n_large)
         @test diameter(g_star) == 2
 
-        # 2. Tests comparing against the old slow implementation for random graphs
+        # 2. Comparing against the original implementation for random graphs
         function diameter_naive(g)
             return maximum(eccentricity(g))
         end
@@ -79,6 +89,8 @@
 
             # Undirected Graphs
             g = erdos_renyi(n, p)
+            @test diameter(g) == diameter_naive(g)
+
             ccs = connected_components(g)
             largest_component = ccs[argmax(length.(ccs))]
             g_lscc, _ = induced_subgraph(g, largest_component)
@@ -91,6 +103,8 @@
 
             # Directed Graphs
             g_dir = erdos_renyi(n, p, is_directed=true)
+            @test diameter(g_dir) == diameter_naive(g_dir)
+
             sccs = strongly_connected_components(g_dir)
             largest_component_directed = sccs[argmax(length.(sccs))]
             g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
