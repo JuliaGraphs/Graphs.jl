@@ -96,7 +96,7 @@ end
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
-An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both [undirected](https://semeval.inria.fr/2012/printemps/theme1/teams/gang/62.pdf) 
+An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
 `SimpleGraph` and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) `SimpleDiGraph`
 is used to avoid computing eccentricities for all vertices.
 
@@ -113,11 +113,9 @@ julia> diameter(path_graph(5))
 """
 diameter(eccentricities::Vector) = maximum(eccentricities)
 
-function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
-    return maximum(eccentricity(g, distmx))
-end
+diameter(g::AbstractGraph) = diameter(g, weights(g))
 
-function diameter(g::Union{SimpleGraph,SimpleDiGraph})
+function diameter(g::AbstractGraph, ::DefaultDistance)
     if nv(g) == 0
         return 0
     end
@@ -129,6 +127,10 @@ function diameter(g::Union{SimpleGraph,SimpleDiGraph})
     end
 
     return _diameter_ifub(g)
+end
+
+function diameter(g::AbstractGraph, distmx::AbstractMatrix)
+    return maximum(eccentricity(g, distmx))
 end
 
 function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
