@@ -91,14 +91,12 @@ end
 """
     diameter(eccentricities)
     diameter(g, distmx=weights(g))
-    diameter(g::Union{SimpleGraph, SimpleDiGraph})
 
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
-An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
-`SimpleGraph` and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) `SimpleDiGraph`
-is used to avoid computing eccentricities for all vertices.
+An optimizied BFS algorithm (iFUB) is for unweighted graphs, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
+and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) cases.
 
 # Examples
 ```jldoctest
@@ -123,7 +121,7 @@ function diameter(g::AbstractGraph, ::DefaultDistance)
     connected = is_directed(g) ? is_strongly_connected(g) : is_connected(g)
 
     if !connected
-        return typemax(eltype(g))
+        return typemax(Int)
     end
 
     return _diameter_ifub(g)
