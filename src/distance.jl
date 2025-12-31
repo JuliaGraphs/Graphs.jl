@@ -95,7 +95,7 @@ end
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
-An optimizied BFS algorithm (iFUB) is for unweighted graphs, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
+An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
 and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) cases.
 
 # Examples
@@ -109,6 +109,8 @@ julia> diameter(path_graph(5))
 4
 ```
 """
+function diameter end
+
 diameter(eccentricities::Vector) = maximum(eccentricities)
 
 diameter(g::AbstractGraph) = diameter(g, weights(g))

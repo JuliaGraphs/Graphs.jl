@@ -81,7 +81,6 @@
 
         NUM_SAMPLES = 50 # Adjust this to change test duration
 
-        Random.seed!(42)
         for i in 1:NUM_SAMPLES
             # Random unweighted Graphs
             n = rand(10:1000) # Small to Medium size graphs
