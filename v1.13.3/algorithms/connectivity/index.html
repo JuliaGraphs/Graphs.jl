@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Connected components · Graphs.jl</title><meta name="title" content="Connected components · Graphs.jl"/><meta property="og:title" content="Connected components · Graphs.jl"/><meta property="twitter:title" content="Connected components · Graphs.jl"/><meta name="description" content="Documentation for Graphs.jl."/><meta property="og:description" content="Documentation for Graphs.jl."/><meta property="twitter:description" content="Documentation for Graphs.jl."/><meta property="og:url" content="https://gdalle.github.io/Graphs.jl/algorithms/connectivity/"/><meta property="twitter:url" content="https://gdalle.github.io/Graphs.jl/algorithms/connectivity/"/><link rel="canonical" href="https://gdalle.github.io/Graphs.jl/algorithms/connectivity/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="Graphs.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">Graphs.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><input class="collapse-toggle" id="menuitem-1" type="checkbox"/><label class="tocitem" for="menuitem-1"><span class="docs-label">First steps</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../">Graphs.jl</a></li><li><a class="tocitem" href="../../first_steps/theory/">Basics of graph theory</a></li><li><a class="tocitem" href="../../first_steps/construction/">Graph construction</a></li><li><a class="tocitem" href="../../first_steps/access/">Graph access</a></li><li><a class="tocitem" href="../../first_steps/paths_traversal/">Paths and traversal</a></li><li><a class="tocitem" href="../../first_steps/plotting/">Graph plotting</a></li><li><a class="tocitem" href="../../first_steps/persistence/">Reading and writing graphs</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox"/><label class="tocitem" for="menuitem-2"><span class="docs-label">Ecosystem</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../ecosystem/graphtypes/">Graph types</a></li><li><a class="tocitem" href="../../ecosystem/interface/">Creating your own graph format</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">Core API</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../core_functions/core/">Core functions</a></li><li><a class="tocitem" href="../../core_functions/interface/">AbstractGraph interface</a></li><li><a class="tocitem" href="../../core_functions/module/">Module</a></li><li><a class="tocitem" href="../../core_functions/operators/">Operators</a></li><li><a class="tocitem" href="../../core_functions/persistence/">Reading and writing files</a></li><li><a class="tocitem" href="../../core_functions/simplegraphs_generators/">Generators for common graphs</a></li><li><a class="tocitem" href="../../core_functions/simplegraphs/">SimpleGraphs formats</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-4" type="checkbox" checked/><label class="tocitem" for="menuitem-4"><span class="docs-label">Algorithms API</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../biconnectivity/">Biconnected graphs</a></li><li><a class="tocitem" href="../centrality/">Centrality measures</a></li><li><a class="tocitem" href="../community/">Community structures</a></li><li class="is-active"><a class="tocitem" href>Connected components</a><ul class="internal"><li><a class="tocitem" href="#Index"><span>Index</span></a></li><li><a class="tocitem" href="#Full-docs"><span>Full docs</span></a></li></ul></li><li><a class="tocitem" href="../cut/">Cuts</a></li><li><a class="tocitem" href="../cycles/">Cycles</a></li><li><a class="tocitem" href="../trees/">Trees</a></li><li><a class="tocitem" href="../degeneracy/">Degeneracy</a></li><li><a class="tocitem" href="../digraph/">Directed graphs</a></li><li><a class="tocitem" href="../distance/">Distance</a></li><li><a class="tocitem" href="../dominatingset/">Dominating sets</a></li><li><a class="tocitem" href="../editdist/">Edit distance</a></li><li><a class="tocitem" href="../independentset/">Independent sets</a></li><li><a class="tocitem" href="../iterators/">Iterators</a></li><li><a class="tocitem" href="../linalg/">Linear algebra</a></li><li><a class="tocitem" href="../shortestpaths/">Shortest paths</a></li><li><a class="tocitem" href="../spanningtrees/">Spanning trees</a></li><li><a class="tocitem" href="../steinertree/">Steiner tree</a></li><li><a class="tocitem" href="../traversals/">Traversals and coloring</a></li><li><a class="tocitem" href="../utils/">Utilities</a></li><li><a class="tocitem" href="../vertexcover/">Vertex cover</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-5" type="checkbox"/><label class="tocitem" for="menuitem-5"><span class="docs-label">For advanced users</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../advanced/errorhandling/">Error handling</a></li><li><a class="tocitem" href="../../advanced/test/">Test graphs</a></li><li><a class="tocitem" href="../../advanced/experimental/">Experimental algorithms</a></li><li><a class="tocitem" href="../../advanced/parallel/">Parallel algorithms</a></li><li><a class="tocitem" href="../../contributing/">Contributor Guide</a></li><li><a class="tocitem" href="../../license/">License information</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Algorithms API</a></li><li class="is-active"><a href>Connected components</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Connected components</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaGraphs/Graphs.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaGraphs/Graphs.jl/blob/master/docs/src/algorithms/connectivity.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Connected-components"><a class="docs-heading-anchor" href="#Connected-components">Connected components</a><a id="Connected-components-1"></a><a class="docs-heading-anchor-permalink" href="#Connected-components" title="Permalink"></a></h1><p><em>Graphs.jl</em> includes several functions dealing with <a href="https://en.wikipedia.org/wiki/Component_(graph_theory)">connected components</a>.</p><h2 id="Index"><a class="docs-heading-anchor" href="#Index">Index</a><a id="Index-1"></a><a class="docs-heading-anchor-permalink" href="#Index" title="Permalink"></a></h2><ul><li><a href="#Graphs.attracting_components"><code>Graphs.attracting_components</code></a></li><li><a href="#Graphs.components-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><code>Graphs.components</code></a></li><li><a href="#Graphs.components_dict-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><code>Graphs.components_dict</code></a></li><li><a href="#Graphs.condensation"><code>Graphs.condensation</code></a></li><li><a href="#Graphs.connected_components-Union{Tuple{AbstractGraph{T}}, Tuple{T}} where T"><code>Graphs.connected_components</code></a></li><li><a href="#Graphs.connected_components!-Union{Tuple{T}, Tuple{AbstractVector, AbstractGraph{T}}} where T"><code>Graphs.connected_components!</code></a></li><li><a href="#Graphs.is_connected-Tuple{AbstractGraph}"><code>Graphs.is_connected</code></a></li><li><a href="#Graphs.is_strongly_connected"><code>Graphs.is_strongly_connected</code></a></li><li><a href="#Graphs.is_weakly_connected-Tuple{Any}"><code>Graphs.is_weakly_connected</code></a></li><li><a href="#Graphs.isdigraphical-Tuple{AbstractVector{&lt;:Integer}, AbstractVector{&lt;:Integer}}"><code>Graphs.isdigraphical</code></a></li><li><a href="#Graphs.isgraphical-Tuple{AbstractVector{&lt;:Integer}}"><code>Graphs.isgraphical</code></a></li><li><a href="#Graphs.neighborhood-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><code>Graphs.neighborhood</code></a></li><li><a href="#Graphs.neighborhood_dists-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><code>Graphs.neighborhood_dists</code></a></li><li><a href="#Graphs.period"><code>Graphs.period</code></a></li><li><a href="#Graphs.strongly_connected_components-Tuple{Any}"><code>Graphs.strongly_connected_components</code></a></li><li><a href="#Graphs.strongly_connected_components_kosaraju"><code>Graphs.strongly_connected_components_kosaraju</code></a></li><li><a href="#Graphs.strongly_connected_components_tarjan"><code>Graphs.strongly_connected_components_tarjan</code></a></li><li><a href="#Graphs.weakly_connected_components-Tuple{Any}"><code>Graphs.weakly_connected_components</code></a></li></ul><h2 id="Full-docs"><a class="docs-heading-anchor" href="#Full-docs">Full docs</a><a id="Full-docs-1"></a><a class="docs-heading-anchor-permalink" href="#Full-docs" title="Permalink"></a></h2><article><details class="docstring" open="true"><summary id="Graphs.attracting_components"><a class="docstring-binding" href="#Graphs.attracting_components"><code>Graphs.attracting_components</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">attracting_components(g)</code></pre><p>Return a vector of vectors of integers representing lists of attracting components in the directed graph <code>g</code>.</p><p>The attracting components are a subset of the strongly connected components in which the components do not have any leaving edges.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
+{5, 6} directed simple Int64 graph
+
+julia&gt; strongly_connected_components(g)
+2-element Vector{Vector{Int64}}:
+ [4, 5]
+ [1, 2, 3]
+
+julia&gt; attracting_components(g)
+1-element Vector{Vector{Int64}}:
+ [4, 5]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L611-L636">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.components-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><a class="docstring-binding" href="#Graphs.components-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><code>Graphs.components</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">components(labels)</code></pre><p>Given a vector of component labels, return a vector of vectors representing the vertices associated with a given component id.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L49-L54">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.components_dict-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><a class="docstring-binding" href="#Graphs.components_dict-Union{Tuple{Vector{T}}, Tuple{T}} where T&lt;:Integer"><code>Graphs.components_dict</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">components_dict(labels)</code></pre><p>Convert an array of labels to a map of component id to vertices, and return a map with each key corresponding to a given component id and each value containing the vertices associated with that component.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L32-L38">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.condensation"><a class="docstring-binding" href="#Graphs.condensation"><code>Graphs.condensation</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">condensation(g[, scc])</code></pre><p>Return the condensation graph of the strongly connected components <code>scc</code> in the directed graph <code>g</code>. If <code>scc</code> is missing, generate the strongly connected components first.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0])
+{5, 6} directed simple Int64 graph
+
+julia&gt; strongly_connected_components(g)
+2-element Vector{Vector{Int64}}:
+ [4, 5]
+ [1, 2, 3]
+
+julia&gt; foreach(println, edges(condensation(g)))
+Edge 2 =&gt; 1</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L568-L590">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.connected_components!-Union{Tuple{T}, Tuple{AbstractVector, AbstractGraph{T}}} where T"><a class="docstring-binding" href="#Graphs.connected_components!-Union{Tuple{T}, Tuple{AbstractVector, AbstractGraph{T}}} where T"><code>Graphs.connected_components!</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">connected_components!(label, g)</code></pre><p>Fill <code>label</code> with the <code>id</code> of the connected component in the undirected graph <code>g</code> to which it belongs. Return a vector representing the component assigned to each vertex. The component value is the smallest vertex ID in the component.</p><p><strong>Performance</strong></p><p>This algorithm is linear in the number of edges of the graph.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L3-L12">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.connected_components-Union{Tuple{AbstractGraph{T}}, Tuple{T}} where T"><a class="docstring-binding" href="#Graphs.connected_components-Union{Tuple{AbstractGraph{T}}, Tuple{T}} where T"><code>Graphs.connected_components</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">connected_components(g)</code></pre><p>Return the <a href="https://en.wikipedia.org/wiki/Connectivity_(graph_theory)">connected components</a> of an undirected graph <code>g</code> as a vector of components, with each element a vector of vertices belonging to the component.</p><p>For directed graphs, see <a href="#Graphs.strongly_connected_components-Tuple{Any}"><code>strongly_connected_components</code></a> and <a href="#Graphs.weakly_connected_components-Tuple{Any}"><code>weakly_connected_components</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia&gt; connected_components(g)
+1-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+
+julia&gt; g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia&gt; connected_components(g)
+2-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+ [4, 5]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L71-L98">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.is_connected-Tuple{AbstractGraph}"><a class="docstring-binding" href="#Graphs.is_connected-Tuple{AbstractGraph}"><code>Graphs.is_connected</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">is_connected(g)</code></pre><p>Return <code>true</code> if graph <code>g</code> is connected. For directed graphs, return <code>true</code> if graph <code>g</code> is weakly connected.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
+
+julia&gt; is_connected(g)
+true
+
+julia&gt; g = SimpleGraph([0 1 0 0 0; 1 0 1 0 0; 0 1 0 0 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia&gt; is_connected(g)
+false
+
+julia&gt; g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia&gt; is_connected(g)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L106-L131">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.is_strongly_connected"><a class="docstring-binding" href="#Graphs.is_strongly_connected"><code>Graphs.is_strongly_connected</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">is_strongly_connected(g)</code></pre><p>Return <code>true</code> if directed graph <code>g</code> is strongly connected.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia&gt; is_strongly_connected(g)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L509-L523">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.is_weakly_connected-Tuple{Any}"><a class="docstring-binding" href="#Graphs.is_weakly_connected-Tuple{Any}"><code>Graphs.is_weakly_connected</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">is_weakly_connected(g)</code></pre><p>Return <code>true</code> if the graph <code>g</code> is weakly connected. If <code>g</code> is undirected, this function is equivalent to <a href="#Graphs.is_connected-Tuple{AbstractGraph}"><code>is_connected(g)</code></a>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia&gt; is_weakly_connected(g)
+true
+
+julia&gt; g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia&gt; is_connected(g)
+true
+
+julia&gt; is_strongly_connected(g)
+false
+
+julia&gt; is_weakly_connected(g)
+true</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L157-L183">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.isdigraphical-Tuple{AbstractVector{&lt;:Integer}, AbstractVector{&lt;:Integer}}"><a class="docstring-binding" href="#Graphs.isdigraphical-Tuple{AbstractVector{&lt;:Integer}, AbstractVector{&lt;:Integer}}"><code>Graphs.isdigraphical</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">isdigraphical(indegree_sequence, outdegree_sequence)</code></pre><p>Check whether the given indegree sequence and outdegree sequence are digraphical, that is whether they can be the indegree and outdegree sequence of a simple digraph (i.e. a directed graph with no loops). This implies that <code>indegree_sequence</code> and <code>outdegree_sequence</code> are not independent, as their elements respectively represent the indegrees and outdegrees that the vertices shall have.</p><p><strong>Implementation Notes</strong></p><p>According to Fulkerson-Chen-Anstee theorem, a sequence <span>$\{(a_1, b_1), ...,(a_n, b_n)\}$</span> (sorted in descending order of a) is graphic iff <span>$\sum_{i = 1}^{n} a_i = \sum_{i = 1}^{n} b_i\}$</span> and the sequence obeys the property -</p><p class="math-container">\[\sum_{i=1}^{r} a_i \leq \sum_{i=1}^n min(r-1,b_i) + \sum_{i=r+1}^n min(r,b_i)\]</p><p>for each integer 1 &lt;= r &lt;= n-1. </p><p>See also: <a href="#Graphs.isgraphical-Tuple{AbstractVector{&lt;:Integer}}"><code>isgraphical</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L849-L862">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.isgraphical-Tuple{AbstractVector{&lt;:Integer}}"><a class="docstring-binding" href="#Graphs.isgraphical-Tuple{AbstractVector{&lt;:Integer}}"><code>Graphs.isgraphical</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">isgraphical(degs)</code></pre><p>Return true if the degree sequence <code>degs</code> is graphical. A sequence of integers is called graphical, if there exists a graph where the degrees of its vertices form that same sequence.</p><p><strong>Performance</strong></p><p>Time complexity: <span>$\mathcal{O}(|degs|*\log(|degs|))$</span>.</p><p><strong>Implementation Notes</strong></p><p>According to Erdös-Gallai theorem, a degree sequence <span>$\{d_1, ...,d_n\}$</span> (sorted in descending order) is graphic iff the sum of vertex degrees is even and the sequence obeys the property -</p><p class="math-container">\[\sum_{i=1}^{r} d_i \leq r(r-1) + \sum_{i=r+1}^n min(r,d_i)\]</p><p>for each integer r &lt;= n-1. </p><p>See also: <a href="#Graphs.isdigraphical-Tuple{AbstractVector{&lt;:Integer}, AbstractVector{&lt;:Integer}}"><code>isdigraphical</code></a></p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L778-L795">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.neighborhood-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><a class="docstring-binding" href="#Graphs.neighborhood-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><code>Graphs.neighborhood</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">neighborhood(g, v, d, distmx=weights(g))</code></pre><p>Return a vector of each vertex in <code>g</code> at a geodesic distance less than or equal to <code>d</code>, where distances may be specified by <code>distmx</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>dir=:out</code>: If <code>g</code> is directed, this argument specifies the edge direction</li></ul><p>with respect to <code>v</code> of the edges to be considered. Possible values: <code>:in</code> or <code>:out</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia&gt; neighborhood(g, 1, 2)
+3-element Vector{Int64}:
+ 1
+ 2
+ 3
+
+julia&gt; neighborhood(g, 1, 3)
+4-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+
+julia&gt; neighborhood(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
+5-element Vector{Int64}:
+ 1
+ 2
+ 3
+ 4
+ 5</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L653-L690">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.neighborhood_dists-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><a class="docstring-binding" href="#Graphs.neighborhood_dists-Union{Tuple{T}, Tuple{U}, Tuple{AbstractGraph{T}, Integer, Any}, Tuple{AbstractGraph{T}, Integer, Any, AbstractMatrix{U}}} where {U&lt;:Real, T&lt;:Integer}"><code>Graphs.neighborhood_dists</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">neighborhood_dists(g, v, d, distmx=weights(g))</code></pre><p>Return a a vector of tuples representing each vertex which is at a geodesic distance less than or equal to <code>d</code>, along with its distance from <code>v</code>. Non-negative distances may be specified by <code>distmx</code>.</p><p><strong>Optional Arguments</strong></p><ul><li><code>dir=:out</code>: If <code>g</code> is directed, this argument specifies the edge direction</li></ul><p>with respect to <code>v</code> of the edges to be considered. Possible values: <code>:in</code> or <code>:out</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
+
+julia&gt; neighborhood_dists(g, 1, 3)
+4-element Vector{Tuple{Int64, Int64}}:
+ (1, 0)
+ (2, 1)
+ (3, 2)
+ (4, 3)
+
+julia&gt; neighborhood_dists(g, 1, 3, [0 1 0 0 0; 0 0 1 0 0; 1 0 0 0.25 0; 0 0 0 0 0.25; 0 0 0 0.25 0])
+5-element Vector{Tuple{Int64, Float64}}:
+ (1, 0.0)
+ (2, 1.0)
+ (3, 2.0)
+ (4, 2.25)
+ (5, 2.5)
+
+julia&gt; neighborhood_dists(g, 4, 3)
+2-element Vector{Tuple{Int64, Int64}}:
+ (4, 0)
+ (5, 1)
+
+julia&gt; neighborhood_dists(g, 4, 3, dir=:in)
+5-element Vector{Tuple{Int64, Int64}}:
+ (4, 0)
+ (3, 1)
+ (5, 1)
+ (2, 2)
+ (1, 3)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L697-L741">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.period"><a class="docstring-binding" href="#Graphs.period"><code>Graphs.period</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">period(g)</code></pre><p>Return the (common) period for all vertices in a strongly connected directed graph. Will throw an error if the graph is not strongly connected.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 0 0 1; 1 0 0]);
+
+julia&gt; period(g)
+3</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L529-L544">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.strongly_connected_components-Tuple{Any}"><a class="docstring-binding" href="#Graphs.strongly_connected_components-Tuple{Any}"><code>Graphs.strongly_connected_components</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">strongly_connected_components(g)</code></pre><p>Compute the strongly connected components of a directed graph <code>g</code>.</p><p>Return an array of arrays, each of which is the entire connected component.</p><p><strong>Implementation Notes</strong></p><p>The order of the components is not part of the API contract.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia&gt; strongly_connected_components(g)
+2-element Vector{Vector{Int64}}:
+ [3]
+ [1, 2]
+
+julia&gt; g = SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia&gt; edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+
+julia&gt; g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia&gt; strongly_connected_components(g)
+4-element Vector{Vector{Int64}}:
+ [8, 9]
+ [5, 6, 7]
+ [1, 2, 3, 4]
+ [10, 11]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L186-L222">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.strongly_connected_components_kosaraju"><a class="docstring-binding" href="#Graphs.strongly_connected_components_kosaraju"><code>Graphs.strongly_connected_components_kosaraju</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">strongly_connected_components_kosaraju(g)</code></pre><p>Compute the strongly connected components of a directed graph <code>g</code> using Kosaraju&#39;s Algorithm. (https://en.wikipedia.org/wiki/Kosaraju%27s_algorithm).</p><p>Return an array of arrays, each of which is the entire connected component.</p><p><strong>Performance</strong></p><p>Time Complexity : O(|E|+|V|) Space Complexity : O(|V|) {Excluding the memory required for storing graph}</p><p>|V| = Number of vertices |E| = Number of edges</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g=SimpleDiGraph(3)
+{3, 0} directed simple Int64 graph
+
+julia&gt; g = SimpleDiGraph([0 1 0 ; 0 0 1; 0 0 0])
+{3, 2} directed simple Int64 graph
+
+julia&gt; strongly_connected_components_kosaraju(g)
+3-element Vector{Vector{Int64}}:
+ [1]
+ [2]
+ [3]
+
+
+julia&gt; g=SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia&gt; edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)]
+13-element Vector{Tuple{Int64, Int64}}:
+ (1, 2)
+ (2, 3)
+ (3, 4)
+ (4, 1)
+ (3, 5)
+ (5, 6)
+ (6, 7)
+ (7, 5)
+ (5, 8)
+ (8, 9)
+ (9, 8)
+ (10, 11)
+ (11, 10)
+
+julia&gt; g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia&gt; strongly_connected_components_kosaraju(g)
+4-element Vector{Vector{Int64}}:
+ [11, 10]
+ [2, 3, 4, 1]
+ [6, 7, 5]
+ [9, 8]
+</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L359-L421">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.strongly_connected_components_tarjan"><a class="docstring-binding" href="#Graphs.strongly_connected_components_tarjan"><code>Graphs.strongly_connected_components_tarjan</code></a> — <span class="docstring-category">Function</span></summary><section><div><pre><code class="language-julia hljs">strongly_connected_components_tarjan(g)</code></pre><p>Compute the strongly connected components of a directed graph <code>g</code> using Tarjan&#39;s algorithm.</p><p>Return an array of arrays, each of which is the entire connected component.</p><p><strong>Implementation Notes</strong></p><p>The returned components will be ordered reverse topologically.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia&gt; strongly_connected_components_tarjan(g)
+2-element Vector{Vector{Int64}}:
+ [3]
+ [1, 2]
+
+julia&gt; g = SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia&gt; edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+
+julia&gt; g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia&gt; strongly_connected_components_tarjan(g)
+4-element Vector{Vector{Int64}}:
+ [8, 9]
+ [5, 6, 7]
+ [1, 2, 3, 4]
+ [10, 11]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L225-L261">source</a></section></details></article><article><details class="docstring" open="true"><summary id="Graphs.weakly_connected_components-Tuple{Any}"><a class="docstring-binding" href="#Graphs.weakly_connected_components-Tuple{Any}"><code>Graphs.weakly_connected_components</code></a> — <span class="docstring-category">Method</span></summary><section><div><pre><code class="language-julia hljs">weakly_connected_components(g)</code></pre><p>Return the weakly connected components of the graph <code>g</code>. This is equivalent to the connected components of the undirected equivalent of <code>g</code>. For undirected graphs this is equivalent to the <a href="#Graphs.connected_components-Union{Tuple{AbstractGraph{T}}, Tuple{T}} where T"><code>connected_components</code></a> of <code>g</code>.</p><p><strong>Examples</strong></p><pre><code class="language-julia-repl hljs">julia&gt; using Graphs
+
+julia&gt; g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia&gt; weakly_connected_components(g)
+1-element Vector{Vector{Int64}}:
+ [1, 2, 3]</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaGraphs/Graphs.jl/blob/1d94b7acc8b9adfc9e77d047d3eb4ff7ce47b367/src/connectivity.jl#L137-L154">source</a></section></details></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../community/">« Community structures</a><a class="docs-footer-nextpage" href="../cut/">Cuts »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Wednesday 31 December 2025 16:55">Wednesday 31 December 2025</span>. Using Julia version 1.12.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
