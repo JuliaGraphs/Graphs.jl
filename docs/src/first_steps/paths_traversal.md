@@ -10,7 +10,6 @@ Any graph traversal will traverse an edge only if it is present in the graph. Wh
 
 1. distance values for undefined edges will be ignored;
 2. any unassigned values (in sparse distance matrices) for edges that are present in the graph will be assumed to take the default value of 1.0;
-3. any zero values (in sparse/dense distance matrices) for edges that are present in the graph will instead have an implicit edge cost of 1.0.
 
 ## Graph traversal
 
