@@ -86,9 +86,9 @@ pages = [
     ] for (section_name, section_files) in pages_files
 ]
 
-bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
+bib = CitationBibliography(joinpath(@__DIR__, "src/references.bib"); style=:authoryear)
 
-makedocs(
+makedocs(;
     plugins=[bib],
     modules=[Graphs],
     format=Documenter.HTML(;
