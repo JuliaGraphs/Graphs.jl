@@ -1,4 +1,5 @@
 using Documenter
+using DocumenterCitations
 using Graphs
 
 # same for contributing and license
@@ -85,7 +86,10 @@ pages = [
     ] for (section_name, section_files) in pages_files
 ]
 
-makedocs(;
+bib = CitationBibliography(joinpath(@__DIR__,"src/references.bib"),style=:authoryear)
+
+makedocs(
+    plugins=[bib],
     modules=[Graphs],
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
