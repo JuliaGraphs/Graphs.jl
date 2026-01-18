@@ -93,7 +93,7 @@ makedocs(
     modules=[Graphs],
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
-        assets=String[],
+        assets=String["assets/citations.css"],
         collapselevel=1,
         canonical="https://gdalle.github.io/Graphs.jl",
     ),
