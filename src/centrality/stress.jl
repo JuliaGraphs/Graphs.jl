@@ -9,8 +9,8 @@ vertices. Return a vector representing the centrality calculated for each node i
 The stress centrality of a vertex ``n`` is defined as the number of shortest paths passing through ``n``.
 
 ### References
-- Barabási, A.L., Oltvai, Z.N.: Network biology: understanding the cell's functional organization. Nat Rev Genet 5 (2004) 101-113
-- Shimbel, A.: Structural parameters of communication networks. Bull Math Biophys 15 (1953) 501-507.
+- [barabasi2004network](@cite)
+- [shimbel1953structural](@cite)
 
 # Examples
 ```jldoctest

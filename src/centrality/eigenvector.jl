@@ -18,11 +18,8 @@ eigenvector of the adjacency matrix \$\\mathbf{A}\$.
 
 ### References
 
-- Phillip Bonacich: Power and Centrality: A Family of Measures.
-    American Journal of Sociology 92(5):1170–1182, 1986
-    http://www.leonidzhukov.net/hse/2014/socialnetworks/papers/Bonacich-Centrality.pdf
-- Mark E. J. Newman: Networks: An Introduction.
-       Oxford University Press, USA, 2010, pp. 169.
+- [bonacich1987power](@cite)
+- [datta2012book](@cite)
 """
 function eigenvector_centrality(g::AbstractGraph)
     return abs.(vec(eigs(adjacency_matrix(g); which=LM(), nev=1)[2]))::Vector{Float64}
