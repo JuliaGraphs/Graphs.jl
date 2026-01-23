@@ -103,6 +103,7 @@ using Graphs.Test
 
         @test @inferred(edgetype(g)) == SimpleGraphEdge{T}
         @test @inferred(copy(g)) == g
+        @test @inferred(hash(g)) == hash(copy(g)) == hash(deepcopy(g))
         @test @inferred(!is_directed(g))
 
         e = first(edges(g))
@@ -124,6 +125,8 @@ using Graphs.Test
         @test @inferred(!has_edge(g, 20, 3))
         @test @inferred(!has_edge(g, 2, 30))
 
+        @test @inferred(copy(g)) == g
+        @test @inferred(hash(copy(g))) == hash(g)
         gc = copy(g)
         @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)

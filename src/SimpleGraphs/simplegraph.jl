@@ -430,6 +430,11 @@ function ==(g::SimpleGraph, h::SimpleGraph)
     return vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h)
 end
 
+function Base.hash(g::SimpleGraph, h::UInt)
+    return nv(g) ⊻ ne(g) ⊻ hash(fadj(g), h)
+end
+
+
 """
     is_directed(g)
 
