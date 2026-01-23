@@ -431,7 +431,10 @@ function ==(g::SimpleGraph, h::SimpleGraph)
 end
 
 function Base.hash(g::SimpleGraph, h::UInt)
-    return nv(g) ⊻ ne(g) ⊻ hash(fadj(g), h)
+    r = hash(nv(g), h)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    return r
 end
 
 """

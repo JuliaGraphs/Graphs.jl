@@ -436,7 +436,11 @@ function ==(g::SimpleDiGraph, h::SimpleDiGraph)
 end
 
 function Base.hash(g::SimpleDiGraph, h::UInt)
-    return nv(g) ⊻ ne(g) ⊻ hash(fadj(g), h) ⊻ hash(badj(g), h)
+    r = hash(nv(g), h)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    r = hash(badj(g), r)
+    return r
 end
 
 is_directed(::Type{<:SimpleDiGraph}) = true
