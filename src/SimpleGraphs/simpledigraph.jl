@@ -436,7 +436,8 @@ function ==(g::SimpleDiGraph, h::SimpleDiGraph)
 end
 
 function Base.hash(g::SimpleDiGraph, h::UInt)
-    r = hash(nv(g), h)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
     r = hash(ne(g), r)
     r = hash(fadj(g), r)
     r = hash(badj(g), r)
