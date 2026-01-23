@@ -434,7 +434,6 @@ function Base.hash(g::SimpleGraph, h::UInt)
     return nv(g) ⊻ ne(g) ⊻ hash(fadj(g), h)
 end
 
-
 """
     is_directed(g)
 
