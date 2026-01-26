@@ -1,7 +1,29 @@
+"""
+    louvain(g, distmx=weights(g), γ=1; max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=10e-10, merge_tol::Real=10e-10, rng=nothing, seed=nothing)
+
+Community detection using the louvain algorithm. Finds a partition of the vertices that
+attempts to maximize the modularity. Returns a vector of community ids.
+
+### Optional Arguments
+- `distmx=weights(g)`: distance matrix for weighted graphs
+- `γ=1.0`: where `γ > 0` is a resolution parameter. Higher resolutions lead to more
+    communities, while lower resolutions lead to fewer communities. Where `γ=1.0` it
+    leads to the traditional definition of the modularity.
+- `max_moves=1000`: maximum number of rounds moving vertices before merging.
+- `max_merges=1000`: maximum number of merges.
+- `move_tol=10e-10`: necessary increase of modularity to move a vertex.
+- `merge_tol=10e-10`: necessary increase of modularity in the move stage to merge.
+- `rng=nothing`: rng to use for reproducibility. May only pass one of rng or seed.
+- `seed=nothing`: seed to use for reproducibility. May only pass one of rng or seed.
+
+### References
+- [Vincent D Blondel et al J. Stat. Mech. (2008) P10008][https://doi.org/10.1088/1742-5468/2008/10/P10008]
+- [Nicolas Dugué, Anthony Perez. Directed Louvain : maximizing modularity in directed networks.][https://hal.science/hal-01231784/document]
+"""
 function louvain(
-    g::AbstractGraph{T};
+    g::AbstractGraph{T},
     γ=1.0,
-    distmx::AbstractArray{<:Number}=weights(g),
+    distmx::AbstractArray{<:Number}=weights(g);
     max_moves::Integer=1000,
     max_merges::Integer=1000,
     move_tol::Real=10e-10,
@@ -49,8 +71,13 @@ function louvain(
     return actual_coms
 end
 
+"""
+    louvain_move!(g, γ, c, rng, distmx=weights(g), max_moves=1000, move_tol=10e-10)
+
+The move stage of the louvain algorithm.
+"""
 function louvain_move!(
-    g, γ, c, rng, distmx=weights(g), max_moves::Integer=1000, move_tol::Real=10e-5
+    g, γ, c, rng, distmx=weights(g), max_moves::Integer=1000, move_tol::Real=10e-10
 )
     vertex_order = shuffle!(rng, collect(vertices(g)))
 
@@ -124,6 +151,11 @@ function louvain_move!(
     end
 end
 
+"""
+    ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
+
+Compute the change in modularity when adding vertex v a potential community.
+"""
 function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
     if is_directed(g)
         out_degree = 0
@@ -166,6 +198,11 @@ function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
     end
 end
 
+"""
+    louvain_merge(g, c, distmx)
+
+Merge stage of the louvain algorithm.
+"""
 function louvain_merge(g::AbstractGraph{T}, c, distmx) where {T}
     # c is assumed to be 1:nc
     nc = maximum(c)
