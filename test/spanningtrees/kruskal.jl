@@ -23,8 +23,10 @@
         # test equivalent vector form
         mst_vec = @inferred(kruskal_mst(g, weight_vector))
         max_mst_vec = @inferred(kruskal_mst(g, weight_vector, minimize=false))
-        @test mst_vec == mst
-        @test max_mst_vec == max_mst        
+        @test src.(mst_vec) == src.(mst)
+        @test dst.(mst_vec) == dst.(mst)
+        @test src.(max_mst_vec) == src.(max_mst)
+        @test dst.(max_mst_vec) == dst.(max_mst)
     end
 
     # second test
@@ -55,8 +57,10 @@
         max_mst2_vec = @inferred(kruskal_mst(g, weight_vector_sec, minimize=false))
         @test sort([(src(e), dst(e)) for e in mst2]) == sort([(src(e), dst(e)) for e in vec2])
         @test sort([(src(e), dst(e)) for e in max_mst2]) == sort([(src(e), dst(e)) for e in max_vec2])
-        @test mst2 == mst2_vec
-        @test max_mst2 == max_mst2_vec
+        @test src.(mst2) == src.(mst2_vec)
+        @test dst.(mst2) == dst.(mst2_vec)
+        @test src.(max_mst2) == src.(max_mst2_vec)
+        @test dst.(max_mst2) == dst.(max_mst2_vec)
     end
 
     # non regression test for #362
