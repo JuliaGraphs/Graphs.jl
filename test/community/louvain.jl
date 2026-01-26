@@ -39,7 +39,7 @@
     # Test multiple merges
     g = blockdiag(barbell_graph(3, 3), complete_graph(10))
     add_edge!(g, 2, 5)
-    c = [ones(6);2*ones(10)]
+    c = [ones(6); 2*ones(10)]
     # Should work regardless of rng
     # generic_graphs uses UInt8 for T that is too small
     r = @inferred louvain(g)
@@ -50,7 +50,7 @@
     add_edge!(loops, 1, 1)
     add_edge!(loops, 2, 2)
     add_edge!(loops, 1, 2)
-    c = [1,2]
+    c = [1, 2]
     for g in test_generic_graphs(loops)
         # Should work regardless of rng
         r = @inferred louvain(g)
@@ -59,8 +59,8 @@
 
     # Test γ
     g = complete_graph(2)
-    c1 = [1,1]
-    c2 = [1,2]
+    c1 = [1, 1]
+    c2 = [1, 2]
     for g in test_generic_graphs(g)
         # Should work regardless of rng
         r = @inferred louvain(g)
@@ -77,7 +77,7 @@
         [0 1 0 4]
         [1 0 4 0]
     ]
-    c = [1,1,2,2]
+    c = [1, 1, 2, 2]
     for g in test_generic_graphs(square)
         # Should work regardless of rng
         r = @inferred louvain(g, distmx=d)
@@ -87,9 +87,12 @@
     # Test max_merges
     g = blockdiag(barbell_graph(3, 3), complete_graph(10))
     add_edge!(g, 2, 5)
-    c = [ones(3);2*ones(3)]
+    c = [ones(3); 2*ones(3)]
     # Should work regardless of rng
     # generic_graphs uses UInt8 for T that is too small
     r = @inferred louvain(g, max_merges=0)
-    @test c == r[1:6]  # the clique does not resolve in one step so we don't know what the coms will be. But we know the barbell splits into two groups of 3 in step one and merges in step two.
+    @test c == r[1:6]
+    # the clique does not resolve in one step so we don't know what
+    # the coms will be. But we know the barbell splits into two groups
+    # of 3 in step one and merges in step two.
 end

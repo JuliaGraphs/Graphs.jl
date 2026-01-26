@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 function louvain(
     g::AbstractGraph{T};
     γ=1.0,
@@ -19,27 +17,24 @@ function louvain(
     actual_coms = collect(one(T):nv(g))
     current_coms = copy(actual_coms)
 
-    @debug "Initial coms: $(actual_coms)"
     for iter in 0:max_merges
-        current_modularity = modularity(g, current_coms, distmx=distmx, γ=γ)
+        current_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
         @debug "Current modularity $(current_modularity)"
         @debug "Iter $(iter) moving nodes"
         louvain_move!(g, γ, current_coms, rng, distmx, max_moves, move_tol)
         # remap communities to 1-nc
-        @debug "Done moving nodes. Coms are $(current_coms)"
-        com_map = Dict(old => new for (new,old) in enumerate(unique(current_coms)))
-        @debug "Com map $(com_map)"
+        @debug "Done moving nodes."
+        com_map = Dict(old => new for (new, old) in enumerate(unique(current_coms)))
         for i in eachindex(actual_coms)
             actual_coms[i] = com_map[current_coms[actual_coms[i]]]
         end
-        @debug "Updated actual coms $(actual_coms)"
+        @debug "New actual coms are $(actual_coms)"
         for i in eachindex(current_coms)
             current_coms[i] = com_map[current_coms[i]]
         end
-        @debug "Reindexed coms $(current_coms)"
 
         # Stop if modularity gain is too small
-        new_modularity = modularity(g, current_coms, distmx=distmx, γ=γ)
+        new_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
         @debug "New modularity is $(new_modularity) for a gain of $(new_modularity - current_modularity). Stop = $(new_modularity - current_modularity < merge_tol)"
         if new_modularity - current_modularity < merge_tol
             break
@@ -51,13 +46,7 @@ function louvain(
 end
 
 function louvain_move!(
-    g,
-    γ,
-    c,
-    rng,
-    distmx=weights(g),
-    max_moves::Integer=1000,
-    move_tol::Real=10e-5,
+    g, γ, c, rng, distmx=weights(g), max_moves::Integer=1000, move_tol::Real=10e-5
 )
     vertex_order = shuffle!(rng, collect(vertices(g)))
 
@@ -76,9 +65,9 @@ function louvain_move!(
             m -= distmx[src(e), dst(e)]/2  # don't double count loop weights
         end
     end
-    
+
     @debug "vols $(c_vols)"
-    
+
     for _ in 1:max_moves
         any_changes = false
         for v in vertex_order
@@ -93,15 +82,12 @@ function louvain_move!(
             shuffle!(rng, potential_coms)
 
             #Remove vertex degrees from current communities
-            @debug "Remove node $(v) from community $(c[v])"
-            @debug "Before vols $(c_vols)"
-            out_degree = sum(distmx[v,u] for u in outneighbors(g,v))
+            out_degree = sum(distmx[v, u] for u in outneighbors(g, v))
             c_vols[1, c[v]] -= out_degree
             if is_directed(g)
-                in_degree = sum(distmx[u,v] for u in inneighbors(g,v))
+                in_degree = sum(distmx[u, v] for u in inneighbors(g, v))
                 c_vols[2, c[v]] -= in_degree
             end
-            @debug "After vols $(c_vols)"
 
             # Compute loss in modularity by removing node
             loss = ΔQ(g, γ, distmx, c, v, m, c[v], c_vols)
@@ -138,58 +124,50 @@ function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
         out_degree = 0
         out_com_degree = 0
         for u in outneighbors(g, v)
-            out_degree += distmx[v,u]
+            out_degree += distmx[v, u]
             if c[u] == c_potential || u == v
-                com_out_degree += distmx[v,u]
+                com_out_degree += distmx[v, u]
             end
         end
 
         in_degree = 0
         com_in_degree = 0
         for u in inneighbors(g, v)
-            in_degree += distmx[u,v]
+            in_degree += distmx[u, v]
             if c[u] == c_potential || u == v
-                com_in_degree += distmx[u,v]
+                com_in_degree += distmx[u, v]
             end
         end
 
         # Singleton special case
-        if c_vols[1,c_potential] == 0 && c_vols[2,c_potential] == 0
+        if c_vols[1, c_potential] == 0 && c_vols[2, c_potential] == 0
             return 2com_in_degree/m - γ*2(in_degree + out_degree) / m^2
         end
 
-        return (com_in_degree+out_com_degree)/m - γ*(in_degree*c_vols[1,c_potential]+out_degree*c_vols[2,c_potential])/m^2
+        return (com_in_degree+out_com_degree)/m -
+               γ*(in_degree*c_vols[1, c_potential]+out_degree*c_vols[2, c_potential])/m^2
     else
         degree = 0
         com_degree = 0
         for u in neighbors(g, v)
-            degree += distmx[u,v]
+            degree += distmx[u, v]
             if c[u] == c_potential || u == v
-                com_degree += distmx[u,v]
+                com_degree += distmx[u, v]
             end
         end
 
         # # Singleton special case
-        if c_vols[1,c_potential] == 0
+        if c_vols[1, c_potential] == 0
             return com_degree/2m - γ*(degree/2m)^2
         end
-        # @debug m
-        # @debug "Degree $(degree)"
-        # @debug "Com Degree $(com_degree)"
-        # @debug "Vols $(c_vols)"
-        # @debug "DQ $(com_degree/2m - γ*degree*(c_vols[1,c_potential])/2m^2)"
-        return com_degree/2m - γ*degree*(c_vols[1,c_potential])/2m^2
+        return com_degree/2m - γ*degree*(c_vols[1, c_potential])/2m^2
     end
 end
 
-function louvain_merge(
-    g::AbstractGraph{T},
-    c,
-    distmx,
-) where {T}
+function louvain_merge(g::AbstractGraph{T}, c, distmx) where {T}
     # c is assumed to be 1:nc
     nc = maximum(c)
-    new_distmx = Dict{Tuple{T,T}, eltype(distmx)}()
+    new_distmx = Dict{Tuple{T,T},eltype(distmx)}()
     new_graph = is_directed(g) ? SimpleDiGraph{T}(nc) : SimpleGraph{T}(nc)
     for e in edges(g)
         new_src = c[src(e)]
@@ -202,8 +180,6 @@ function louvain_merge(
         add_edge!(new_graph, new_src, new_dst)
     end
 
-    @debug new_distmx
-
     # Convert new_distmx Dict to SparseArray
     r = [k[1] for k in keys(new_distmx)]
     c = [k[2] for k in keys(new_distmx)]
@@ -212,9 +188,7 @@ function louvain_merge(
 
     if !is_directed(new_graph)
         new_distmx = new_distmx + transpose(new_distmx)
-        # new_distmx[diagind(new_distmx)] ./= 2  # double counts with addition
     end
-    @debug "NC: $(nc)"
-    @debug new_distmx
+
     return new_graph, new_distmx
 end
