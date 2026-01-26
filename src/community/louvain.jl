@@ -10,20 +10,23 @@ function louvain(
     seed::Union{Nothing,Integer}=nothing,
 ) where {T}
     rng = rng_from_rng_or_seed(rng, seed)
-
     n = nv(g)
-    n == 0 && return T[]
+    if n == 0
+        return T[]
+    end
 
     actual_coms = collect(one(T):nv(g))
     current_coms = copy(actual_coms)
+    # actual_coms is always of length nv(g) and holds the current com for each v in g
+    # current_coms is for the current graph; after merges it will be smaller than nv(g)
 
     for iter in 0:max_merges
         current_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
         @debug "Current modularity $(current_modularity)"
-        @debug "Iter $(iter) moving nodes"
+        @debug "Iter $(iter) moving vertices."
         louvain_move!(g, γ, current_coms, rng, distmx, max_moves, move_tol)
         # remap communities to 1-nc
-        @debug "Done moving nodes."
+        @debug "Done moving vertices."
         com_map = Dict(old => new for (new, old) in enumerate(unique(current_coms)))
         for i in eachindex(actual_coms)
             actual_coms[i] = com_map[current_coms[actual_coms[i]]]
@@ -35,7 +38,8 @@ function louvain(
 
         # Stop if modularity gain is too small
         new_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
-        @debug "New modularity is $(new_modularity) for a gain of $(new_modularity - current_modularity). Stop = $(new_modularity - current_modularity < merge_tol)"
+        @debug "New modularity is $(new_modularity) for a gain of $(new_modularity -
+        current_modularity).  Stop = $(new_modularity - current_modularity < merge_tol)"
         if new_modularity - current_modularity < merge_tol
             break
         end
@@ -52,7 +56,8 @@ function louvain_move!(
 
     #Precompute community volumes
     nc = maximum(c)
-    c_vols = zeros(eltype(distmx), ((is_directed(g) ? 2 : 1), nc)) # if directed use row 1 for in and 2 for out
+    c_vols = zeros(eltype(distmx), ((is_directed(g) ? 2 : 1), nc))
+    # if directed c_vols uses row 1 for in and 2 for out
     m = 0
     for e in edges(g)
         m += distmx[src(e), dst(e)]
@@ -89,7 +94,7 @@ function louvain_move!(
                 c_vols[2, c[v]] -= in_degree
             end
 
-            # Compute loss in modularity by removing node
+            # Compute loss in modularity by removing vertex
             loss = ΔQ(g, γ, distmx, c, v, m, c[v], c_vols)
             @debug "Q loss from removing v: $(loss)"
             # Compute gain by moving to alternate neighboring community
@@ -138,12 +143,10 @@ function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
                 com_in_degree += distmx[u, v]
             end
         end
-
         # Singleton special case
         if c_vols[1, c_potential] == 0 && c_vols[2, c_potential] == 0
-            return 2com_in_degree/m - γ*2(in_degree + out_degree) / m^2
+            return 2com_in_degree/m - γ*2(in_degree + out_degree)/m^2
         end
-
         return (com_in_degree+out_com_degree)/m -
                γ*(in_degree*c_vols[1, c_potential]+out_degree*c_vols[2, c_potential])/m^2
     else
@@ -155,12 +158,11 @@ function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
                 com_degree += distmx[u, v]
             end
         end
-
         # # Singleton special case
         if c_vols[1, c_potential] == 0
             return com_degree/2m - γ*(degree/2m)^2
         end
-        return com_degree/2m - γ*degree*(c_vols[1, c_potential])/2m^2
+        return com_degree/2m - γ*degree*c_vols[1,c_potential]/2m^2
     end
 end
 
