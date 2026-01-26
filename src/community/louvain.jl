@@ -21,9 +21,9 @@ attempts to maximize the modularity. Returns a vector of community ids.
 - [Nicolas Dugué, Anthony Perez. Directed Louvain : maximizing modularity in directed networks.][https://hal.science/hal-01231784/document]
 """
 function louvain(
-    g::AbstractGraph{T},
+    g::AbstractGraph{T};
     γ=1.0,
-    distmx::AbstractArray{<:Number}=weights(g);
+    distmx::AbstractArray{<:Number}=weights(g),
     max_moves::Integer=1000,
     max_merges::Integer=1000,
     move_tol::Real=10e-10,
