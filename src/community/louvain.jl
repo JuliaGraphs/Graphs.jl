@@ -1,3 +1,5 @@
+using LinearAlgebra
+
 """
     louvain(g, distmx=weights(g), γ=1; max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=10e-10, merge_tol::Real=10e-10, rng=nothing, seed=nothing)
 
@@ -19,6 +21,33 @@ attempts to maximize the modularity. Returns a vector of community ids.
 ### References
 - [Vincent D Blondel et al J. Stat. Mech. (2008) P10008][https://doi.org/10.1088/1742-5468/2008/10/P10008]
 - [Nicolas Dugué, Anthony Perez. Directed Louvain : maximizing modularity in directed networks.][https://hal.science/hal-01231784/document]
+
+# Examples 
+```jldoctest
+julia> using Graphs
+
+julia> barbell = blockdiag(complete_graph(3), complete_graph(3));
+
+julia> add_edge!(barbell, 1, 4);
+
+julia> louvain(barbell)
+6-element Vector{Int64}:
+ 1
+ 1
+ 1
+ 2
+ 2
+ 2
+
+julia> louvain(barbell, γ=0.01)
+6-element Vector{Int64}:
+ 1
+ 1
+ 1
+ 1
+ 1
+ 1
+```
 """
 function louvain(
     g::AbstractGraph{T};
@@ -66,6 +95,10 @@ function louvain(
             break
         end
         g, distmx = louvain_merge(g, current_coms, distmx)
+        @debug distmx
+        if nv(g) == 1 # nothing left to merge
+            break
+        end
         current_coms = collect(one(T):nv(g))
     end
     return actual_coms
@@ -80,44 +113,45 @@ function louvain_move!(
     g, γ, c, rng, distmx=weights(g), max_moves::Integer=1000, move_tol::Real=10e-10
 )
     vertex_order = shuffle!(rng, collect(vertices(g)))
-
-    #Precompute community volumes
     nc = maximum(c)
-    c_vols = zeros(eltype(distmx), ((is_directed(g) ? 2 : 1), nc))
-    # if directed c_vols uses row 1 for in and 2 for out
+
+    # Compute graph and community volumes
     m = 0
+    c_vols = zeros(eltype(distmx), ((is_directed(g) ? 2 : 1), nc))
+    # if is_directed use row 1 for in and 2 for out
     for e in edges(g)
         m += distmx[src(e), dst(e)]
         c_vols[1, c[src(e)]] += distmx[src(e), dst(e)]
         if is_directed(g)
             c_vols[2, c[dst(e)]] += distmx[src(e), dst(e)]
-        elseif src(e) != dst(e)
-            c_vols[1, c[dst(e)]] += distmx[src(e), dst(e)]
         else
-            m -= distmx[src(e), dst(e)]/2  # don't double count loop weights
+            c_vols[1, c[dst(e)]] += distmx[src(e), dst(e)]
         end
     end
-
     @debug "vols $(c_vols)"
-
     for _ in 1:max_moves
-        any_changes = false
+        last_change = nothing
         for v in vertex_order
+            if v == last_change  # stop if we see each vertex and no movement
+                return nothing
+            end
             potential_coms = unique(c[u] for u in all_neighbors(g, v))
             filter!(!=(c[v]), potential_coms)
             @debug "Moving vertex $(v) from com $(c[v]) to potential_coms $(potential_coms)"
-            # Continue if there are no other neighboring coms
-            if isempty(potential_coms)
+            if isempty(potential_coms)  # Continue if there are no other neighboring coms
                 continue
             end
-            # Break ties randomly by first com
-            shuffle!(rng, potential_coms)
+            shuffle!(rng, potential_coms)  # Break ties randomly by first com
 
-            #Remove vertex degrees from current communities
-            out_degree = sum(distmx[v, u] for u in outneighbors(g, v))
+            #Remove vertex degrees from current community
+            out_degree = sum(
+                u == v ? 2distmx[v, u] : distmx[v, u] for u in outneighbors(g, v)
+            )
             c_vols[1, c[v]] -= out_degree
             if is_directed(g)
-                in_degree = sum(distmx[u, v] for u in inneighbors(g, v))
+                in_degree = sum(
+                    u == v ? 2distmx[v, u] : distmx[v, u] for u in inneighbors(g, v)
+                )
                 c_vols[2, c[v]] -= in_degree
             end
 
@@ -135,7 +169,7 @@ function louvain_move!(
                 if is_directed(g)
                     c_vols[2, best_com] += in_degree
                 end
-                any_changes = true
+                last_change = v
                 @debug "Moved! New coms are $(c)"
             else
                 c_vols[1, c[v]] += out_degree
@@ -145,8 +179,8 @@ function louvain_move!(
                 @debug "Didn't move. coms are $(c)"
             end
         end
-        if !any_changes
-            break
+        if isnothing(last_change) # No movement
+            return nothing
         end
     end
 end
@@ -159,7 +193,7 @@ Compute the change in modularity when adding vertex v a potential community.
 function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
     if is_directed(g)
         out_degree = 0
-        out_com_degree = 0
+        com_out_degree = 0
         for u in outneighbors(g, v)
             out_degree += distmx[v, u]
             if c[u] == c_potential || u == v
@@ -175,26 +209,29 @@ function ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
                 com_in_degree += distmx[u, v]
             end
         end
+
         # Singleton special case
         if c_vols[1, c_potential] == 0 && c_vols[2, c_potential] == 0
-            return 2com_in_degree/m - γ*2(in_degree + out_degree)/m^2
+            return (com_in_degree+com_out_degree)/m - γ*2(in_degree + out_degree)/m^2
         end
-        return (com_in_degree+out_com_degree)/m -
+        return (com_in_degree+com_out_degree)/m -
                γ*(in_degree*c_vols[1, c_potential]+out_degree*c_vols[2, c_potential])/m^2
     else
         degree = 0
         com_degree = 0
         for u in neighbors(g, v)
-            degree += distmx[u, v]
-            if c[u] == c_potential || u == v
+            degree += u == v ? 2distmx[u, v] : distmx[u, v]
+            if u == v
+                com_degree += 2distmx[u, v]
+            elseif c[u] == c_potential
                 com_degree += distmx[u, v]
             end
         end
-        # # Singleton special case
+        # Singleton special case
         if c_vols[1, c_potential] == 0
             return com_degree/2m - γ*(degree/2m)^2
         end
-        return com_degree/2m - γ*degree*c_vols[1,c_potential]/2m^2
+        return com_degree/2m - γ*degree*c_vols[1, c_potential]/2m^2
     end
 end
 
@@ -227,6 +264,7 @@ function louvain_merge(g::AbstractGraph{T}, c, distmx) where {T}
 
     if !is_directed(new_graph)
         new_distmx = new_distmx + transpose(new_distmx)
+        new_distmx[diagind(new_distmx)] ./= 2
     end
 
     return new_graph, new_distmx

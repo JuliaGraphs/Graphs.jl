@@ -1,7 +1,7 @@
 @testset "Louvain" begin
     # Basic Test case
-    barbell = barbell_graph(4, 4)
-    c = [1, 1, 1, 1, 2, 2, 2, 2]
+    barbell = barbell_graph(3, 3)
+    c = [1, 1, 1, 2, 2, 2]
     for g in test_generic_graphs(barbell)
         # Should work regardless of rng
         r = @inferred louvain(g)
@@ -46,10 +46,9 @@
     @test c == r
 
     # Test loops
-    loops = SimpleGraph(2)
+    loops = complete_graph(2)
     add_edge!(loops, 1, 1)
     add_edge!(loops, 2, 2)
-    add_edge!(loops, 1, 2)
     c = [1, 2]
     for g in test_generic_graphs(loops)
         # Should work regardless of rng
@@ -95,4 +94,64 @@
     # the clique does not resolve in one step so we don't know what
     # the coms will be. But we know the barbell splits into two groups
     # of 3 in step one and merges in step two.
+
+    # Directed cases
+
+    # Simple
+    triangle = SimpleDiGraph(3)
+    add_edge!(triangle, 1, 2)
+    add_edge!(triangle, 2, 3)
+    add_edge!(triangle, 3, 1)
+
+    barbell = blockdiag(triangle, triangle)
+    add_edge!(barbell, 1, 4)
+    c1 = [1, 1, 1, 2, 2, 2]
+    c2 = [1, 1, 1, 1, 1, 1]
+    for g in test_generic_graphs(barbell)
+        r = @inferred louvain(g)
+        @test r == c1
+        r = @inferred louvain(g, γ=10e-5)
+        @test r == c2
+    end
+
+    # Self loops
+    barbell = SimpleDiGraph(2)
+    add_edge!(barbell, 1, 1)
+    add_edge!(barbell, 2, 2)
+    add_edge!(barbell, 1, 2)
+    c1 = [1, 2]
+    c2 = [1, 1]
+    for g in test_generic_graphs(barbell)
+        r = @inferred louvain(g)
+        @test r == c1
+        r = @inferred louvain(g, γ=10e-5)
+        @test r == c2
+    end
+
+    # Weighted
+    square = SimpleDiGraph(4)
+    add_edge!(square, 1, 2)
+    add_edge!(square, 2, 3)
+    add_edge!(square, 3, 4)
+    add_edge!(square, 4, 1)
+    d1 = [
+        [0 5 0 0]
+        [0 0 1 0]
+        [0 0 0 5]
+        [1 0 0 0]
+    ]
+    d2 = [
+        [0 1 0 0]
+        [0 0 5 0]
+        [0 0 0 1]
+        [5 0 0 0]
+    ]
+    c1 = [1, 1, 2, 2]
+    c2 = [1, 2, 2, 1]
+    for g in test_generic_graphs(square)
+        r = @inferred louvain(g, distmx=d1)
+        @test r == c1
+        r = @inferred louvain(g, distmx=d2)
+        @test r == c2
+    end
 end
