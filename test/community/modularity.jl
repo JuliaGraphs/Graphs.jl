@@ -25,7 +25,7 @@
     end
 
     # Test with self loop
-    add_edge!(barbell,1,1)
+    add_edge!(barbell, 1, 1)
     for g in test_generic_graphs(barbell)
         Q = @inferred(modularity(g, c))
         @test isapprox(Q, 0.3671875, atol=1e-3)
@@ -74,7 +74,7 @@
         @test isapprox(Q, 0.045454545454545456, atol=1e-3)
     end
     # Add self loop with weight 5
-    add_edge!(barbell,1,1)
+    add_edge!(barbell, 1, 1)
     d = [
         [5 1 1 0 0 0]
         [1 0 1 0 0 0]
@@ -110,7 +110,7 @@
         @test isapprox(Q, 0.1487603305785124, atol=1e-3)
     end
     # Add self loop with weight 5
-    add_edge!(barbell,1,1)
+    add_edge!(barbell, 1, 1)
     d = [
         [5 1 0 0 0 0]
         [0 0 1 0 0 0]
