@@ -31,7 +31,6 @@
         @test isapprox(Q, 0.3671875, atol=1e-3)
     end
 
-
     # 2. directed test cases 
     triangle = SimpleDiGraph(3)
     add_edge!(triangle, 1, 2)
@@ -123,5 +122,4 @@
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.333333333, atol=1e-3)
     end
-
 end
