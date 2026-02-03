@@ -90,14 +90,20 @@ function modularity(
             c2 = c[v]
             if c1 == c2
                 Q += distmx[u, v]
+                if u == v && !is_directed(g)
+                  #Since we do not look at each end in outer loop
+                  Q += distmx[u, v]
+              end
             end
             kout[c1] += distmx[u, v]
             kin[c2] += distmx[u, v]
+            if u == v && !is_directed(g)
+              #Since we do not look at each end in outer loop
+              kout[c1] += distmx[u, v]
+              kin[c2] += distmx[u, v]
+          end
         end
     end
-    Q = Q * m
-    @inbounds for i in 1:nc
-        Q -= γ * kin[i] * kout[i]
-    end
-    return Q / m^2
+    Q = Q/m - γ * sum(kin .* kout) / m^2
+    return Q
 end
