@@ -115,7 +115,6 @@ diameter(eccentricities::Vector) = maximum(eccentricities)
 
 diameter(g::AbstractGraph) = diameter(g, weights(g))
 
-
 function diameter(g::AbstractGraph, ::DefaultDistance)
     if nv(g) == 0
         return 0
@@ -250,7 +249,7 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
     return diam
 end
 
-function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where T <: Number
+function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where {T<:Number}
     # Handle empty graph
     nv(g) == 0 && return zero(T)
 
@@ -276,7 +275,7 @@ function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where T
     lb = unique_dists[end]
 
     # Group nodes by distance
-    nodes_by_dist = Dict{T, Vector{Int}}()
+    nodes_by_dist = Dict{T,Vector{Int}}()
     for v in valid_nodes
         d = dists[v]
         if !haskey(nodes_by_dist, d)
@@ -287,10 +286,10 @@ function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where T
 
     # 4. Iterate backward
     num_levels = length(unique_dists)
-    
+
     for i in num_levels:-1:2
         d_i = unique_dists[i]
-        d_prev = unique_dists[i-1]
+        d_prev = unique_dists[i - 1]
 
         # Process the "Fringe" at distance d_i FIRST
         fringe = nodes_by_dist[d_i]
