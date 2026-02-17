@@ -115,6 +115,7 @@ diameter(eccentricities::Vector) = maximum(eccentricities)
 
 diameter(g::AbstractGraph) = diameter(g, weights(g))
 
+
 function diameter(g::AbstractGraph, ::DefaultDistance)
     if nv(g) == 0
         return 0
@@ -130,8 +131,27 @@ function diameter(g::AbstractGraph, ::DefaultDistance)
 end
 
 function diameter(g::AbstractGraph, distmx::AbstractMatrix)
+    # If the graph is unweighted (DefaultDistance), use the existing BFS-based iFUB
+    if distmx isa DefaultDistance
+        return diameter(g, DefaultDistance(nv(g))) # Redirects to existing _diameter_ifub logic
+    end
+
+    # For weighted directed graphs, strictly implementing DiFUB requires efficient 
+    # backward Dijkstra traversals 
+    # For simplicity, we fall back to the naive method for directed weighted graphs
+    # and use the optimized iFUB for undirected weighted graphs
+    if is_directed(g)
+        return maximum(eccentricity(g, vertices(g), distmx))
+    end
+
+    return _diameter_weighted(g, distmx)
+end
+
+#=
+function diameter(g::AbstractGraph, distmx::AbstractMatrix)
     return maximum(eccentricity(g, distmx))
 end
+=#
 
 function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
     nvg = nv(g)
@@ -228,6 +248,68 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
     end
 
     return diam
+end
+
+function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where T <: Number
+    # Handle empty graph
+    nv(g) == 0 && return zero(T)
+
+    # 1. Heuristic: Start from a node 'u' with high degree
+    u = argmax(degree(g))
+
+    # 2. Compute Shortest Path Tree from u
+    ds = dijkstra_shortest_paths(g, u, distmx)
+    dists = ds.dists
+
+    # Handle disconnected components
+    # If u cannot reach all nodes, the graph is disconnected -> infinite diameter
+    valid_nodes = findall(d -> d < typemax(T), dists)
+    if length(valid_nodes) < nv(g)
+        return typemax(T)
+    end
+
+    # 3. Identify distinct sorted distances
+    unique_dists = unique(dists[valid_nodes])
+    sort!(unique_dists)
+
+    # Initialize Lower Bound (lb) with eccentricity of u
+    lb = unique_dists[end]
+
+    # Group nodes by distance
+    nodes_by_dist = Dict{T, Vector{Int}}()
+    for v in valid_nodes
+        d = dists[v]
+        if !haskey(nodes_by_dist, d)
+            nodes_by_dist[d] = Int[]
+        end
+        push!(nodes_by_dist[d], v)
+    end
+
+    # 4. Iterate backward
+    num_levels = length(unique_dists)
+    
+    for i in num_levels:-1:2
+        d_i = unique_dists[i]
+        d_prev = unique_dists[i-1]
+
+        # Process the "Fringe" at distance d_i FIRST
+        fringe = nodes_by_dist[d_i]
+        for v in fringe
+            ecc_v = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
+            if ecc_v > lb
+                lb = ecc_v
+            end
+        end
+
+        # Pruning Condition: Check AFTER processing the current level
+        # If the found lower bound is greater than 2 * (distance of previous level),
+        # we can stop. Nodes in previous levels cannot form a path longer than 2*d_prev.
+        if lb > 2 * d_prev
+            return lb
+        end
+    end
+
+    return lb
 end
 
 """

@@ -79,7 +79,7 @@
             return maximum(eccentricity(g))
         end
 
-        NUM_SAMPLES = 50 # Adjust this to change test duration
+        NUM_SAMPLES = 50
 
         for i in 1:NUM_SAMPLES
             # Random unweighted Graphs
@@ -139,5 +139,45 @@
         )
         g2 = GenericGraph(path_graph(2))
         @test_logs eccentricity(g2)
+    end
+
+    @testset "Weighted Diameter Benchmarks" begin
+        n_bench = 3000
+        
+        function symmetric_weights(n)
+            W = rand(n, n)
+            return (W + W') / 2
+        end
+
+        @testset "Erdős-Rényi (ER) Model" begin
+            p = 10 / n_bench
+            g = erdos_renyi(n_bench, p)
+            while !is_connected(g)
+                g = erdos_renyi(n_bench, p)
+            end
+            
+            distmx = symmetric_weights(n_bench)
+            
+            t_opt = @elapsed d_opt = diameter(g, distmx)
+            t_naive = @elapsed d_naive = maximum(eccentricity(g, vertices(g), distmx))
+            
+            @test d_opt ≈ d_naive
+            @info "ER Speedup: $(round(t_naive/t_opt, digits=1))x"
+        end
+
+        @testset "Barabási-Albert (BA) Model" begin
+            g = barabasi_albert(n_bench, 5)
+            while !is_connected(g)
+                g = barabasi_albert(n_bench, 5)
+            end
+            
+            distmx = symmetric_weights(n_bench)
+            
+            t_opt = @elapsed d_opt = diameter(g, distmx)
+            t_naive = @elapsed d_naive = maximum(eccentricity(g, vertices(g), distmx))
+            
+            @test d_opt ≈ d_naive
+            @info "BA Speedup: $(round(t_naive/t_opt, digits=3))x"
+        end
     end
 end
