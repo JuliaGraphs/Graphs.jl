@@ -81,7 +81,7 @@ function louvain(
         for i in eachindex(actual_coms)
             actual_coms[i] = com_map[current_coms[actual_coms[i]]]
         end
-        @debug "Communities after moving in iteration $(iter): $(acutal_coms)"
+        @debug "Communities after moving in iteration $(iter): $(actual_coms)"
         for i in eachindex(current_coms)
             current_coms[i] = com_map[current_coms[i]]
         end
