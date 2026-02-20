@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 """
     louvain(g, distmx=weights(g), γ=1; max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=10e-10, merge_tol::Real=10e-10, rng=nothing, seed=nothing)
 

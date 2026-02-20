@@ -18,7 +18,7 @@ using DataStructures:
     BinaryMaxHeap,
     BinaryMinHeap,
     Stack
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
