@@ -24,6 +24,13 @@
         @test isapprox(Q2, 0.6071428571428571, atol=1e-3)
     end
 
+    # Test with self loop
+    add_edge!(barbell, 1, 1)
+    for g in test_generic_graphs(barbell)
+        Q = @inferred(modularity(g, c))
+        @test isapprox(Q, 0.3671875, atol=1e-3)
+    end
+
     # 2. directed test cases 
     triangle = SimpleDiGraph(3)
     add_edge!(triangle, 1, 2)
@@ -65,6 +72,20 @@
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.045454545454545456, atol=1e-3)
     end
+    # Add self loop with weight 5
+    add_edge!(barbell, 1, 1)
+    d = [
+        [5 1 1 0 0 0]
+        [1 0 1 0 0 0]
+        [1 1 0 1 0 0]
+        [0 0 1 0 1 1]
+        [0 0 0 1 0 1]
+        [0 0 0 1 1 0]
+    ]
+    for g in test_generic_graphs(barbell)
+        Q = @inferred(modularity(g, c, distmx=d))
+        @test isapprox(Q, 0.329861, atol=1e-3)
+    end
 
     # 3.2. directed and weighted test cases
     triangle = SimpleDiGraph(3)
@@ -73,12 +94,12 @@
     add_edge!(triangle, 3, 1)
 
     barbell = blockdiag(triangle, triangle)
-    add_edge!(barbell, 1, 4) # this edge has a weight of 5
+    add_edge!(barbell, 3, 4) # this edge has a weight of 5
     c = [1, 1, 1, 2, 2, 2]
     d = [
-        [0 1 0 5 0 0]
+        [0 1 0 0 0 0]
         [0 0 1 0 0 0]
-        [1 0 0 0 0 0]
+        [1 0 0 5 0 0]
         [0 0 0 0 1 0]
         [0 0 0 0 0 1]
         [0 0 0 1 0 0]
@@ -86,5 +107,19 @@
     for g in test_generic_graphs(barbell)
         Q = @inferred(modularity(g, c, distmx=d))
         @test isapprox(Q, 0.1487603305785124, atol=1e-3)
+    end
+    # Add self loop with weight 5
+    add_edge!(barbell, 1, 1)
+    d = [
+        [5 1 0 0 0 0]
+        [0 0 1 0 0 0]
+        [1 0 0 1 0 0]
+        [0 0 0 0 1 0]
+        [0 0 0 0 0 1]
+        [0 0 0 1 0 0]
+    ]
+    for g in test_generic_graphs(barbell)
+        Q = @inferred(modularity(g, c, distmx=d))
+        @test isapprox(Q, 0.333333333, atol=1e-3)
     end
 end
