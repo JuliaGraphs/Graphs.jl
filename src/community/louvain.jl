@@ -64,7 +64,7 @@ function louvain(
         return T[]
     end
 
-    @debug "Running louvain with parameters γ=$(γ), max_moves=$(max_move), " *
+    @debug "Running louvain with parameters γ=$(γ), max_moves=$(max_moves), " *
         "max_merges=$(max_merges), move_tol=$(move_tol), merge_tol=$(merge_tol)"
 
     actual_coms = collect(one(T):nv(g))
