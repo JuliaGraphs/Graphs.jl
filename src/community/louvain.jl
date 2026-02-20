@@ -64,6 +64,9 @@ function louvain(
         return T[]
     end
 
+    @debug "Running louvain with parameters γ=$(γ), max_moves=$(max_move), "*
+        "max_merges=$(max_merges), move_tol=$(move_tol), merge_tol=$(merge_tol)"
+
     actual_coms = collect(one(T):nv(g))
     current_coms = copy(actual_coms)
     # actual_coms is always of length nv(g) and holds the current com for each v in g
@@ -71,16 +74,14 @@ function louvain(
 
     for iter in 0:max_merges
         current_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
-        @debug "Current modularity $(current_modularity)"
-        @debug "Iter $(iter) moving vertices."
+        @debug "Merge iteration $(iter). Current modularity is $(current_modularity)"
         louvain_move!(g, γ, current_coms, rng, distmx, max_moves, move_tol)
         # remap communities to 1-nc
-        @debug "Done moving vertices."
         com_map = Dict(old => new for (new, old) in enumerate(unique(current_coms)))
         for i in eachindex(actual_coms)
             actual_coms[i] = com_map[current_coms[actual_coms[i]]]
         end
-        @debug "New actual coms are $(actual_coms)"
+        @debug "Communities after moving in iteration $(iter): $(acutal_coms)"
         for i in eachindex(current_coms)
             current_coms[i] = com_map[current_coms[i]]
         end
@@ -88,12 +89,11 @@ function louvain(
         # Stop if modularity gain is too small
         new_modularity = modularity(g, current_coms; distmx=distmx, γ=γ)
         @debug "New modularity is $(new_modularity) for a gain of $(new_modularity -
-        current_modularity).  Stop = $(new_modularity - current_modularity < merge_tol)"
+        current_modularity)"
         if new_modularity - current_modularity < merge_tol
             break
         end
         g, distmx = louvain_merge(g, current_coms, distmx)
-        @debug distmx
         if nv(g) == 1 # nothing left to merge
             break
         end
@@ -126,7 +126,7 @@ function louvain_move!(
             c_vols[1, c[dst(e)]] += distmx[src(e), dst(e)]
         end
     end
-    @debug "vols $(c_vols)"
+
     for _ in 1:max_moves
         last_change = nothing
         for v in vertex_order
@@ -155,7 +155,7 @@ function louvain_move!(
 
             # Compute loss in modularity by removing vertex
             loss = ΔQ(g, γ, distmx, c, v, m, c[v], c_vols)
-            @debug "Q loss from removing v: $(loss)"
+            @debug "Q loss of removing vertex $(v) from its community: $(loss)"
             # Compute gain by moving to alternate neighboring community
             this_ΔQ = c_potential -> ΔQ(g, γ, distmx, c, v, m, c_potential, c_vols)
             best_ΔQ, best_com_id = findmax(this_ΔQ, potential_coms)
@@ -168,13 +168,13 @@ function louvain_move!(
                     c_vols[2, best_com] += in_degree
                 end
                 last_change = v
-                @debug "Moved! New coms are $(c)"
+                @debug "Moved vertex $(v) to community $(best_com)"
             else
                 c_vols[1, c[v]] += out_degree
                 if is_directed(g)
                     c_vols[2, c[v]] += out_degree
                 end
-                @debug "Didn't move. coms are $(c)"
+                @debug "Insufficient Q gain, vertex $(v) stays in community $(c[v])"
             end
         end
         if isnothing(last_change) # No movement
