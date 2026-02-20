@@ -147,7 +147,7 @@ function louvain_move!(
             )
             c_vols[1, c[v]] -= out_degree
 
-            in_degree = 0.  # defined outside to keep JET.jl happy
+            in_degree = 0.0  # defined outside to keep JET.jl happy
             if is_directed(g)
                 in_degree = sum(
                     u == v ? 2distmx[v, u] : distmx[v, u] for u in inneighbors(g, v)
