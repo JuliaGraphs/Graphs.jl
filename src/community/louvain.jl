@@ -146,6 +146,8 @@ function louvain_move!(
                 u == v ? 2distmx[v, u] : distmx[v, u] for u in outneighbors(g, v)
             )
             c_vols[1, c[v]] -= out_degree
+
+            in_degree = 0.  # defined outside to keep JET.jl happy
             if is_directed(g)
                 in_degree = sum(
                     u == v ? 2distmx[v, u] : distmx[v, u] for u in inneighbors(g, v)
@@ -172,7 +174,7 @@ function louvain_move!(
             else
                 c_vols[1, c[v]] += out_degree
                 if is_directed(g)
-                    c_vols[2, c[v]] += out_degree
+                    c_vols[2, c[v]] += in_degree
                 end
                 @debug "Insufficient Q gain, vertex $(v) stays in community $(c[v])"
             end
