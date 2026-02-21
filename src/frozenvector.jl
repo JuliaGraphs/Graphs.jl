@@ -9,9 +9,11 @@ end
 
 Base.size(v::FrozenVector) = Base.size(v.wrapped)
 
-Base.@propagate_inbounds Base.getindex(v::FrozenVector, i::Int) = Base.getindex(v.wrapped, i)
+Base.@propagate_inbounds Base.getindex(v::FrozenVector, i::Int) = Base.getindex(
+    v.wrapped, i
+)
 
-Base.IndexStyle(v::Type{FrozenVector{T}}) where {T}  = Base.IndexStyle(Vector{T})
+Base.IndexStyle(v::Type{FrozenVector{T}}) where {T} = Base.IndexStyle(Vector{T})
 
 Base.iterate(v::FrozenVector) = Base.iterate(v.wrapped)
 Base.iterate(v::FrozenVector, state) = Base.iterate(v.wrapped, state)
