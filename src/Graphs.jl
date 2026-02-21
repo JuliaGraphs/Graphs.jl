@@ -473,6 +473,7 @@ and tutorials are available at the
 Graphs
 include("interface.jl")
 include("utils.jl")
+include("frozenvector.jl")
 include("deprecations.jl")
 include("core.jl")
 
