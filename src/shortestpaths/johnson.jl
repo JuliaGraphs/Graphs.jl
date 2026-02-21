@@ -9,7 +9,7 @@ An [`AbstractPathState`](@ref) designed for Johnson shortest-paths calculations.
 - `dists::Matrix{T}`: `dists[u, v]` is the length of the shortest path from `u` to `v` 
 - `parents::Matrix{U}`: `parents[u, v]` is the predecessor of vertex `v` on the shortest path from `u` to `v`
 """
-struct JohnsonState{T<:Real,U<:Integer} <: AbstractPathState
+struct JohnsonState{T<:Number,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
     parents::Matrix{U}
 end
@@ -29,14 +29,14 @@ Complexity: `O(|V|*|E|)`
 """
 function johnson_shortest_paths(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(g)
     type_distmx = typeof(distmx)
     # Change when parallel implementation of Bellman Ford available
     wt_transform =
         bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx).dists
 
-    @compat if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
+    if !ismutable(distmx) && type_distmx != Graphs.DefaultDistance
         distmx = sparse(distmx) # Change reference, not value
     end
 
@@ -60,7 +60,7 @@ function johnson_shortest_paths(
         dists[:, v] .+= wt_transform[v] # Vertical traversal preferred
     end
 
-    @compat if ismutable(distmx)
+    if ismutable(distmx)
         for e in edges(g)
             distmx[src(e), dst(e)] += wt_transform[dst(e)] - wt_transform[src(e)]
         end
@@ -71,7 +71,7 @@ end
 
 function enumerate_paths(
     s::JohnsonState{T,U}, v::Integer
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     pathinfo = s.parents[v, :]
     paths = Vector{Vector{U}}()
     for i in 1:length(pathinfo)

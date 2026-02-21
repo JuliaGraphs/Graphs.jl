@@ -4,20 +4,20 @@ using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
 using JET
-using JuliaFormatter
 using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
-using Compat
 using DelimitedFiles
 using Base64
 using Random
 using Statistics: mean, std
 using StableRNGs
 using Pkg
+using Unitful
 
 const testdir = dirname(@__FILE__)
+const KMf = typeof(u"1.0km")
 
 function get_pkg_version(name::AbstractString)
     for dep in values(Pkg.dependencies())
@@ -116,6 +116,7 @@ tests = [
     "community/core-periphery",
     "community/independent_sets",
     "community/label_propagation",
+    "community/louvain",
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",
@@ -152,20 +153,17 @@ tests = [
 
 @testset verbose = true "Graphs" begin
     @testset "Code quality (JET.jl)" begin
-        if VERSION >= v"1.9"
-            @assert get_pkg_version("JET") >= v"0.8.4"
-            JET.test_package(
-                Graphs; target_defined_modules=true, ignore_missing_comparison=true
-            )
-        end
+        @assert get_pkg_version("JET") >= v"0.8.4"
+        JET.test_package(
+            Graphs;
+            target_defined_modules=true,
+            ignore_missing_comparison=true,
+            mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+        )
     end
 
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(Graphs; ambiguities=false)
-    end
-
-    @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Graphs; verbose=false, overwrite=false)
     end
 
     doctest(Graphs)

@@ -798,24 +798,49 @@ function isgraphical(degs::AbstractVector{<:Integer})
     !isempty(degs) || return true
     # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
-    # Check that all degrees are non negative and less than n-1
+    # Compute the length of the degree sequence
     n = length(degs)
+    # Check that all degrees are non negative and less than n-1
     all(0 .<= degs .<= n - 1) || return false
     # Sort the degree sequence in non-increasing order
     sorted_degs = sort(degs; rev=true)
-    # Compute the length of the degree sequence
+    # Initialise a sum variable
     cur_sum = zero(UInt64)
-    # Compute the minimum of each degree and the corresponding index
-    mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i in 1:n
-        mindeg[i] = min(i, sorted_degs[i])
-    end
+    right_deg_sum = zero(UInt64)
+    # Initalise a pointer to track the smallest index with degree greater than r
+    ptr = n
     # Check if the degree sequence satisfies the Erdös-Gallai condition
-    cum_min = sum(mindeg)
     @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
-        cum_min -= mindeg[r]
-        cond = cur_sum <= (r * (r - 1) + cum_min)
+        #  Calculate the sum of the minimum of r and the degrees of the vertices
+        min_idx = r + 1
+        while ptr >= min_idx
+            if sorted_degs[ptr] <= r
+                # left_deg_sum = sum_{ptr+1}^n d_i
+                right_deg_sum += sorted_degs[ptr]
+                # move pointer to the 1-slot left
+                ptr -= 1
+            else
+                # the ptr points to the degree greater than r
+                break
+            end
+        end
+        # calculate min_deg_sum: sum_{r+1}^n min(r, d_i)
+        if ptr < min_idx
+            # all required degrees are less than r
+            # ptr is min_idx - 1
+            min_deg_sum = right_deg_sum
+            # prepare for the next iteration
+            # shift ptr to the right
+            ptr += 1
+            # reduce right_deg_sum
+            right_deg_sum -= sorted_degs[ptr]
+        else
+            # d_i with i between ptr and min_idx are greater than r 
+            min_deg_sum = (ptr - r) * r + right_deg_sum
+        end
+        # Check the Erdös-Gallai condition
+        cond = cur_sum <= (r * (r - 1) + min_deg_sum)
         cond || return false
     end
     return true

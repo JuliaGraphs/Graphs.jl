@@ -96,4 +96,21 @@
             @test @inferred(density(g)) == 0.4
         end
     end
+
+    @testset "squash" for (g_in, g_expected) in [
+        (SimpleGraph{Int64}(), SimpleGraph{UInt8}()),
+        (SimpleDiGraph{UInt8}(), SimpleDiGraph{UInt8}()),
+        (path_graph(Int16(126)), path_graph(UInt8(126))),
+        (path_digraph(Int16(127)), path_digraph(UInt8(127))),
+        (path_graph(Int16(254)), path_graph(UInt8(254))),
+        (path_digraph(Int16(255)), path_digraph(UInt16(255))),
+        (path_graph(UInt16(255)), path_graph(UInt16(255))),
+        (star_graph(Int16(32766)), star_graph(UInt16(32766))),
+        (star_digraph(Int32(32767)), star_digraph(UInt16(32767))),
+        (cycle_graph(Int128(123)), cycle_graph(UInt8(123))),
+    ]
+        g_actual = squash(generic_graph(g_in))
+        @test typeof(g_actual) === typeof(g_expected)
+        @test g_actual == g_expected
+    end
 end

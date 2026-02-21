@@ -6,26 +6,19 @@ using SimpleTraits
 using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 using Statistics: mean
 
-# Currently used to support the ismutable function that is not available in Julia < v1.7
-using Compat
-
 using Inflate: InflateGzipStream
 using DataStructures:
-    IntDisjointSets,
+    IntDisjointSet,
     PriorityQueue,
-    dequeue!,
-    dequeue_pair!,
-    enqueue!,
     heappop!,
     heappush!,
     in_same_set,
-    peek,
     union!,
     find_root!,
     BinaryMaxHeap,
     BinaryMinHeap,
     Stack
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
@@ -253,6 +246,7 @@ export
     has_negative_edge_cycle_spfa,
     has_negative_edge_cycle,
     enumerate_paths,
+    enumerate_paths!,
     johnson_shortest_paths,
     floyd_warshall_shortest_paths,
     transitiveclosure!,
@@ -321,6 +315,7 @@ export
     global_clustering_coefficient,
     triangles,
     label_propagation,
+    louvain,
     maximal_cliques,
     maximum_clique,
     clique_number,
@@ -539,6 +534,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/louvain.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
