@@ -15,7 +15,7 @@ Pages = ["wrappedgraphs.md"]
 ```@autodocs
 Modules = [Graphs]
 Pages = [
-    "wrappedgraphs/graphviews.jl",
+    "wrappedGraphs/graphviews.jl",
 ]
 
 ```
