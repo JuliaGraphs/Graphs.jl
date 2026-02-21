@@ -11,6 +11,7 @@ using LinearAlgebra
 using DelimitedFiles
 using Base64
 using Random
+using Logging: NullLogger, with_logger
 using Statistics: mean, std
 using StableRNGs
 using Pkg
@@ -79,6 +80,7 @@ tests = [
     "interface",
     "core",
     "operators",
+    "wrappedGraphs/graphviews",
     "degeneracy",
     "distance",
     "digraph/transitivity",
@@ -114,6 +116,7 @@ tests = [
     "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
+    "community/independent_sets",
     "community/label_propagation",
     "community/louvain",
     "community/modularity",

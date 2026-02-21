@@ -114,6 +114,11 @@ export
     squash,
     weights,
 
+    # wrapped graphs
+    ReverseView,
+    UndirectedView,
+    wrapped_graph,
+
     # simplegraphs
     add_edge!,
     add_vertex!,
@@ -156,6 +161,10 @@ export
     join,
     tensor_product,
     cartesian_product,
+    strong_product,
+    disjunctive_product,
+    lexicographic_product,
+    homomorphic_product,
     crosspath,
     induced_subgraph,
     egonet,
@@ -317,6 +326,11 @@ export
     label_propagation,
     louvain,
     maximal_cliques,
+    maximum_clique,
+    clique_number,
+    maximal_independent_sets,
+    maximum_independent_set,
+    independence_number,
     clique_percolation,
     assortativity,
     rich_club,
@@ -461,6 +475,7 @@ include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
+include("wrappedGraphs/graphviews.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
 """
