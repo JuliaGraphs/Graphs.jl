@@ -2,9 +2,7 @@ module Parallel
 
 using Graphs
 using Graphs: sample, AbstractPathState, JohnsonState, BellmanFordState, FloydWarshallState
-using Distributed: @distributed
 using Base.Threads: @threads, nthreads, Atomic, atomic_add!, atomic_cas!
-using SharedArrays: SharedMatrix, SharedVector, sdata
 using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 using Random: AbstractRNG, shuffle
 import SparseArrays: sparse

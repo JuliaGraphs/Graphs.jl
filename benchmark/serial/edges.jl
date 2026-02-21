@@ -5,11 +5,7 @@ const P = Pair{Int,Int}
 convert(::Type{Tuple}, e::Pair) = (e.first, e.second)
 
 function fille(n)
-    t = Vector{Graphs.Edge}(undef, n)
-    for i in 1:n
-        t[i] = Graphs.Edge(i, i + 1)
-    end
-    return t
+    return [Graphs.Edge(i, i + 1) for i in 1:n]
 end
 
 function fillp(n)
@@ -22,8 +18,8 @@ end
 
 function tsum(t)
     x = 0
-    for i in 1:length(t)
-        u, v = Tuple(t[i])
+    for item in t
+        u, v = Tuple(item)
         x += u
         x += v
     end

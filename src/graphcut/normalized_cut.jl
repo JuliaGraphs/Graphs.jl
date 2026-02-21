@@ -201,6 +201,6 @@ function normalized_cut(
     thres::Real,
     W::AbstractMatrix{T}=adjacency_matrix(g),
     num_cuts::Int=10,
-) where {T<:Real}
+) where {T<:Number}
     return _recursive_normalized_cut(W, thres, num_cuts)
 end
