@@ -316,6 +316,7 @@
     @test @inferred(isgraphical([2, 2, 2]))
     @test @inferred(isgraphical(fill(3, 10)))
     @test @inferred(isgraphical(Integer[]))
+    @test @inferred(!isgraphical([4, 2, 2, 2, 0]))
     ##@test !@inferred(isgraphical([2]))
 
     # Test simple digraphicality
