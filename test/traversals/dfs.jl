@@ -23,6 +23,15 @@
             0 0 0 1 0 0 0
         ],
     )
+    # non regression test following https://github.com/JuliaGraphs/Graphs.jl/pull/266#issuecomment-1621698039
+    g6 = SimpleDiGraph(4)
+    add_edge!(g6, 1, 2)
+    add_edge!(g6, 2, 3)
+    add_edge!(g6, 2, 4)
+    add_edge!(g6, 4, 3)
+    g7 = copy(g6)
+    add_edge!(g7, 3, 4)
+
     @testset "dfs_tree" begin
         for g in testdigraphs(g5)
             z = @inferred(dfs_tree(GenericDiGraph(g), 1))
@@ -44,6 +53,11 @@
         for g in testdigraphs(gx)
             @test @inferred(is_cyclic(g))
             @test_throws ErrorException topological_sort(g)
+        end
+
+        # non regression test following https://github.com/JuliaGraphs/Graphs.jl/pull/266#issuecomment-1621698039
+        for g in testdigraphs(g6)
+            @test @inferred(topological_sort(g)) == [1, 2, 4, 3]
         end
     end
 
@@ -82,6 +96,10 @@
             @test @inferred(is_cyclic(g))
         end
         for g in testgraphs(gloop_undirected)
+            @test @inferred(is_cyclic(g))
+        end
+        # non regression test following https://github.com/JuliaGraphs/Graphs.jl/pull/266#issuecomment-1621698039
+        for g in testdigraphs(g7)
             @test @inferred(is_cyclic(g))
         end
     end

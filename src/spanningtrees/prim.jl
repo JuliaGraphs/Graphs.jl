@@ -8,7 +8,7 @@ Return a vector of edges.
 function prim_mst end
 @traitfn function prim_mst(
     g::AG::(!IsDirected), distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real,U,AG<:AbstractGraph{U}}
+) where {T<:Number,U,AG<:AbstractGraph{U}}
     nvg = nv(g)
 
     pq = PriorityQueue{U,T}()
@@ -20,7 +20,7 @@ function prim_mst end
     wt[1] = typemin(T)
 
     while !isempty(pq)
-        v = dequeue!(pq)
+        v = popfirst!(pq).first
         finished[v] = true
 
         for u in neighbors(g, v)

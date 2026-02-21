@@ -6,14 +6,14 @@
 #
 ###################################################################
 
-using Base.Threads
-
 """
     spfa_shortest_paths(g, s, distmx=weights(g))
 
 Compute shortest paths between a source `s` and all
 other nodes in graph `g` using the [Shortest Path Faster Algorithm]
 (https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm).
+
+Return a vector of distances to the source.
 
 # Examples
 
@@ -32,20 +32,21 @@ julia> spfa_shortest_paths(g, 1, d)
   0
 ```
 
-```
+```jldoctest
+julia> using Graphs
 
 julia> g = complete_graph(3);
 
 julia> d = [1 -3 1; -3 1 1; 1 1 1];
 
 julia> spfa_shortest_paths(g, 1, d)
-
 ERROR: Graphs.NegativeCycleError()
+[...]
 ```
 """
 function spfa_shortest_paths(
     graph::AbstractGraph{U}, source::Integer, distmx::AbstractMatrix{T}=weights(graph)
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(graph)
 
     (source in 1:nvg) ||
@@ -114,7 +115,7 @@ false
 """
 function has_negative_edge_cycle_spfa(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     try
         spfa_shortest_paths(g, 1, distmx)
     catch e

@@ -1,4 +1,5 @@
 using Random: Random
+using Graphs.Test
 
 @testset "SimpleGraphs" begin
     rng = StableRNG(1)
@@ -102,6 +103,7 @@ using Random: Random
 
         @test @inferred(edgetype(g)) == SimpleGraphEdge{T}
         @test @inferred(copy(g)) == g
+        @test @inferred(hash(g)) == hash(copy(g)) == hash(deepcopy(g))
         @test @inferred(!is_directed(g))
 
         e = first(edges(g))
@@ -123,6 +125,8 @@ using Random: Random
         @test @inferred(!has_edge(g, 20, 3))
         @test @inferred(!has_edge(g, 2, 30))
 
+        @test @inferred(copy(g)) == g
+        @test @inferred(hash(copy(g))) == hash(g)
         gc = copy(g)
         @test @inferred(add_edge!(gc, 4 => 1)) && gc == cycle_digraph(4)
         @test @inferred(has_edge(gc, 4 => 1)) && has_edge(gc, 0x04 => 0x01)
@@ -321,8 +325,9 @@ using Random: Random
             SimpleGraph(0)
         )
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([
+                (4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)
+            ])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -351,8 +356,9 @@ using Random: Random
             SimpleDiGraph(0)
         )
             E = edgetype(g)
-            edge_list =
-                E.([(4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)])
+            edge_list = E.([
+                (4, 4), (1, 2), (4, 4), (1, 2), (4, 4), (2, 1), (0, 1), (1, 0), (0, 0)
+            ])
             edge_iter = (e for e in edge_list)
             edge_set = Set(edge_list)
             edge_set_any = Set{Any}(edge_list)
@@ -509,4 +515,41 @@ using Random: Random
         SimpleDiGraphFromIterator(Edge.([(1, 2), (3, 2)]))
     @test SimpleDiGraphFromIterator(Edge.([(1, 2), (2, 3)])) !=
         SimpleDiGraphFromIterator(Edge.([(1, 2), (1, 3)]))
+
+    # Tests for constructors from AbstractGraph
+
+    g = path_graph(4)
+    add_vertex!(g)
+    for h in [g, GenericGraph(g)]
+        hu = SimpleGraph(h)
+        hd = SimpleDiGraph(h)
+        @test nv(hu) == 5
+        @test ne(hu) == 3
+        @test nv(hd) == 5
+        @test ne(hd) == 6
+        @test eltype(SimpleGraph{Int32}(h)) == Int32
+        @test eltype(SimpleDiGraph{Int32}(h)) == Int32
+    end
+
+    g = path_digraph(4)
+    add_vertex!(g)
+    for h in [g, GenericDiGraph(g)]
+        hu = SimpleGraph(h)
+        hd = SimpleDiGraph(h)
+        @test nv(hu) == 5
+        @test ne(hu) == 3
+        @test nv(hd) == 5
+        @test ne(hd) == 3
+    end
+
+    g = union(path_digraph(4), reverse(path_digraph(4)))
+    add_vertex!(g)
+    for h in [g, GenericDiGraph(g)]
+        hu = SimpleGraph(h)
+        hd = SimpleDiGraph(h)
+        @test nv(hu) == 5
+        @test ne(hu) == 3
+        @test nv(hd) == 5
+        @test ne(hd) == 6
+    end
 end

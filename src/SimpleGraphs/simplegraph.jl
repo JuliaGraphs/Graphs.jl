@@ -265,6 +265,25 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where {T<:Integer}
     return g
 end
 
+"""
+    SimpleGraph{T}(g::AbstractGraph)
+    SimpleGraph(g::AbstractGraph)
+
+Construct a `SimpleGraph` from any `AbstractGraph` by enumerating edges.
+
+If `g` is directed, a directed edge `{u, v}` is added if either directed edge `(u, v)` or `(v, u)` exists.
+"""
+function SimpleGraph{T}(g::AbstractGraph) where {T}
+    eds = edges(g)
+    srcs = src.(eds)
+    dsts = dst.(eds)
+    newg = SimpleGraph(Edge{T}.(srcs, dsts))
+    add_vertices!(newg, nv(g) - nv(newg))
+    return newg
+end
+
+SimpleGraph(g::AbstractGraph{T}) where {T} = SimpleGraph{T}(g)
+
 @inbounds function add_to_fadjlist!(
     fadjlist::Vector{Vector{T}}, s::T, d::T
 ) where {T<:Integer}
@@ -297,7 +316,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)
@@ -409,6 +428,14 @@ copy(g::SimpleGraph) = SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 function ==(g::SimpleGraph, h::SimpleGraph)
     return vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h)
+end
+
+function Base.hash(g::SimpleGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    return r
 end
 
 """

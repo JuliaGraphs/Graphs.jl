@@ -3,28 +3,22 @@ module Graphs
 using SimpleTraits
 
 ### Remove the following line once #915 is closed
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 using Statistics: mean
-
-# Currently used to support the ismutable function that is not available in Julia < v1.7
-using Compat
 
 using Inflate: InflateGzipStream
 using DataStructures:
-    IntDisjointSets,
+    IntDisjointSet,
     PriorityQueue,
-    dequeue!,
-    dequeue_pair!,
-    enqueue!,
     heappop!,
     heappush!,
     in_same_set,
-    peek,
     union!,
     find_root!,
     BinaryMaxHeap,
-    BinaryMinHeap
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+    BinaryMinHeap,
+    Stack
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
@@ -185,6 +179,10 @@ export
     dfs_tree,
     dfs_parents,
 
+    # iterators
+    DFSIterator,
+    BFSIterator,
+
     # random
     randomwalk,
     self_avoiding_walk,
@@ -194,6 +192,12 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
+    # all simple paths
+    all_simple_paths,
+
     # coloring
     greedy_color,
 
@@ -201,6 +205,7 @@ export
     connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
+    strongly_connected_components_tarjan,
     weakly_connected_components,
     is_connected,
     is_strongly_connected,
@@ -241,6 +246,7 @@ export
     has_negative_edge_cycle_spfa,
     has_negative_edge_cycle,
     enumerate_paths,
+    enumerate_paths!,
     johnson_shortest_paths,
     floyd_warshall_shortest_paths,
     transitiveclosure!,
@@ -309,6 +315,7 @@ export
     global_clustering_coefficient,
     triangles,
     label_propagation,
+    louvain,
     maximal_cliques,
     clique_percolation,
     assortativity,
@@ -422,7 +429,10 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # longestpaths
+    dag_longest_path
 
 """
     Graphs
@@ -488,9 +498,14 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("iterators/bfs.jl")
+include("iterators/dfs.jl")
+include("traversals/eulerian.jl")
+include("traversals/all_simple_paths.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
+include("shortestpaths/utils.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
@@ -499,6 +514,7 @@ include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("shortestpaths/spfa.jl")
+include("shortestpaths/longest_path.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
@@ -513,6 +529,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/louvain.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")

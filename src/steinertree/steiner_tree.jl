@@ -1,5 +1,5 @@
 """
-    filter_non_term_leaves!(g, term_vert)
+	filter_non_term_leaves!(g, term_vert)
 
 Remove edges of `g` so that all non-isolated leaves of `g` are in the set `term_vert`
 """
@@ -44,6 +44,8 @@ function steiner_tree end
     g::AG::(!IsDirected), term_vert::Vector{<:Integer}, distmx::AbstractMatrix{U}=weights(g)
 ) where {U<:Real,T,AG<:AbstractGraph{T}}
     nvg = nv(g)
+    length(term_vert) == 0 && return SimpleGraph{T}()
+    length(term_vert) == 1 && return SimpleGraph{T}(first(term_vert))
     term_to_actual = T.(term_vert)
     unique!(term_to_actual)
 

@@ -8,7 +8,7 @@ module Test
 
 using Graphs
 
-export GenericEdge, GenericGraph, GenericDiGraph
+export GenericEdge, GenericGraph, GenericDiGraph, generic_graph
 
 """
     GenericEdge <: Graphs.AbstractEdge
@@ -44,6 +44,20 @@ A directed graph type that can  be used to tests functions that relay on the Gra
 """
 struct GenericDiGraph{T} <: Graphs.AbstractGraph{T}
     g::SimpleDiGraph{T}
+end
+
+"""
+    generic_graph(g::Union{SimpleGraph, SimpleDiGraph})
+
+Return either a GenericGraph or GenericDiGraph that wraps a copy of g.
+"""
+function generic_graph(g::Union{SimpleGraph,SimpleDiGraph})
+    g = copy(g)
+    return is_directed(g) ? GenericDiGraph(g) : GenericGraph(g)
+end
+
+function GenericDiGraph(elist::Vector{Graphs.SimpleDiGraphEdge{T}}) where {T<:Integer}
+    return GenericDiGraph{T}(SimpleDiGraph(elist))
 end
 
 Graphs.is_directed(::Type{<:GenericGraph}) = false

@@ -59,6 +59,7 @@ pages_files = [
         "algorithms/dominatingset.md",
         "algorithms/editdist.md",
         "algorithms/independentset.md",
+        "algorithms/iterators.md",
         "algorithms/linalg.md",
         "algorithms/shortestpaths.md",
         "algorithms/spanningtrees.md",
@@ -69,6 +70,7 @@ pages_files = [
     ],
     "For advanced users" => [
         "advanced/errorhandling.md",
+        "advanced/test.md",
         "advanced/experimental.md",
         "advanced/parallel.md",
         "contributing.md",
@@ -92,6 +94,7 @@ makedocs(;
         canonical="https://gdalle.github.io/Graphs.jl",
     ),
     sitename="Graphs.jl",
+    checkdocs=:public,
     doctest=false,
     expandfirst=[],
     pages=[

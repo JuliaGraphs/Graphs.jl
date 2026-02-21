@@ -23,16 +23,18 @@ function perm_greedy_color(g::AbstractGraph, seq::Vector{T}) where {T<:Integer}
 
     has_self_loops(g) && throw(ArgumentError("graph must not have self loops"))
 
+    colors_used = BitSet()
+
     for v in seq
-        colors_used = zeros(Bool, nvg)
+        empty!(colors_used)
         for w in neighbors(g, v)
             if seen[w]
-                colors_used[cols[w]] = true
+                push!(colors_used, cols[w])
             end
         end
 
         for i in one(T):nvg
-            if colors_used[i] == false
+            if i ∉ colors_used
                 cols[v] = i
                 break
             end

@@ -4,6 +4,11 @@
     struct FloydWarshallState{T, U}
 
 An [`AbstractPathState`](@ref) designed for Floyd-Warshall shortest-paths calculations.
+
+# Fields
+
+- `dists::Matrix{T}`: `dists[u, v]` is the length of the shortest path from `u` to `v` 
+- `parents::Matrix{U}`: `parents[u, v]` is the predecessor of vertex `v` on the shortest path from `u` to `v`
 """
 struct FloydWarshallState{T,U<:Integer} <: AbstractPathState
     dists::Matrix{T}
@@ -15,15 +20,14 @@ end
 
 Use the [Floyd-Warshall algorithm](http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm)
 to compute the shortest paths between all pairs of vertices in graph `g` using an
-optional distance matrix `distmx`. Return a [`Graphs.FloydWarshallState`](@ref) with relevant
-traversal information.
+optional distance matrix `distmx`. Return a [`Graphs.FloydWarshallState`](@ref) with relevant traversal information (try querying `state.parents` or `state.dists`).
 
 ### Performance
-Space complexity is on the order of ``\\mathcal{O}(|V|^2)``.
+Space complexity is on the order of `O(|V|^2)`.
 """
 function floyd_warshall_shortest_paths(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(g)
     # if we do checkbounds here, we can use @inbounds later
     checkbounds(distmx, Base.OneTo(nvg), Base.OneTo(nvg))

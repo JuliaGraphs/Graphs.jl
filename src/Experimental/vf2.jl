@@ -278,10 +278,10 @@ function vf2check_feasibility(
         vf2rule_self_loops(u, v, state, problemtype)
     syntactic_feasability || return false
 
-    if vertex_relation != nothing
+    if !isnothing(vertex_relation)
         vertex_relation(u, v) || return false
     end
-    if edge_relation != nothing
+    if !isnothing(edge_relation)
         E1 = edgetype(state.g1)
         E2 = edgetype(state.g2)
         for u2 in outneighbors(state.g1, u)
@@ -489,7 +489,7 @@ function has_induced_subgraphisomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -509,7 +509,7 @@ function has_subgraphisomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Bool
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -531,7 +531,7 @@ function has_isomorph(
     !could_have_isomorph(g1, g2) && return false
 
     result = false
-    callback(vmap) = (result = true; return false)
+    callback(vmap) = (result=true; return false)
     vf2(
         callback,
         g1,
@@ -648,8 +648,6 @@ function all_subgraphisomorph(
 end
 
 #! format: off
-# Turns off formatting from this point onwards
-
 function all_isomorph(
     g1::AbstractGraph,
     g2::AbstractGraph,
@@ -658,7 +656,7 @@ function all_isomorph(
     edge_relation::Union{Nothing,Function}=nothing,
 )::Channel{Vector{Tuple{eltype(g1),eltype(g2)}}}
     T = Vector{Tuple{eltype(g1),eltype(g2)}}
-    !could_have_isomorph(g1, g2) && return Channel(_ -> nothing, ctype = T)  # TODO: fix problem with JuliaFormatter, right now the whole file is ignored
+    !could_have_isomorph(g1, g2) && return Channel(_ -> nothing, ctype = T)
     make_callback(c) = vmap -> (put!(c, collect(zip(vmap, 1:length(vmap)))), return true)
     ch::Channel{T} = Channel(; ctype=T) do c
         vf2(
@@ -672,6 +670,4 @@ function all_isomorph(
     end
     return ch
 end
-
 #! format: on
-# Turns on formatting from this point onwards

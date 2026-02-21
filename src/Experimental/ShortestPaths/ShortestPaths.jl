@@ -4,7 +4,7 @@ using Graphs
 using Graphs.Experimental.Traversals
 using Graphs: AbstractGraph, AbstractEdge
 using Graphs.SimpleGraphs: AbstractSimpleGraph
-using DataStructures: PriorityQueue, enqueue!, dequeue!
+using DataStructures: PriorityQueue
 
 import Graphs.Experimental.Traversals:
     initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!
@@ -78,7 +78,7 @@ shortest paths.
 See `ShortestPathAlgorithm` for more details on the algorithm specifications.
 
 ### Implementation Notes
-The elements of `distmx` may be of any type that has a [Total Ordering](https://en.m.wikipedia.org/wiki/Total_order)
+The elements of `distmx` may be of any type that has a [Total Ordering](https://en.wikipedia.org/wiki/Total_order)
 and valid comparator, `zero` and `typemax` functions. Concretely, this means that
 distance matrices containing complex numbers are invalid.
 
@@ -181,8 +181,8 @@ algorithm `alg` (one of [`BellmanFord`](@ref) or [`SPFA`](@ref)), return
 `true` if any cycle detected in the graph has a negative weight.
 # Examples
 
-```
-julia> using Graphs
+```jldoctest
+julia> using Graphs, Graphs.Experimental.ShortestPaths
 
 julia> g = complete_graph(3);
 

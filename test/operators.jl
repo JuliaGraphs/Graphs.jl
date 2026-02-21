@@ -1,3 +1,7 @@
+# TODO most of the tests here do not work with generic graphs yet
+# as the require the ability to copy or modify graphs, which is not provided
+# by the AbstractGraph interface
+
 @testset "Operators" begin
     rng = StableRNG(1)
 
@@ -52,66 +56,79 @@
 
         @testset "merge vertices" begin
             # Check merge_vertices function.
-            h = Graph{T}(7)
-            add_edge!(h, 2, 5)
-            add_edge!(h, 3, 6)
-            add_edge!(h, 1, 7)
-            add_edge!(h, 6, 5)
-
+            h1 = Graph{T}(7)
+            add_edge!(h1, 2, 5)
+            add_edge!(h1, 3, 6)
+            add_edge!(h1, 1, 7)
+            add_edge!(h1, 6, 5)
             vs = [2, 3, 7, 3, 3, 2]
-            hmerged = merge_vertices(h, vs)
+            hmerged = @inferred merge_vertices(h1, vs)
             @test neighbors(hmerged, 1) == [2]
             @test neighbors(hmerged, 2) == [1, 4, 5]
             @test neighbors(hmerged, 3) == []
             @test neighbors(hmerged, 4) == [2, 5]
+            @test eltype(hmerged) == eltype(g)
 
-            new_map = @inferred(merge_vertices!(h, vs))
+            new_map = @inferred(merge_vertices!(h1, vs))
             @test new_map == [1, 2, 2, 3, 4, 5, 2]
-            @test neighbors(h, 1) == [2]
-            @test neighbors(h, 2) == [1, 4, 5]
-            @test neighbors(h, 3) == []
-            @test neighbors(hmerged, 4) == [2, 5]
-            @test hmerged == h
+            @test neighbors(h1, 1) == [2]
+            @test neighbors(h1, 2) == [1, 4, 5]
+            @test neighbors(h1, 3) == []
+            @test neighbors(h1, 4) == [2, 5]
+            @test hmerged == h1
 
-            h = Graph{T}(7)
-            add_edge!(h, 1, 2)
-            add_edge!(h, 2, 3)
-            add_edge!(h, 2, 4)
-            add_edge!(h, 3, 4)
-            add_edge!(h, 3, 7)
-            new_map = @inferred(merge_vertices!(h, [2, 3, 2, 2]))
+            h2 = path_digraph(4)
+            h2 = DiGraph{T}(h2)
+            hmerged = @inferred merge_vertices(h2, [2, 3])
+            @test is_directed(hmerged)
+            @test inneighbors(hmerged, 1) == []
+            @test inneighbors(hmerged, 2) == [1]
+            @test inneighbors(hmerged, 3) == [2]
+            @test outneighbors(hmerged, 1) == [2]
+            @test outneighbors(hmerged, 2) == [3]
+            @test outneighbors(hmerged, 3) == []
+            @test eltype(hmerged) == eltype(h2)
+
+            h3 = Graph{T}(7)
+            add_edge!(h3, 1, 2)
+            add_edge!(h3, 2, 3)
+            add_edge!(h3, 2, 4)
+            add_edge!(h3, 3, 4)
+            add_edge!(h3, 3, 7)
+            new_map = @inferred(merge_vertices!(h3, [2, 3, 2, 2]))
             @test new_map == [1, 2, 2, 3, 4, 5, 6]
-            @test neighbors(h, 2) == [1, 3, 6]
-            @test neighbors(h, 1) == [2]
-            @test neighbors(h, 3) == [2]
-            @test neighbors(h, 4) == Int[]
-            @test neighbors(h, 6) == [2]
-            @test ne(h) == 3
-            @test nv(h) == 6
+            @test neighbors(h3, 2) == [1, 3, 6]
+            @test neighbors(h3, 1) == [2]
+            @test neighbors(h3, 3) == [2]
+            @test neighbors(h3, 4) == Int[]
+            @test neighbors(h3, 6) == [2]
+            @test ne(h3) == 3
+            @test nv(h3) == 6
 
-            h2 = Graph{T}(7)
-            add_edge!(h2, 1, 2)
-            add_edge!(h2, 2, 3)
-            add_edge!(h2, 2, 4)
-            add_edge!(h2, 3, 4)
-            add_edge!(h2, 3, 7)
-            add_edge!(h2, 6, 7)
-            new_map = @inferred(merge_vertices!(h2, [2, 7, 3, 2]))
+            h4 = Graph{T}(7)
+            add_edge!(h4, 1, 2)
+            add_edge!(h4, 2, 3)
+            add_edge!(h4, 2, 4)
+            add_edge!(h4, 3, 4)
+            add_edge!(h4, 3, 7)
+            add_edge!(h4, 6, 7)
+            new_map = @inferred(merge_vertices!(h4, [2, 7, 3, 2]))
             @test new_map == [1, 2, 2, 3, 4, 5, 2]
-            @test neighbors(h2, 2) == [1, 3, 5]
-            @test neighbors(h2, 1) == [2]
-            @test neighbors(h2, 3) == [2]
-            @test neighbors(h2, 4) == Int[]
-            @test neighbors(h2, 5) == [2]
-            @test ne(h2) == 3
-            @test nv(h2) == 5
+            @test neighbors(h4, 2) == [1, 3, 5]
+            @test neighbors(h4, 1) == [2]
+            @test neighbors(h4, 3) == [2]
+            @test neighbors(h4, 4) == Int[]
+            @test neighbors(h4, 5) == [2]
+            @test ne(h4) == 3
+            @test nv(h4) == 5
 
-            h3 = star_graph(5)
-            h3merged = merge_vertices(h3, [1, 2])
-            @test neighbors(h3merged, 1) == [2, 3, 4]
-            @test neighbors(h3merged, 2) == [1]
-            @test neighbors(h3merged, 3) == [1]
-            @test neighbors(h3merged, 4) == [1]
+            h5 = star_graph(5)
+            h5 = Graph{T}(h5)
+            h5merged = merge_vertices(h5, [1, 2])
+            @test neighbors(h5merged, 1) == [2, 3, 4]
+            @test neighbors(h5merged, 2) == [1]
+            @test neighbors(h5merged, 3) == [1]
+            @test neighbors(h5merged, 4) == [1]
         end
     end
 
@@ -176,7 +193,7 @@
     end
 
     px = path_graph(10)
-    @testset "Matrix operations: $p" for p in testgraphs(px)
+    @testset "Matrix operations: $(typeof(p))" for p in test_generic_graphs(px)
         x = @inferred(p * ones(10))
         @test x[1] == 1.0 && all(x[2:(end - 1)] .== 2.0) && x[end] == 1.0
         @test size(p) == (10, 10)
@@ -195,7 +212,7 @@
     add_edge!(gx, 2, 3)
     add_edge!(gx, 1, 3)
     add_edge!(gx, 3, 4)
-    @testset "Matrix operations: $g" for g in testdigraphs(gx)
+    @testset "Matrix operations: $(typeof(g))" for g in test_generic_graphs(gx)
         @test @inferred(g * ones(nv(g))) == [2.0, 1.0, 1.0, 0.0]
         @test sum(g, 1) == [0, 1, 2, 1]
         @test sum(g, 2) == [2, 1, 1, 0]
@@ -208,7 +225,7 @@
     add_edge!(gx, 2, 1)
     add_edge!(gx, 1, 3)
     add_edge!(gx, 3, 1)
-    @testset "Matrix operations: $g" for g in testdigraphs(gx)
+    @testset "Matrix operations: $(typeof(g))" for g in test_generic_graphs(gx)
         @test @inferred(issymmetric(g))
     end
 
@@ -332,7 +349,7 @@
         @test @inferred(ndims(g)) == 2
     end
 
-    @testset "Length: $g" for g in testgraphs(SimpleGraph(100))
+    @testset "Length: $(typeof(g))" for g in test_generic_graphs(SimpleGraph(100))
         @test length(g) == 10000
     end
 end

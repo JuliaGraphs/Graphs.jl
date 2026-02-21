@@ -127,11 +127,16 @@ function randbn(
 end
 
 """
-    erdos_renyi(n, p)
+    erdos_renyi(n, p::Real)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
-probability `p`.
+probability `p`. 
+
+Note that there exists another definition of the Erdös-Rényi model in which the
+total number of edges is kept constant, rather than the probability `p`.
+To access this definition, use `erdos_renyi(n, ne::Integer)`
+(specifically: `erdos_renyi(n, 1) != erdos_renyi(n, 1.0)`).
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
@@ -145,7 +150,7 @@ julia> using Graphs
 julia> erdos_renyi(10, 0.5)
 {10, 20} undirected simple Int64 graph
 ```
-```jldoctest
+```
 julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
@@ -170,7 +175,7 @@ function erdos_renyi(
 end
 
 """
-    erdos_renyi(n, ne)
+    erdos_renyi(n, ne::Integer)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
 graph with `n` vertices and `ne` edges.
@@ -181,7 +186,7 @@ graph with `n` vertices and `ne` edges.
 - `seed=nothing`: set the RNG seed.
 
 # Examples
-```jldoctest
+```
 julia> using Graphs
 
 julia> erdos_renyi(10, 30)
@@ -443,7 +448,9 @@ function newman_watts_strogatz(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
-    return watts_strogatz(n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed)
+    return watts_strogatz(
+        n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed
+    )
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
@@ -696,7 +703,7 @@ julia> edges(g) |> collect
  Edge 2 => 3
  Edge 2 => 4
 ```
-```jldoctest
+```
 julia> using Graphs
 
 julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1], seed=123)
@@ -755,7 +762,7 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 
 ## Examples
-```jldoctest
+```
 julia> using Graphs
 
 julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
@@ -965,10 +972,10 @@ function random_regular_graph(
 end
 
 """
-    random_configuration_model(n, ks)
+    random_configuration_model(n, k)
 
 Create a random undirected graph according to the [configuration model]
-(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
+(https://sites.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
 containing `n` vertices, with each node `i` having degree `k[i]`.
 
 ### Optional Arguments
@@ -1157,7 +1164,7 @@ function stochastic_block_model(
         for b in a:K
             ((a == b) && !(c[a, b] <= n[b] - 1)) ||
                 ((a != b) && !(c[a, b] <= n[b])) && error(
-                    "Mean degree cannot be greater than available neighbors in the block.",
+                    "Mean degree cannot be greater than available neighbors in the block."
                 ) # TODO 0.7: turn into some other error?
 
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
@@ -1487,24 +1494,28 @@ function dorogovtsev_mendes(
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = rng_from_rng_or_seed(rng, seed)
     g = cycle_graph(3)
+    bag_of_edges = Vector{SimpleEdge{Int}}(undef, 2 * n - 3) # Caching edges as they are added to avoid costly lookups
 
-    for iteration in 1:(n - 3)
-        chosenedge = rand(rng, 1:(2 * ne(g))) # undirected so each edge is listed twice in adjlist
-        u, v = -1, -1
-        for i in 1:nv(g)
-            edgelist = outneighbors(g, i)
-            if chosenedge > length(edgelist)
-                chosenedge -= length(edgelist)
-            else
-                u = i
-                v = edgelist[chosenedge]
-                break
-            end
-        end
+    bag_of_edges[1] = SimpleEdge(1, 2)
+    bag_of_edges[2] = SimpleEdge(1, 3)
+    bag_of_edges[3] = SimpleEdge(2, 3)
+    index = 3
 
+    for _ in 1:(n - 3)
+        # Choose random edge from bag
+        edge = bag_of_edges[rand(rng, 1:index)]
+        u, v = src(edge), dst(edge)
+
+        # Add new vertex
         add_vertex!(g)
+        # Add new edges
         add_edge!(g, nv(g), u)
         add_edge!(g, nv(g), v)
+
+        # Add new edges to bag
+        bag_of_edges[index + 1] = SimpleEdge(nv(g), edge.src)
+        bag_of_edges[index + 2] = SimpleEdge(nv(g), edge.dst)
+        index += 2
     end
     return g
 end

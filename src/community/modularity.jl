@@ -48,28 +48,26 @@ julia> barbell = blockdiag(complete_graph(3), complete_graph(3));
 julia> add_edge!(barbell, 1, 4);
 
 julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
-0.35714285714285715
+0.3571428571428571
 
 julia> modularity(barbell, [1, 1, 1, 2, 2, 2], γ=0.5)
 0.6071428571428571  
 ```
-```
-julia> using SimpleWeightedGraphs
+```jldoctest
+julia> using Graphs
 
-julia> triangle = SimpleWeightedGraph(3);
-
-julia> add_edge!(triangle, 1, 2, 1);
-
-julia> add_edge!(triangle, 2, 3, 1);
-
-julia> add_edge!(triangle, 3, 1, 1);
+julia> triangle = cycle_graph(3);
 
 julia> barbell = blockdiag(triangle, triangle);
 
-julia> add_edge!(barbell, 1, 4, 5); # this edge has a weight of 5
+julia> add_edge!(barbell, 1, 4);
 
-julia> modularity(barbell, [1, 1, 1, 2, 2, 2])
-0.045454545454545456
+julia> distmx = Matrix(weights(barbell));
+
+julia> distmx[1, 4] = distmx[4, 1] = 5;  # additional edge has a weight of 5
+
+julia> round(modularity(barbell, [1, 1, 1, 2, 2, 2]; distmx), digits=6)
+0.045455
 ```
 """
 function modularity(
@@ -92,14 +90,20 @@ function modularity(
             c2 = c[v]
             if c1 == c2
                 Q += distmx[u, v]
+                if u == v && !is_directed(g)
+                    #Since we do not look at each end in outer loop
+                    Q += distmx[u, v]
+                end
             end
             kout[c1] += distmx[u, v]
             kin[c2] += distmx[u, v]
+            if u == v && !is_directed(g)
+                #Since we do not look at each end in outer loop
+                kout[c1] += distmx[u, v]
+                kin[c2] += distmx[u, v]
+            end
         end
     end
-    Q = Q * m
-    @inbounds for i in 1:nc
-        Q -= γ * kin[i] * kout[i]
-    end
-    return Q / m^2
+    Q = Q/m - γ * sum(kin .* kout) / m^2
+    return Q
 end

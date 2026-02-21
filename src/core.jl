@@ -47,8 +47,11 @@ add_vertices!(g::AbstractGraph, n::Integer) = sum([add_vertex!(g) for i in 1:n])
 """
     indegree(g[, v])
 
-Return a vector corresponding to the number of edges which end at each vertex in
-graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+Return a vector containing the indegrees of every vertex of the graph `g`, where
+the indegree of a vertex is defined as the number of edges which end at that
+vertex. If `v` is specified and is a single vertex, only return the indegree of
+`v`. If `v` is specified and is a vector of vertices, only return the indegrees
+of the vertices in `v`.
 
 # Examples
 ```jldoctest
@@ -65,16 +68,27 @@ julia> indegree(g)
  1
  0
  1
+
+julia> indegree(g,[2,3])
+2-element Vector{Int64}:
+ 0
+ 1
+
+julia> indegree(g,2)
+0
 ```
 """
 indegree(g::AbstractGraph, v::Integer) = length(inneighbors(g, v))
-indegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [indegree(g, x) for x in v]
+indegree(g::AbstractGraph, vs=vertices(g)) = [indegree(g, x) for x in vs]
 
 """
     outdegree(g[, v])
 
-Return a vector corresponding to the number of edges which start at each vertex in
-graph `g`. If `v` is specified, only return degrees for vertices in `v`.
+Return a vector containing the outdegrees of every vertex of the graph `g`, where
+the outdegree of a vertex is defined as the number of edges which start at that
+vertex. If `v` is specified and is a single vertex, only return the outdegree of
+`v`. If `v` is specified and is a vector of vertices, only return the outdegrees
+of the vertices in `v`.
 
 # Examples
 ```jldoctest
@@ -91,18 +105,28 @@ julia> outdegree(g)
  0
  1
  1
+
+julia> outdegree(g,[1,2])
+2-element Vector{Int64}:
+ 0
+ 1
+
+julia> outdegree(g,2)
+1
 ```
 """
 outdegree(g::AbstractGraph, v::Integer) = length(outneighbors(g, v))
-outdegree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [outdegree(g, x) for x in v]
+outdegree(g::AbstractGraph, vs=vertices(g)) = [outdegree(g, x) for x in vs]
 
 """
     degree(g[, v])
 
-Return a vector corresponding to the number of edges which start or end at each
-vertex in graph `g`. If `v` is specified, only return degrees for vertices in `v`.
-For directed graphs, this value equals the incoming plus outgoing edges.
-For undirected graphs, it equals the connected edges.
+Return a vector containing the degrees of every vertex of the graph `g`, where
+the degree of a vertex is defined as the number of edges which start or end at
+that vertex. For directed graphs, the degree of a vertex is equal to the sum of
+its indegree and outdegree. If `v` is specified and is a single vertex, only
+return the degree of `v`. If `v` is specified and is a vector of vertices, only
+return the degrees of the vertices in `v`.
 
 # Examples
 ```jldoctest
@@ -119,13 +143,26 @@ julia> degree(g)
  1
  1
  2
+
+julia> degree(g,[1,3])
+2-element Vector{Int64}:
+ 1
+ 2
+
+julia> degree(g,3)
+2
 ```
 """
 function degree end
-@traitfn degree(g::::IsDirected, v::Integer) = indegree(g, v) + outdegree(g, v)
-@traitfn degree(g::::(!IsDirected), v::Integer) = indegree(g, v)
 
-degree(g::AbstractGraph, v::AbstractVector=vertices(g)) = [degree(g, x) for x in v]
+function degree(g::AbstractGraph, v::Integer)
+    if !is_directed(g)
+        return outdegree(g, v)
+    end
+    return indegree(g, v) + outdegree(g, v)
+end
+
+degree(g::AbstractGraph, vs=vertices(g)) = [degree(g, x) for x in vs]
 
 """
     Δout(g)
@@ -392,14 +429,8 @@ can accommodate all vertices.
 May also return the original graph if the eltype does not change.
 """
 function squash(g::AbstractGraph)
-
-    # TODO this version check can be removed when we increase the required Julia version
     deprecation_msg = "squash(::AbstractGraph) is deprecated in favor of methods that specialize on the graph type."
-    if VERSION >= v"1.5.2"
-        Base.depwarn(deprecation_msg, :squash; force=true)
-    else
-        Base.depwarn(deprecation_msg, :squash)
-    end
+    Base.depwarn(deprecation_msg, :squash; force=true)
 
     gtype = is_directed(g) ? DiGraph : Graph
     validtypes = [UInt8, UInt16, UInt32, UInt64, Int64]

@@ -220,9 +220,49 @@ julia> strongly_connected_components(g)
  [10, 11]
 ```
 """
-function strongly_connected_components end
+strongly_connected_components(g) = strongly_connected_components_tarjan(g)
+
+"""
+    strongly_connected_components_tarjan(g)
+
+Compute the strongly connected components of a directed graph `g` using Tarjan's algorithm.
+
+Return an array of arrays, each of which is the entire connected component.
+
+### Implementation Notes
+The returned components will be ordered reverse topologically.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = SimpleDiGraph([0 1 0; 1 0 1; 0 0 0]);
+
+julia> strongly_connected_components_tarjan(g)
+2-element Vector{Vector{Int64}}:
+ [3]
+ [1, 2]
+
+julia> g = SimpleDiGraph(11)
+{11, 0} directed simple Int64 graph
+
+julia> edge_list=[(1,2),(2,3),(3,4),(4,1),(3,5),(5,6),(6,7),(7,5),(5,8),(8,9),(9,8),(10,11),(11,10)];
+
+julia> g = SimpleDiGraph(Edge.(edge_list))
+{11, 13} directed simple Int64 graph
+
+julia> strongly_connected_components_tarjan(g)
+4-element Vector{Vector{Int64}}:
+ [8, 9]
+ [5, 6, 7]
+ [1, 2, 3, 4]
+ [10, 11]
+```
+"""
+function strongly_connected_components_tarjan end
+
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components(
+@traitfn function strongly_connected_components_tarjan(
     g::AG::IsDirected
 ) where {T<:Integer,AG<:AbstractGraph{T}}
     zero_t = zero(T)
@@ -758,24 +798,49 @@ function isgraphical(degs::AbstractVector{<:Integer})
     !isempty(degs) || return true
     # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
-    # Check that all degrees are non negative and less than n-1
+    # Compute the length of the degree sequence
     n = length(degs)
+    # Check that all degrees are non negative and less than n-1
     all(0 .<= degs .<= n - 1) || return false
     # Sort the degree sequence in non-increasing order
     sorted_degs = sort(degs; rev=true)
-    # Compute the length of the degree sequence
+    # Initialise a sum variable
     cur_sum = zero(UInt64)
-    # Compute the minimum of each degree and the corresponding index
-    mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i in 1:n
-        mindeg[i] = min(i, sorted_degs[i])
-    end
+    right_deg_sum = zero(UInt64)
+    # Initalise a pointer to track the smallest index with degree greater than r
+    ptr = n
     # Check if the degree sequence satisfies the Erdös-Gallai condition
-    cum_min = sum(mindeg)
     @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
-        cum_min -= mindeg[r]
-        cond = cur_sum <= (r * (r - 1) + cum_min)
+        #  Calculate the sum of the minimum of r and the degrees of the vertices
+        min_idx = r + 1
+        while ptr >= min_idx
+            if sorted_degs[ptr] <= r
+                # left_deg_sum = sum_{ptr+1}^n d_i
+                right_deg_sum += sorted_degs[ptr]
+                # move pointer to the 1-slot left
+                ptr -= 1
+            else
+                # the ptr points to the degree greater than r
+                break
+            end
+        end
+        # calculate min_deg_sum: sum_{r+1}^n min(r, d_i)
+        if ptr < min_idx
+            # all required degrees are less than r
+            # ptr is min_idx - 1
+            min_deg_sum = right_deg_sum
+            # prepare for the next iteration
+            # shift ptr to the right
+            ptr += 1
+            # reduce right_deg_sum
+            right_deg_sum -= sorted_degs[ptr]
+        else
+            # d_i with i between ptr and min_idx are greater than r 
+            min_deg_sum = (ptr - r) * r + right_deg_sum
+        end
+        # Check the Erdös-Gallai condition
+        cond = cur_sum <= (r * (r - 1) + min_deg_sum)
         cond || return false
     end
     return true

@@ -81,7 +81,7 @@ function betweenness_centrality(
 )
     return betweenness_centrality(
         g,
-        sample(vertices(g), k; rng=rng, seed=seed),
+        sample(collect_if_not_vector(vertices(g)), k; rng=rng, seed=seed),
         distmx;
         normalize=normalize,
         endpoints=endpoints,
@@ -124,8 +124,7 @@ function _accumulate_endpoints!(
     v1 = collect(Base.OneTo(n_v))
     v2 = state.dists
     S = reverse(state.closest_vertices)
-    s = vertices(g)[si]
-    betweenness[s] += length(S) - 1    # 289
+    betweenness[si] += length(S) - 1    # 289
 
     for w in S
         coeff = (1.0 + δ[w]) / σ[w]
@@ -142,22 +141,15 @@ end
 function _rescale!(
     betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Integer
 )
+    scale = nothing
     if normalize
-        if n <= 2
-            do_scale = false
-        else
-            do_scale = true
+        if 2 < n
             scale = 1.0 / ((n - 1) * (n - 2))
         end
-    else
-        if !directed
-            do_scale = true
-            scale = 1.0 / 2.0
-        else
-            do_scale = false
-        end
+    elseif !directed
+        scale = 1.0 / 2.0
     end
-    if do_scale
+    if !isnothing(scale)
         if k > 0
             scale = scale * n / k
         end
