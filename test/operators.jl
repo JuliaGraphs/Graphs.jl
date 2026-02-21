@@ -268,6 +268,7 @@
     for i in 3:4
         @testset "Tensor Product: $g" for g in testgraphs(path_graph(i))
             @test length(connected_components(tensor_product(g, g))) == 2
+            @test count_connected_components(tensor_product(g, g)) == 2
         end
     end
 
