@@ -17,6 +17,11 @@ cp(
     normpath(@__FILE__, "../src/index.md");
     force=true,
 )
+cp(
+    normpath(@__FILE__, "../../CHANGELOG.md"),
+    normpath(@__FILE__, "../src/CHANGELOG.md");
+    force=true,
+)
 
 function get_title(markdown_file_path::AbstractString)
     first_line = open(markdown_file_path) do io
@@ -111,3 +116,4 @@ deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))
 rm(normpath(@__FILE__, "../src/index.md"))
+rm(normpath(@__FILE__, "../src/CHANGELOG.md"))
