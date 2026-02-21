@@ -21,5 +21,6 @@ Pages   = [
     "traversals/maxadjvisit.jl",
     "traversals/randomwalks.jl",
     "traversals/eulerian.jl",
+    "traversals/all_simple_paths.jl",
 ]
 ```

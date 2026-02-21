@@ -5,11 +5,20 @@
     @test last(eulerian(g0, 1)) == 1 # a cycle
 
     # a tour (different start/end)
-    g1 = GenericGraph(SimpleGraph([Edge(1, 2), Edge(2, 3), Edge(3, 4)]))
-    @test eulerian(g1, 1) == [1, 2, 3, 4]
+    g1_3 = GenericGraph(SimpleGraph([Edge(1, 2), Edge(2, 3)]))
+    @test eulerian(g1_3, 3) == [3, 2, 1]
+    g1_4 = GenericGraph(SimpleGraph([Edge(1, 2), Edge(2, 3), Edge(3, 4)]))
+    @test eulerian(g1_4, 1) == [1, 2, 3, 4]
+    # in a graph with an Eulerian trail but not cycle, you have to start at an odd degree vertex
     @test_throws ErrorException(
         "starting vertex has even degree but there are other vertices with odd degree: a eulerian cycle does not exist",
-    ) eulerian(g1, 2)
+    ) eulerian(g1_3, 2)
+    # too many odd degree vertices; Eulerian cycle does not exist
+    # 3-pointed star with vertex 1 at the center
+    g_star = GenericGraph(SimpleGraph([Edge(1, 2), Edge(1, 3), Edge(1, 4)]))
+    @test_throws ErrorException(
+        "starting vertex has odd degree but the total number of vertices of odd degree is not equal to 2: a eulerian trail does not exist",
+    ) eulerian(g_star, 1)
 
     # a cycle with a node (vertex 2) with multiple neighbors
     g2 = GenericGraph(

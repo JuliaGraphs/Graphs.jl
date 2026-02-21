@@ -2,7 +2,7 @@
 # as they require cloning and modifying graphs.
 
 """
-    complement(g)
+	complement(g)
 
 Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
 of a graph
@@ -58,7 +58,7 @@ function complement(g::DiGraph)
 end
 
 """
-    reverse(g)
+	reverse(g)
 
 Return a directed graph where all edges are reversed from the
 original directed graph.
@@ -93,7 +93,7 @@ function reverse end
 end
 
 """
-    reverse!(g)
+	reverse!(g)
 
 In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
@@ -105,7 +105,7 @@ function reverse! end
 end
 
 """
-    blockdiag(g, h)
+	blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
 edges where the vertices and edges from graph `h` are appended to graph `g`.
@@ -150,7 +150,7 @@ function blockdiag(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    intersect(g, h)
+	intersect(g, h)
 
 Return a graph with edges that are only in both graph `g` and graph `h`.
 
@@ -184,7 +184,7 @@ function intersect(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    difference(g, h)
+	difference(g, h)
 
 Return a graph with edges in graph `g` that are not in graph `h`.
 
@@ -218,7 +218,7 @@ function difference(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    symmetric_difference(g, h)
+	symmetric_difference(g, h)
 
 Return a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
@@ -264,7 +264,7 @@ function symmetric_difference(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    union(g, h)
+	union(g, h)
 
 Return a graph that combines graphs `g` and `h` by taking the set union
 of all vertices and edges.
@@ -319,7 +319,7 @@ function union(g::T, h::T) where {T<:AbstractSimpleGraph}
 end
 
 """
-    join(g, h)
+	join(g, h)
 
 Return a graph that combines graphs `g` and `h` using `blockdiag` and then
 adds all the edges between the vertices in `g` and those in `h`.
@@ -359,7 +359,7 @@ function join(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    crosspath(len::Integer, g::Graph)
+	crosspath(len::Integer, g::Graph)
 
 Return a graph that duplicates `g` `len` times and connects each vertex
 with its copies in a path.
@@ -405,7 +405,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize Graphs natively.
 # """
-function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
+function *(g::AbstractGraph, v::Vector{T}) where {T<:Number}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -420,7 +420,7 @@ function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
 end
 
 """
-    sum(g, i)
+	sum(g, i)
 
 Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 
@@ -455,7 +455,7 @@ end
 
 size(g::AbstractGraph) = (nv(g), nv(g))
 """
-    size(g, i)
+	size(g, i)
 
 Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
 
@@ -478,7 +478,7 @@ julia> size(g, 3)
 size(g::AbstractGraph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
 """
-    sum(g)
+	sum(g)
 
 Return the number of edges in `g`.
 
@@ -495,7 +495,7 @@ julia> sum(g)
 sum(g::AbstractGraph) = ne(g)
 
 """
-    sparse(g)
+	sparse(g)
 
 Return the default adjacency matrix of `g`.
 """
@@ -504,11 +504,11 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;!IsDirected{AG}}
     return true
 end
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;IsDirected{AG}}
     for e in edges(g)
         if !has_edge(g, reverse(e))
             return false
@@ -518,7 +518,7 @@ end
 end
 
 """
-    cartesian_product(g, h)
+	cartesian_product(g, h)
 
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
@@ -570,7 +570,7 @@ function cartesian_product(g::G, h::G) where {G<:AbstractGraph}
 end
 
 """
-    tensor_product(g, h)
+	tensor_product(g, h)
 
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
@@ -618,8 +618,8 @@ end
 ## subgraphs ###
 
 """
-    induced_subgraph(g, vlist)
-    induced_subgraph(g, elist)
+	induced_subgraph(g, vlist)
+	induced_subgraph(g, elist)
 
 Return the subgraph of `g` induced by the vertices in  `vlist` or edges in `elist`
 along with a vector mapping the new vertices to the old ones
@@ -706,7 +706,7 @@ function induced_subgraph(
 end
 
 """
-    g[iter]
+	g[iter]
 
 Return the subgraph induced by `iter`.
 Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
@@ -714,7 +714,7 @@ Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 """
-    egonet(g, v, d, distmx=weights(g))
+	egonet(g, v, d, distmx=weights(g))
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
 `d`, using weights (optionally) provided by `distmx`.
@@ -735,7 +735,7 @@ function egonet(
 end
 
 """
-    compute_shifts(n::Int, x::AbstractArray)
+	compute_shifts(n::Int, x::AbstractArray)
 
 Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
@@ -746,7 +746,7 @@ function compute_shifts(n::Integer, x::AbstractArray)
 end
 
 """
-    merge_vertices(g::AbstractGraph, vs)
+	merge_vertices(g::AbstractGraph, vs)
 
 Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
 
@@ -772,7 +772,7 @@ julia> collect(edges(h))
  Edge 3 => 4
 ```
 """
-function merge_vertices(g::AbstractSimpleGraph, vs)
+function merge_vertices(g::G, vs) where {G<:AbstractSimpleGraph}
     # Use lowest value as new vertex id.
     vs = unique!(sort(vs))
     merged_vertex = popfirst!(vs)
@@ -788,7 +788,7 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
     new_vertex_ids[vs] .= merged_vertex
 
     # if v in vs then labels[v] == v0 else labels[v] == v
-    newg = SimpleGraph(nvnew)
+    newg = G(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
         if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
@@ -799,7 +799,7 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
 end
 
 """
-    merge_vertices!(g, vs)
+	merge_vertices!(g, vs)
 
 Combine vertices specified in `vs` into single vertex whose
 index will be the lowest value in `vs`. All edges connected to vertices in `vs`

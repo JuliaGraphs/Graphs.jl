@@ -162,7 +162,7 @@ ne(g::AbstractGraph) = _NI("ne")
 Return (an iterator to or collection of) the vertices of a graph.
 
 ### Implementation Notes
-A returned iterator is valid for one pass over the edges, and
+A returned iterator is valid for one pass over the vertices, and
 is invalidated by changes to `g`.
 
 # Examples
@@ -183,7 +183,7 @@ vertices(g::AbstractGraph) = _NI("vertices")
     edges(g)
 
 Return (an iterator to or collection of) the edges of a graph.
-For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter`.
+For `AbstractSimpleGraph`s it returns a `SimpleEdgeIter` (lexicographical order).
 The expressions `e in edges(g)` and `e ∈ edges(g)` evaluate as
 calls to [`has_edge`](@ref).
 

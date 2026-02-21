@@ -4,7 +4,7 @@ using Graphs.Experimental.Traversals
     struct BFS <: ShortestPathAlgorithm
 
 The structure used to configure and specify that [`shortest_paths`](@ref)
-should use the [Breadth-First Search algorithm](https://en.m.wikipedia.org/wiki/Breadth-first_search).
+should use the [Breadth-First Search algorithm](https://en.wikipedia.org/wiki/Breadth-first_search).
 
 An optional sorting algorithm may be specified (default = no sorting).
 Sorting helps maintain cache locality and will improve performance on

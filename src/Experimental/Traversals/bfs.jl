@@ -1,4 +1,3 @@
-import Base.Sort, Base.Sort.Algorithm
 import Base: sort!
 
 struct NOOPSortAlg <: Base.Sort.Algorithm end
