@@ -578,6 +578,8 @@ The optional `T` argument specifies the element type, which defaults to `Int64`.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> regular_tree(4, 3)
 {40, 39} undirected simple Int64 graph
 
