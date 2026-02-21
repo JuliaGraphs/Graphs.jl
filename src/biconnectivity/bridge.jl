@@ -1,7 +1,7 @@
 """
     bridges(g)
 
-Compute the [bridges](https://en.m.wikipedia.org/wiki/Bridge_(graph_theory))
+Compute the [bridges](https://en.wikipedia.org/wiki/Bridge_(graph_theory))
 of a connected graph `g` and return an array containing all bridges, i.e edges
 whose deletion increases the number of connected components of the graph.
 # Examples
@@ -9,14 +9,14 @@ whose deletion increases the number of connected components of the graph.
 julia> using Graphs
 
 julia> bridges(star_graph(5))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
  Edge 1 => 5
 
 julia> bridges(path_graph(5))
-8-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+4-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 4 => 5
  Edge 3 => 4
  Edge 2 => 3
@@ -40,6 +40,14 @@ function bridges end
         cnt::T = one(T) # keeps record of the time
         first_time = true
 
+        # TODO the algorithm currently relies on the assumption that
+        # outneighbors(g, v) is indexable. This assumption might not be true
+        # in general, so in case that outneighbors does not produce a vector
+        # we collect these vertices. This might lead to a large number of
+        # allocations, so we should find a way to handle that case differently,
+        # or require inneighbors, outneighbors and neighbors to always
+        # return indexable collections.
+
         # start of DFS
         while !isempty(s) || first_time
             first_time = false
@@ -47,11 +55,11 @@ function bridges end
                 pre[v] = cnt
                 cnt += 1
                 low[v] = pre[v]
-                v_neighbors = outneighbors(g, v)
+                v_neighbors = collect_if_not_vector(outneighbors(g, v))
                 wi = 1
             else
                 wi, u, v = pop!(s) # the stack states, explained later
-                v_neighbors = outneighbors(g, v)
+                v_neighbors = collect_if_not_vector(outneighbors(g, v))
                 w = v_neighbors[wi]
                 low[v] = min(low[v], low[w]) # condition check for (v, w) being a tree-edge
                 if low[w] > pre[v]

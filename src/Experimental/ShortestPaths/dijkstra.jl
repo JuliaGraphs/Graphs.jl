@@ -66,7 +66,7 @@ function shortest_paths(
     sizehint!(closest_vertices, nvg)
 
     while !isempty(H)
-        u = dequeue!(H)
+        u = popfirst!(H).first
 
         if alg.track_vertices
             push!(closest_vertices, u)

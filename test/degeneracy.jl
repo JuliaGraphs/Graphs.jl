@@ -1,7 +1,7 @@
 @testset "Decomposition" begin
     d = loadgraph(joinpath(testdir, "testdata", "graph-decomposition.jgz"))
 
-    @testset "$g" for g in testgraphs(d)
+    @testset "$(typeof(g))" for g in test_generic_graphs(d)
         corenum = @inferred(core_number(g))
         @test corenum == [3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 0]
 
@@ -22,18 +22,26 @@
             @test @inferred(k_crust(g, 2)) == k_crust(g, 2; corenum=corenum) == [9:21;]
             @test @inferred(k_crust(g, 4, corenum=corenum)) == [1:21;]
         end
+    end
 
-        @testset "k-corona" begin
-            @test @inferred(k_corona(g, 1)) == k_corona(g, 1; corenum=corenum) == [17:20;]
-            @test @inferred(k_corona(g, 2)) == [10, 12, 13, 14, 15, 16]
-        end
+    # TODO k_corona does not work yet with generic graphs
+    @testset "k-corona $(typeof(g))" for g in testgraphs(d)
+        corenum = [3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 0]
 
-        @testset "errors" begin
-            add_edge!(g, 1, 1)
-            @test_throws ArgumentError k_core(g)
-            @test_throws ArgumentError k_shell(g)
-            @test_throws ArgumentError k_crust(g)
-            @test_throws ArgumentError k_corona(g, 1)
-        end
+        @test @inferred(k_corona(g, 1)) == k_corona(g, 1; corenum=corenum) == [17:20;]
+        @test @inferred(k_corona(g, 2)) == [10, 12, 13, 14, 15, 16]
+    end
+
+    d_loop = copy(d)
+    add_edge!(d_loop, 1, 1)
+    @testset "errors $(typeof(g))" for g in test_generic_graphs(d_loop)
+        @test_throws ArgumentError k_core(g)
+        @test_throws ArgumentError k_shell(g)
+        @test_throws ArgumentError k_crust(g)
+    end
+
+    # TODO k_corona does not work yet with generic graphs
+    @testset "k-corona errors $(typeof(g))" for g in testgraphs(d_loop)
+        @test_throws ArgumentError k_corona(g, 1)
     end
 end

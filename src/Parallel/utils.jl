@@ -22,14 +22,10 @@ end
 
 Distributed implementation of [`generate_reduce`](@ref).
 """
-function distr_generate_reduce(
-    g::AbstractGraph{T}, gen_func::Function, comp::Comp, reps::Integer
-) where {T<:Integer,Comp}
-    # Type assert required for type stability
-    min_set::Vector{T} = @distributed ((x, y) -> comp(x, y) ? x : y) for _ in 1:reps
-        gen_func(g)
-    end
-    return min_set
+function distr_generate_reduce(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 """
@@ -40,20 +36,24 @@ Multi-threaded implementation of [`generate_reduce`](@ref).
 function threaded_generate_reduce(
     g::AbstractGraph{T}, gen_func::Function, comp::Comp, reps::Integer
 ) where {T<:Integer,Comp}
-    n_t = Base.Threads.nthreads()
-    is_undef = ones(Bool, n_t)
-    min_set = [Vector{T}() for _ in 1:n_t]
-    Base.Threads.@threads for _ in 1:reps
-        t = Base.Threads.threadid()
-        next_set = gen_func(g)
-        if is_undef[t] || comp(next_set, min_set[t])
-            min_set[t] = next_set
-            is_undef[t] = false
+    d, r = divrem(reps, Threads.nthreads())
+    ntasks = d == 0 ? r : Threads.nthreads()
+    min_set = [Vector{T}() for _ in 1:ntasks]
+    is_undef = ones(Bool, ntasks)
+    task_size = cld(reps, ntasks)
+
+    @sync for (t, task_range) in enumerate(Iterators.partition(1:reps, task_size))
+        Threads.@spawn for _ in task_range
+            next_set = gen_func(g)
+            if is_undef[t] || comp(next_set, min_set[t])
+                min_set[t] = next_set
+                is_undef[t] = false
+            end
         end
     end
 
     min_ind = 0
-    for i in filter((j) -> !is_undef[j], 1:n_t)
+    for i in filter((j) -> !is_undef[j], 1:ntasks)
         if min_ind == 0 || comp(min_set[i], min_set[min_ind])
             min_ind = i
         end

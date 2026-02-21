@@ -15,6 +15,8 @@ If not specified, the element type `T` is the type of `nv`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleGraph(5, 7)
 {5, 7} undirected simple Int64 graph
 ```
@@ -63,6 +65,8 @@ If not specified, the element type `T` is the type of `nv`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleDiGraph(5, 7)
 {5, 7} directed simple Int64 graph
 ```
@@ -114,7 +118,7 @@ function randbn(
     log_q = log(1.0 - p)
     x = 0
     sum = 0.0
-    while true
+    for _ in 1:n
         sum += log(rand(rng)) / (n - x)
         sum < log_q && break
         x += 1
@@ -123,11 +127,16 @@ function randbn(
 end
 
 """
-    erdos_renyi(n, p)
+    erdos_renyi(n, p::Real)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model)
 random graph with `n` vertices. Edges are added between pairs of vertices with
-probability `p`.
+probability `p`. 
+
+Note that there exists another definition of the Erdös-Rényi model in which the
+total number of edges is kept constant, rather than the probability `p`.
+To access this definition, use `erdos_renyi(n, ne::Integer)`
+(specifically: `erdos_renyi(n, 1) != erdos_renyi(n, 1.0)`).
 
 ### Optional Arguments
 - `is_directed=false`: if true, return a directed graph.
@@ -135,9 +144,14 @@ probability `p`.
 - `seed=nothing`: set the RNG seed.
 
 # Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> erdos_renyi(10, 0.5)
 {10, 20} undirected simple Int64 graph
+```
+```
+julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
 {10, 49} directed simple Int64 graph
@@ -161,7 +175,7 @@ function erdos_renyi(
 end
 
 """
-    erdos_renyi(n, ne)
+    erdos_renyi(n, ne::Integer)
 
 Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) random
 graph with `n` vertices and `ne` edges.
@@ -172,7 +186,9 @@ graph with `n` vertices and `ne` edges.
 - `seed=nothing`: set the RNG seed.
 
 # Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> erdos_renyi(10, 30)
 {10, 30} undirected simple Int64 graph
 
@@ -213,8 +229,10 @@ from the expected values are likely.
 - Efficient Generation of Networks with Given Expected Degrees, Joel C. Miller and Aric Hagberg. [https://doi.org/10.1007/978-3-642-21286-4_10](https://doi.org/10.1007/978-3-642-21286-4_10)
 
 # Examples
-```jldoctest
+```
 # 1)
+julia> using Graphs
+
 julia> g = expected_degree_graph([3, 1//2, 1//2, 1//2, 1//2])
 {5, 3} undirected simple Int64 graph
 
@@ -276,11 +294,11 @@ end
     watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k`
+small world random graph with `n` vertices, each with expected degree `k` 
 (or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
-where each vertex has exactly `div(k, 2)` neighbors on each side (i.e., `k` or
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
 `k - 1` in total). Then the following steps are repeated for a hop length `i` of
 `1` through `div(k, 2)`.
 
@@ -296,12 +314,15 @@ For `β = 0`, the graph will remain a 1-lattice, and for `β = 1`, all edges wil
 be rewired randomly.
 
 ### Optional Arguments
+- `remove_edges=true`: if false, do not remove the original edges.
 - `is_directed=false`: if true, return a directed graph.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> watts_strogatz(10, 4, 0.3)
 {10, 20} undirected simple Int64 graph
 
@@ -317,7 +338,8 @@ function watts_strogatz(
     n::Integer,
     k::Integer,
     β::Real;
-    is_directed=false,
+    is_directed::Bool=false,
+    remove_edges::Bool=true,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
@@ -363,12 +385,72 @@ function watts_strogatz(
             d == s && continue          # Self-loops prohibited
             d == t && break             # Rewired to original target
             if add_edge!(g, s, d)       # Was this valid (i.e., unconnected)?
-                rem_edge!(g, s, t)      # True rewiring: Delete original edge
-                break                   # We found a valid target
+                remove_edges && rem_edge!(g, s, t)     # True rewiring: Delete original edge
+                break                                   # We found a valid target
             end
         end
     end
     return g
+end
+
+"""
+    newman_watts_strogatz(n, k, β)
+
+Return a Newman-Watts-Strogatz small world random graph with `n` vertices, each
+with expected degree `k(1 + β)` (or `(k - 1)(1 + β)` if `k` is odd). Edges are
+randomized per the model based on probability `β`.
+
+The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
+where each vertex has exacly `div(k, 2)` neighbors on each side (i.e., `k` or
+`k - 1` in total). Then the following steps are repeated for a hop length `i` of
+`1` through `div(k, 2)`.
+
+1. Consider each vertex `s` in turn, along with the edge to its `i`th nearest
+   neighbor `t`, in a clockwise sense.
+
+2. Generate a uniformly random number `r`. If `r < β`, `s` is connected to some
+   vertex `d`, chosen uniformly at random from the entire graph, excluding `s` and
+   its neighbors. (Note that `t` is a valid candidate.)
+
+For `β = 0`, the graph will remain a 1-lattice, and for `β = 1`, all edges will
+be rewired randomly.
+
+Note: In the original paper by Newman and Watts, self-loops and double edges were
+allowed, which is not the case here. However, for large enough networks and small
+enough `p` and `k`, this should not deviate much from the original model.
+
+### Optional Arguments
+- `is_directed=false`: if true, return a directed graph.
+- `rng=nothing`: set the Random Number Generator.
+- `seed=nothing`: set the RNG seed.
+
+## Examples
+```
+julia> using Graphs
+
+julia> newman_watts_strogatz(10, 4, 0.3)
+{10, 26} undirected simple Int64 graph
+````
+```jldoctest
+
+julia> newman_watts_strogatz(Int8(10), 4, 0.8, is_directed=true, seed=123)
+{10, 36} directed simple Int8 graph
+```
+
+### References
+- Scaling and percolation in the small-world network model, M. E. J. Newman, Duncan J. Watts. [https://doi.org/10.1103/PhysRevE.60.7332](https://doi.org/10.1103/PhysRevE.60.7332)
+"""
+function newman_watts_strogatz(
+    n::Integer,
+    k::Integer,
+    β::Real;
+    is_directed::Bool=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    return watts_strogatz(
+        n, k, β; is_directed=is_directed, remove_edges=false, rng=rng, seed=seed
+    )
 end
 
 function _suitable(edges::Set{SimpleEdge{T}}, potential_edges::Dict{T,T}) where {T<:Integer}
@@ -440,6 +522,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 - `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barabasi_albert(50, 3)
 {50, 141} undirected simple Int64 graph
 
@@ -466,6 +550,8 @@ Initial graphs are undirected and consist of isolated vertices by default.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> barabasi_albert(10, 3, 2)
 {10, 14} undirected simple Int64 graph
 
@@ -505,6 +591,8 @@ already present in the system by preferential attachment.
 - `seed=nothing`: set the RNG seed.
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = cycle_graph(4)
 {4, 4} undirected simple Int64 graph
 
@@ -603,17 +691,31 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 
 ## Examples
-```jldoctest
+```
 julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1])
 {4, 5} undirected simple Int64 graph
 
 julia> edges(g) |> collect
-5-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
  Edge 2 => 3
  Edge 2 => 4
+```
+```
+julia> using Graphs
+
+julia> g = static_fitness_model(5, [1, 1, 0.5, 0.1], seed=123)
+{4, 5} undirected simple Int64 graph
+
+julia> edges(g) |> collect
+5-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 1 => 3
+ Edge 2 => 3
+ Edge 2 => 4
+ Edge 3 => 4
 ```
 """
 function static_fitness_model(
@@ -660,12 +762,14 @@ Time complexity is ``\\mathcal{O}(|V| + |E| log |E|)``.
 - Goh K-I, Kahng B, Kim D: Universal behaviour of load distribution in scale-free networks. Phys Rev Lett 87(27):278701, 2001.
 
 ## Examples
-```jldoctest
+```
+julia> using Graphs
+
 julia> g = static_fitness_model(6, [1, 0.2, 0.2, 0.2], [0.1, 0.1, 0.1, 0.9]; seed=123)
 {4, 6} directed simple Int64 graph
 
 julia> edges(g) |> collect
-6-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+6-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 1 => 3
  Edge 1 => 4
@@ -868,10 +972,10 @@ function random_regular_graph(
 end
 
 """
-    random_configuration_model(n, ks)
+    random_configuration_model(n, k)
 
 Create a random undirected graph according to the [configuration model]
-(http://tuvalu.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
+(https://sites.santafe.edu/~aaronc/courses/5352/fall2013/csci5352_2013_L11.pdf)
 containing `n` vertices, with each node `i` having degree `k[i]`.
 
 ### Optional Arguments
@@ -912,6 +1016,29 @@ function random_configuration_model(
         add_vertices!(g, n - nv(g))
     end
     return g
+end
+"""
+    uniform_tree(n)
+
+Generates a random labelled tree, drawn uniformly at random over the ``n^{n-2}`` such trees. A uniform word of length `n-2` over the alphabet `1:n` is generated (Prüfer sequence) then decoded. See also the `prufer_decode` function and [this page on Prüfer codes](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence). 
+
+### Optional Arguments
+- `rng=nothing`: set the Random Number Generator.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> uniform_tree(10)
+{10, 9} undirected simple Int64 graph
+```
+"""
+function uniform_tree(n::Integer; rng::Union{Nothing,AbstractRNG}=nothing)
+    n <= 1 && return Graph(n)
+    n == 2 && return path_graph(n)
+    rng = rng_from_rng_or_seed(rng, nothing)
+    random_code = rand(rng, Base.OneTo(n), n - 2)
+    return prufer_decode(random_code)
 end
 
 """
@@ -975,6 +1102,8 @@ with `n` vertices.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> random_tournament_digraph(5)
 {5, 10} directed simple Int64 graph
 
@@ -1035,7 +1164,7 @@ function stochastic_block_model(
         for b in a:K
             ((a == b) && !(c[a, b] <= n[b] - 1)) ||
                 ((a != b) && !(c[a, b] <= n[b])) && error(
-                    "Mean degree cannot be greater than available neighbors in the block.",
+                    "Mean degree cannot be greater than available neighbors in the block."
                 ) # TODO 0.7: turn into some other error?
 
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
@@ -1348,6 +1477,8 @@ the `t`th stage of this algorithm by accessing the first `t` vertices with `g[1:
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> dorogovtsev_mendes(10)
 {10, 17} undirected simple Int64 graph
 
@@ -1363,24 +1494,28 @@ function dorogovtsev_mendes(
     n < 3 && throw(DomainError("n=$n must be at least 3"))
     rng = rng_from_rng_or_seed(rng, seed)
     g = cycle_graph(3)
+    bag_of_edges = Vector{SimpleEdge{Int}}(undef, 2 * n - 3) # Caching edges as they are added to avoid costly lookups
 
-    for iteration in 1:(n - 3)
-        chosenedge = rand(rng, 1:(2 * ne(g))) # undirected so each edge is listed twice in adjlist
-        u, v = -1, -1
-        for i in 1:nv(g)
-            edgelist = outneighbors(g, i)
-            if chosenedge > length(edgelist)
-                chosenedge -= length(edgelist)
-            else
-                u = i
-                v = edgelist[chosenedge]
-                break
-            end
-        end
+    bag_of_edges[1] = SimpleEdge(1, 2)
+    bag_of_edges[2] = SimpleEdge(1, 3)
+    bag_of_edges[3] = SimpleEdge(2, 3)
+    index = 3
 
+    for _ in 1:(n - 3)
+        # Choose random edge from bag
+        edge = bag_of_edges[rand(rng, 1:index)]
+        u, v = src(edge), dst(edge)
+
+        # Add new vertex
         add_vertex!(g)
+        # Add new edges
         add_edge!(g, nv(g), u)
         add_edge!(g, nv(g), v)
+
+        # Add new edges to bag
+        bag_of_edges[index + 1] = SimpleEdge(nv(g), edge.src)
+        bag_of_edges[index + 2] = SimpleEdge(nv(g), edge.dst)
+        index += 2
     end
     return g
 end
@@ -1397,10 +1532,12 @@ DAG's have a finite topological order; this order is randomly generated via "ord
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> random_orientation_dag(complete_graph(10))
 {10, 45} directed simple Int64 graph
 
-julia> random_orientation_dag(star_graph(Int8(10)), 123)
+julia> random_orientation_dag(star_graph(Int8(10)), seed=123)
 {10, 9} directed simple Int8 graph
 ```
 """

@@ -19,8 +19,6 @@ function SimpleGraph(ne, fadjlist::Vector{Vector{T}}) where {T}
     return SimpleGraph{T}(ne, fadjlist)
 end
 
-eltype(x::SimpleGraph{T}) where {T} = T
-
 # Graph{UInt8}(6), Graph{Int16}(7), Graph{UInt8}()
 """
     SimpleGraph{T}(n=0)
@@ -30,6 +28,8 @@ If not specified, the element type `T` is the type of `n`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleGraph(UInt8(10))
 {10, 0} undirected simple UInt8 graph
 ```
@@ -53,6 +53,8 @@ Construct an empty `SimpleGraph{T}` with 0 vertices and 0 edges.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> SimpleGraph(UInt8)
 {0, 0} undirected simple UInt8 graph
 ```
@@ -69,11 +71,15 @@ The element type `T` can be omitted.
 
 ## Examples
 ```jldoctest
-julia> A1 = [false true; true false]
+julia> using Graphs
+
+julia> A1 = [false true; true false];
+
 julia> SimpleGraph(A1)
 {2, 1} undirected simple Int64 graph
 
-julia> A2 = [2 7; 7 0]
+julia> A2 = [2 7; 7 0];
+
 julia> SimpleGraph{Int16}(A2)
 {2, 2} undirected simple Int16 graph
 ```
@@ -105,7 +111,11 @@ Otherwise the element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = complete_graph(5)
+{5, 10} undirected simple Int64 graph
+
 julia> SimpleGraph{UInt8}(g)
 {5, 10} undirected simple UInt8 graph
 ```
@@ -128,7 +138,11 @@ The element type is the same as for `g`.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = path_digraph(Int8(5))
+{5, 4} directed simple Int8 graph
+
 julia> SimpleGraph(g)
 {5, 4} undirected simple Int8 graph
 ```
@@ -191,8 +205,13 @@ by the lexical ordering and does not contain any duplicates.
 
 ## Examples
 ```jldoctest
+julia> using Graphs
 
 julia> el = Edge.([ (1, 2), (1, 5) ])
+2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 1 => 5
+
 julia> SimpleGraph(el)
 {5, 2} undirected simple Int64 graph
 ```
@@ -246,6 +265,25 @@ function SimpleGraph(edge_list::Vector{SimpleGraphEdge{T}}) where {T<:Integer}
     return g
 end
 
+"""
+    SimpleGraph{T}(g::AbstractGraph)
+    SimpleGraph(g::AbstractGraph)
+
+Construct a `SimpleGraph` from any `AbstractGraph` by enumerating edges.
+
+If `g` is directed, a directed edge `{u, v}` is added if either directed edge `(u, v)` or `(v, u)` exists.
+"""
+function SimpleGraph{T}(g::AbstractGraph) where {T}
+    eds = edges(g)
+    srcs = src.(eds)
+    dsts = dst.(eds)
+    newg = SimpleGraph(Edge{T}.(srcs, dsts))
+    add_vertices!(newg, nv(g) - nv(newg))
+    return newg
+end
+
+SimpleGraph(g::AbstractGraph{T}) where {T} = SimpleGraph{T}(g)
+
 @inbounds function add_to_fadjlist!(
     fadjlist::Vector{Vector{T}}, s::T, d::T
 ) where {T<:Integer}
@@ -278,7 +316,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)
@@ -337,7 +375,7 @@ julia> add_edge!(g, 2, 3);
 julia> h = SimpleGraphFromIterator(edges(g));
 
 julia> collect(edges(h))
-2-element Array{Graphs.SimpleGraphs.SimpleEdge{Int64},1}:
+2-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
  Edge 1 => 2
  Edge 2 => 3
 ```
@@ -390,6 +428,14 @@ copy(g::SimpleGraph) = SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 function ==(g::SimpleGraph, h::SimpleGraph)
     return vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h)
+end
+
+function Base.hash(g::SimpleGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    return r
 end
 
 """
@@ -538,13 +584,13 @@ This function is not part of the official Graphs API and is subject to change/re
 ```jldoctest
 julia> using Graphs
 
-julia> g = complete_graph{5}
+julia> g = complete_graph(5)
 {5, 10} undirected simple Int64 graph
 
 julia> vmap = rem_vertices!(g, [2, 4], keep_order=true);
 
 julia> vmap
-3-element Array{Int64,1}:
+3-element Vector{Int64}:
  1
  3
  5

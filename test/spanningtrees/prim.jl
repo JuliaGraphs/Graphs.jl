@@ -9,7 +9,7 @@
     ]
 
     vec_mst = Vector{Edge}([Edge(1, 2), Edge(2, 3), Edge(3, 4)])
-    for g in testgraphs(g4)
+    for g in test_generic_graphs(g4)
         # Testing Prim's algorithm
         mst = @inferred(prim_mst(g, distmx))
         @test mst == vec_mst
@@ -31,7 +31,7 @@
         Edge(8, 2), Edge(1, 3), Edge(3, 4), Edge(6, 5), Edge(8, 6), Edge(3, 7), Edge(1, 8)
     ])
     gx = SimpleGraph(distmx_sec)
-    for g in testgraphs(gx)
+    for g in test_generic_graphs(gx)
         mst2 = @inferred(prim_mst(g, distmx_sec))
         @test mst2 == vec2
     end

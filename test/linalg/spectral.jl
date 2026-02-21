@@ -1,6 +1,6 @@
 import Base: Matrix
 import Base: size
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 # using Graphs.LinAlg: eigs
 # just so that we can assert equality of matrices
@@ -61,6 +61,7 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
         @test size(n10, 1) == n10.m
         @test size(n10, 2) == n10.m
         @test eltype(n10) == Float64
+        @test eltype(typeof(n10)) == Float64
         @test !issymmetric(n10)
 
         contract!(z, n10, v)
@@ -185,5 +186,13 @@ Matrix(nbt::Nonbacktracking) = Matrix(sparse(nbt))
             @test spectral_distance(g, g) ≈ 0 atol = 1e-8
             @test spectral_distance(g, g, 1) ≈ 0 atol = 1e-8
         end
+    end
+
+    @testset "adjacency_matrix with `dir=:both`" begin
+        edges = [Edge(1, 3), Edge(1, 4), Edge(2, 1), Edge(4, 1)]
+        g = SimpleDiGraph(edges)
+        @test all(adjacency_matrix(g; dir=:out) .== [0 0 1 1; 1 0 0 0; 0 0 0 0; 1 0 0 0])
+        @test all(adjacency_matrix(g; dir=:in) .== [0 1 0 1; 0 0 0 0; 1 0 0 0; 1 0 0 0])
+        @test all(adjacency_matrix(g; dir=:both) .== [0 1 1 1; 1 0 0 0; 1 0 0 0; 1 0 0 0])
     end
 end

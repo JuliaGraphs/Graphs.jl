@@ -38,7 +38,7 @@
         @test Graphs.rng_from_rng_or_seed(nothing, nothing) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, -10) === Random.GLOBAL_RNG
         @test Graphs.rng_from_rng_or_seed(nothing, 456) == Graphs.getRNG(456)
-        @compat if ismutable(Random.GLOBAL_RNG)
+        if ismutable(Random.GLOBAL_RNG)
             @test Graphs.rng_from_rng_or_seed(nothing, 456) !== Random.GLOBAL_RNG
         end
         rng = Random.MersenneTwister(789)
@@ -81,4 +81,24 @@ end
 
     p = @inferred(Graphs.optimal_contiguous_partition([1, 1, 1, 1], 4))
     @test p == [1:1, 2:2, 3:3, 4:4]
+end
+
+@testset "collect_if_not_vector" begin
+    vectors = [["ab", "cd"], 1:2:9, BitVector([0, 1, 0])]
+    not_vectors = [Set([1, 2]), (x for x in Int8[3, 4]), "xyz"]
+
+    @testset "identitcal if vector" for v in vectors
+        @test Graphs.collect_if_not_vector(v) === v
+    end
+
+    @testset "not identical if not vector" for v in not_vectors
+        @test Graphs.collect_if_not_vector(v) !== v
+    end
+
+    @testset "collected if not vector" for v in not_vectors
+        actual = Graphs.collect_if_not_vector(v)
+        expected = collect(v)
+        @test typeof(actual) == typeof(expected)
+        @test actual == expected
+    end
 end

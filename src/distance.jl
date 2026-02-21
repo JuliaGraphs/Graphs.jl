@@ -53,25 +53,27 @@ An infinite path length is represented by the `typemax` of the distance matrix.
 
 # Examples
 ```jldoctest
+julia> using Graphs
+
 julia> g = SimpleGraph([0 1 0; 1 0 1; 0 1 0]);
 
 julia> eccentricity(g, 1)
 2
 
 julia> eccentricity(g, [1; 2])
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  2
  1
 
 julia> eccentricity(g, [1; 2], [0 2 0; 0.5 0 0.5; 0 2 0])
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  2.5
  0.5
 ```
 """
 function eccentricity(
     g::AbstractGraph, v::Integer, distmx::AbstractMatrix{T}=weights(g)
-) where {T<:Real}
+) where {T<:Number}
     e = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
     e == typemax(T) && @warn("Infinite path length detected for vertex $v")
 
@@ -93,6 +95,9 @@ end
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
+An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
+and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) cases.
+
 # Examples
 ```jldoctest
 julia> using Graphs
@@ -104,9 +109,125 @@ julia> diameter(path_graph(5))
 4
 ```
 """
+function diameter end
+
 diameter(eccentricities::Vector) = maximum(eccentricities)
-function diameter(g::AbstractGraph, distmx::AbstractMatrix=weights(g))
+
+diameter(g::AbstractGraph) = diameter(g, weights(g))
+
+function diameter(g::AbstractGraph, ::DefaultDistance)
+    if nv(g) == 0
+        return 0
+    end
+
+    connected = is_directed(g) ? is_strongly_connected(g) : is_connected(g)
+
+    if !connected
+        return typemax(Int)
+    end
+
+    return _diameter_ifub(g)
+end
+
+function diameter(g::AbstractGraph, distmx::AbstractMatrix)
     return maximum(eccentricity(g, distmx))
+end
+
+function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
+    nvg = nv(g)
+    out_list = [outneighbors(g, v) for v in vertices(g)]
+
+    if is_directed(g)
+        in_list = [inneighbors(g, v) for v in vertices(g)]
+    else
+        in_list = out_list
+    end
+
+    active = trues(nvg)
+    visited = falses(nvg)
+    queue = Vector{T}(undef, nvg)
+    distbuf = fill(typemax(T), nvg)
+    diam = 0
+
+    # Sort vertices by total degree (descending) to maximize pruning potential
+    vs = collect(vertices(g))
+    sort!(vs; by=v -> -(length(out_list[v]) + length(in_list[v])))
+
+    for u in vs
+        if !active[u]
+            continue
+        end
+
+        # Forward BFS from u
+        fill!(visited, false)
+        visited[u] = true
+        queue[1] = u
+        front = 1
+        back = 2
+        level_end = 1
+        e = 0
+
+        while front < back
+            v = queue[front]
+            front += 1
+
+            @inbounds for w in out_list[v]
+                if !visited[w]
+                    visited[w] = true
+                    queue[back] = w
+                    back += 1
+                end
+            end
+
+            if front > level_end && front < back
+                e += 1
+                level_end = back - 1
+            end
+        end
+        diam = max(diam, e)
+
+        # Backward BFS (Pruning)
+        dmax = diam - e
+
+        # Only prune if we have a chance to exceed the current diameter
+        if dmax >= 0
+            fill!(distbuf, typemax(T))
+            distbuf[u] = 0
+            queue[1] = u
+            front = 1
+            back = 2
+
+            while front < back
+                v = queue[front]
+                front += 1
+
+                if distbuf[v] >= dmax
+                    continue
+                end
+
+                @inbounds for w in in_list[v]
+                    if distbuf[w] == typemax(T)
+                        distbuf[w] = distbuf[v] + 1
+                        queue[back] = w
+                        back += 1
+                    end
+                end
+            end
+
+            # Prune vertices that cannot lead to a longer diameter
+            @inbounds for v in vertices(g)
+                if active[v] && distbuf[v] != typemax(T) && (distbuf[v] + e <= diam)
+                    active[v] = false
+                end
+            end
+        end
+
+        if !any(active)
+            break
+        end
+    end
+
+    return diam
 end
 
 """
@@ -123,14 +244,14 @@ largest eccentricity).
 julia> using Graphs
 
 julia> periphery(star_graph(5))
-4-element Array{Int64,1}:
+4-element Vector{Int64}:
  2
  3
  4
  5
 
 julia> periphery(path_graph(5))
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  5
 ```
@@ -180,11 +301,11 @@ to the graph's radius (that is, the set of vertices with the smallest eccentrici
 julia> using Graphs
 
 julia> center(star_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  1
 
 julia> center(path_graph(5))
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  3
 ```
 """

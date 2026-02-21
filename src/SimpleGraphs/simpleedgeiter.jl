@@ -15,10 +15,10 @@ julia> es = edges(g)
 SimpleEdgeIter 2
 
 julia> e_it = iterate(es)
-(Edge 1 => 2, SimpleEdgeIterState [2, 2])
+(Edge 1 => 2, (1, 2))
 
 julia> iterate(es, e_it[2])
-(Edge 2 => 3, SimpleEdgeIterState [0, 1])
+(Edge 2 => 3, (2, 3))
 ```
 """
 struct SimpleEdgeIter{G} <: AbstractEdgeIter
@@ -30,18 +30,17 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
 
 @traitfn @inline function iterate(
     eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1)
-) where {G <: AbstractSimpleGraph; !IsDirected{G}}
+) where {G<:AbstractSimpleGraph;!IsDirected{G}}
     g = eit.g
-    fadjlist = fadj(g)
     T = eltype(g)
     n = T(nv(g))
     u, i = state
 
     @inbounds while u < n
-        list_u = fadjlist[u]
+        list_u = fadj(g, u)
         if i > length(list_u)
             u += one(u)
-            i = searchsortedfirst(fadjlist[u], u)
+            i = searchsortedfirst(fadj(g, u), u)
             continue
         end
         e = SimpleEdge(u, list_u[i])
@@ -49,7 +48,7 @@ eltype(::Type{SimpleEdgeIter{SimpleDiGraph{T}}}) where {T} = SimpleDiGraphEdge{T
         return e, state
     end
 
-    @inbounds (n == 0 || i > length(fadjlist[n])) && return nothing
+    @inbounds (n == 0 || i > length(fadj(g, n))) && return nothing
 
     e = SimpleEdge(n, n)
     state = (u, i + 1)
@@ -58,9 +57,8 @@ end
 
 @traitfn @inline function iterate(
     eit::SimpleEdgeIter{G}, state=(one(eltype(eit.g)), 1)
-) where {G <: AbstractSimpleGraph; IsDirected{G}}
+) where {G<:AbstractSimpleGraph;IsDirected{G}}
     g = eit.g
-    fadjlist = fadj(g)
     T = eltype(g)
     n = T(nv(g))
     u, i = state
@@ -68,12 +66,12 @@ end
     n == 0 && return nothing
 
     @inbounds while true
-        list_u = fadjlist[u]
+        list_u = fadj(g, u)
         if i > length(list_u)
             u == n && return nothing
 
             u += one(u)
-            list_u = fadjlist[u]
+            list_u = fadj(g, u)
             i = 1
             continue
         end

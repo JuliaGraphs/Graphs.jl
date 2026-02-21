@@ -1,8 +1,5 @@
 # This file provides reexported functions.
 
-using ArnoldiMethod
-using SparseArrays
-
 """
     adjacency_matrix(g[, T=Int; dir=:out])
 
@@ -57,15 +54,12 @@ function _adjacency_matrix(
     for j in 1:n_v  # this is by column, not by row.
         if has_edge(g, j, j)
             push!(selfloops, j)
-            if !(T <: Bool) && !is_directed(g)
-                nz -= 1
-            end
         end
         dsts = sort(collect(neighborfn(g, j))) # TODO for most graphs it might not be necessary to sort
         colpt[j + 1] = colpt[j] + length(dsts)
         append!(rowval, dsts)
     end
-    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, nz))
+    spmx = SparseMatrixCSC(n_v, n_v, colpt, rowval, ones(T, length(rowval)))
 
     # this is inefficient. There should be a better way of doing this.
     # the issue is that adjacency matrix entries for self-loops are 2,
@@ -85,7 +79,7 @@ Return a sparse [Laplacian matrix](https://en.wikipedia.org/wiki/Laplacian_matri
 for a graph `g`, indexed by `[u, v]` vertices. `T` defaults to `Int` for both graph types.
 
 ### Optional Arguments
-`dir=:unspec`: `:unspec`, `:both`, :in`, and `:out` are currently supported.
+`dir=:unspec`: `:unspec`, `:both`, `:in`, and `:out` are currently supported.
 For undirected graphs, `dir` defaults to `:out`; for directed graphs,
 `dir` defaults to `:both`.
 """
@@ -186,7 +180,7 @@ function spectral_distance end
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
 @traitfn function spectral_distance(
     G₁::G, G₂::G, k::Integer
-) where {G <: AbstractGraph; !IsDirected{G}}
+) where {G<:AbstractGraph;!IsDirected{G}}
     A₁ = adjacency_matrix(G₁)
     A₂ = adjacency_matrix(G₂)
 
@@ -205,7 +199,7 @@ function spectral_distance end
 end
 
 # can't use Traitor syntax here (https://github.com/mauro3/SimpleTraits.jl/issues/36)
-@traitfn function spectral_distance(G₁::G, G₂::G) where {G <: AbstractGraph; !IsDirected{G}}
+@traitfn function spectral_distance(G₁::G, G₂::G) where {G<:AbstractGraph;!IsDirected{G}}
     nv(G₁) == nv(G₂) ||
         throw(ArgumentError("Spectral distance not defined for |G₁| != |G₂|"))
     return spectral_distance(G₁, G₂, nv(G₁))

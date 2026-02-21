@@ -3,29 +3,29 @@ using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
-using JuliaFormatter
+using JET
+using Graphs.Test
 using Test
 using SparseArrays
 using LinearAlgebra
-using Compat
 using DelimitedFiles
 using Base64
 using Random
-using Statistics: mean
+using Statistics: mean, std
 using StableRNGs
+using Pkg
+using Unitful
 
 const testdir = dirname(@__FILE__)
+const KMf = typeof(u"1.0km")
 
-@testset verbose = true "Code quality (Aqua.jl)" begin
-    Aqua.test_all(Graphs; ambiguities=false)
-end
-
-@testset verbose = true "Code formatting (JuliaFormatter.jl)" begin
-    @test format(Graphs; verbose=false, overwrite=false, ignore=["vf2.jl"])  # TODO: remove ignore kwarg once the file is formatted correctly
-end
-
-@testset verbose = true "Doctests (Documenter.jl)" begin
-    # doctest(Graphs)  # TODO: uncomment it when the errors it throws are fixed
+function get_pkg_version(name::AbstractString)
+    for dep in values(Pkg.dependencies())
+        if dep.name == name
+            return dep.version
+        end
+    end
+    return error("Dependency not available")
 end
 
 function testgraphs(g)
@@ -49,6 +49,29 @@ function testlargegraphs(g)
 end
 testlargegraphs(gs...) = vcat((testlargegraphs(g) for g in gs)...)
 
+function test_generic_graphs(g; eltypes=[UInt8, Int16], skip_if_too_large::Bool=false)
+    SG = is_directed(g) ? SimpleDiGraph : SimpleGraph
+    GG = is_directed(g) ? GenericDiGraph : GenericGraph
+    result = GG[]
+    for T in eltypes
+        if skip_if_too_large && nv(g) > typemax(T)
+            continue
+        end
+        push!(result, GG(SG{T}(g)))
+    end
+    return result
+end
+
+function test_generic_graphs(gs...; kwargs...)
+    return vcat((test_generic_graphs(g; kwargs...) for g in gs)...)
+end
+
+function test_large_generic_graphs(g; skip_if_too_large::Bool=false)
+    return test_generic_graphs(
+        g; eltypes=[UInt16, Int32], skip_if_too_large=skip_if_too_large
+    )
+end
+
 tests = [
     "simplegraphs/runtests",
     "linalg/runtests",
@@ -68,6 +91,7 @@ tests = [
     "edit_distance",
     "connectivity",
     "persistence/persistence",
+    "shortestpaths/utils",
     "shortestpaths/astar",
     "shortestpaths/bellman-ford",
     "shortestpaths/desopo-pape",
@@ -76,6 +100,7 @@ tests = [
     "shortestpaths/floyd-warshall",
     "shortestpaths/yen",
     "shortestpaths/spfa",
+    "shortestpaths/longest_path",
     "traversals/bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
@@ -83,9 +108,14 @@ tests = [
     "traversals/maxadjvisit",
     "traversals/randomwalks",
     "traversals/diffusion",
+    "iterators/bfs",
+    "iterators/dfs",
+    "traversals/eulerian",
+    "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
+    "community/louvain",
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",
@@ -116,12 +146,31 @@ tests = [
     "independentset/maximal_ind_set",
     "vertexcover/degree_vertex_cover",
     "vertexcover/random_vertex_cover",
+    "trees/prufer",
     "experimental/experimental",
 ]
 
 @testset verbose = true "Graphs" begin
-    for t in tests
-        tp = joinpath(testdir, "$(t).jl")
-        include(tp)
+    @testset "Code quality (JET.jl)" begin
+        @assert get_pkg_version("JET") >= v"0.8.4"
+        JET.test_package(
+            Graphs;
+            target_defined_modules=true,
+            ignore_missing_comparison=true,
+            mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+        )
+    end
+
+    @testset "Code quality (Aqua.jl)" begin
+        Aqua.test_all(Graphs; ambiguities=false)
+    end
+
+    doctest(Graphs)
+
+    @testset verbose = true "Actual tests" begin
+        for t in tests
+            tp = joinpath(testdir, "$(t).jl")
+            include(tp)
+        end
     end
 end;

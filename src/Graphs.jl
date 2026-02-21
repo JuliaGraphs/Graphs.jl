@@ -3,26 +3,22 @@ module Graphs
 using SimpleTraits
 
 ### Remove the following line once #915 is closed
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 using Statistics: mean
-
-# Currently used to support the ismutable function that is not available in Julia < v1.7
-using Compat
 
 using Inflate: InflateGzipStream
 using DataStructures:
-    IntDisjointSets,
+    IntDisjointSet,
     PriorityQueue,
-    dequeue!,
-    dequeue_pair!,
-    enqueue!,
     heappop!,
     heappush!,
     in_same_set,
-    peek,
     union!,
-    find_root!
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+    find_root!,
+    BinaryMaxHeap,
+    BinaryMinHeap,
+    Stack
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
@@ -183,6 +179,10 @@ export
     dfs_tree,
     dfs_parents,
 
+    # iterators
+    DFSIterator,
+    BFSIterator,
+
     # random
     randomwalk,
     self_avoiding_walk,
@@ -192,6 +192,12 @@ export
     diffusion,
     diffusion_rate,
 
+    # eulerian
+    eulerian,
+
+    # all simple paths
+    all_simple_paths,
+
     # coloring
     greedy_color,
 
@@ -199,6 +205,7 @@ export
     connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
+    strongly_connected_components_tarjan,
     weakly_connected_components,
     is_connected,
     is_strongly_connected,
@@ -209,6 +216,7 @@ export
     neighborhood,
     neighborhood_dists,
     isgraphical,
+    isdigraphical,
 
     # cycles
     simplecycles_hawick_james,
@@ -238,6 +246,7 @@ export
     has_negative_edge_cycle_spfa,
     has_negative_edge_cycle,
     enumerate_paths,
+    enumerate_paths!,
     johnson_shortest_paths,
     floyd_warshall_shortest_paths,
     transitiveclosure!,
@@ -278,7 +287,9 @@ export
     erdos_renyi,
     expected_degree_graph,
     watts_strogatz,
+    newman_watts_strogatz,
     random_regular_graph,
+    uniform_tree,
     random_regular_digraph,
     random_configuration_model,
     random_tournament_digraph,
@@ -304,6 +315,7 @@ export
     global_clustering_coefficient,
     triangles,
     label_propagation,
+    louvain,
     maximal_cliques,
     clique_percolation,
     assortativity,
@@ -391,6 +403,11 @@ export
     kruskal_mst,
     prim_mst,
 
+    # trees and prufer
+    is_tree,
+    prufer_encode,
+    prufer_decode,
+
     # steinertree
     steiner_tree,
 
@@ -412,7 +429,10 @@ export
     independent_set,
 
     # vertexcover
-    vertex_cover
+    vertex_cover,
+
+    # longestpaths
+    dag_longest_path
 
 """
     Graphs
@@ -425,14 +445,13 @@ undirected graphs are supported via separate types, and conversion is available
 from directed to undirected.
 
 The project goal is to mirror the functionality of robust network and graph
-analysis libraries such as NetworkX while being simpler to use and more
-efficient than existing Julian graph libraries such as Graphs.jl. It is an
-explicit design decision that any data not required for graph manipulation
+analysis libraries such as NetworkX while being simple to use and efficient.
+It is an explicit design decision that any data not required for graph manipulation
 (attributes and other information, for example) is expected to be stored
 outside of the graph structure itself. Such data lends itself to storage in
 more traditional and better-optimized mechanisms.
 
-[Full documentation](http://codecov.io/github/JuliaGraphs/Graphs.jl) is available,
+[Full documentation](https://juliagraphs.org/Graphs.jl/stable/) is available,
 and tutorials are available at the
 [JuliaGraphsTutorials repository](https://github.com/JuliaGraphs/JuliaGraphsTutorials).
 """
@@ -479,9 +498,14 @@ include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")
 include("traversals/diffusion.jl")
+include("iterators/bfs.jl")
+include("iterators/dfs.jl")
+include("traversals/eulerian.jl")
+include("traversals/all_simple_paths.jl")
 include("connectivity.jl")
 include("distance.jl")
 include("editdist.jl")
+include("shortestpaths/utils.jl")
 include("shortestpaths/astar.jl")
 include("shortestpaths/bellman-ford.jl")
 include("shortestpaths/dijkstra.jl")
@@ -490,6 +514,7 @@ include("shortestpaths/desopo-pape.jl")
 include("shortestpaths/floyd-warshall.jl")
 include("shortestpaths/yen.jl")
 include("shortestpaths/spfa.jl")
+include("shortestpaths/longest_path.jl")
 include("linalg/LinAlg.jl")
 include("operators.jl")
 include("persistence/common.jl")
@@ -504,6 +529,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/louvain.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
@@ -513,6 +539,7 @@ include("community/rich_club.jl")
 include("spanningtrees/boruvka.jl")
 include("spanningtrees/kruskal.jl")
 include("spanningtrees/prim.jl")
+include("trees/prufer.jl")
 include("steinertree/steiner_tree.jl")
 include("biconnectivity/articulation.jl")
 include("biconnectivity/biconnect.jl")
@@ -527,6 +554,7 @@ include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
+include("Test/Test.jl")
 
 using .LinAlg
 end # module

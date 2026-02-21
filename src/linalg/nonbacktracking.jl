@@ -26,17 +26,25 @@ function non_backtracking_matrix(g::AbstractGraph)
         end
     end
 
-    B = zeros(Float64, m, m)
-
+    nz = if is_directed(g)
+        sum(indegree(g, v) * outdegree(g, v) for v in vertices(g))
+    else
+        sum(degree(g, v) * (degree(g, v) - 1) for v in vertices(g))
+    end
+    rowidx = sizehint!(Vector{Int}(), nz)
+    colidx = sizehint!(Vector{Int}(), nz)
     for (e, u) in edgeidmap
         i, j = src(e), dst(e)
         for k in inneighbors(g, i)
             k == j && continue
             v = edgeidmap[Edge(k, i)]
-            B[v, u] = 1
+
+            push!(rowidx, v)
+            push!(colidx, u)
         end
     end
 
+    B = sparse(rowidx, colidx, ones(Int, length(rowidx)), m, m)
     return B, edgeidmap
 end
 
@@ -85,7 +93,7 @@ end
 
 size(nbt::Nonbacktracking) = (nbt.m, nbt.m)
 size(nbt::Nonbacktracking, i::Number) = size(nbt)[i]
-eltype(nbt::Nonbacktracking) = Float64
+eltype(::Type{<:Nonbacktracking}) = Float64
 issymmetric(nbt::Nonbacktracking) = false
 
 function *(nbt::Nonbacktracking, x::Vector{T}) where {T<:Number}
@@ -110,16 +118,15 @@ function mul!(C, nbt::Nonbacktracking, B)
 end
 
 function coo_sparse(nbt::Nonbacktracking)
-    m = nbt.m
-    #= I,J = zeros(Int, m), zeros(Int, m) =#
+    m = nbt.m#= I,J = zeros(Int, m), zeros(Int, m) =#
+
     I, J = zeros(Int, 0), zeros(Int, 0)
     for (e, u) in nbt.edgeidmap
         i, j = src(e), dst(e)
         for k in inneighbors(nbt.g, i)
             k == j && continue
-            v = nbt.edgeidmap[Edge(k, i)]
-            #= J[u] = v =#
-            #= I[u] = u =#
+            v = nbt.edgeidmap[Edge(k, i)]#= J[u] = v =##= I[u] = u =#
+
             push!(I, v)
             push!(J, u)
         end

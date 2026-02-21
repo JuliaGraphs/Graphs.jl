@@ -21,11 +21,11 @@ Memory: O(|V|)
 julia> using Graphs
 
 julia> vertex_cover(path_graph(3), DegreeVertexCover())
-1-element Array{Int64,1}:
+1-element Vector{Int64}:
  2
 
 julia> vertex_cover(cycle_graph(3), DegreeVertexCover())
-2-element Array{Int64,1}:
+2-element Vector{Int64}:
  1
  3
 ```
@@ -36,8 +36,8 @@ function vertex_cover(g::AbstractGraph{T}, alg::DegreeVertexCover) where {T<:Int
     length_cover = 0
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g)))
 
-    while !isempty(degree_queue) && peek(degree_queue)[2] > 0
-        v = dequeue!(degree_queue)
+    while !isempty(degree_queue) && first(degree_queue)[2] > 0
+        v = popfirst!(degree_queue).first
         in_cover[v] = true
         length_cover += 1
 

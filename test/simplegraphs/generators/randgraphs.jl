@@ -86,6 +86,33 @@
         @test is_directed(ws) == true
     end
 
+    @testset "Newman-Watts-Strogatz" begin
+        # Each iteration creates, on average, n*k/2*(1+β) edges (if the network is large enough).
+        # As such, we need to average to check if the function works.
+        nsamp = 100
+        n = 1000
+        β = 0.2
+        k = 4
+        mean_num_edges = n * k / 2 * (1 + β)
+        nes = 0
+        for i in 1:nsamp
+            nws = newman_watts_strogatz(n, k, β; rng=rng)
+            nes += ne(nws)
+            @test nv(nws) == n
+            @test is_directed(nws) == false
+        end
+        @test abs(sum(nes) / nsamp - mean_num_edges) / mean_num_edges < 0.01
+
+        nes = 0
+        for i in 1:nsamp
+            nws = newman_watts_strogatz(n, k, β; is_directed=true, rng=rng)
+            nes += ne(nws)
+            @test nv(nws) == n
+            @test is_directed(nws) == true
+        end
+        @test abs(sum(nes) / nsamp - mean_num_edges) / mean_num_edges < 0.01
+    end
+
     @testset "Barabasi-Albert" begin
         ba = barabasi_albert(10, 2; rng=rng)
         @test nv(ba) == 10
@@ -218,6 +245,18 @@
         @test is_directed(rd)
     end
 
+    @testset "uniform trees" begin
+        t = uniform_tree(50; rng=rng)
+        @test nv(t) == 50
+        @test ne(t) == 49
+        @test is_tree(t)
+
+        t2 = uniform_tree(50; rng=StableRNG(4))
+        @test nv(t2) == 50
+        @test ne(t2) == 49
+        @test is_tree(t2)
+    end
+
     @testset "random configuration model" begin
         rr = random_configuration_model(10, repeat([2, 4], 5); rng=StableRNG(3))
         @test nv(rr) == 10
@@ -343,6 +382,19 @@
         @test δ(g) == 2
         g = dorogovtsev_mendes(3; rng=rng)
         @test nv(g) == 3 && ne(g) == 3
+        @test δ(g) == 2 && Δ(g) == 2
+
+        # Testing that n=4 graph is one on the possible graphs
+        g = dorogovtsev_mendes(4; rng=rng)
+        @test has_edge(g, 1, 2) &&
+            has_edge(g, 1, 3) &&
+            has_edge(g, 2, 3) &&
+            (
+                has_edge(g, 1, 4) && has_edge(g, 2, 4) ||
+                has_edge(g, 2, 4) && has_edge(g, 3, 4) ||
+                has_edge(g, 1, 4) && has_edge(g, 3, 4)
+            )
+
         # testing domain errors
         @test_throws DomainError dorogovtsev_mendes(2, rng=rng)
         @test_throws DomainError dorogovtsev_mendes(-1, rng=rng)
@@ -363,5 +415,25 @@
         rog3 = random_orientation_dag(SimpleGraph(10, 15; rng=rng); rng=rng)
         @test isvalid_simplegraph(rog3)
         @test !is_cyclic(rog3)
+    end
+
+    @testset "randbn" begin
+        for i in 0:10
+            @test Graphs.SimpleGraphs.randbn(i, 0.0; rng=rng) == 0
+            @test Graphs.SimpleGraphs.randbn(i, 1.0; rng=rng) == i
+        end
+        N = 30
+        s1 = zeros(N)
+        s2 = zeros(N)
+        for i in 1:N
+            s1[i] = Graphs.SimpleGraphs.randbn(5, 0.3)
+            s2[i] = Graphs.SimpleGraphs.randbn(3, 0.7)
+        end
+        μ1 = mean(s1)
+        μ2 = mean(s2)
+        sv1 = std(s1)
+        sv2 = std(s2)
+        @test μ1 - sv1 <= 0.3 * 5 <= μ1 + sv1 # since the stdev of μ1 is around sv1/sqrt(N), this should rarely fail
+        @test μ2 - sv2 <= 0.7 * 3 <= μ2 + sv2
     end
 end

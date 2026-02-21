@@ -1,10 +1,10 @@
 module LinAlg
 
-using ArnoldiMethod
+using ArnoldiMethod: LM, SR, LR, partialschur, partialeigen
 
 using SimpleTraits
 using SparseArrays: SparseMatrixCSC
-import SparseArrays: blockdiag, sparse
+import SparseArrays: blockdiag, sparse, spdiagm
 using LinearAlgebra: I, Symmetric, diagm, dot, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, diag, issymmetric, mul!
 
@@ -51,13 +51,8 @@ function eigs(A; kwargs...)
     schr = partialschur(A; kwargs...)
     vals, vectors = partialeigen(schr[1])
     reved = (kwargs[:which] == LR() || kwargs[:which] == LM())
-    k::Int = get(kwargs, :nev, length(vals))
-    k = min(k, length(vals))
-    perm = collect(1:k)
-    if vals[1] isa (Real)
-        perm = sortperm(vals; rev=reved)
-        perm = perm[1:k]
-    end
+    k = min(get(kwargs, :nev, length(vals))::Int, length(vals))
+    perm = sortperm(vals; by=real, rev=reved)[1:k]
     λ = vals[perm]
     Q = vectors[:, perm]
     return λ, Q

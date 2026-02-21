@@ -13,16 +13,16 @@ The parameter `k` defines the size of the clique to use in percolation.
 julia> using Graphs
 
 julia> clique_percolation(clique_graph(3, 2))
-2-element Array{BitSet,1}:
+2-element Vector{BitSet}:
  BitSet([4, 5, 6])
  BitSet([1, 2, 3])
 
 julia> clique_percolation(clique_graph(3, 2), k=2)
-1-element Array{BitSet,1}:
+1-element Vector{BitSet}:
  BitSet([1, 2, 3, 4, 5, 6])
 
 julia> clique_percolation(clique_graph(3, 2), k=4)
-0-element Array{BitSet,1}
+BitSet[]
 ```
 """
 function clique_percolation end

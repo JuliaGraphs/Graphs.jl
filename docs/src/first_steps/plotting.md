@@ -56,7 +56,7 @@ SGtSNEpi.jl enables 3D graph embedding as well. The 3D embedding of the weighted
 
 ## [GraphRecipes.jl](https://github.com/JuliaPlots/GraphRecipes.jl)
 
-GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem. There are a lot of different recipes and styles to choose from, check out the [examples page](http://docs.juliaplots.org/latest/graphrecipes/examples/) to see more of them.
+GraphRecipes.jl contains several recipes for plotting networks using the Plots.jl ecosystem. There are a lot of different recipes and styles to choose from, check out the [examples page](https://docs.juliaplots.org/stable/GraphRecipes/examples/) to see more of them.
 
 ```julia
 using Plots, GraphRecipes
@@ -75,7 +75,36 @@ using GLMakie, GraphMakie
 using GraphMakie.NetworkLayout
 
 g = smallgraph(:dodecahedral)
-graphplot(g; layout=Stress(dim=3))
+graphplot(g; layout=Stress(; dim=3))
 ```
 
 ![GraphMakie example plot](https://user-images.githubusercontent.com/35867212/133593687-b92b8af9-7bf1-4c43-999b-e2847edb869d.png)
+
+## [Karnak.jl](https://github.com/cormullion/Karnak.jl)
+
+The Karnak.jl package integrates the
+[Luxor.jl](https://github.com/JuliaGraphics/Luxor.jl) 2D graphics package, and uses
+[NetworkLayout.jl](https://github.com/JuliaGraphs/NetworkLayout.jl) for
+calculating layouts. Check out the [docs](https://cormullion.github.io/Karnak.jl/stable/) for examples.
+
+```julia
+using Graphs
+using Karnak
+using NetworkLayout
+using Colors
+g = barabasi_albert(60, 1)
+@drawsvg begin
+    background("black")
+    sethue("grey40")
+    fontsize(8)
+    drawgraph(g, 
+        layout=stress, 
+        vertexlabels = 1:nv(g),
+        vertexfillcolors = 
+            [RGB(rand(3)/2...) 
+               for i in 1:nv(g)]
+    )
+end 600 400
+```
+
+![Karnak.jl example plot](../assets/karnak-example.svg)
