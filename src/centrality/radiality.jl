@@ -14,7 +14,7 @@ where ``D_g`` is the diameter of the graph and ``d_{u,v}`` is the
 length of the shortest path from ``u`` to ``v``.
 
 ### References
-- Brandes, U.: A faster algorithm for betweenness centrality. J Math Sociol 25 (2001) 163-177
+- [brandes2001faster](@cite)
 
 # Examples
 ```jldoctest
