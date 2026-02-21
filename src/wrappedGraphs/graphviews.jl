@@ -3,6 +3,11 @@
 
 A graph view that wraps a directed graph and reverse the direction of every edge.
 
+!!! warning
+    Some properties of the view (e.g. the number of edges) are forwarded from the
+    underlying graph and are not recomputed. Modifying the underlying graph after
+    constructing the view may lead to incorrect results.
+
 # Examples
 ```jldoctest
 julia> using Graphs
@@ -53,6 +58,11 @@ Graphs.outneighbors(g::ReverseView, v) = Graphs.inneighbors(g.g, v)
     UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
 
 A graph view that wraps a directed graph and consider every edge as undirected.
+
+!!! warning
+    Some properties of the view, such as the number of edges, are cached at
+    construction time. Modifying the underlying graph after constructing the view
+    will lead to incorrect results.
 
 # Examples
 ```jldoctest
