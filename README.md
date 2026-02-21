@@ -68,6 +68,6 @@ It is an explicit design decision that any data not required for graph manipulat
 
 Additional functionality like advanced IO and file formats, weighted graphs, property graphs, and optimization-related functions can be found in the packages of the [JuliaGraphs organization](https://juliagraphs.org/).
 
-## Project status
+## Project history
 
 _Graphs.jl_ is the successor to _LightGraphs.jl_ (archived October 2021); see the [CHANGELOG](CHANGELOG.md) for the full transition history.
