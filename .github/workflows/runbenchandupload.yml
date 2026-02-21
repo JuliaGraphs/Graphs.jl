@@ -26,12 +26,12 @@ jobs:
           - version: '1'
             allow_failure: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@latest
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         env:
           cache-name: cache-artifacts
         with:
@@ -54,7 +54,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo $PR_NUMBER > .benchmarkci/pr_number
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v6
         with: 
           name: BenchmarkResults
           path: .benchmarkci/

@@ -316,7 +316,7 @@ function _SimpleGraphFromIterator(iter)::SimpleGraph
     g = SimpleGraph{T}()
     fadjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)
@@ -428,6 +428,14 @@ copy(g::SimpleGraph) = SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 function ==(g::SimpleGraph, h::SimpleGraph)
     return vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h)
+end
+
+function Base.hash(g::SimpleGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    return r
 end
 
 """

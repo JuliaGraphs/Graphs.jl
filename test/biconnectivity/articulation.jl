@@ -27,7 +27,7 @@
         btree = Graphs.binary_tree(level)
         for tree in test_generic_graphs(btree; eltypes=[Int, UInt8, Int16])
             artpts = @inferred(articulation(tree))
-            @test artpts == collect(1:(2^(level - 1) - 1))
+            @test artpts == collect(1:(2 ^ (level - 1) - 1))
         end
     end
 

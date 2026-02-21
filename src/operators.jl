@@ -2,7 +2,7 @@
 # as they require cloning and modifying graphs.
 
 """
-    complement(g)
+	complement(g)
 
 Return the [graph complement](https://en.wikipedia.org/wiki/Complement_graph)
 of a graph
@@ -58,7 +58,7 @@ function complement(g::DiGraph)
 end
 
 """
-    reverse(g)
+	reverse(g)
 
 Return a directed graph where all edges are reversed from the
 original directed graph.
@@ -93,7 +93,7 @@ function reverse end
 end
 
 """
-    reverse!(g)
+	reverse!(g)
 
 In-place reverse of a directed graph (modifies the original graph).
 See [`reverse`](@ref) for a non-modifying version.
@@ -105,7 +105,7 @@ function reverse! end
 end
 
 """
-    blockdiag(g, h)
+	blockdiag(g, h)
 
 Return a graph with ``|V(g)| + |V(h)|`` vertices and ``|E(g)| + |E(h)|``
 edges where the vertices and edges from graph `h` are appended to graph `g`.
@@ -150,7 +150,7 @@ function blockdiag(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    intersect(g, h)
+	intersect(g, h)
 
 Return a graph with edges that are only in both graph `g` and graph `h`.
 
@@ -184,7 +184,7 @@ function intersect(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    difference(g, h)
+	difference(g, h)
 
 Return a graph with edges in graph `g` that are not in graph `h`.
 
@@ -218,7 +218,7 @@ function difference(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    symmetric_difference(g, h)
+	symmetric_difference(g, h)
 
 Return a graph with edges from graph `g` that do not exist in graph `h`,
 and vice versa.
@@ -264,7 +264,7 @@ function symmetric_difference(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    union(g, h)
+	union(g, h)
 
 Return a graph that combines graphs `g` and `h` by taking the set union
 of all vertices and edges.
@@ -319,7 +319,7 @@ function union(g::T, h::T) where {T<:AbstractSimpleGraph}
 end
 
 """
-    join(g, h)
+	join(g, h)
 
 Return a graph that combines graphs `g` and `h` using `blockdiag` and then
 adds all the edges between the vertices in `g` and those in `h`.
@@ -359,7 +359,7 @@ function join(g::T, h::T) where {T<:AbstractGraph}
 end
 
 """
-    crosspath(len::Integer, g::Graph)
+	crosspath(len::Integer, g::Graph)
 
 Return a graph that duplicates `g` `len` times and connects each vertex
 with its copies in a path.
@@ -405,7 +405,7 @@ end
 # """Provides multiplication of a graph `g` by a vector `v` such that spectral
 # graph functions in [GraphMatrices.jl](https://github.com/jpfairbanks/GraphMatrices.jl) can utilize Graphs natively.
 # """
-function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
+function *(g::AbstractGraph, v::Vector{T}) where {T<:Number}
     length(v) == nv(g) || throw(ArgumentError("Vector size must equal number of vertices"))
     y = zeros(T, nv(g))
     for e in edges(g)
@@ -420,7 +420,7 @@ function *(g::AbstractGraph, v::Vector{T}) where {T<:Real}
 end
 
 """
-    sum(g, i)
+	sum(g, i)
 
 Return a vector of indegree (`i`=1) or outdegree (`i`=2) values for graph `g`.
 
@@ -455,7 +455,7 @@ end
 
 size(g::AbstractGraph) = (nv(g), nv(g))
 """
-    size(g, i)
+	size(g, i)
 
 Return the number of vertices in `g` if `i`=1 or `i`=2, or `1` otherwise.
 
@@ -478,7 +478,7 @@ julia> size(g, 3)
 size(g::AbstractGraph, dim::Int) = (dim == 1 || dim == 2) ? nv(g) : 1
 
 """
-    sum(g)
+	sum(g)
 
 Return the number of edges in `g`.
 
@@ -495,7 +495,7 @@ julia> sum(g)
 sum(g::AbstractGraph) = ne(g)
 
 """
-    sparse(g)
+	sparse(g)
 
 Return the default adjacency matrix of `g`.
 """
@@ -504,11 +504,11 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;!IsDirected{AG}}
     return true
 end
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;IsDirected{AG}}
     for e in edges(g)
         if !has_edge(g, reverse(e))
             return false
@@ -518,10 +518,13 @@ end
 end
 
 """
-    cartesian_product(g, h)
+	cartesian_product(g, h)
 
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
+
+The cartesian product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂).
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
@@ -570,10 +573,12 @@ function cartesian_product(g::G, h::G) where {G<:AbstractGraph}
 end
 
 """
-    tensor_product(g, h)
+	tensor_product(g, h)
 
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
+
+The tensor product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∧ h₁ ∼ h₂.
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
@@ -615,11 +620,232 @@ function tensor_product(g::G, h::G) where {G<:AbstractGraph}
     return z
 end
 
+"""
+    strong_product(g, h)
+
+Return the [strong product](https://en.wikipedia.org/wiki/Strong_product_of_graphs)
+of `g` and `h`.
+
+The strong product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂) ∨ (g₁ ∼ g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = strong_product(a, b)
+{9, 20} undirected simple Int64 graph
+
+julia> g == union(cartesian_product(a, b), tensor_product(a, b))
+true
+```
+"""
+function strong_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for e1 in edges(g)
+        i1, i2 = Tuple(e1)
+        for e2 in edges(h)
+            j1, j2 = Tuple(e2)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+    end
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    disjunctive_product(g, h)
+
+Return the [disjunctive product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The disjunctive product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∨ h₁ ∼ h₂.
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = disjunctive_product(a, b)
+{9, 28} undirected simple Int64 graph
+
+julia> complement(g) == strong_product(complement(a), complement(b))
+true
+```
+"""
+function disjunctive_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            for k in vertices(g)
+                add_edge!(z, id(i, j1), id(k, j2))
+            end
+        end
+    end
+    return z
+end
+
+"""
+    lexicographic_product(g, h)
+
+Return the [lexicographic product](https://en.wikipedia.org/wiki/Lexicographic_product_of_graphs)
+of `g` and `h`.
+
+The lexicographic product has edges (g₁, h₁) ∼ (g₂, h₂) when (g₁ ∼ g₂) ∨ (g₁ = g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = lexicographic_product(star_graph(3), path_graph(3))
+{9, 24} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 48 stored entries:
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  ⋅  1  1  1  1  1  1  1
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+```
+"""
+function lexicographic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    homomorphic_product(g, h)
+
+Return the [homomorphic product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The homomorphic product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂) ∨ (g₁ ∼ g₂ ∧ h₁ ≁ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = homomorphic_product(star_graph(3), path_graph(3))
+{9, 19} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 38 stored entries:
+ ⋅  1  1  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  ⋅  ⋅  1  ⋅
+ 1  1  ⋅  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  1  ⋅  ⋅  ⋅
+ ⋅  1  ⋅  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  ⋅  1  1  1  ⋅  ⋅  ⋅  ⋅
+ 1  ⋅  1  ⋅  ⋅  ⋅  ⋅  1  1
+ ⋅  1  ⋅  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  ⋅  1  ⋅  ⋅  ⋅  1  1  ⋅
+```
+"""
+function homomorphic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for i in vertices(g)
+        for j in vertices(h)
+            for k in vertices(h)
+                if k != j
+                    add_edge!(z, id(i, j), id(i, k))
+                end
+            end
+        end
+    end
+    cmpl_h = complement(h)
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for f in edges(cmpl_h)
+            j1, j2 = Tuple(f)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
+        end
+    end
+    return z
+end
+
 ## subgraphs ###
 
 """
-    induced_subgraph(g, vlist)
-    induced_subgraph(g, elist)
+	induced_subgraph(g, vlist)
+	induced_subgraph(g, elist)
 
 Return the subgraph of `g` induced by the vertices in  `vlist` or edges in `elist`
 along with a vector mapping the new vertices to the old ones
@@ -706,7 +932,7 @@ function induced_subgraph(
 end
 
 """
-    g[iter]
+	g[iter]
 
 Return the subgraph induced by `iter`.
 Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
@@ -714,7 +940,7 @@ Equivalent to [`induced_subgraph`](@ref)`(g, iter)[1]`.
 getindex(g::AbstractGraph, iter) = induced_subgraph(g, iter)[1]
 
 """
-    egonet(g, v, d, distmx=weights(g))
+	egonet(g, v, d, distmx=weights(g))
 
 Return the subgraph of `g` induced by the neighbors of `v` up to distance
 `d`, using weights (optionally) provided by `distmx`.
@@ -735,7 +961,7 @@ function egonet(
 end
 
 """
-    compute_shifts(n::Int, x::AbstractArray)
+	compute_shifts(n::Int, x::AbstractArray)
 
 Determine how many elements of `x` are less than `i` for all `i` in `1:n`.
 """
@@ -746,7 +972,7 @@ function compute_shifts(n::Integer, x::AbstractArray)
 end
 
 """
-    merge_vertices(g::AbstractGraph, vs)
+	merge_vertices(g::AbstractGraph, vs)
 
 Create a new graph where all vertices in `vs` have been aliased to the same vertex `minimum(vs)`.
 
@@ -772,7 +998,7 @@ julia> collect(edges(h))
  Edge 3 => 4
 ```
 """
-function merge_vertices(g::AbstractSimpleGraph, vs)
+function merge_vertices(g::G, vs) where {G<:AbstractSimpleGraph}
     # Use lowest value as new vertex id.
     vs = unique!(sort(vs))
     merged_vertex = popfirst!(vs)
@@ -788,7 +1014,7 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
     new_vertex_ids[vs] .= merged_vertex
 
     # if v in vs then labels[v] == v0 else labels[v] == v
-    newg = SimpleGraph(nvnew)
+    newg = G(nvnew)
     for e in edges(g)
         u, w = src(e), dst(e)
         if new_vertex_ids[u] != new_vertex_ids[w] # not a new self loop
@@ -799,7 +1025,7 @@ function merge_vertices(g::AbstractSimpleGraph, vs)
 end
 
 """
-    merge_vertices!(g, vs)
+	merge_vertices!(g, vs)
 
 Combine vertices specified in `vs` into single vertex whose
 index will be the lowest value in `vs`. All edges connected to vertices in `vs`

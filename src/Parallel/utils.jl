@@ -22,14 +22,10 @@ end
 
 Distributed implementation of [`generate_reduce`](@ref).
 """
-function distr_generate_reduce(
-    g::AbstractGraph{T}, gen_func::Function, comp::Comp, reps::Integer
-) where {T<:Integer,Comp}
-    # Type assert required for type stability
-    min_set::Vector{T} = @distributed ((x, y) -> comp(x, y) ? x : y) for _ in 1:reps
-        gen_func(g)
-    end
-    return min_set
+function distr_generate_reduce(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 """
