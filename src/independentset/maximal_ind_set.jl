@@ -20,6 +20,9 @@ Approximation Factor: maximum(degree(g))+1
 ### Optional Arguments
 - `rng=nothing`: set the Random Number Generator.
 - If `seed >= 0`, a random generator is seeded with this value.
+
+### See also
+[`maximum_independent_set`](@ref)
 """
 function independent_set(
     g::AbstractGraph{T},

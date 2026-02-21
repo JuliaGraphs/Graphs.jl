@@ -149,16 +149,16 @@ function _edit_distance(
     # initialize open set
     OPEN = PriorityQueue{Vector{Tuple},Float64}()
     for v in vertices(G₂)
-        enqueue!(OPEN, [(T(1), v)], vertex_subst_cost(1, v) + h([(T(1), v)]))
+        push!(OPEN, [(T(1), v)] => vertex_subst_cost(1, v) + h([(T(1), v)]))
     end
-    enqueue!(OPEN, [(T(1), U(0))], vertex_delete_cost(1) + h([(T(1), U(0))]))
+    push!(OPEN, [(T(1), U(0))] => vertex_delete_cost(1) + h([(T(1), U(0))]))
 
     c = 0
     while true
         # minimum (partial) edit path
-        λ, cost = peek(OPEN)
+        λ, cost = first(OPEN)
         c += 1
-        dequeue!(OPEN)
+        popfirst!(OPEN)
 
         if is_complete_path(λ, G₁, G₂)
             return cost, λ
@@ -177,7 +177,7 @@ function _edit_distance(
                     end
                     new_cost += association_cost(u1, u1, v1, v1) # handle self-loops
 
-                    enqueue!(OPEN, λ⁺, new_cost)
+                    push!(OPEN, λ⁺ => new_cost)
                 end
                 # we try deleting v1
                 λ⁺ = [λ; (u1, U(0))]
@@ -194,7 +194,7 @@ function _edit_distance(
                         new_cost += edge_delete_cost(Edge(u2, u1))
                     end
                 end
-                enqueue!(OPEN, λ⁺, new_cost)
+                push!(OPEN, λ⁺ => new_cost)
             else
                 # add remaining vertices of G₂ to the path by deleting them
                 λ⁺ = [λ; [(T(0), v) for v in vs]]
@@ -212,7 +212,7 @@ function _edit_distance(
                         end
                     end
                 end
-                enqueue!(OPEN, λ⁺, new_cost + h(λ⁺) - h(λ))
+                push!(OPEN, λ⁺ => new_cost + h(λ⁺) - h(λ))
             end
         end
     end
