@@ -354,6 +354,7 @@ export
     cycle_digraph,
     binary_tree,
     double_binary_tree,
+    regular_tree,
     roach_graph,
     clique_graph,
     ladder_graph,
