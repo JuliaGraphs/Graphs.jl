@@ -605,7 +605,7 @@ function regular_tree(T::Type{<:Integer}, k::Integer, z::Integer)
     @inbounds for l in 2:(k - 1)
         w = (z^(l - 1) - 1) ÷ (z - 1)
         x = w + z^(l - 1)
-        @simd for i in 1:(z^(l - 1))
+        @simd for i in 1:(z ^ (l - 1))
             j = w + i
             fadjlist[j] = [
                 T(ceil((j - x) / z) + w)
