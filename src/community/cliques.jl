@@ -194,7 +194,7 @@ independent sets found in the undirected graph `g`.
 
 The graph will be converted to SimpleGraph at the start of the computation.
 
-```jldoctest
+```jldoctest; filter = r"^\\s+\\[[\\d, ]+\\]\$"m
 julia> using Graphs
 
 julia> maximal_independent_sets(cycle_graph(5))
@@ -227,7 +227,7 @@ The graph will be converted to SimpleGraph at the start of the computation.
 [`independent_set`](@ref)
 
 ## Examples
-```jldoctest
+```jldoctest; filter = r"^\\s+\\d+\$"m
 julia> using Graphs
 
 julia> maximum_independent_set(cycle_graph(7))

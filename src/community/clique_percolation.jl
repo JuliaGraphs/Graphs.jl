@@ -9,7 +9,7 @@ The parameter `k` defines the size of the clique to use in percolation.
 - [Palla G, Derenyi I, Farkas I J, et al.] (https://www.nature.com/articles/nature03607)
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"^\\s+BitSet\\(\\[[\\d, ]+\\]\\)\$"m
 julia> using Graphs
 
 julia> clique_percolation(clique_graph(3, 2))
