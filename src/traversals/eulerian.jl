@@ -95,7 +95,7 @@ function _check_eulerian_input(g, u)
             )
         end
     else # isodd(du)  # trail: start (u) != stop (v) - all nodes, except u and v, must have even degree
-        if count(x -> iseven(degree(g, x)), vertices(g)) != 2
+        if count(x -> isodd(degree(g, x)), vertices(g)) != 2
             error(
                 "starting vertex has odd degree but the total number of vertices of odd degree is not equal to 2: a eulerian trail does not exist",
             )

@@ -58,23 +58,23 @@ function _lg_skip_one_graph(f::IO, n_e::Integer)
 end
 
 function _parse_header(s::AbstractString)
-    addl_info = false
     nvstr, nestr, dirundir, graphname = split(s, r"s*,s*"; limit=4)
+    addl = nothing
     if occursin(",", graphname) # version number and type
         graphname, _ver, _dtype, graphcode = split(graphname, r"s*,s*")
         ver = parse(Int, _ver)
         dtype = getfield(Main, Symbol(_dtype))
-        addl_info = true
+        addl = (ver, dtype, graphcode)
     end
     n_v = parse(Int, nvstr)
     n_e = parse(Int, nestr)
     dirundir = strip(dirundir)
     directed = !(dirundir == "u")
     graphname = strip(graphname)
-    if !addl_info
+    if addl === nothing
         header = LGHeader(n_v, n_e, directed, graphname)
     else
-        header = LGHeader(n_v, n_e, directed, graphname, ver, dtype, graphcode)
+        header = LGHeader(n_v, n_e, directed, graphname, addl...)
     end
     return header
 end

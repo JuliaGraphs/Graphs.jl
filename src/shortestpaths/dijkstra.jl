@@ -11,7 +11,7 @@ An [`AbstractPathState`](@ref) designed for Dijkstra shortest-paths calculations
 - `pathcounts::Vector{Float64}`: a vector, indexed by vertex, of the number of shortest paths from the source to that vertex. The path count of a source vertex is always `1.0`. The path count of an unreached vertex is always `0.0`.
 - `closest_vertices::Vector{U}`: a vector of all vertices in the graph ordered from closest to farthest.
 """
-struct DijkstraState{T<:Real,U<:Integer} <: AbstractPathState
+struct DijkstraState{T<:Number,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
     predecessors::Vector{Vector{U}}
@@ -73,7 +73,7 @@ function dijkstra_shortest_paths(
     allpaths=false,
     trackvertices=false,
     maxdist=typemax(T),
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(g)
     dists = fill(typemax(T), nvg)
     parents = zeros(U, nvg)
@@ -95,7 +95,7 @@ function dijkstra_shortest_paths(
     sizehint!(closest_vertices, nvg)
 
     while !isempty(H)
-        u = dequeue!(H)
+        u = popfirst!(H).first
 
         if trackvertices
             push!(closest_vertices, u)

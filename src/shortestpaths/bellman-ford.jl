@@ -8,7 +8,6 @@
 #   The type that encapsulates the state of Bellman Ford algorithm
 #
 ###################################################################
-using Base.Threads
 
 struct NegativeCycleError <: Exception end
 
@@ -23,7 +22,7 @@ An `AbstractPathState` designed for Bellman-Ford shortest-paths calculations.
 - `parents::Vector{U}`: `parents[v]` is the predecessor of vertex `v` on the shortest path from the source to `v`
 - `dists::Vector{T}`: `dists[v]` is the length of the shortest path from the source to `v`
 """
-struct BellmanFordState{T<:Real,U<:Integer} <: AbstractPathState
+struct BellmanFordState{T<:Number,U<:Integer} <: AbstractPathState
     parents::Vector{U}
     dists::Vector{T}
 end
@@ -41,7 +40,7 @@ function bellman_ford_shortest_paths(
     graph::AbstractGraph{U},
     sources::AbstractVector{<:Integer},
     distmx::AbstractMatrix{T}=weights(graph),
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     nvg = nv(graph)
     active = falses(nvg)
     active[sources] .= true
@@ -77,7 +76,7 @@ end
 
 function bellman_ford_shortest_paths(
     graph::AbstractGraph{U}, v::Integer, distmx::AbstractMatrix{T}=weights(graph);
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     return bellman_ford_shortest_paths(graph, [v], distmx)
 end
 
@@ -85,7 +84,7 @@ has_negative_edge_cycle(g::AbstractGraph) = false
 
 function has_negative_edge_cycle(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
-) where {T<:Real} where {U<:Integer}
+) where {T<:Number} where {U<:Integer}
     try
         bellman_ford_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e
@@ -108,6 +107,7 @@ single destinations, the path is represented by a single vector of vertices,
 and will be length 0 if the path does not exist.
 
 ### Implementation Notes
+
 For Floyd-Warshall path states, please note that the output is a bit different,
 since this algorithm calculates all shortest paths for all pairs of vertices:
 `enumerate_paths(state)` will return a vector (indexed by source vertex) of
@@ -117,13 +117,47 @@ to all other vertices. In addition, `enumerate_paths(state, v, d)` will return
 a vector representing the path from vertex `v` to vertex `d`.
 """
 function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer})
-    parents = state.parents
-    T = eltype(parents)
+    T = eltype(state.parents)
+    all_paths = Vector{T}[Vector{eltype(state.parents)}() for _ in 1:length(vs)]
+    return enumerate_paths!(all_paths, state, vs)
+end
+enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, v:v)[1]
+function enumerate_paths(state::AbstractPathState)
+    return enumerate_paths(state, 1:length(state.parents))
+end
 
+"""
+    enumerate_paths!(paths::AbstractVector{<:AbstractVector}, state, vs::AbstractVector{Int})
+
+In-place version of [`enumerate_paths`](@ref).
+
+`paths` must be a `Vector{Vectors{eltype(state.parents)}}`, `state` an `AbstractPathState`, 
+and `vs`` an AbstractRange or other AbstractVector of `Int`. 
+
+See the `enumerate_paths` documentation for details.
+
+`enumerate_paths!` should be more efficient when used in a loop,
+as the same memory can be used for each iteration.
+"""
+function enumerate_paths!(
+    all_paths::AbstractVector{<:AbstractVector},
+    state::AbstractPathState,
+    vs::AbstractVector{<:Integer},
+)
+    Base.require_one_based_indexing(all_paths)
+    Base.require_one_based_indexing(vs)
+    length(all_paths) == length(vs) || throw(
+        ArgumentError(
+            "length of destination paths $(length(vs)) deos not match length of vs $(length(all_paths))",
+        ),
+    )
+
+    parents = state.parents
+    T = eltype(state.parents)
     num_vs = length(vs)
-    all_paths = Vector{Vector{T}}(undef, num_vs)
+
     for i in 1:num_vs
-        all_paths[i] = Vector{T}()
+        empty!(all_paths[i])
         index = T(vs[i])
         if parents[index] != 0 || parents[index] == index
             while parents[index] != 0
@@ -135,9 +169,4 @@ function enumerate_paths(state::AbstractPathState, vs::AbstractVector{<:Integer}
         end
     end
     return all_paths
-end
-
-enumerate_paths(state::AbstractPathState, v::Integer) = enumerate_paths(state, [v])[1]
-function enumerate_paths(state::AbstractPathState)
-    return enumerate_paths(state, [1:length(state.parents);])
 end
