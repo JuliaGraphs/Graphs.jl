@@ -24,10 +24,12 @@ julia> neighbors(rg, 2)
 struct ReverseView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
     g::G
 
-    @traitfn ReverseView{T,G}(g::::(IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
-        new(g)
-    @traitfn ReverseView{T,G}(g::::(!IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} =
-        throw(ArgumentError("Your graph needs to be directed"))
+    @traitfn ReverseView{T,G}(g::::(IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} = new(
+        g
+    )
+    @traitfn ReverseView{T,G}(g::::(!IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} = throw(
+        ArgumentError("Your graph needs to be directed")
+    )
 end
 
 ReverseView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = ReverseView{T,G}(g)
@@ -81,10 +83,9 @@ struct UndirectedView{T<:Integer,G<:AbstractGraph} <: AbstractGraph{T}
         return new(g, ne)
     end
 
-    @traitfn UndirectedView{T,G}(
-        g::::(!IsDirected)
-    ) where {T<:Integer,G<:AbstractGraph{T}} =
-        throw(ArgumentError("Your graph needs to be directed"))
+    @traitfn UndirectedView{T,G}(g::::(!IsDirected)) where {T<:Integer,G<:AbstractGraph{T}} = throw(
+        ArgumentError("Your graph needs to be directed")
+    )
 end
 
 UndirectedView(g::G) where {T<:Integer,G<:AbstractGraph{T}} = UndirectedView{T,G}(g)
