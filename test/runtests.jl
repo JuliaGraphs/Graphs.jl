@@ -115,6 +115,7 @@ tests = [
     "community/cliques",
     "community/core-periphery",
     "community/label_propagation",
+    "community/louvain",
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",

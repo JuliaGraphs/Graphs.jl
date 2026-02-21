@@ -18,7 +18,7 @@ using DataStructures:
     BinaryMaxHeap,
     BinaryMinHeap,
     Stack
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
@@ -315,6 +315,7 @@ export
     global_clustering_coefficient,
     triangles,
     label_propagation,
+    louvain,
     maximal_cliques,
     clique_percolation,
     assortativity,
@@ -528,6 +529,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/louvain.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")

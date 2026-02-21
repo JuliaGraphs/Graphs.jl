@@ -94,6 +94,7 @@ makedocs(;
         canonical="https://gdalle.github.io/Graphs.jl",
     ),
     sitename="Graphs.jl",
+    checkdocs=:public,
     doctest=false,
     expandfirst=[],
     pages=[
