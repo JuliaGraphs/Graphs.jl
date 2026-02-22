@@ -370,12 +370,11 @@
         @test length(g) == 10000
     end
 
-
     @testset "Mycielski Operator" begin
         @testset "out of place" begin
             g = complete_graph(2)
 
-            m = mycielski(g; iterations = 8)
+            m = mycielski(g; iterations=8)
             @test nv(m) == 767
             @test ne(m) == 22196
 
@@ -398,7 +397,7 @@
         @testset "in place" begin
             g = complete_graph(2)
 
-            m = mycielski!(g; iterations = 8)
+            m = mycielski!(g; iterations=8)
             @test nv(m) == 767
             @test ne(m) == 22196
 
@@ -447,7 +446,7 @@
             add_edge!(g, 1, 1)
             n = nv(g)
             e = ne(g)
-            
+
             # no modification
             m = mycielski(g)
             @test nv(m) == n

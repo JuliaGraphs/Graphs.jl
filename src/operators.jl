@@ -1115,10 +1115,9 @@ See [`mycielski`](@ref) for the details of the operation.
 ### Implementation Notes
 Operates in place and expects `g` to not have self loops.
 """
-function mycielski!(g::SimpleGraph; iterations::Integer = 1)
-
+function mycielski!(g::SimpleGraph; iterations::Integer=1)
     has_self_loops(g) && return g
-    
+
     for _ in Base.OneTo(iterations)
         N = nv(g)
 
@@ -1200,7 +1199,7 @@ julia> collect(edges(gm))
  Edge 10 => 11
 ```
 """
-function mycielski(g; iterations = 1) 
-    has_self_loops(g) && return g    
+function mycielski(g; iterations=1)
+    has_self_loops(g) && return g
     mycielski!(copy(g); iterations=iterations)
 end
