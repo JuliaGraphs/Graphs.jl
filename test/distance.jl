@@ -177,7 +177,7 @@
             t_naive = @elapsed d_naive = maximum(eccentricity(g, vertices(g), distmx))
 
             @test d_opt ≈ d_naive
-            @info "Speedup Barabási-Albert Model: $(round(t_naive/t_opt, digits=3))x"
+            @info "Speedup on Barabási-Albert Model: $(round(t_naive/t_opt, digits=3))x"
         end
     end
 end
