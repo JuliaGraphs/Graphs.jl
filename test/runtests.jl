@@ -3,7 +3,9 @@ using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
-using JET
+if isempty(VERSION.prerelease)
+    using JET
+end
 using Graphs.Test
 using Test
 using SparseArrays
@@ -156,14 +158,16 @@ tests = [
 ]
 
 @testset verbose = true "Graphs" begin
-    @testset "Code quality (JET.jl)" begin
-        @assert get_pkg_version("JET") >= v"0.8.4"
-        JET.test_package(
-            Graphs;
-            target_defined_modules=true,
-            ignore_missing_comparison=true,
-            mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
-        )
+    if isempty(VERSION.prerelease)
+        @testset "Code quality (JET.jl)" begin
+            @assert get_pkg_version("JET") >= v"0.8.4"
+            JET.test_package(
+                Graphs;
+                target_defined_modules=true,
+                ignore_missing_comparison=true,
+                mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+            )
+        end
     end
 
     @testset "Code quality (Aqua.jl)" begin

@@ -411,6 +411,23 @@
         @test isvalid_simplegraph(g)
     end
 
+    @testset "Regular Trees" begin
+        g = @inferred(regular_tree(3, 3))
+        I = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        J = [2, 3, 4, 1, 5, 6, 7, 8, 1, 9, 10, 1, 11, 12, 13, 2, 2, 2, 3, 3, 3, 4, 4, 4]
+        V = ones(Int, length(I))
+        Adj = sparse(I, J, V)
+        @test Adj == sparse(g)
+        @test isvalid_simplegraph(g)
+        @test_throws InexactError regular_tree(Int8, 4, 5)
+        g = @inferred(regular_tree(Int16, 4, 5))
+        @test isvalid_simplegraph(g)
+        # test that z = 1 recovers a path graph
+        @test all(regular_tree(k, 1) == path_graph(k) for k in 0:10)
+        # test that z = 2 recovers a binary tree
+        @test all(regular_tree(k, 2) == binary_tree(k) for k in 0:10)
+    end
+
     @testset "Roach Graphs" begin
         rg3 = @inferred(roach_graph(3))
         # [3]
