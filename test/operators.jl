@@ -372,25 +372,86 @@
 
 
     @testset "Mycielski Operator" begin
-        g = complete_graph(2)
+        @testset "out of place" begin
+            g = complete_graph(2)
 
-        m = mycielski(g; iterations = 8)
-        @test nv(m) == 767
-        @test ne(m) == 22196
+            m = mycielski(g; iterations = 8)
+            @test nv(m) == 767
+            @test ne(m) == 22196
 
-        # ensure it is not done in-place
-        @test nv(g) == 2
-        @test ne(g) == 1
+            # ensure it is not done in-place
+            @test nv(g) == 2
+            @test ne(g) == 1
 
-        # check that mycielski preserves triangle-freeness
-        g = complete_bipartite_graph(10, 5)
-        m = mycielski(g)
-        @test nv(m) == 2*15 + 1
-        @test ne(m) == 3*50 + 15
-        @test all(iszero, triangles(m))
+            # check that mycielski preserves triangle-freeness
+            g = complete_bipartite_graph(10, 5)
+            m = mycielski(g)
+            @test nv(m) == 2*15 + 1
+            @test ne(m) == 3*50 + 15
+            @test all(iszero, triangles(m))
 
-        # ensure it is not done in-place
-        @test nv(g) == 15
-        @test ne(g) == 50
+            # ensure it is not done in-place
+            @test nv(g) == 15
+            @test ne(g) == 50
+        end
+
+        @testset "in place" begin
+            g = complete_graph(2)
+
+            m = mycielski!(g; iterations = 8)
+            @test nv(m) == 767
+            @test ne(m) == 22196
+
+            # ensure it is done in-place
+            @test nv(g) == 767
+            @test ne(g) == 22196
+
+            # check that mycielski preserves triangle-freeness
+            g = complete_bipartite_graph(10, 5)
+            m = mycielski(g)
+            @test nv(m) == 2*15 + 1
+            @test ne(m) == 3*50 + 15
+            @test all(iszero, triangles(m))
+
+            # ensure it is not done in-place
+            @test nv(g) == 15
+            @test ne(g) == 50
+        end
+
+        @testset "empty" begin
+            g = Graph()
+
+            m = mycielski!(g)
+            @test nv(m) == 1
+            @test ne(m) == 0
+
+            # one more iteration
+            m = mycielski!(m)
+            @test nv(m) == 3
+            @test ne(m) == 1
+        end
+
+        @testset "isolated vertices" begin
+            g = Graph()
+            add_vertices!(g, 2)
+
+            m = mycielski!(g)
+            @test nv(m) == 5
+            @test ne(m) == 2
+        end
+
+        @testset "self loop" begin
+            g = complete_graph(5)
+
+            # add a self loop
+            add_edge!(g, 1, 1)
+            n = nv(g)
+            e = ne(g)
+            
+            # no modification
+            m = mycielski(g)
+            @test nv(m) == n
+            @test ne(m) == e
+        end
     end
 end

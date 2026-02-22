@@ -170,6 +170,7 @@ export
     egonet,
     merge_vertices!,
     merge_vertices,
+    mycielski!,
     mycielski,
 
     # bfs
