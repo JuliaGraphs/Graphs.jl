@@ -95,8 +95,9 @@ end
 Given a graph and optional distance matrix, or a vector of precomputed
 eccentricities, return the maximum eccentricity of the graph.
 
-An optimizied BFS algorithm (iFUB) is used for unweighted graphs, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
-and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) cases.
+An optimizied BFS algorithm (iFUB) is used, both in [undirected](https://www.sciencedirect.com/science/article/pii/S0304397512008687) 
+and [directed](https://link.springer.com/chapter/10.1007/978-3-642-30850-5_10) cases. For weighted graphs,
+dijkstra is used to compute shortest path trees, and the algorithm iterates over sorted distinct distance values.
 
 # Examples
 ```jldoctest
@@ -115,52 +116,29 @@ diameter(eccentricities::Vector) = maximum(eccentricities)
 
 diameter(g::AbstractGraph) = diameter(g, weights(g))
 
-function diameter(g::AbstractGraph, ::DefaultDistance)
-    if nv(g) == 0
-        return 0
+function diameter(g::AbstractGraph, distmx::AbstractMatrix)
+    if distmx isa DefaultDistance
+        return diameter(g, DefaultDistance(nv(g)))
     end
+
+    if is_directed(g)
+        return _diameter_weighted_directed(g, distmx)
+    else
+        return _diameter_weighted_undirected(g, distmx)
+    end
+end
+
+function diameter(g::AbstractGraph, ::DefaultDistance)
+    nv(g) == 0 && return 0
 
     connected = is_directed(g) ? is_strongly_connected(g) : is_connected(g)
-
-    if !connected
-        return typemax(Int)
-    end
+    !connected && return typemax(Int)
 
     return _diameter_ifub(g)
 end
 
-function diameter(g::AbstractGraph, distmx::AbstractMatrix)
-    # If the graph is unweighted (DefaultDistance), use the existing BFS-based iFUB
-    if distmx isa DefaultDistance
-        return diameter(g, DefaultDistance(nv(g))) # Redirects to existing _diameter_ifub logic
-    end
-
-    # For weighted directed graphs, strictly implementing DiFUB requires efficient 
-    # backward Dijkstra traversals 
-    # For simplicity, we fall back to the naive method for directed weighted graphs
-    # and use the optimized iFUB for undirected weighted graphs
-    if is_directed(g)
-        return maximum(eccentricity(g, vertices(g), distmx))
-    end
-
-    return _diameter_weighted(g, distmx)
-end
-
-#=
-function diameter(g::AbstractGraph, distmx::AbstractMatrix)
-    return maximum(eccentricity(g, distmx))
-end
-=#
-
 function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
     nvg = nv(g)
-    out_list = [outneighbors(g, v) for v in vertices(g)]
-
-    if is_directed(g)
-        in_list = [inneighbors(g, v) for v in vertices(g)]
-    else
-        in_list = out_list
-    end
 
     active = trues(nvg)
     visited = falses(nvg)
@@ -170,142 +148,190 @@ function _diameter_ifub(g::AbstractGraph{T}) where {T<:Integer}
 
     # Sort vertices by total degree (descending) to maximize pruning potential
     vs = collect(vertices(g))
-    sort!(vs; by=v -> -(length(out_list[v]) + length(in_list[v])))
+    sort!(vs; by=v -> -degree(g, v))
 
     for u in vs
-        if !active[u]
-            continue
-        end
+        !active[u] && continue
 
-        # Forward BFS from u
-        fill!(visited, false)
-        visited[u] = true
-        queue[1] = u
-        front = 1
-        back = 2
-        level_end = 1
-        e = 0
-
-        while front < back
-            v = queue[front]
-            front += 1
-
-            @inbounds for w in out_list[v]
-                if !visited[w]
-                    visited[w] = true
-                    queue[back] = w
-                    back += 1
-                end
-            end
-
-            if front > level_end && front < back
-                e += 1
-                level_end = back - 1
-            end
-        end
+        # Forward BFS
+        e = _fwd_bfs_eccentricity!(g, u, visited, queue)
         diam = max(diam, e)
 
-        # Backward BFS (Pruning)
+        # Backward BFS
         dmax = diam - e
-
-        # Only prune if we have a chance to exceed the current diameter
         if dmax >= 0
-            fill!(distbuf, typemax(T))
-            distbuf[u] = 0
-            queue[1] = u
-            front = 1
-            back = 2
-
-            while front < back
-                v = queue[front]
-                front += 1
-
-                if distbuf[v] >= dmax
-                    continue
-                end
-
-                @inbounds for w in in_list[v]
-                    if distbuf[w] == typemax(T)
-                        distbuf[w] = distbuf[v] + 1
-                        queue[back] = w
-                        back += 1
-                    end
-                end
-            end
-
-            # Prune vertices that cannot lead to a longer diameter
-            @inbounds for v in vertices(g)
-                if active[v] && distbuf[v] != typemax(T) && (distbuf[v] + e <= diam)
-                    active[v] = false
-                end
-            end
+            _bwd_bfs_prune!(g, u, active, distbuf, queue, dmax, e, diam)
         end
 
-        if !any(active)
-            break
-        end
+        !any(active) && break
     end
 
     return diam
 end
 
-function _diameter_weighted(g::AbstractGraph, distmx::AbstractMatrix{T}) where {T<:Number}
-    # Handle empty graph
-    nv(g) == 0 && return zero(T)
+# iFUB Helpers
 
-    # 1. Heuristic: Start from a node 'u' with high degree
-    u = argmax(degree(g))
+function _fwd_bfs_eccentricity!(g, u, visited, queue)
+    fill!(visited, false)
+    visited[u] = true
+    queue[1] = u
+    front, back, level_end, e = 1, 2, 1, 0
 
-    # 2. Compute Shortest Path Tree from u
-    ds = dijkstra_shortest_paths(g, u, distmx)
-    dists = ds.dists
+    while front < back
+        v = queue[front]
+        front += 1
 
-    # Handle disconnected components
-    # If u cannot reach all nodes, the graph is disconnected -> infinite diameter
-    valid_nodes = findall(d -> d < typemax(T), dists)
-    if length(valid_nodes) < nv(g)
-        return typemax(T)
-    end
-
-    # 3. Identify distinct sorted distances
-    unique_dists = unique(dists[valid_nodes])
-    sort!(unique_dists)
-
-    # Initialize Lower Bound (lb) with eccentricity of u
-    lb = unique_dists[end]
-
-    # Group nodes by distance
-    nodes_by_dist = Dict{T,Vector{Int}}()
-    for v in valid_nodes
-        d = dists[v]
-        if !haskey(nodes_by_dist, d)
-            nodes_by_dist[d] = Int[]
-        end
-        push!(nodes_by_dist[d], v)
-    end
-
-    # 4. Iterate backward
-    num_levels = length(unique_dists)
-
-    for i in num_levels:-1:2
-        d_i = unique_dists[i]
-        d_prev = unique_dists[i - 1]
-
-        # Process the "Fringe" at distance d_i FIRST
-        fringe = nodes_by_dist[d_i]
-        for v in fringe
-            ecc_v = maximum(dijkstra_shortest_paths(g, v, distmx).dists)
-            if ecc_v > lb
-                lb = ecc_v
+        @inbounds for w in outneighbors(g, v)
+            if !visited[w]
+                visited[w] = true
+                queue[back] = w
+                back += 1
             end
         end
 
-        # Pruning Condition: Check AFTER processing the current level
-        # If the found lower bound is greater than 2 * (distance of previous level),
-        # we can stop. Nodes in previous levels cannot form a path longer than 2*d_prev.
-        if lb > 2 * d_prev
-            return lb
+        if front > level_end && front < back
+            e += 1
+            level_end = back - 1
         end
+    end
+    return e
+end
+
+function _bwd_bfs_prune!(g, u, active, distbuf, queue, dmax, e, diam)
+    T = eltype(queue)
+    fill!(distbuf, typemax(T))
+    distbuf[u] = 0
+    queue[1] = u
+    front, back = 1, 2
+
+    while front < back
+        v = queue[front]
+        front += 1
+
+        distbuf[v] >= dmax && continue
+
+        @inbounds for w in inneighbors(g, v)
+            if distbuf[w] == typemax(T)
+                distbuf[w] = distbuf[v] + 1
+                queue[back] = w
+                back += 1
+            end
+        end
+    end
+
+    # Prune vertices
+    @inbounds for v in eachindex(active)
+        if active[v] && distbuf[v] != typemax(T) && (distbuf[v] + e <= diam)
+            active[v] = false
+        end
+    end
+end
+
+function _safe_reverse(g::T) where {T<:AbstractGraph}
+    if hasmethod(reverse, Tuple{T})
+        return reverse(g)
+    else
+        U = eltype(g)
+        rg = SimpleDiGraph{U}(nv(g))
+        @inbounds for v in vertices(g)
+            for w in outneighbors(g, v)
+                add_edge!(rg, w, v)
+            end
+        end
+        return rg
+    end
+end
+
+function _diameter_weighted_directed(
+    g::AbstractGraph, distmx::AbstractMatrix{T}
+) where {T<:Number}
+    nv(g) == 0 && return zero(T)
+    U = eltype(g)
+    u = U(argmax(degree(g)))
+
+    # Compute base trees
+    g_rev = _safe_reverse(g)
+    distmx_rev = permutedims(distmx)
+
+    dists_fwd = dijkstra_shortest_paths(g, u, distmx).dists
+    dists_bwd = dijkstra_shortest_paths(g_rev, u, distmx_rev).dists
+
+    if maximum(dists_fwd) == typemax(T) || maximum(dists_bwd) == typemax(T)
+        return typemax(T)
+    end
+
+    # Group fringes and initialize lower bound
+    unique_dists = sort!(unique(vcat(dists_fwd, dists_bwd)))
+    lb = max(maximum(dists_fwd), maximum(dists_bwd))
+
+    fringe_fwd = Dict{T,Vector{Int}}()
+    fringe_bwd = Dict{T,Vector{Int}}()
+
+    @inbounds for v in vertices(g)
+        push!(get!(fringe_fwd, dists_fwd[v], Int[]), v)
+        push!(get!(fringe_bwd, dists_bwd[v], Int[]), v)
+    end
+
+    # Evaluate fringes backward
+    for i in length(unique_dists):-1:2
+        d_i = unique_dists[i]
+        d_prev = unique_dists[i - 1]
+
+        if haskey(fringe_fwd, d_i)
+            for v in fringe_fwd[d_i]
+                ds = dijkstra_shortest_paths(g_rev, U(v), distmx_rev)
+                lb = max(lb, maximum(ds.dists))
+            end
+        end
+
+        if haskey(fringe_bwd, d_i)
+            for v in fringe_bwd[d_i]
+                ds = dijkstra_shortest_paths(g, U(v), distmx)
+                lb = max(lb, maximum(ds.dists))
+            end
+        end
+
+        lb > 2 * d_prev && break
+    end
+
+    return lb
+end
+
+function _diameter_weighted_undirected(
+    g::AbstractGraph, distmx::AbstractMatrix{T}
+) where {T<:Number}
+    nv(g) == 0 && return zero(T)
+    U = eltype(g)
+    u = U(argmax(degree(g)))
+
+    # Compute base trees
+    dists = dijkstra_shortest_paths(g, u, distmx).dists
+
+    if maximum(dists) == typemax(T)
+        return typemax(T)
+    end
+
+    # Group fringes and initialize lower bound
+    unique_dists = sort!(unique(dists))
+    lb = maximum(dists)
+
+    fringe = Dict{T,Vector{Int}}()
+    @inbounds for v in vertices(g)
+        push!(get!(fringe, dists[v], Int[]), v)
+    end
+
+    for i in length(unique_dists):-1:2
+        d_i = unique_dists[i]
+        d_prev = unique_dists[i - 1]
+
+        if haskey(fringe, d_i)
+            for v in fringe[d_i]
+                ds = dijkstra_shortest_paths(g, U(v), distmx)
+                lb = max(lb, maximum(ds.dists))
+            end
+        end
+
+        lb >= 2 * d_prev && break
     end
 
     return lb
