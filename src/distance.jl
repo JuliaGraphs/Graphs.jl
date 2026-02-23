@@ -117,10 +117,6 @@ diameter(eccentricities::Vector) = maximum(eccentricities)
 diameter(g::AbstractGraph) = diameter(g, weights(g))
 
 function diameter(g::AbstractGraph, distmx::AbstractMatrix)
-    if distmx isa DefaultDistance
-        return diameter(g, DefaultDistance(nv(g)))
-    end
-
     if is_directed(g)
         return _diameter_weighted_directed(g, distmx)
     else

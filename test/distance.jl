@@ -49,12 +49,30 @@
         end
     end
 
-    @testset "Disconnected graph diameter" for g in test_generic_graphs(a3)
-        @test @inferred(diameter(g)) == typemax(Int)
+    @testset "Disconnected graph diameter" begin
+        for g in test_generic_graphs(a3)
+            @test @inferred(diameter(g)) == typemax(Int)
+
+            distmx3 = [Inf 1.0 Inf; Inf Inf Inf; Inf Inf Inf]
+            @test diameter(g, distmx3) == Inf
+        end
+
+        g_un_isolated = SimpleGraph(2)
+        distmx_isolated = [0.0 Inf; Inf 0.0]
+        @test diameter(g_un_isolated, distmx_isolated) == Inf
     end
 
-    @testset "simplegraph diameter" for g in test_generic_graphs(a4)
-        @test @inferred(diameter(g)) == 3
+    @testset "simplegraph diameter" begin
+        for g in test_generic_graphs(a4)
+            @test @inferred(diameter(g)) == 3
+        end
+
+        g_di = SimpleDiGraph(3)
+        add_edge!(g_di, 1, 2)
+        add_edge!(g_di, 2, 3)
+        add_edge!(g_di, 3, 1)
+        distmx_di = [Inf 1.5 Inf; Inf Inf 2.5; 1.0 Inf Inf]
+        @test @inferred(diameter(g_di, distmx_di)) == 4.0
     end
 
     @testset "Empty graph diameter" begin
