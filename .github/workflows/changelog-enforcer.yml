@@ -1,0 +1,10 @@
+name: "Changelog Enforcer"
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dangoslen/changelog-enforcer@v3
