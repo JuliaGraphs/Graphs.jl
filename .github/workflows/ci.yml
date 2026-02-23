@@ -14,7 +14,8 @@ on:
   push:
     branches:
       - master
-    tags: '*'
+    tags: 
+      - '*'
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -28,13 +29,16 @@ jobs:
         os:
           - ubuntu-latest
           - macos-latest
+          - macos-15-intel
           - windows-latest
         arch:
           - x64
+        exclude:
+          - os: macos-latest
+            arch: x64
         include:
-          - version: '1'
-            os: macos-latest
-            arch: aarch64
+          - os: macos-latest
+            arch: arm64
     steps:
       - uses: actions/checkout@v6
       - uses: julia-actions/setup-julia@v2
