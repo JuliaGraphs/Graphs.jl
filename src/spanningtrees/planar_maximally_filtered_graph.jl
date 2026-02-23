@@ -38,7 +38,7 @@ function planar_maximally_filtered_graph(
     #we want the smallest weight edges at the end of the edge list
     #after sorting, which means reversing the usual direction of
     #the sort.
-    edge_list .= edge_list[sortperm(weights; rev=!minimize)]
+    edge_list .= edge_list[sortperm(weights; rev=(!minimize))]
 
     #construct an initial graph
     test_graph = SimpleGraph{U}(nv(g))
@@ -62,4 +62,3 @@ function planar_maximally_filtered_graph(
 
     return test_graph
 end
-
