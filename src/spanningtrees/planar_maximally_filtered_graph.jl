@@ -23,7 +23,7 @@ function planar_maximally_filtered_graph(
     if ne(g) <= 6
         test_graph = SimpleGraph{U}(nv(g))
         for e in edges(g)
-            add_edge!(g, e)
+            add_edge!(test_graph, e)
         end
         return test_graph
     end
@@ -34,27 +34,23 @@ function planar_maximally_filtered_graph(
     #sort the set of edges by weight
     #we try to maximally filter the graph and assume that weights
     #represent distances. Thus we want to add edges with the 
-    #smallest distances first. Given that we pop the edge list, 
-    #we want the smallest weight edges at the end of the edge list
-    #after sorting, which means reversing the usual direction of
-    #the sort.
+    #smallest distances first. We sort edges in ascending order
+    #of weight (if minimize=true) and iterate from the start of
+    #the list.
     edge_list .= edge_list[sortperm(weights; rev=(!minimize))]
 
     #construct an initial graph
     test_graph = SimpleGraph{U}(nv(g))
 
-    for e in edge_list[1:6]
+    for e in edge_list[1:min(6, length(edge_list))]
         #we can always add the first six edges of a graph 
         add_edge!(test_graph, src(e), dst(e))
     end
 
-    #generate lrp state
-    lrp_state = LRPlanarity(test_graph)
     #go through the rest of the edge list 
     for e in edge_list[7:end]
         add_edge!(test_graph, src(e), dst(e)) #add it to graph
-        reset_lrp_state!(lrp_state, test_graph)
-        if !lr_planarity!(lrp_state) #if resulting graph is not planar, remove it again
+        if !is_planar(test_graph) #if resulting graph is not planar, remove it again
             rem_edge!(test_graph, src(e), dst(e))
         end
         (ne(test_graph) >= 3 * nv(test_graph) - 6) && break #break if limit reached

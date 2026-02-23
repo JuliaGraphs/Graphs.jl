@@ -197,47 +197,6 @@ function lrp_type(lrp::LRPlanarity{T}) where {T}
     T
 end
 
-function reset_lrp_state!(lrp_state, g)
-    T = lrp_type(lrp_state)
-    #resets the LRP state 
-
-    #reset roots 
-    empty!(lrp_state.roots)
-
-    #reset lowpts 
-    #empty!(lrp_state.lowpt)
-    #empty!(lrp_state.lowpt2)
-    #reset nesting depth
-    empty!(lrp_state.nesting_depth)
-
-    #reset heights
-    for k in keys(lrp_state.height)
-        lrp_state.height[k] = -1
-    end
-
-    for k in keys(lrp_state.parent_edge)
-        lrp_state.parent_edge[k] = empty_edge(T)
-    end
-
-    for e in edges(lrp_state.DG)
-        rem_edge!(lrp_state.DG, e)
-    end
-
-    for v in 1:nv(g) #for all vertices in G,
-        lrp_state.adjs[v] = all_neighbors(g, v) ##neighbourhood of v
-    end
-
-    for k in keys(lrp_state.ref)
-        lrp_state.ref[k] = empty_edge(T)
-    end
-
-    for k in keys(lrp_state.side)
-        lrp_state.side[k] = one(Int8)
-    end
-
-    empty!(lrp_state.S)
-end
-
 function lowest(self::ConflictPair, planarity_state::LRPlanarity)
     #Returns the lowest lowpoint of a conflict pair
     if isempty(self.L)
