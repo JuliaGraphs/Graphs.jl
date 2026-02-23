@@ -63,14 +63,3 @@ function planar_maximally_filtered_graph(
     return test_graph
 end
 
-#= 
-This could be improved a lot by not reallocating
-the LRP construct. 
-Things to reset on each planarity retest:
-heights 
-parent_edge
-DG (shame...)
-Ref
-side 
-S  =#
-
