@@ -13,7 +13,7 @@ useful, e.g. when deriving equations for electric circuits
 using Kirchhoff's Laws.
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"^\\s+\\[[\\d, ]+\\]\$"m
 julia> using Graphs
 
 julia> elist = [(1,2),(2,3),(2,4),(3,4),(4,1),(1,5)];
