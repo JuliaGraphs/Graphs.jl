@@ -15,7 +15,6 @@ p_g = planar_maximally_filtered_graph(g)
 ### References 
 - [Tuminello et al. 2005](https://doi.org/10.1073/pnas.0500298102)
 """
-
 function planar_maximally_filtered_graph(
     g::AG, distmx::AbstractMatrix{T}=weights(g); minimize=true
 ) where {T<:Real,U,AG<:AbstractGraph{U}}
