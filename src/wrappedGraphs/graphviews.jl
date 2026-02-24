@@ -9,7 +9,7 @@ A graph view that wraps a directed graph and reverse the direction of every edge
     constructing the view may lead to incorrect results.
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"0-element Graphs\\.FrozenVector\\{Int64\\}|Int64\\[\\]"
 julia> using Graphs
 
 julia> g = SimpleDiGraph(2);

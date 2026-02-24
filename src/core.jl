@@ -254,7 +254,7 @@ the array behind this reference may be modified too, but this is not guaranteed.
 If you need to modify the result use `collect` or `copy` to create a copy.
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"0-element Graphs\\.FrozenVector\\{Int64\\}|Int64\\[\\]"
 julia> using Graphs
 
 julia> g = DiGraph(3);
