@@ -13,8 +13,8 @@ to each vertex. The component value is the smallest vertex ID in the component.
    If not provided, it is automatically instantiated.
 
 !!! warning "Experimental"
-    The `search_queue` argument is experimental. Future versions of Graphs.jl will provide
-    a more universal approach to defining work buffers for graph algorithms.
+    The `search_queue` argument is experimental and subject to potential change
+    in future versions of Graphs.jl.
 
 ## Performance
 This algorithm is linear in the number of edges of the graph.
@@ -166,8 +166,8 @@ For `g :: AbstractGraph{T}`, `label` must be a zero-initialized `Vector{T}` of l
 `nv(g)` and `search_queue` a `Vector{T}`. See also [`connected_components!`](@ref).
 
 !!! warning "Experimental"
-    The `search_queue` argument is experimental. Future versions of Graphs.jl will provide
-    a more universal approach to defining work buffers for graph algorithms.
+    The `search_queue` and `label` arguments are experimental and subject to potential
+    change in future versions of Graphs.jl.
 
 ## Keyword arguments
 - `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to a zero-vector
