@@ -449,8 +449,11 @@ export
     vertex_cover,
 
     # longestpaths
-    dag_longest_path
+    dag_longest_path,
 
+    # planarity
+    is_planar,
+    planar_maximally_filtered_graph
 """
     Graphs
 
@@ -573,6 +576,8 @@ include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")
+include("planarity.jl")
+include("spanningtrees/planar_maximally_filtered_graph.jl")
 
 using .LinAlg
 end # module

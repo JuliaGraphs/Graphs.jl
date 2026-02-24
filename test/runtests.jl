@@ -139,6 +139,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "spanningtrees/planar_maximally_filtered_graph",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
@@ -153,6 +154,7 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "planarity",
 ]
 
 @testset verbose = true "Graphs" begin
