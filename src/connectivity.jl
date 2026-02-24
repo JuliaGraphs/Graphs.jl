@@ -12,6 +12,10 @@ to each vertex. The component value is the smallest vertex ID in the component.
    reallocating this work array repeatedly on repeated calls of `connected_components!`.
    If not provided, it is automatically instantiated.
 
+!!! warning "Experimental"
+    The `search_queue` argument is experimental. Future versions of Graphs.jl will provide
+    a more universal approach to defining work buffers for graph algorithms.
+
 ## Performance
 This algorithm is linear in the number of edges of the graph.
 """
@@ -157,9 +161,13 @@ materializing the component vectors explicitly.
 
 ## Optional arguments
 Mutated work arrays, `label` and `search_queue` can be provided to avoid allocating these
-arrays repeatedly on repeated calls of `count_connected_components`. 
+arrays repeatedly on repeated calls of `count_connected_components`.
 For `g :: AbstractGraph{T}`, `label` must be a zero-initialized `Vector{T}` of length
 `nv(g)` and `search_queue` a `Vector{T}`. See also [`connected_components!`](@ref).
+
+!!! warning "Experimental"
+    The `search_queue` argument is experimental. Future versions of Graphs.jl will provide
+    a more universal approach to defining work buffers for graph algorithms.
 
 ## Keyword arguments
 - `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to a zero-vector
