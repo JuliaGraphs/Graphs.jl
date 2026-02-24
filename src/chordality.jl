@@ -31,12 +31,27 @@ parallel edges.
     May 29, 2025. Accessed June 2, 2025.
     https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.chordal.is_chordal.html.
 
-# Examples
-TODO: Add examples
+### Examples
+```jldoctest
+julia> using Graphs
+
+julia> is_chordal(cycle_graph(3))
+true
+
+julia> is_chordal(cycle_graph(4))
+false
+
+julia> g = SimpleGraph(4); add_edge!(g, 1, 2); add_edge!(g, 2, 3); add_edge!(g, 3, 4); add_edge!(g, 4, 1); add_edge!(g, 1, 3);
+
+julia> is_chordal(g)
+true
+
+```
 """
-function is_chordal(g::AbstractGraph)
+function is_chordal end
+
+@traitfn function is_chordal(g::AG::(!IsDirected)) where {AG<:AbstractGraph}
     # The `AbstractGraph` interface does not support parallel edges, so no need to check
-    is_directed(g) && throw(ArgumentError("Graph must be undirected"))
     has_self_loops(g) && throw(ArgumentError("Graph must not have self-loops"))
 
     # Every graph of order `< 4` has no cycles of length `≥ 4` and thus is trivially chordal
