@@ -16,6 +16,7 @@ serialbenchmarks = [
     "serial/core.jl",
     "serial/connectivity.jl",
     "serial/centrality.jl",
+    "serial/distance.jl",
     "serial/edges.jl",
     "serial/insertions.jl",
     "serial/traversals.jl",
