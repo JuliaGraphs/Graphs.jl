@@ -3,7 +3,9 @@ using Documenter
 using Graphs
 using Graphs.SimpleGraphs
 using Graphs.Experimental
-using JET
+if isempty(VERSION.prerelease)
+    using JET
+end
 using Graphs.Test
 using Test
 using SparseArrays
@@ -11,6 +13,7 @@ using LinearAlgebra
 using DelimitedFiles
 using Base64
 using Random
+using Logging: NullLogger, with_logger
 using Statistics: mean, std
 using StableRNGs
 using Pkg
@@ -79,6 +82,7 @@ tests = [
     "interface",
     "core",
     "operators",
+    "wrappedGraphs/graphviews",
     "degeneracy",
     "distance",
     "digraph/transitivity",
@@ -114,7 +118,9 @@ tests = [
     "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
+    "community/independent_sets",
     "community/label_propagation",
+    "community/louvain",
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",
@@ -133,6 +139,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "spanningtrees/planar_maximally_filtered_graph",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
@@ -147,17 +154,20 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "planarity",
 ]
 
 @testset verbose = true "Graphs" begin
-    @testset "Code quality (JET.jl)" begin
-        @assert get_pkg_version("JET") >= v"0.8.4"
-        JET.test_package(
-            Graphs;
-            target_defined_modules=true,
-            ignore_missing_comparison=true,
-            mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
-        )
+    if isempty(VERSION.prerelease)
+        @testset "Code quality (JET.jl)" begin
+            @assert get_pkg_version("JET") >= v"0.8.4"
+            JET.test_package(
+                Graphs;
+                target_defined_modules=true,
+                ignore_missing_comparison=true,
+                mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+            )
+        end
     end
 
     @testset "Code quality (Aqua.jl)" begin

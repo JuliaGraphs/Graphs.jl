@@ -99,37 +99,41 @@
 
         NUM_SAMPLES = 50
 
-        for i in 1:NUM_SAMPLES
-            # Random unweighted Graphs
-            n = rand(10:1000) # Small to Medium size graphs
-            p = rand() * 0.1 + 0.005 # Sparse to medium density
+        # Silence the many "Infinite path length detected" warnings from
+        # eccentricity on disconnected random graphs.
+        with_logger(NullLogger()) do
+            for i in 1:NUM_SAMPLES
+                # Random unweighted Graphs
+                n = rand(10:1000) # Small to Medium size graphs
+                p = rand() * 0.1 + 0.005 # Sparse to medium density
 
-            # Undirected Graphs
-            g = erdos_renyi(n, p)
-            @test diameter(g) == diameter_naive(g)
+                # Undirected Graphs
+                g = erdos_renyi(n, p)
+                @test diameter(g) == diameter_naive(g)
 
-            ccs = connected_components(g)
-            largest_component = ccs[argmax(length.(ccs))]
-            g_lscc, _ = induced_subgraph(g, largest_component)
+                ccs = connected_components(g)
+                largest_component = ccs[argmax(length.(ccs))]
+                g_lscc, _ = induced_subgraph(g, largest_component)
 
-            if nv(g_lscc) > 1
-                d_new = @inferred diameter(g_lscc)
-                d_ref = diameter_naive(g_lscc)
-                @test d_new == d_ref
-            end
+                if nv(g_lscc) > 1
+                    d_new = @inferred diameter(g_lscc)
+                    d_ref = diameter_naive(g_lscc)
+                    @test d_new == d_ref
+                end
 
-            # Directed Graphs
-            g_dir = erdos_renyi(n, p, is_directed=true)
-            @test diameter(g_dir) == diameter_naive(g_dir)
+                # Directed Graphs
+                g_dir = erdos_renyi(n, p, is_directed=true)
+                @test diameter(g_dir) == diameter_naive(g_dir)
 
-            sccs = strongly_connected_components(g_dir)
-            largest_component_directed = sccs[argmax(length.(sccs))]
-            g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
+                sccs = strongly_connected_components(g_dir)
+                largest_component_directed = sccs[argmax(length.(sccs))]
+                g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
 
-            if nv(g_dir_lscc) > 1
-                d_new_dir = @inferred diameter(g_dir_lscc)
-                d_ref_dir = diameter_naive(g_dir_lscc)
-                @test d_new_dir == d_ref_dir
+                if nv(g_dir_lscc) > 1
+                    d_new_dir = @inferred diameter(g_dir_lscc)
+                    d_ref_dir = diameter_naive(g_dir_lscc)
+                    @test d_new_dir == d_ref_dir
+                end
             end
         end
     end

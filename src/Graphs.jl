@@ -18,7 +18,7 @@ using DataStructures:
     BinaryMaxHeap,
     BinaryMinHeap,
     Stack
-using LinearAlgebra: I, Symmetric, diagm, eigen, eigvals, norm, rmul!, tril, triu
+using LinearAlgebra: I, Symmetric, diagind, diagm, eigen, eigvals, norm, rmul!, tril, triu
 import LinearAlgebra: Diagonal, issymmetric, mul!
 using Random:
     AbstractRNG,
@@ -114,6 +114,11 @@ export
     squash,
     weights,
 
+    # wrapped graphs
+    ReverseView,
+    UndirectedView,
+    wrapped_graph,
+
     # simplegraphs
     add_edge!,
     add_vertex!,
@@ -156,6 +161,10 @@ export
     join,
     tensor_product,
     cartesian_product,
+    strong_product,
+    disjunctive_product,
+    lexicographic_product,
+    homomorphic_product,
     crosspath,
     induced_subgraph,
     egonet,
@@ -203,6 +212,8 @@ export
 
     # connectivity
     connected_components,
+    connected_components!,
+    count_connected_components,
     strongly_connected_components,
     strongly_connected_components_kosaraju,
     strongly_connected_components_tarjan,
@@ -315,7 +326,13 @@ export
     global_clustering_coefficient,
     triangles,
     label_propagation,
+    louvain,
     maximal_cliques,
+    maximum_clique,
+    clique_number,
+    maximal_independent_sets,
+    maximum_independent_set,
+    independence_number,
     clique_percolation,
     assortativity,
     rich_club,
@@ -337,6 +354,7 @@ export
     cycle_digraph,
     binary_tree,
     double_binary_tree,
+    regular_tree,
     roach_graph,
     clique_graph,
     ladder_graph,
@@ -431,8 +449,11 @@ export
     vertex_cover,
 
     # longestpaths
-    dag_longest_path
+    dag_longest_path,
 
+    # planarity
+    is_planar,
+    planar_maximally_filtered_graph
 """
     Graphs
 
@@ -460,6 +481,7 @@ include("utils.jl")
 include("deprecations.jl")
 include("core.jl")
 
+include("wrappedGraphs/graphviews.jl")
 include("SimpleGraphs/SimpleGraphs.jl")
 using .SimpleGraphs
 """
@@ -528,6 +550,7 @@ include("centrality/eigenvector.jl")
 include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
+include("community/louvain.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
@@ -553,6 +576,8 @@ include("vertexcover/random_vertex_cover.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")
+include("planarity.jl")
+include("spanningtrees/planar_maximally_filtered_graph.jl")
 
 using .LinAlg
 end # module
