@@ -158,5 +158,4 @@
         g2 = GenericGraph(path_graph(2))
         @test_logs eccentricity(g2)
     end
-
 end
