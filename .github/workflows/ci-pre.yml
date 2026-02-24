@@ -14,7 +14,8 @@ on:
   push:
     branches:
       - master
-    tags: '*'
+    tags: 
+      - '*'
 jobs:
   test:
     name: Julia pre - ubuntu-latest - x64 - ${{ github.event_name }}
