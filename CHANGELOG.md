@@ -7,6 +7,7 @@
 - `maximum_clique`, `clique_number`, `maximal_independent_sets`, `maximum_independent_set`, `independence_number`
 - `regular_tree` generator
 - `kruskal_mst` now accepts weight vectors
+- `is_planar` planarity test and `planar_maximally_filtered_graph` (PMFG) algorithm
 
 ## v1.13.0 - 2025-06-05
 - **(breaking)** Julia v1.10 (LTS) minimum version requirement
