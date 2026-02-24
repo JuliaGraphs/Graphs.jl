@@ -8,6 +8,9 @@
 - `regular_tree` generator
 - `kruskal_mst` now accepts weight vectors
 - `is_planar` planarity test and `planar_maximally_filtered_graph` (PMFG) algorithm
+- `count_connected_components` for efficiently counting connected components without materializing them
+- `connected_components!` is now exported and accepts an optional `search_queue` argument to reduce allocations
+- `is_connected` optimized to avoid allocating component vectors
 
 ## v1.13.0 - 2025-06-05
 - **(breaking)** Julia v1.10 (LTS) minimum version requirement
