@@ -239,6 +239,8 @@ export
     karp_minimum_cycle_mean,
     cycle_basis,
     simplecycles_limited_length,
+    mincyclebasis,
+    edgemincyclebasis,
 
     # incremental cycles
     IncrementalCycleTracker,
@@ -513,6 +515,7 @@ include("cycles/karp.jl")
 include("cycles/basis.jl")
 include("cycles/limited_length.jl")
 include("cycles/incremental.jl")
+include("cycles/mincyclebasis.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
