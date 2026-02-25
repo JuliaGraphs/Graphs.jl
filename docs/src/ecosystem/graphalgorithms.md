@@ -43,7 +43,7 @@ Here, dispatching via `NautyAlg()` implicitly converts `g` to a _nauty_-compatib
 A list of functions extended by _IGraphs.jl_ can be obtained with
 
 ```@example
-using IGraphs
+import IGraphs
 IGraphs.igraphalg_methods()
 ```
 
@@ -52,6 +52,6 @@ IGraphs.igraphalg_methods()
 A list of functions extended by _NautyGraphs.jl_ can be obtained with
 
 ```@example
-using NautyGraphs
+import NautyGraphs
 NautyGraphs.nautyalg_methods()
 ```
