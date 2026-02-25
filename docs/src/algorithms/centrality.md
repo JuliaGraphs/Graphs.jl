@@ -24,3 +24,8 @@ Pages   = [
 ]
 
 ```
+
+## References
+
+```@bibliography
+```

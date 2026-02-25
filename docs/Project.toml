@@ -1,6 +1,7 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
 
 [compat]
 Documenter = "1"
