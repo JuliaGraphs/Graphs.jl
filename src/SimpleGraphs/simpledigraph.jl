@@ -335,7 +335,7 @@ function _SimpleDiGraphFromIterator(iter)::SimpleDiGraph
     fadjlist = Vector{Vector{T}}()
     badjlist = Vector{Vector{T}}()
 
-    while next != nothing
+    while !isnothing(next)
         (e, state) = next
 
         if !(e isa E)
@@ -433,6 +433,15 @@ function ==(g::SimpleDiGraph, h::SimpleDiGraph)
            ne(g) == ne(h) &&
            fadj(g) == fadj(h) &&
            badj(g) == badj(h)
+end
+
+function Base.hash(g::SimpleDiGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    r = hash(badj(g), r)
+    return r
 end
 
 is_directed(::Type{<:SimpleDiGraph}) = true

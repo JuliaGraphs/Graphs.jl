@@ -530,12 +530,12 @@ function binary_tree(k::T) where {T<:Integer}
     fadjlist = Vector{Vector{T}}(undef, n)
     @inbounds fadjlist[1] = T[2, 3]
     @inbounds for i in 1:(k - 2)
-        @simd for j in (2^i):(2^(i + 1) - 1)
+        @simd for j in (2 ^ i):(2 ^ (i + 1) - 1)
             fadjlist[j] = T[j ÷ 2, 2j, 2j + 1]
         end
     end
     i = k - 1
-    @inbounds @simd for j in (2^i):(2^(i + 1) - 1)
+    @inbounds @simd for j in (2 ^ i):(2 ^ (i + 1) - 1)
         fadjlist[j] = T[j ÷ 2]
     end
     return SimpleGraph(ne, fadjlist)
@@ -567,6 +567,64 @@ function double_binary_tree(k::Integer)
     add_edge!(g, 1, nv(gl) + 1)
     return g
 end
+
+"""
+    regular_tree([T::Type], k, z)
+
+Create a regular tree or [perfect z-ary tree](https://en.wikipedia.org/wiki/M-ary_tree#Types_of_m-ary_trees): 
+a `k`-level tree where all nodes except the leaves have exactly `z` children. 
+For `z = 2` one recovers a binary tree.
+The optional `T` argument specifies the element type, which defaults to `Int64`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> regular_tree(4, 3)
+{40, 39} undirected simple Int64 graph
+
+julia> regular_tree(Int8, 3, 2)
+{7, 6} undirected simple Int8 graph
+
+julia> regular_tree(5, 2) == binary_tree(5)
+true
+```
+"""
+function regular_tree(T::Type{<:Integer}, k::Integer, z::Integer)
+    z <= 0 && throw(DomainError(z, "number of children must be positive"))
+    z == 1 && return path_graph(T(k))
+    k <= 0 && return SimpleGraph(zero(T))
+    k == 1 && return SimpleGraph(one(T))
+    nbig = (BigInt(z)^k - 1) ÷ (z - 1)
+    if Graphs.isbounded(k) && nbig > typemax(T)
+        throw(InexactError(:convert, T, nbig))
+    end
+
+    n = T(nbig)
+    ne = n - 1
+    fadjlist = Vector{Vector{T}}(undef, n)
+    @inbounds fadjlist[1] = convert.(T, 2:(z + 1))
+    @inbounds for l in 2:(k - 1)
+        w = (z^(l - 1) - 1) ÷ (z - 1)
+        x = w + z^(l - 1)
+        @simd for i in 1:(z ^ (l - 1))
+            j = w + i
+            fadjlist[j] = [
+                T(ceil((j - x) / z) + w)
+                convert.(T, (x + (i - 1) * z + 1):(x + i * z))
+            ]
+        end
+    end
+    l = k
+    w = (z^(l - 1) - 1) ÷ (z - 1)
+    x = w + z^(l - 1)
+    @inbounds @simd for j in (w + 1):x
+        fadjlist[j] = T[ceil((j - x) / z) + w]
+    end
+    return SimpleGraph(ne, fadjlist)
+end
+
+regular_tree(k::Integer, z::Integer) = regular_tree(Int64, k, z)
 
 """
     roach_graph(k)

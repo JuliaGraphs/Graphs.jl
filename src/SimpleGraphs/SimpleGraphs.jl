@@ -15,6 +15,7 @@ import Graphs:
     AbstractGraph,
     AbstractEdge,
     AbstractEdgeIter,
+    FrozenVector,
     src,
     dst,
     edgetype,
@@ -93,6 +94,7 @@ export AbstractSimpleGraph,
     cycle_digraph,
     binary_tree,
     double_binary_tree,
+    regular_tree,
     roach_graph,
     clique_graph,
     barbell_graph,
@@ -152,8 +154,8 @@ add_edge!(g::AbstractSimpleGraph, x) = add_edge!(g, edgetype(g)(x))
 has_edge(g::AbstractSimpleGraph, x, y) = has_edge(g, edgetype(g)(x, y))
 add_edge!(g::AbstractSimpleGraph, x, y) = add_edge!(g, edgetype(g)(x, y))
 
-inneighbors(g::AbstractSimpleGraph, v::Integer) = badj(g, v)
-outneighbors(g::AbstractSimpleGraph, v::Integer) = fadj(g, v)
+inneighbors(g::AbstractSimpleGraph, v::Integer) = FrozenVector(badj(g, v))
+outneighbors(g::AbstractSimpleGraph, v::Integer) = FrozenVector(fadj(g, v))
 
 function issubset(g::T, h::T) where {T<:AbstractSimpleGraph}
     nv(g) <= nv(h) || return false
