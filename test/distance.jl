@@ -80,7 +80,7 @@
         @test @inferred(diameter(SimpleDiGraph(0))) == 0
     end
 
-    @testset "iFUB diameter" begin
+    @testset "Unweighted graph diameter" begin
         # 1. Comparing against large graphs with known diameters  
         n_large = 5000
         g_path = path_graph(n_large)
@@ -133,6 +133,50 @@
                     d_new_dir = @inferred diameter(g_dir_lscc)
                     d_ref_dir = diameter_naive(g_dir_lscc)
                     @test d_new_dir == d_ref_dir
+                end
+            end
+        end
+    end
+
+    @testset "Weighted graph diameter" begin
+        function diameter_naive_weighted(g, distmx)
+            return maximum(eccentricity(g, vertices(g), distmx))
+        end
+
+        NUM_SAMPLES = 20
+
+        with_logger(NullLogger()) do
+            for i in 1:NUM_SAMPLES
+                n = rand(10:50)
+                p = rand() * 0.2 + 0.1
+
+                # Undirected Weighted Graphs
+                g = erdos_renyi(n, p)
+                ccs = connected_components(g)
+                largest_component = ccs[argmax(length.(ccs))]
+                g_lscc, _ = induced_subgraph(g, largest_component)
+
+                if nv(g_lscc) > 1
+                    W = rand(nv(g_lscc), nv(g_lscc))
+                    distmx = (W + W') / 2
+
+                    d_new = @inferred diameter(g_lscc, distmx)
+                    d_ref = diameter_naive_weighted(g_lscc, distmx)
+                    @test d_new ≈ d_ref
+                end
+
+                # Directed Weighted Graphs
+                g_dir = erdos_renyi(n, p, is_directed=true)
+                sccs = strongly_connected_components(g_dir)
+                largest_component_directed = sccs[argmax(length.(sccs))]
+                g_dir_lscc, _ = induced_subgraph(g_dir, largest_component_directed)
+
+                if nv(g_dir_lscc) > 1
+                    distmx_dir = rand(nv(g_dir_lscc), nv(g_dir_lscc))
+
+                    d_new_dir = @inferred diameter(g_dir_lscc, distmx_dir)
+                    d_ref_dir = diameter_naive_weighted(g_dir_lscc, distmx_dir)
+                    @test d_new_dir ≈ d_ref_dir
                 end
             end
         end
