@@ -20,10 +20,9 @@ Several packages make established graph libraries written in other languages acc
 - [IGraphs.jl](https://github.com/JuliaGraphs/IGraphs.jl) is a thin Julia wrapper around the C graphs library [igraph](https://igraph.org).
 - [NautyGraphs.jl](https://github.com/JuliaGraphs/NautyGraphs.jl) provides graph structures compatible with the graph isomorphism library [_nauty_](https://pallini.di.uniroma1.it), allowing for efficient isomorphism checking and canonization, as well as computing the properties of graph automorphism groups.
 
-
 ## Dispatching to algorithm implementations in external packages
 
-Apart from providing additional graph types and algorithms, many packages extend existing functions in _Graphs.jl_ with new backends. This can make it easier to use the additional algorithms from within _Graphs.jl_.
+Apart from providing additional graph types and algorithms, many packages extend existing functions in _Graphs.jl_ with new backends. This can make it easier to use the algorithms from within _Graphs.jl_.
 
 For example, _NautyGraphs.jl_ provides a new backend for graph isomorphism calculations:
 
