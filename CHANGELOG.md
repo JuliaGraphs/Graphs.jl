@@ -1,7 +1,8 @@
 # News
 
 ## dev - unreleased
-- The iFUB algorithm now supports weighted graph diameter calculation when using `diameter`
+- **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
+- The iFUB algorithm is used for faster diameter calculation and now supports weighted graph diameter calculation
 - Louvain community detection algorithm
 - Graph views: `ReverseView` and `UndirectedView` for directed graphs
 - New graph products: `strong_product`, `disjunctive_product`, `lexicographic_product`, `homomorphic_product`
