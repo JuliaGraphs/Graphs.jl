@@ -1,5 +1,6 @@
 using Documenter
 using Graphs
+using NautyGraphs, IGraphs
 
 # same for contributing and license
 cp(
