@@ -9,7 +9,7 @@ A graph view that wraps a directed graph and reverse the direction of every edge
     constructing the view may lead to incorrect results.
 
 # Examples
-```jldoctest
+```jldoctest; filter = r"0-element Graphs\\.FrozenVector\\{Int64\\}|Int64\\[\\]"
 julia> using Graphs
 
 julia> g = SimpleDiGraph(2);
@@ -19,10 +19,10 @@ julia> add_edge!(g, 1, 2);
 julia> rg = ReverseView(g);
 
 julia> neighbors(rg, 1)
-Int64[]
+0-element Graphs.FrozenVector{Int64}
 
 julia> neighbors(rg, 2)
-1-element Vector{Int64}:
+1-element Graphs.FrozenVector{Int64}:
  1
 ```
 """

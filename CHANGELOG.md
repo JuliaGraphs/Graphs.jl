@@ -1,6 +1,7 @@
 # News
 
 ## dev - unreleased
+- **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
 - Louvain community detection algorithm
 - Graph views: `ReverseView` and `UndirectedView` for directed graphs
 - New graph products: `strong_product`, `disjunctive_product`, `lexicographic_product`, `homomorphic_product`
