@@ -62,6 +62,8 @@
         @test getfield.(y.dists, :val) == getfield.(z.dists, :val) == [Inf, 0, 6, 17, 33]
         @test @inferred(enumerate_paths(z))[2] == []
         @test @inferred(enumerate_paths(z))[4] == enumerate_paths(z, 4) == [2, 3, 4]
+        @test @inferred(enumerate_paths!([[0]], z, 4:4))[1] == [2, 3, 4]
+        @test_throws ArgumentError enumerate_paths!([[0, 0], [0, 0]], z, 4:4)
         @test @inferred(!has_negative_edge_cycle(g))
         @test @inferred(!has_negative_edge_cycle(g, d3))
 

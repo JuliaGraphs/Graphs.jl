@@ -35,7 +35,22 @@
         end
     end
     nodes_visited = collect(BFSIterator(g2, [1, 6]))
-    @test nodes_visited == [1, 2, 3, 6, 5, 7, 4]
+    levels = ([1, 6], [2, 3, 5, 7], [4])
+    @test sort(nodes_visited[1:2]) == sort(levels[1])
+    @test sort(nodes_visited[3:6]) == sort(levels[2])
+    @test sort(nodes_visited[7:end]) == sort(levels[3])
+
     nodes_visited = collect(BFSIterator(g2, [8, 1, 6]))
-    @test nodes_visited == [8, 9, 1, 2, 3, 6, 5, 7, 4]
+    levels = ([8, 1, 6], [2, 3, 5, 7, 9], [4])
+    @test sort(nodes_visited[1:3]) == sort(levels[1])
+    @test sort(nodes_visited[4:8]) == sort(levels[2])
+    @test sort(nodes_visited[9:end]) == sort(levels[3])
+
+    nodes_visited = collect(BFSIterator(g2, [8, 1, 6]; depth_limit=1))
+    @test sort(nodes_visited[1:3]) == sort(levels[1])
+    @test sort(nodes_visited[4:end]) == sort(levels[2])
+
+    g = path_digraph(7)
+    nodes_visited = collect(BFSIterator(g, 7; neighbors_type=inneighbors))
+    @test nodes_visited == collect(7:-1:1)
 end

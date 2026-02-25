@@ -268,7 +268,25 @@
     for i in 3:4
         @testset "Tensor Product: $g" for g in testgraphs(path_graph(i))
             @test length(connected_components(tensor_product(g, g))) == 2
+            @test count_connected_components(tensor_product(g, g)) == 2
         end
+    end
+
+    gx = SimpleGraph(10, 20)
+    gy = SimpleGraph(15, 34)
+    @testset "Graph product edge counts" for (g1, g2) in zip(testgraphs(gx), testgraphs(gy))
+        v1 = nv(g1)
+        v2 = nv(g2)
+        e1 = ne(g1)
+        e2 = ne(g2)
+        # Edge counts from https://en.wikipedia.org/wiki/Graph_product
+        @test ne(cartesian_product(g1, g2)) == v1 * e2 + v2 * e1
+        @test ne(tensor_product(g1, g2)) == 2 * e1 * e2
+        @test ne(lexicographic_product(g1, g2)) == v1 * e2 + e1 * v2^2
+        @test ne(strong_product(g1, g2)) == v1 * e2 + v2 * e1 + 2 * e1 * e2
+        @test ne(disjunctive_product(g1, g2)) == v1^2 * e2 + e1 * v2^2 - 2 * e1 * e2
+        @test ne(homomorphic_product(g1, g2)) ==
+            v1 * v2 * (v2 - 1) / 2 + e1 * (v2^2 - 2 * e2)
     end
 
     ## test subgraphs ##

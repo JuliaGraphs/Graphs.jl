@@ -17,6 +17,11 @@ cp(
     normpath(@__FILE__, "../src/index.md");
     force=true,
 )
+cp(
+    normpath(@__FILE__, "../../CHANGELOG.md"),
+    normpath(@__FILE__, "../src/CHANGELOG.md");
+    force=true,
+)
 
 function get_title(markdown_file_path::AbstractString)
     first_line = open(markdown_file_path) do io
@@ -44,6 +49,7 @@ pages_files = [
         "core_functions/persistence.md",
         "core_functions/simplegraphs_generators.md",
         "core_functions/simplegraphs.md",
+        "core_functions/wrappedgraphs.md",
     ],
     "Algorithms API" => [
         "algorithms/biconnectivity.md",
@@ -59,6 +65,7 @@ pages_files = [
         "algorithms/dominatingset.md",
         "algorithms/editdist.md",
         "algorithms/independentset.md",
+        "algorithms/iterators.md",
         "algorithms/linalg.md",
         "algorithms/shortestpaths.md",
         "algorithms/spanningtrees.md",
@@ -93,6 +100,7 @@ makedocs(;
         canonical="https://gdalle.github.io/Graphs.jl",
     ),
     sitename="Graphs.jl",
+    checkdocs=:public,
     doctest=false,
     expandfirst=[],
     pages=[
@@ -108,3 +116,4 @@ deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))
 rm(normpath(@__FILE__, "../src/index.md"))
+rm(normpath(@__FILE__, "../src/CHANGELOG.md"))

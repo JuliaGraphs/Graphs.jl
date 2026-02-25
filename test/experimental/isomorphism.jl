@@ -84,24 +84,24 @@ cubic_graphs = [
 cubic_graphs_perm = []
 
 rng = StableRNG(1)
-for i in 1:length(cubic_graphs)
-    push!(cubic_graphs_perm, shuffle_vertices(cubic_graphs[i], randperm(rng, 8)))
+for graph in cubic_graphs
+    push!(cubic_graphs_perm, shuffle_vertices(graph, randperm(rng, 8)))
 end
 
 @testset "Isomorphism" begin
     @test has_isomorph(grid([2, 3]), grid([3, 2]))
 
-    # the cubic graphs should only be isomorph to themself
+    # the cubic graphs should only be isomorphic to themselves
     # the same holds for subgraph isomorphism and induced subgraph isomorphism
-    for i in 1:length(cubic_graphs), j in 1:length(cubic_graphs)
+    for i in eachindex(cubic_graphs), j in eachindex(cubic_graphs)
         @test (i == j) == has_isomorph(cubic_graphs[i], cubic_graphs[j])
         @test (i == j) == has_subgraphisomorph(cubic_graphs[i], cubic_graphs[j])
         @test (i == j) == has_induced_subgraphisomorph(cubic_graphs[i], cubic_graphs[j])
     end
 
-    # the cubic graphs should only be isomorph a permutation of themself
+    # the cubic graphs should only be isomorphic to a permutation of themselves
     # the same holds for subgraph isomorphism and induced subgraph isomorphism
-    for i in 1:length(cubic_graphs), j in 1:length(cubic_graphs_perm)
+    for i in eachindex(cubic_graphs), j in eachindex(cubic_graphs_perm)
         @test (i == j) == has_isomorph(cubic_graphs[i], cubic_graphs_perm[j])
         @test (i == j) == has_subgraphisomorph(cubic_graphs[i], cubic_graphs_perm[j])
         @test (i == j) ==
@@ -109,7 +109,7 @@ end
     end
 
     # count_isomorph, count_subgraphisomorph and count_induced_subgraphisomorph are commutative
-    for i in 1:length(cubic_graphs)
+    for i in eachindex(cubic_graphs)
         g1 = cubic_graphs[i]
         g2 = cubic_graphs_perm[i]
         @test count_isomorph(g1, g1) ==
@@ -126,7 +126,7 @@ end
             count_subgraphisomorph(g2, g2)
     end
 
-    for i in 1:length(cubic_graphs)
+    for i in eachindex(cubic_graphs)
         g1 = cubic_graphs[i]
         g2 = cubic_graphs_perm[i]
         length(collect(all_isomorph(g1, g1))) == count_isomorph(g1, g2)

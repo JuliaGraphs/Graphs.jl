@@ -1,26 +1,37 @@
 # Parts of this code were taken / derived from Graphs.jl. See LICENSE for
 # licensing details.
 """
-    connected_components!(label, g)
+    connected_components!(label, g, [search_queue])
 
 Fill `label` with the `id` of the connected component in the undirected graph
 `g` to which it belongs. Return a vector representing the component assigned
 to each vertex. The component value is the smallest vertex ID in the component.
 
-### Performance
+## Optional arguments
+- `search_queue`, an empty `Vector{eltype(edgetype(g))}`, can be provided to avoid
+   reallocating this work array repeatedly on repeated calls of `connected_components!`.
+   If not provided, it is automatically instantiated.
+
+!!! warning "Experimental"
+    The `search_queue` argument is experimental and subject to potential change
+    in future versions of Graphs.jl.
+
+## Performance
 This algorithm is linear in the number of edges of the graph.
 """
-function connected_components!(label::AbstractVector, g::AbstractGraph{T}) where {T}
+function connected_components!(
+    label::AbstractVector{T}, g::AbstractGraph{T}, search_queue::Vector{T}=Vector{T}()
+) where {T}
+    empty!(search_queue)
     for u in vertices(g)
         label[u] != zero(T) && continue
         label[u] = u
-        Q = Vector{T}()
-        push!(Q, u)
-        while !isempty(Q)
-            src = popfirst!(Q)
+        push!(search_queue, u)
+        while !isempty(search_queue)
+            src = popfirst!(search_queue)
             for vertex in all_neighbors(g, src)
                 if label[vertex] == zero(T)
-                    push!(Q, vertex)
+                    push!(search_queue, vertex)
                     label[vertex] = u
                 end
             end
@@ -129,9 +140,78 @@ julia> is_connected(g)
 true
 ```
 """
-function is_connected(g::AbstractGraph)
+function is_connected(g::AbstractGraph{T}) where {T}
     mult = is_directed(g) ? 2 : 1
-    return mult * ne(g) + 1 >= nv(g) && length(connected_components(g)) == 1
+    if mult * ne(g) + 1 >= nv(g)
+        label = zeros(T, nv(g))
+        connected_components!(label, g)
+        return allequal(label)
+    else
+        return false
+    end
+end
+
+"""
+    count_connected_components( g, [label, search_queue]; reset_label::Bool=false)
+
+Return the number of connected components in `g`.
+
+Equivalent to `length(connected_components(g))` but uses fewer allocations by not
+materializing the component vectors explicitly. 
+
+## Optional arguments
+Mutated work arrays, `label` and `search_queue` can be provided to avoid allocating these
+arrays repeatedly on repeated calls of `count_connected_components`.
+For `g :: AbstractGraph{T}`, `label` must be a zero-initialized `Vector{T}` of length
+`nv(g)` and `search_queue` a `Vector{T}`. See also [`connected_components!`](@ref).
+
+!!! warning "Experimental"
+    The `search_queue` and `label` arguments are experimental and subject to potential
+    change in future versions of Graphs.jl.
+
+## Keyword arguments
+- `reset_label :: Bool` (default, `false`): if `true`, `label` is reset to a zero-vector
+  before returning.
+
+## Example
+```
+julia> using Graphs
+
+julia> g = Graph(Edge.([1=>2, 2=>3, 3=>1, 4=>5, 5=>6, 6=>4, 7=>8]));
+
+length> connected_components(g)
+3-element Vector{Vector{Int64}}:
+ [1, 2, 3]
+ [4, 5, 6]
+ [7, 8]
+
+julia> count_connected_components(g)
+3
+```
+"""
+function count_connected_components(
+    g::AbstractGraph{T},
+    label::AbstractVector{T}=zeros(T, nv(g)),
+    search_queue::Vector{T}=Vector{T}();
+    reset_label::Bool=false,
+) where {T}
+    connected_components!(label, g, search_queue)
+    c = count_unique(label)
+    reset_label && fill!(label, zero(eltype(label)))
+    return c
+end
+
+function count_unique(label::Vector{T}) where {T}
+    # effectively does `length(Set(label))` but faster, since `Set(label)` sizehints
+    # aggressively and assumes that most elements of `label` will be unique, which very
+    # rarely will be the case for caller `count_connected_components!`
+    seen = T === Int ? BitSet() : Set{T}() # if `T=Int`, we can use faster BitSet
+    for l in label
+        # faster than direct `push!(seen, l)` when `label` has few unique elements relative
+        # to `length(label)`
+        l ∉ seen && push!(seen, l)
+    end
+    return length(seen)
 end
 
 """
@@ -798,24 +878,49 @@ function isgraphical(degs::AbstractVector{<:Integer})
     !isempty(degs) || return true
     # Check whether the sum of degrees is even
     iseven(sum(degs)) || return false
-    # Check that all degrees are non negative and less than n-1
+    # Compute the length of the degree sequence
     n = length(degs)
+    # Check that all degrees are non negative and less than n-1
     all(0 .<= degs .<= n - 1) || return false
     # Sort the degree sequence in non-increasing order
     sorted_degs = sort(degs; rev=true)
-    # Compute the length of the degree sequence
+    # Initialise a sum variable
     cur_sum = zero(UInt64)
-    # Compute the minimum of each degree and the corresponding index
-    mindeg = Vector{UInt64}(undef, n)
-    @inbounds for i in 1:n
-        mindeg[i] = min(i, sorted_degs[i])
-    end
+    right_deg_sum = zero(UInt64)
+    # Initalise a pointer to track the smallest index with degree greater than r
+    ptr = n
     # Check if the degree sequence satisfies the Erdös-Gallai condition
-    cum_min = sum(mindeg)
     @inbounds for r in 1:(n - 1)
         cur_sum += sorted_degs[r]
-        cum_min -= mindeg[r]
-        cond = cur_sum <= (r * (r - 1) + cum_min)
+        #  Calculate the sum of the minimum of r and the degrees of the vertices
+        min_idx = r + 1
+        while ptr >= min_idx
+            if sorted_degs[ptr] <= r
+                # left_deg_sum = sum_{ptr+1}^n d_i
+                right_deg_sum += sorted_degs[ptr]
+                # move pointer to the 1-slot left
+                ptr -= 1
+            else
+                # the ptr points to the degree greater than r
+                break
+            end
+        end
+        # calculate min_deg_sum: sum_{r+1}^n min(r, d_i)
+        if ptr < min_idx
+            # all required degrees are less than r
+            # ptr is min_idx - 1
+            min_deg_sum = right_deg_sum
+            # prepare for the next iteration
+            # shift ptr to the right
+            ptr += 1
+            # reduce right_deg_sum
+            right_deg_sum -= sorted_degs[ptr]
+        else
+            # d_i with i between ptr and min_idx are greater than r 
+            min_deg_sum = (ptr - r) * r + right_deg_sum
+        end
+        # Check the Erdös-Gallai condition
+        cond = cur_sum <= (r * (r - 1) + min_deg_sum)
         cond || return false
     end
     return true
