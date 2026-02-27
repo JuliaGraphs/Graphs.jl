@@ -430,6 +430,7 @@ export
 
     # biconnectivity and articulation points
     articulation,
+    is_articulation,
     biconnected_components,
     bridges,
 
