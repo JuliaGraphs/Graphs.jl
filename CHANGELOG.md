@@ -2,6 +2,10 @@
 
 We follow SemVer as most of the Julia ecosystem. Below you might see the "breaking" label even for minor version bumps -- we use it a bit more loosely to denote things that are not breaking by SemVer's definition but might cause breakage to people using internal or experimental APIs or undocumented implementation details. 
 
+## unreleased
+- `is_articulation(g, v)` for checking whether a single vertex is an articulation point
+
+
 ## v1.14.0 - 2026-02-26
 - **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
 - Louvain community detection algorithm
@@ -14,7 +18,6 @@ We follow SemVer as most of the Julia ecosystem. Below you might see the "breaki
 - `count_connected_components` for efficiently counting connected components without materializing them
 - `connected_components!` is now exported and accepts an optional `search_queue` argument to reduce allocations
 - `is_connected` optimized to avoid allocating component vectors
-- `is_articulation(g, v)` for checking whether a single vertex is an articulation point
 
 ## v1.13.0 - 2025-06-05
 - **(breaking)** Julia v1.10 (LTS) minimum version requirement
