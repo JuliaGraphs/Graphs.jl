@@ -16,6 +16,7 @@ using Random
 using Logging: NullLogger, with_logger
 using Statistics: mean, std
 using StableRNGs
+using IGraphs
 using Pkg
 using Unitful
 
