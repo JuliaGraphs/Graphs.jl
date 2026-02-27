@@ -1,6 +1,8 @@
 # News
 
-## dev - unreleased
+We follow SemVer as most of the Julia ecosystem. Below you might see the "breaking" label even for minor version bumps -- we use it a bit more loosely to denote things that are not breaking by SemVer's definition but might cause breakage to people using internal or experimental APIs or undocumented implementation details. 
+
+## v1.14.0 - 2026-02-26
 - **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
 - Louvain community detection algorithm
 - Graph views: `ReverseView` and `UndirectedView` for directed graphs
