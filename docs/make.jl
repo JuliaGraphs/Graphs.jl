@@ -60,6 +60,7 @@ pages_files = [
     "Algorithms API" => [
         "algorithms/biconnectivity.md",
         "algorithms/centrality.md",
+        "algorithms/chordality.md",
         "algorithms/community.md",
         "algorithms/connectivity.md",
         "algorithms/cut.md",
