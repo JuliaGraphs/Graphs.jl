@@ -52,10 +52,14 @@ function is_chordal end
 
 @traitfn function is_chordal(g::AG::(!IsDirected)) where {AG<:AbstractGraph}
     # The `AbstractGraph` interface does not support parallel edges, so no need to check
-    has_self_loops(g) && throw(ArgumentError("Graph must not have self-loops"))
+    if has_self_loops(g)
+        throw(ArgumentError("Graph must not have self-loops"))
+    end
 
     # Every graph of order `< 4` has no cycles of length `≥ 4` and thus is trivially chordal
-    nv(g) < 4 && return true
+    if nv(g) < 4
+        return true
+    end
 
     unnumbered = Set(vertices(g))
     start_vertex = pop!(unnumbered) # The search can start from any arbitrary vertex
@@ -72,8 +76,9 @@ function is_chordal end
         push!(numbered, v)
         subsequent_neighbors = filter(in(numbered), collect(neighbors(g, v)))
 
-        # A complete subgraph is also called a "clique," hence the naming here
-        _induces_clique(subsequent_neighbors, g) || return false
+        if !_induces_clique(subsequent_neighbors, g)
+            return false
+        end
     end
 
     #= A perfect elimination ordering is an "if and only if" condition for chordality, so if
@@ -84,13 +89,14 @@ end
 function _max_cardinality_vertex(
     g::AbstractGraph{T}, unnumbered::Set{T}, numbered::Set{T}
 ) where {T}
-    cardinality(v::T) = count(in(numbered), neighbors(g, v))
-    return argmax(cardinality, unnumbered)
+    return argmax(v -> count(in(numbered), neighbors(g, v)), unnumbered)
 end
 
 function _induces_clique(vertex_subset::Vector{T}, g::AbstractGraph{T}) where {T}
     for (i, u) in enumerate(vertex_subset), v in Iterators.drop(vertex_subset, i)
-        has_edge(g, u, v) || return false
+        if !has_edge(g, u, v)
+            return false
+        end
     end
 
     return true
