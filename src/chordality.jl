@@ -70,7 +70,7 @@ function is_chordal end
         v = _max_cardinality_vertex(g, unnumbered, numbered)
         delete!(unnumbered, v)
         push!(numbered, v)
-        subsequent_neighbors = intersect(neighbors(g, v), numbered)
+        subsequent_neighbors = filter(in(numbered), collect(neighbors(g, v)))
 
         # A complete subgraph is also called a "clique," hence the naming here
         _induces_clique(subsequent_neighbors, g) || return false
