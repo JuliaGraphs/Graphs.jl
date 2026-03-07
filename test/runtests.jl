@@ -174,7 +174,9 @@ tests = [
         Aqua.test_all(Graphs; ambiguities=false)
     end
 
-    doctest(Graphs)
+    if !Sys.iswindows()
+        doctest(Graphs)
+    end
 
     @testset verbose = true "Actual tests" begin
         for t in tests

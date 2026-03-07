@@ -1,5 +1,7 @@
 using Documenter
 using Graphs
+using IGraphs: IGraphs
+using NautyGraphs: NautyGraphs
 
 # same for contributing and license
 cp(
@@ -40,7 +42,11 @@ pages_files = [
         "first_steps/plotting.md",
         "first_steps/persistence.md",
     ],
-    "Ecosystem" => ["ecosystem/graphtypes.md", "ecosystem/interface.md"],
+    "Ecosystem" => [
+        "ecosystem/graphtypes.md",
+        "ecosystem/graphalgorithms.md",
+        "ecosystem/interface.md",
+    ],
     "Core API" => [
         "core_functions/core.md",
         "core_functions/interface.md",
