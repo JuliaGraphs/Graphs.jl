@@ -117,7 +117,7 @@ diameter(eccentricities::Vector) = maximum(eccentricities)
 diameter(g::AbstractGraph) = diameter(g, weights(g))
 
 function diameter(g::AbstractGraph, distmx::AbstractMatrix)
-    if is_directed(g)
+    if is_directed(g) || !issymmetric(distmx)
         return _diameter_weighted_directed(g, distmx)
     else
         return _diameter_weighted_undirected(g, distmx)
@@ -224,6 +224,8 @@ function _bwd_bfs_prune!(g, u, active, distbuf, queue, dmax, e, diam)
 end
 
 function _safe_reverse(g::T) where {T<:AbstractGraph}
+    !is_directed(g) && return g
+
     if hasmethod(reverse, Tuple{T})
         return reverse(g)
     else
@@ -327,7 +329,7 @@ function _diameter_weighted_undirected(
             end
         end
 
-        lb >= 2 * d_prev && break
+        lb > 2 * d_prev && break
     end
 
     return lb
