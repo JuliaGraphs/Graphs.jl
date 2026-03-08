@@ -327,6 +327,8 @@ export
     triangles,
     label_propagation,
     louvain,
+    ecg,
+    ecg_weights,
     maximal_cliques,
     maximum_clique,
     clique_number,
@@ -553,6 +555,7 @@ include("centrality/radiality.jl")
 include("community/modularity.jl")
 include("community/label_propagation.jl")
 include("community/louvain.jl")
+include("community/ecg.jl")
 include("community/core-periphery.jl")
 include("community/clustering.jl")
 include("community/cliques.jl")
