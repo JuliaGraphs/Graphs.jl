@@ -18,12 +18,20 @@
         @test c == r
     end
 
-    # Empty
+    # Empty, no edges
     empty = SimpleGraph(10)
     c = spzeros(10, 10)
     for g in test_generic_graphs(empty)
         r = @inferred ecg_weights(g)
         dropzeros!(r)
+        @test c == r
+    end
+
+    # Empty, no nodes
+    empty = SimpleGraph()
+    c = spzeros(0, 0)
+    for g in test_generic_graphs(empty)
+        r = @inferred ecg_weights(g)
         @test c == r
     end
 
@@ -102,5 +110,20 @@
     for g in test_generic_graphs(barbell)
         r = ecg(g)
         @test r == c
+    end
+
+    # Empty, no edges
+    empty = SimpleGraph(10)
+    c = collect(1:10)
+    for g in test_generic_graphs(empty)
+        r = ecg(g)
+        @test c == r
+    end
+
+    # Empty, no nodes
+    empty = SimpleGraph()
+    for g in test_generic_graphs(empty)
+        r = ecg(g)
+        @test length(r) == 0
     end
 end
