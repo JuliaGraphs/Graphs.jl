@@ -665,3 +665,53 @@
         @test_throws DomainError lollipop_graph(-1, -1)
     end
 end
+
+
+@testset "havel hakimi" begin
+    rr = havel_hakimi_graph(repeat([2, 4], 5))
+    @test nv(rr) == 10
+    @test ne(rr) == 15
+    @test is_directed(rr) == false
+
+    rr = havel_hakimi_graph(zeros(Int, 1000))
+    @test nv(rr) == 1000
+    @test ne(rr) == 0
+    @test is_directed(rr) == false
+
+    rr = havel_hakimi_graph([2, 2, 2])
+    @test nv(rr) == 3
+    @test ne(rr) == 3
+    @test is_directed(rr) == false
+
+    graph = SimpleGraph(10, 15)
+    degree_sequence = degree(graph)
+    rr = havel_hakimi_graph(degree_sequence)
+    @test nv(rr) == 10
+    @test ne(rr) == 15
+    @test is_directed(rr) == false
+end
+
+@testset "kleitman wang" begin
+    rr = kleitman_wang_graph(repeat([2, 4], 5), repeat([2, 4], 5))
+    @test nv(rr) == 10
+    @test ne(rr) == 30
+    @test is_directed(rr) == true
+
+    rr = kleitman_wang_graph(zeros(Int, 1000), zeros(Int, 1000))
+    @test nv(rr) == 1000
+    @test ne(rr) == 0
+    @test is_directed(rr) == true
+
+    rr = kleitman_wang_graph([2, 2, 2], [2, 2, 2])
+    @test nv(rr) == 3
+    @test ne(rr) == 6
+    @test is_directed(rr) == true
+
+    graph = SimpleDiGraph(10, 15)
+    indegree_sequence = indegree(graph)
+    outdegree_sequence = outdegree(graph)
+    rr = kleitman_wang_graph(indegree_sequence, outdegree_sequence)
+    @test nv(rr) == 10
+    @test ne(rr) == 15
+    @test is_directed(rr) == true
+end
