@@ -16,8 +16,7 @@ import Graphs.Experimental.Traversals:
 #     LGEnvironment() = new(false, false)
 # end
 
-abstract type AbstractGraphResult end
-abstract type AbstractGraphAlgorithm end
+# Redefinitions removed, now inherited from Graphs
 
 """
     ShortestPathResult <: AbstractGraphResult

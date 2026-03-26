@@ -15,9 +15,11 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [weakdeps]
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+IGraphs = "647e90d3-2106-487c-adb4-c91fc07b96ea"
 
 [extensions]
 GraphsSharedArraysExt = "SharedArrays"
+IGraphsExt = "IGraphs"
 
 [compat]
 ArnoldiMethod = "0.4"

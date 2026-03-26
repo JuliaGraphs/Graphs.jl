@@ -71,6 +71,8 @@ export
     AbstractGraph,
     AbstractEdge,
     AbstractEdgeIter,
+    AbstractGraphAlgorithm,
+    AbstractGraphResult,
     Edge,
     Graph,
     SimpleGraph,
@@ -454,7 +456,17 @@ export
 
     # planarity
     is_planar,
-    planar_maximally_filtered_graph
+    planar_maximally_filtered_graph,
+
+    # igraphs
+    IGraphAlgorithm,
+    AbstractIGraph,
+    igraph,
+    sir_model,
+    layout_kamada_kawai,
+    layout_fruchterman_reingold,
+    community_leiden,
+    modularity_matrix
 """
     Graphs
 
@@ -478,6 +490,7 @@ and tutorials are available at the
 """
 Graphs
 include("interface.jl")
+include("igraphs.jl")
 include("utils.jl")
 include("frozenvector.jl")
 include("deprecations.jl")
@@ -582,4 +595,13 @@ include("planarity.jl")
 include("spanningtrees/planar_maximally_filtered_graph.jl")
 
 using .LinAlg
+
+function __init__()
+    Base.Experimental.register_error_hint(MethodError) do io, exc, argtypes, kwargs
+        if exc.f in _IGRAPH_REQUIRED_FUNCTIONS
+            print(io, "\n\nThis function requires the IGraphs.jl package to be loaded.")
+        end
+    end
+end
+
 end # module

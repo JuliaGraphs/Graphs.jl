@@ -16,6 +16,10 @@ function Base.showerror(io::IO, ie::NotImplementedError)
 end
 
 _NI(m) = throw(NotImplementedError(m))
+abstract type AbstractGraphResult end
+abstract type AbstractGraphAlgorithm end
+
+export AbstractGraphResult, AbstractGraphAlgorithm
 
 """
     AbstractEdge
