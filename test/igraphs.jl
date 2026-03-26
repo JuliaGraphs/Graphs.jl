@@ -33,3 +33,8 @@
         @test contains(msg, "This function requires the IGraphs.jl package to be loaded")
     end
 end
+
+if !isnothing(Base.find_package("IGraphs"))
+    include("igraphs_ext.jl")
+    include("igraphs_interface.jl")
+end

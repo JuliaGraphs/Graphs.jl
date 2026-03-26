@@ -154,7 +154,6 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "igraphs",
-    "igraphs_ext",
     "experimental/experimental",
     "planarity",
 ]
