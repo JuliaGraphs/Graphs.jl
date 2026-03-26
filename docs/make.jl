@@ -46,6 +46,7 @@ pages_files = [
         "ecosystem/graphtypes.md",
         "ecosystem/graphalgorithms.md",
         "ecosystem/interface.md",
+        "ecosystem/igraphs.md",
     ],
     "Core API" => [
         "core_functions/core.md",
