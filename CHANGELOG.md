@@ -4,6 +4,7 @@ We follow SemVer as most of the Julia ecosystem. Below you might see the "breaki
 
 ## unreleased
 - `is_articulation(g, v)` for checking whether a single vertex is an articulation point
+- Added documentation stubs for `community_leiden`, `modularity_matrix`, `sir_model`, `layout_kamada_kawai`, and `layout_fruchterman_reingold` pointing users to `IGraphs.jl`.
 
 
 ## v1.14.0 - 2026-02-26
