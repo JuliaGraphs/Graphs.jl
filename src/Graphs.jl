@@ -200,6 +200,7 @@ export
     # diffusion
     diffusion,
     diffusion_rate,
+    sir_model,
 
     # eulerian
     eulerian,
@@ -320,6 +321,8 @@ export
 
     # community
     modularity,
+    modularity_matrix,
+    community_leiden,
     core_periphery_deg,
     local_clustering,
     local_clustering_coefficient,
@@ -454,7 +457,11 @@ export
 
     # planarity
     is_planar,
-    planar_maximally_filtered_graph
+    planar_maximally_filtered_graph,
+
+    # Layouts
+    layout_kamada_kawai,
+    layout_fruchterman_reingold
 """
     Graphs
 
@@ -478,6 +485,7 @@ and tutorials are available at the
 """
 Graphs
 include("interface.jl")
+include("igraphs_stubs.jl")
 include("utils.jl")
 include("frozenvector.jl")
 include("deprecations.jl")

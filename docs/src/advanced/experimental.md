@@ -37,3 +37,15 @@ Pages = [
 ]
 
 ```
+
+## External Algorithm Stubs
+
+The following algorithms are not implemented natively in Graphs.jl but define documentation stubs guiding users to external wrapper packages like `IGraphs.jl`.
+
+```@docs
+Graphs.community_leiden
+Graphs.modularity_matrix
+Graphs.sir_model
+Graphs.layout_kamada_kawai
+Graphs.layout_fruchterman_reingold
+```

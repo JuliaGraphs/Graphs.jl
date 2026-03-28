@@ -38,6 +38,21 @@ true
 
 Here, dispatching via `NautyAlg()` implicitly converts `g` to a _nauty_-compatible format and uses _nauty_ for the isomorphism computation.
 
+Similarly, _IGraphs.jl_ provides a backend for algorithms like `pagerank` and `betweenness_centrality`. You can dispatch to the C implementation by passing `IGraphs.IGraphAlgorithm()`:
+
+```julia
+julia> using Graphs, IGraphs
+
+julia> g = star_graph(5)
+{5, 4} undirected simple Int64 graph
+
+julia> pagerank(g, IGraphs.IGraphAlgorithm())
+5-element Vector{Float64}:
+...
+```
+
+To quickly convert a _Graphs.jl_ graph to an _IGraphs.jl_ structure, you can use `IGraphs.igraph(g)`.
+
 ### Functions extended by IGraphs.jl
 
 A list of functions extended by _IGraphs.jl_ can be obtained with
@@ -46,6 +61,11 @@ A list of functions extended by _IGraphs.jl_ can be obtained with
 import IGraphs
 IGraphs.igraphalg_methods()
 ```
+
+### Exclusive algorithms provided by IGraphs.jl
+
+_IGraphs.jl_ also provides algorithms that are not natively available in _Graphs.jl_ (e.g., `community_leiden`, `sir_model`, `modularity_matrix`, and various layout algorithms such as `layout_kamada_kawai`). Users looking for these functionalities should use `IGraphs.jl` directly.
+
 
 ### Functions extended by NautyGraphs.jl
 
