@@ -454,7 +454,9 @@ export
 
     # planarity
     is_planar,
-    planar_maximally_filtered_graph
+    planar_maximally_filtered_graph,
+    chromatic_number,
+    edge_chromatic_number
 """
     Graphs
 
@@ -575,6 +577,7 @@ include("independentset/degree_ind_set.jl")
 include("independentset/maximal_ind_set.jl")
 include("vertexcover/degree_vertex_cover.jl")
 include("vertexcover/random_vertex_cover.jl")
+include("vngraphs_stubs.jl")
 include("Experimental/Experimental.jl")
 include("Parallel/Parallel.jl")
 include("Test/Test.jl")

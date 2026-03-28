@@ -155,6 +155,7 @@ tests = [
     "trees/prufer",
     "experimental/experimental",
     "planarity",
+    "vngraphs_stubs",
 ]
 
 @testset verbose = true "Graphs" begin
