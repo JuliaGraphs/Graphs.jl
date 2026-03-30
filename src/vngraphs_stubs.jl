@@ -40,4 +40,3 @@ function edge_chromatic_number(g::AbstractGraph, args...; kwargs...)
     )
 end
 
-export chromatic_number, edge_chromatic_number
