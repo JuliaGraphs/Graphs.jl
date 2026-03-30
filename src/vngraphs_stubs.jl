@@ -39,4 +39,3 @@ function edge_chromatic_number(g::AbstractGraph, args...; kwargs...)
         "Please load VNGraphs.jl to use the very_nauty implementation.",
     )
 end
-
