@@ -14,8 +14,10 @@ chromatic_number(g)
 ```
 """
 function chromatic_number(g::AbstractGraph, args...; kwargs...)
-    error("chromatic_number is not implemented in Graphs.jl. " *
-          "Please load VNGraphs.jl to use the very_nauty implementation.")
+    error(
+        "chromatic_number is not implemented in Graphs.jl. " *
+        "Please load VNGraphs.jl to use the very_nauty implementation.",
+    )
 end
 
 """
@@ -32,8 +34,10 @@ edge_chromatic_number(g)
 ```
 """
 function edge_chromatic_number(g::AbstractGraph, args...; kwargs...)
-    error("edge_chromatic_number is not implemented in Graphs.jl. " *
-          "Please load VNGraphs.jl to use the very_nauty implementation.")
+    error(
+        "edge_chromatic_number is not implemented in Graphs.jl. " *
+        "Please load VNGraphs.jl to use the very_nauty implementation.",
+    )
 end
 
 export chromatic_number, edge_chromatic_number
