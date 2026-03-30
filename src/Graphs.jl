@@ -454,7 +454,9 @@ export
 
     # planarity
     is_planar,
-    planar_maximally_filtered_graph
+    planar_maximally_filtered_graph,
+    chromatic_number,
+    edge_chromatic_number
 """
     Graphs
 
@@ -478,6 +480,7 @@ and tutorials are available at the
 """
 Graphs
 include("interface.jl")
+include("vngraphs_stubs.jl")
 include("utils.jl")
 include("frozenvector.jl")
 include("deprecations.jl")
