@@ -504,11 +504,11 @@ sparse(g::AbstractGraph) = adjacency_matrix(g)
 length(g::AbstractGraph) = widen(nv(g)) * widen(nv(g))
 ndims(g::AbstractGraph) = 2
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; !IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;!IsDirected{AG}}
     return true
 end
 
-@traitfn function issymmetric(g::AG) where {AG <: AbstractGraph; IsDirected{AG}}
+@traitfn function issymmetric(g::AG) where {AG<:AbstractGraph;IsDirected{AG}}
     for e in edges(g)
         if !has_edge(g, reverse(e))
             return false
@@ -522,6 +522,9 @@ end
 
 Return the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product_of_graphs)
 of `g` and `h`.
+
+The cartesian product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂).
 
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
@@ -575,6 +578,8 @@ end
 Return the [tensor product](https://en.wikipedia.org/wiki/Tensor_product_of_graphs)
 of `g` and `h`.
 
+The tensor product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∧ h₁ ∼ h₂.
+
 ### Implementation Notes
 Preserves the eltype of the input graph. Will error if the number of vertices
 in the generated graph exceeds the eltype.
@@ -610,6 +615,227 @@ function tensor_product(g::G, h::G) where {G<:AbstractGraph}
             if undirected
                 add_edge!(z, id(i1, j2), id(i2, j1))
             end
+        end
+    end
+    return z
+end
+
+"""
+    strong_product(g, h)
+
+Return the [strong product](https://en.wikipedia.org/wiki/Strong_product_of_graphs)
+of `g` and `h`.
+
+The strong product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂ ∧ h₁ ∼ h₂) ∨ (g₁ ∼ g₂ ∧ h₁ = h₂) ∨ (g₁ ∼ g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = strong_product(a, b)
+{9, 20} undirected simple Int64 graph
+
+julia> g == union(cartesian_product(a, b), tensor_product(a, b))
+true
+```
+"""
+function strong_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for e1 in edges(g)
+        i1, i2 = Tuple(e1)
+        for e2 in edges(h)
+            j1, j2 = Tuple(e2)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+    end
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    disjunctive_product(g, h)
+
+Return the [disjunctive product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The disjunctive product has edges (g₁, h₁) ∼ (g₂, h₂) when g₁ ∼ g₂ ∨ h₁ ∼ h₂.
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> a = star_graph(3);
+
+julia> b = path_graph(3);
+
+julia> g = disjunctive_product(a, b)
+{9, 28} undirected simple Int64 graph
+
+julia> complement(g) == strong_product(complement(a), complement(b))
+true
+```
+"""
+function disjunctive_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            for k in vertices(g)
+                add_edge!(z, id(i, j1), id(k, j2))
+            end
+        end
+    end
+    return z
+end
+
+"""
+    lexicographic_product(g, h)
+
+Return the [lexicographic product](https://en.wikipedia.org/wiki/Lexicographic_product_of_graphs)
+of `g` and `h`.
+
+The lexicographic product has edges (g₁, h₁) ∼ (g₂, h₂) when (g₁ ∼ g₂) ∨ (g₁ = g₂ ∧ h₁ ∼ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = lexicographic_product(star_graph(3), path_graph(3))
+{9, 24} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 48 stored entries:
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  ⋅  1  1  1  1  1  1  1
+ ⋅  1  ⋅  1  1  1  1  1  1
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  1  ⋅  ⋅  ⋅  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+ 1  1  1  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  1  1  ⋅  ⋅  ⋅  ⋅  1  ⋅
+```
+"""
+function lexicographic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for j in vertices(h)
+            for k in vertices(h)
+                add_edge!(z, id(i1, j), id(i2, k))
+            end
+        end
+    end
+    for e in edges(h)
+        j1, j2 = Tuple(e)
+        for i in vertices(g)
+            add_edge!(z, id(i, j1), id(i, j2))
+        end
+    end
+    return z
+end
+
+"""
+    homomorphic_product(g, h)
+
+Return the [homomorphic product](https://en.wikipedia.org/wiki/Graph_product)
+of `g` and `h`.
+
+The homomorphic product has edges (g₁, h₁) ∼ (g₂, h₂) when
+(g₁ = g₂) ∨ (g₁ ∼ g₂ ∧ h₁ ≁ h₂).
+
+### Implementation Notes
+Preserves the eltype of the input graph. Will error if the number of vertices
+in the generated graph exceeds the eltype.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = homomorphic_product(star_graph(3), path_graph(3))
+{9, 19} undirected simple Int64 graph
+
+julia> adjacency_matrix(g)
+9×9 SparseArrays.SparseMatrixCSC{Int64, Int64} with 38 stored entries:
+ ⋅  1  1  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  ⋅  ⋅  1  ⋅
+ 1  1  ⋅  1  ⋅  1  1  ⋅  1
+ 1  ⋅  1  ⋅  1  1  ⋅  ⋅  ⋅
+ ⋅  1  ⋅  1  ⋅  1  ⋅  ⋅  ⋅
+ 1  ⋅  1  1  1  ⋅  ⋅  ⋅  ⋅
+ 1  ⋅  1  ⋅  ⋅  ⋅  ⋅  1  1
+ ⋅  1  ⋅  ⋅  ⋅  ⋅  1  ⋅  1
+ 1  ⋅  1  ⋅  ⋅  ⋅  1  1  ⋅
+```
+"""
+function homomorphic_product(g::G, h::G) where {G<:AbstractSimpleGraph}
+    z = G(nv(g) * nv(h))
+    id(i, j) = (i - 1) * nv(h) + j
+    undirected = !is_directed(g)
+    for i in vertices(g)
+        for j in vertices(h)
+            for k in vertices(h)
+                if k != j
+                    add_edge!(z, id(i, j), id(i, k))
+                end
+            end
+        end
+    end
+    cmpl_h = complement(h)
+    for e in edges(g)
+        i1, i2 = Tuple(e)
+        for f in edges(cmpl_h)
+            j1, j2 = Tuple(f)
+            add_edge!(z, id(i1, j1), id(i2, j2))
+            if undirected
+                add_edge!(z, id(i1, j2), id(i2, j1))
+            end
+        end
+        for j in vertices(h)
+            add_edge!(z, id(i1, j), id(i2, j))
         end
     end
     return z
@@ -881,86 +1107,148 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T
 end
 
 """
-	line_graph(g::SimpleGraph) ::SimpleGraph
+	line_graph(g::SimpleGraph; loops::Symbol=:none) ::SimpleGraph
+
 Given a graph `g`, return the graph `lg`, whose vertices are integers that enumerate the 
 edges in `g`, and two vertices in `lg` form an edge iff the corresponding edges in `g` 
 share a common endpoint. In other words, edges in `lg` are length-2 paths in `g`. 
-Note that `i ∈ vertices(lg)` corresponds to `collect(edges(g))[i]`. 
+Note that `k ∈ vertices(lg)` corresponds to `collect(edges(g))[k]`. 
+
+The argument `loops` determines how self-loops in `lg` are handled:
+- `loops = :none` means that `lg` will contain no loops `k-k`;
+- `loops = :inherit` means that only a loop `v-v = edges(g)[k]` induces a loop `k-k` in `lg`;
+- `loops = :all` means that every `edges(g)[k]` induces a loop `k-k` in `lg`.
 
 # Examples
 ```jldoctest
 julia> using Graphs
 
-julia> g = path_graph(5);
+julia> g = path_graph(5);  # path with 4 edges
 
-julia> lg = line_graph(g)
+julia> lg = line_graph(g)  # path with 3 edges
 {4, 3} undirected simple Int64 graph
+
+julia> g = cycle_graph(4);  # cycle with 4 edges
+
+julia> lg = line_graph(g)  # cycle with 4 edges
+{4, 4} undirected simple Int64 graph
+
+julia> g = star_graph(6);  # star with 5 edges
+
+julia> lg = line_graph(g)  # complete graph with 10 edges
+{5, 10} undirected simple Int64 graph
+
+julia> g = SimpleGraph(3, [[2],[1,2,3],[2]]);  # vertices 1:3, edges 1-2, 2-2, 2-3
+
+julia> lg = line_graph(g, loops=:none)  # vertices 1:3, edges 1-2, 1-3, 2-3
+{3, 3} undirected simple Int64 graph
+
+julia> lg = line_graph(g, loops=:inherit)  # vertices 1:3, edges 1-2, 1-3, 2-3, 2-2
+{3, 4} undirected simple Int64 graph
+
+julia> lg = line_graph(g, loops=:all)  # vertices 1:3, edges 1-2, 1-3, 2-3, 1-1, 2-2, 3-3
+{3, 6} undirected simple Int64 graph
 ```
 """
-function line_graph(g::SimpleGraph)
+function line_graph(g::SimpleGraph; loops::Symbol=:none)
+    @assert loops in (:none, :inherit, :all)
     vertex_to_edges = [Int[] for _ in 1:nv(g)]
-    for (i, e) in enumerate(edges(g))
+    is_loop = BitVector(undef, ne(g))
+    for (k, e) in enumerate(edges(g))
         s, d = src(e), dst(e)
-        push!(vertex_to_edges[s], i)
-        s == d && continue  # do not push self-loops twice
-        push!(vertex_to_edges[d], i)
+        is_loop[k] = (loops == :none ? false : (loops == :all ? true : s == d))
+        push!(vertex_to_edges[s], k)
+        s==d && continue  # do not push self-loops twice
+        push!(vertex_to_edges[d], k)
     end
 
-    fadjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbors adjacency in lg
-    m = 0  # number of edges in the line-graph
-    for es in vertex_to_edges
-        n = length(es)
-        for i in 1:(n - 1), j in (i + 1):n  # iterate through pairs of edges with same endpoint
-            ei, ej = es[i], es[j]
+    fadjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbor-edges adjacency in lg
+    m = 0  # number of edges in lg
+    for ee in vertex_to_edges  # edges ee in g induce a clique in lg
+        n = length(ee)
+        for i in 1:n, j in i:n  # iterate through pairs of edges with same endpoint
+            ei, ej = ee[i], ee[j]
+            ei==ej && !is_loop[ei] && continue
+            is_loop[ei] = false  # prevent non-loop edge in g to be added twice as a loop in lg
             m += 1
             push!(fadjlist[ei], ej)
             push!(fadjlist[ej], ei)
         end
     end
 
-    foreach(sort!, fadjlist)
+    for list in fadjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
     return SimpleGraph(m, fadjlist)
 end
 
 """
-	line_graph(g::SimpleDiGraph) ::SimpleDiGraph
+	line_graph(g::SimpleDiGraph; loops::Symbol=:none) ::SimpleDiGraph
+
 Given a digraph `g`, return the digraph `lg`, whose vertices are integers that enumerate 
 the edges in `g`, and there is an edge in `lg` from `Edge(a,b)` to `Edge(c,d)` iff b==c.
 In other words, edges in `lg` are length-2 directed paths in `g`. 
-Note that `i ∈ vertices(lg)` corresponds to `collect(edges(g))[i]`. 
+Note that `k ∈ vertices(lg)` corresponds to `collect(edges(g))[k]`. 
+
+The argument `loops` determines how self-loops in `lg` are handled:
+- `loops = :none` means that `lg` will contain no loops `k-k`;
+- `loops = :inherit` means that every loop `v->v = edges(g)[k]` induces a loop `k-k` in `lg`.
 
 # Examples
 ```jldoctest
 julia> using Graphs
 
-julia> g = cycle_digraph(5);
+julia> g = path_digraph(5);  # path with 4 edges
 
-julia> lg = line_graph(g)
-{5, 5} directed simple Int64 graph
+julia> lg = line_graph(g)  # path with 3 edges
+{4, 3} directed simple Int64 graph
+
+julia> g = cycle_digraph(4);  # cycle with 4 edges
+
+julia> lg = line_graph(g)  # cycle with 4 edges
+{4, 4} directed simple Int64 graph
+
+julia> g = SimpleDiGraphFromIterator(Edge(k≤3 ? k+1 : 1, k≤3 ? 1 : k+1) for k in 1:3+4);  # star, 3 in, 4 out
+
+julia> lg = line_graph(g)  # complete bipartite digraph with 3*4 edges
+{7, 12} directed simple Int64 graph
+
+julia> g = SimpleDiGraph(3, [[2],[2,3],Int[]], [Int[],[1,2],[2]]);  # vertices 1:3, edges 1->2, 2->2, 2->3
+
+julia> lg = line_graph(g, loops=:none)  # vertices 1:3, edges 1->2, 1->3, 2->3
+{3, 3} directed simple Int64 graph
+
+julia> lg = line_graph(g, loops=:inherit)  # vertices 1:3, edges 1->2, 1->3, 2->3, 2->2
+{3, 4} directed simple Int64 graph
 ```
 """
-function line_graph(g::SimpleDiGraph)
+function line_graph(g::SimpleDiGraph; loops::Symbol=:none)
+    @assert loops in (:none, :inherit)
     vertex_to_edgesout = [Int[] for _ in 1:nv(g)]
     vertex_to_edgesin = [Int[] for _ in 1:nv(g)]
-    for (i, e) in enumerate(edges(g))
+    for (k, e) in enumerate(edges(g))
         s, d = src(e), dst(e)
-        push!(vertex_to_edgesout[s], i)
-        push!(vertex_to_edgesin[d], i)
+        push!(vertex_to_edgesout[s], k)
+        push!(vertex_to_edgesin[d], k)
     end
 
-    fadjilist = [Int[] for _ in 1:ne(g)]  # edge to neighbors forward adjacency in lg
-    badjilist = [Int[] for _ in 1:ne(g)]  # edge to neighbors backward adjacency in lg
+    fadjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbors forward adjacency in lg
+    badjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbors backward adjacency in lg
     m = 0  # number of edges in the line-graph
     for (e_i, e_o) in zip(vertex_to_edgesin, vertex_to_edgesout)
         for ei in e_i, eo in e_o  # iterate through length-2 directed paths
-            ei == eo && continue  # a self-loop in g does not induce a self-loop in lg
+            ei == eo && loops == :none && continue  # a self-loop in g does not induce a self-loop in lg
             m += 1
-            push!(fadjilist[ei], eo)
-            push!(badjilist[eo], ei)
+            push!(fadjlist[ei], eo)
+            push!(badjlist[eo], ei)
         end
     end
 
-    foreach(sort!, fadjilist)
-    foreach(sort!, badjilist)
-    return SimpleDiGraph(m, fadjilist, badjilist)
+    for list in fadjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
+    for list in badjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
+    return SimpleDiGraph(m, fadjlist, badjlist)
 end

@@ -141,22 +141,15 @@ end
 function _rescale!(
     betweenness::Vector{Float64}, n::Integer, normalize::Bool, directed::Bool, k::Integer
 )
+    scale = nothing
     if normalize
-        if n <= 2
-            do_scale = false
-        else
-            do_scale = true
+        if 2 < n
             scale = 1.0 / ((n - 1) * (n - 2))
         end
-    else
-        if !directed
-            do_scale = true
-            scale = 1.0 / 2.0
-        else
-            do_scale = false
-        end
+    elseif !directed
+        scale = 1.0 / 2.0
     end
-    if do_scale
+    if !isnothing(scale)
         if k > 0
             scale = scale * n / k
         end

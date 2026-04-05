@@ -1,5 +1,7 @@
 using Documenter
 using Graphs
+using IGraphs: IGraphs
+using NautyGraphs: NautyGraphs
 
 # same for contributing and license
 cp(
@@ -15,6 +17,11 @@ cp(
 cp(
     normpath(@__FILE__, "../../README.md"),
     normpath(@__FILE__, "../src/index.md");
+    force=true,
+)
+cp(
+    normpath(@__FILE__, "../../CHANGELOG.md"),
+    normpath(@__FILE__, "../src/CHANGELOG.md");
     force=true,
 )
 
@@ -35,7 +42,11 @@ pages_files = [
         "first_steps/plotting.md",
         "first_steps/persistence.md",
     ],
-    "Ecosystem" => ["ecosystem/graphtypes.md", "ecosystem/interface.md"],
+    "Ecosystem" => [
+        "ecosystem/graphtypes.md",
+        "ecosystem/graphalgorithms.md",
+        "ecosystem/interface.md",
+    ],
     "Core API" => [
         "core_functions/core.md",
         "core_functions/interface.md",
@@ -44,6 +55,7 @@ pages_files = [
         "core_functions/persistence.md",
         "core_functions/simplegraphs_generators.md",
         "core_functions/simplegraphs.md",
+        "core_functions/wrappedgraphs.md",
     ],
     "Algorithms API" => [
         "algorithms/biconnectivity.md",
@@ -94,6 +106,7 @@ makedocs(;
         canonical="https://gdalle.github.io/Graphs.jl",
     ),
     sitename="Graphs.jl",
+    checkdocs=:public,
     doctest=false,
     expandfirst=[],
     pages=[
@@ -109,3 +122,4 @@ deploydocs(; repo="github.com/JuliaGraphs/Graphs.jl.git", target="build")
 rm(normpath(@__FILE__, "../src/contributing.md"))
 rm(normpath(@__FILE__, "../src/license.md"))
 rm(normpath(@__FILE__, "../src/index.md"))
+rm(normpath(@__FILE__, "../src/CHANGELOG.md"))

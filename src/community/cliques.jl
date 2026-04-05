@@ -144,3 +144,125 @@ function maximal_cliques end
     end
     return cliques
 end
+
+"""
+    maximum_clique(g)
+
+Return a vector representing the node indices of a maximum clique
+of the undirected graph `g`.
+
+```jldoctest
+julia> using Graphs
+
+julia> maximum_clique(blockdiag(complete_graph(3), complete_graph(4)))
+4-element Vector{Int64}:
+ 4
+ 5
+ 6
+ 7
+```
+"""
+function maximum_clique end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function maximum_clique(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
+    return sort(argmax(length, maximal_cliques(g)))
+end
+
+"""
+    clique_number(g)
+
+Returns the size of the largest clique of the undirected graph `g`.
+
+```jldoctest
+julia> using Graphs
+
+julia> clique_number(blockdiag(complete_graph(3), complete_graph(4)))
+4
+```
+"""
+function clique_number end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function clique_number(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
+    return maximum(length, maximal_cliques(g))
+end
+
+"""
+    maximal_independent_sets(g)
+
+Return a vector of vectors representing the node indices in each of the maximal
+independent sets found in the undirected graph `g`.
+
+The graph will be converted to SimpleGraph at the start of the computation.
+
+```jldoctest; filter = r"^\\s+\\[[\\d, ]+\\]\$"m
+julia> using Graphs
+
+julia> maximal_independent_sets(cycle_graph(5))
+5-element Vector{Vector{Int64}}:
+ [5, 2]
+ [5, 3]
+ [2, 4]
+ [1, 4]
+ [1, 3]
+```
+"""
+function maximal_independent_sets end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function maximal_independent_sets(
+    g::AG::(!IsDirected)
+) where {T,AG<:AbstractGraph{T}}
+    # Convert to SimpleGraph first because `complement` doesn't accept AbstractGraph.
+    return maximal_cliques(complement(SimpleGraph(g)))
+end
+
+"""
+    maximum_independent_set(g)
+
+Return a vector representing the node indices of a maximum independent set
+of the undirected graph `g`.
+
+The graph will be converted to SimpleGraph at the start of the computation.
+
+### See also
+[`independent_set`](@ref)
+
+## Examples
+```jldoctest; filter = r"^\\s+\\d+\$"m
+julia> using Graphs
+
+julia> maximum_independent_set(cycle_graph(7))
+3-element Vector{Int64}:
+ 2
+ 5
+ 7
+```
+"""
+function maximum_independent_set end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function maximum_independent_set(
+    g::AG::(!IsDirected)
+) where {T,AG<:AbstractGraph{T}}
+    # Convert to SimpleGraph first because `complement` doesn't accept AbstractGraph.
+    return maximum_clique(complement(SimpleGraph(g)))
+end
+
+"""
+    independence_number(g)
+
+Returns the size of the largest independent set of the undirected graph `g`.
+
+The graph will be converted to SimpleGraph at the start of the computation.
+
+```jldoctest
+julia> using Graphs
+
+julia> independence_number(cycle_graph(7))
+3
+```
+"""
+function independence_number end
+# see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
+@traitfn function independence_number(g::AG::(!IsDirected)) where {T,AG<:AbstractGraph{T}}
+    # Convert to SimpleGraph first because `complement` doesn't accept AbstractGraph.
+    return clique_number(complement(SimpleGraph(g)))
+end

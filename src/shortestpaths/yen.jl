@@ -88,7 +88,7 @@ function yen_k_shortest_paths(
                 distpath = distrootpath + djspur.dists[target]
                 # Add the potential k-shortest path to the heap
                 if !haskey(B, pathtotal)
-                    enqueue!(B, pathtotal, distpath)
+                    push!(B, pathtotal => distpath)
                 end
             end
 
@@ -99,11 +99,11 @@ function yen_k_shortest_paths(
 
         # No more paths in B
         isempty(B) && break
-        mindistB = peek(B)[2]
+        mindistB = first(B)[2]
         # The path with minimum distance in B is higher than maxdist
         mindistB > maxdist && break
-        push!(dists, peek(B)[2])
-        push!(A, dequeue!(B))
+        push!(dists, first(B)[2])
+        push!(A, popfirst!(B).first)
     end
 
     return YenState{T,U}(dists, A)

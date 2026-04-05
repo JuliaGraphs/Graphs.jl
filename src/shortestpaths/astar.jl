@@ -31,7 +31,7 @@ function a_star_impl!(
     total_path = Vector{edgetype_to_return}()
 
     @inbounds while !isempty(open_set)
-        current = dequeue!(open_set)
+        current = popfirst!(open_set).first
 
         if current == goal
             reconstruct_path!(total_path, came_from, current, g, edgetype_to_return)
@@ -86,7 +86,7 @@ function a_star(
     checkbounds(distmx, Base.OneTo(nv(g)), Base.OneTo(nv(g)))
 
     open_set = PriorityQueue{U,T}()
-    enqueue!(open_set, s, 0)
+    push!(open_set, s => 0)
 
     closed_set = zeros(Bool, nv(g))
 

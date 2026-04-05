@@ -1,4 +1,4 @@
-@testset "Parallel.Distance" begin
+@testset "Parallel.Distance" for parallel in [:threads, :distributed]
     g4 = path_digraph(5)
     adjmx1 = [0 1 0; 1 0 1; 0 1 0] # graph
     adjmx2 = [0 1 0; 1 0 1; 1 1 0] # digraph
@@ -9,7 +9,7 @@
 
     for g in testgraphs(a1)
         z = @inferred(Graphs.eccentricity(g, distmx1))
-        y = @inferred(Parallel.eccentricity(g, distmx1))
+        y = @inferred(Parallel.eccentricity(g, distmx1; parallel))
         @test isapprox(y, z)
         @test @inferred(Graphs.diameter(y)) ==
             @inferred(Parallel.diameter(g, distmx1)) ==
@@ -21,9 +21,15 @@
         @test @inferred(Graphs.center(y)) == @inferred(Parallel.center(g, distmx1)) == [2]
     end
 
+    let g = testgraphs(a1)[1]
+        # An error should be reported if the parallel mode could not be understood
+        @test_throws ArgumentError Parallel.eccentricity(g, distmx1; parallel=:thread)
+        @test_throws ArgumentError Parallel.eccentricity(g, distmx1; parallel=:distriibuted)
+    end
+
     for g in testdigraphs(a2)
         z = @inferred(Graphs.eccentricity(g, distmx2))
-        y = @inferred(Parallel.eccentricity(g, distmx2))
+        y = @inferred(Parallel.eccentricity(g, distmx2; parallel))
         @test isapprox(y, z)
         @test @inferred(Graphs.diameter(y)) ==
             @inferred(Parallel.diameter(g, distmx2)) ==

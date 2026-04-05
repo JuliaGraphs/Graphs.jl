@@ -4,7 +4,7 @@ using Graphs
 using Graphs.Experimental.Traversals
 using Graphs: AbstractGraph, AbstractEdge
 using Graphs.SimpleGraphs: AbstractSimpleGraph
-using DataStructures: PriorityQueue, enqueue!, dequeue!
+using DataStructures: PriorityQueue
 
 import Graphs.Experimental.Traversals:
     initfn!, previsitfn!, newvisitfn!, visitfn!, postvisitfn!, postlevelfn!

@@ -19,6 +19,7 @@ Pages = [
     "community/clustering.jl",
     "community/core-periphery.jl",
     "community/label_propagation.jl",
+    "community/louvain.jl",
     "community/modularity.jl",
     "community/rich_club.jl",
 ]

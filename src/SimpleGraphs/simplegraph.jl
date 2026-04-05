@@ -271,7 +271,7 @@ end
 
 Construct a `SimpleGraph` from any `AbstractGraph` by enumerating edges.
 
-If `g` is directed, a directed edge `{u, v}` is added if either directed edge `(u, v)` or `(v, u)` exists.
+If `g` is directed, an undirected edge `{u, v}` is added if either directed edge `(u, v)` or `(v, u)` exists.
 """
 function SimpleGraph{T}(g::AbstractGraph) where {T}
     eds = edges(g)
@@ -428,6 +428,14 @@ copy(g::SimpleGraph) = SimpleGraph(g.ne, deepcopy_adjlist(g.fadjlist))
 
 function ==(g::SimpleGraph, h::SimpleGraph)
     return vertices(g) == vertices(h) && ne(g) == ne(h) && fadj(g) == fadj(h)
+end
+
+function Base.hash(g::SimpleGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    return r
 end
 
 """

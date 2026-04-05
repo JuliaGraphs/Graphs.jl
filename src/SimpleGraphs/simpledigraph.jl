@@ -435,6 +435,15 @@ function ==(g::SimpleDiGraph, h::SimpleDiGraph)
            badj(g) == badj(h)
 end
 
+function Base.hash(g::SimpleDiGraph, h::UInt)
+    r = hash(typeof(g), h)
+    r = hash(nv(g), r)
+    r = hash(ne(g), r)
+    r = hash(fadj(g), r)
+    r = hash(badj(g), r)
+    return r
+end
+
 is_directed(::Type{<:SimpleDiGraph}) = true
 
 function has_edge(g::SimpleDiGraph{T}, s, d) where {T}

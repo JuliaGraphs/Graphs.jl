@@ -36,8 +36,8 @@ function vertex_cover(g::AbstractGraph{T}, alg::DegreeVertexCover) where {T<:Int
     length_cover = 0
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g)))
 
-    while !isempty(degree_queue) && peek(degree_queue)[2] > 0
-        v = dequeue!(degree_queue)
+    while !isempty(degree_queue) && first(degree_queue)[2] > 0
+        v = popfirst!(degree_queue).first
         in_cover[v] = true
         length_cover += 1
 

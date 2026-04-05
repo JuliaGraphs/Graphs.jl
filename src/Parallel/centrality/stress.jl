@@ -1,4 +1,4 @@
-function stress_centrality(g::AbstractGraph, vs=vertices(g); parallel=:distributed)
+function stress_centrality(g::AbstractGraph, vs=vertices(g); parallel=:threads)
     return if parallel == :distributed
         distr_stress_centrality(g, vs)
     else
@@ -9,7 +9,7 @@ end
 function stress_centrality(
     g::AbstractGraph,
     k::Integer;
-    parallel=:distributed,
+    parallel=:threads,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
@@ -21,21 +21,10 @@ function stress_centrality(
     end
 end
 
-function distr_stress_centrality(g::AbstractGraph, vs=vertices(g))::Vector{Int64}
-    n_v = nv(g)
-    k = length(vs)
-    isdir = is_directed(g)
-
-    # Parallel reduction
-    stress = @distributed (+) for s in vs
-        temp_stress = zeros(Int64, n_v)
-        if degree(g, s) > 0  # this might be 1?
-            state = Graphs.dijkstra_shortest_paths(g, s; allpaths=true, trackvertices=true)
-            Graphs._stress_accumulate_basic!(temp_stress, state, g, s)
-        end
-        temp_stress
-    end
-    return stress
+function distr_stress_centrality(args...; kwargs...)
+    return error(
+        "`parallel = :distributed` requested, but SharedArrays or Distributed is not loaded"
+    )
 end
 
 function threaded_stress_centrality(g::AbstractGraph, vs=vertices(g))::Vector{Int64}

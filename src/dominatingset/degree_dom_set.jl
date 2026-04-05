@@ -52,8 +52,8 @@ function dominating_set(g::AbstractGraph{T}, alg::DegreeDominatingSet) where {T<
     degree_queue = PriorityQueue(Base.Order.Reverse, enumerate(degree(g) .+ 1))
     length_ds = 0
 
-    while !isempty(degree_queue) && peek(degree_queue)[2] > 0
-        v = dequeue!(degree_queue)
+    while !isempty(degree_queue) && first(degree_queue)[2] > 0
+        v = popfirst!(degree_queue).first
         in_dom_set[v] = true
         length_ds += 1
 

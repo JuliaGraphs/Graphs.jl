@@ -17,6 +17,9 @@ adjacent to the fewest valid vertices in the independent set until all vertices 
 ### Performance
 Runtime: O((|V|+|E|)*log(|V|))
 Memory: O(|V|)
+
+### See also
+[`maximum_independent_set`](@ref)
 """
 function independent_set(g::AbstractGraph{T}, alg::DegreeIndependentSet) where {T<:Integer}
     nvg = nv(g)
@@ -26,7 +29,7 @@ function independent_set(g::AbstractGraph{T}, alg::DegreeIndependentSet) where {
     degree_queue = PriorityQueue(enumerate(degree(g)))
 
     while !isempty(degree_queue)
-        v = dequeue!(degree_queue)
+        v = popfirst!(degree_queue).first
         (deleted[v] || has_edge(g, v, v)) && continue
         deleted[v] = true
         push!(ind_set, v)

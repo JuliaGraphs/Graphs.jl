@@ -1,6 +1,8 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+IGraphs = "647e90d3-2106-487c-adb4-c91fc07b96ea"
+NautyGraphs = "7509a0a4-015a-4167-b44b-0799a1a2605e"
 
 [compat]
 Documenter = "1"

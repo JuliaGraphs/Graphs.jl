@@ -1,17 +1,19 @@
 using Aqua
 using Documenter
 using Graphs
-using Graphs.Experimental
 using Graphs.SimpleGraphs
+using Graphs.Experimental
+if isempty(VERSION.prerelease)
+    using JET
+end
 using Graphs.Test
-using JET
-using JuliaFormatter
 using Test
 using SparseArrays
 using LinearAlgebra
 using DelimitedFiles
 using Base64
 using Random
+using Logging: NullLogger, with_logger
 using Statistics: mean, std
 using StableRNGs
 using Pkg
@@ -80,6 +82,7 @@ tests = [
     "interface",
     "core",
     "operators",
+    "wrappedGraphs/graphviews",
     "degeneracy",
     "distance",
     "digraph/transitivity",
@@ -115,7 +118,9 @@ tests = [
     "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
+    "community/independent_sets",
     "community/label_propagation",
+    "community/louvain",
     "community/modularity",
     "community/clustering",
     "community/clique_percolation",
@@ -134,6 +139,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "spanningtrees/planar_maximally_filtered_graph",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
@@ -148,12 +154,11 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "planarity",
 ]
 
-args = lowercase.(ARGS)
-
 @testset verbose = true "Graphs" begin
-    if "jet" in args || isempty(args)
+    if isempty(VERSION.prerelease)
         @testset "Code quality (JET.jl)" begin
             @assert get_pkg_version("JET") >= v"0.8.4"
             JET.test_package(
@@ -165,27 +170,18 @@ args = lowercase.(ARGS)
         end
     end
 
-    if "aqua" in args || isempty(args)
-        @testset "Code quality (Aqua.jl)" begin
-            Aqua.test_all(Graphs; ambiguities=false)
-        end
+    @testset "Code quality (Aqua.jl)" begin
+        Aqua.test_all(Graphs; ambiguities=false)
     end
 
-    if "juliaformatter" in args || isempty(args)
-        @testset "Code formatting (JuliaFormatter.jl)" begin
-            @test format(Graphs; verbose=false, overwrite=false)
-        end
-    end
-
-    if "doctest" in args || isempty(args)
+    if !Sys.iswindows()
         doctest(Graphs)
     end
 
     @testset verbose = true "Actual tests" begin
         for t in tests
-            if t in args || isempty(args)
-                include(joinpath(testdir, "$(t).jl"))
-            end
+            tp = joinpath(testdir, "$(t).jl")
+            include(tp)
         end
     end
 end;

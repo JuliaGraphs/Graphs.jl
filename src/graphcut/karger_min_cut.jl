@@ -23,7 +23,7 @@ function karger_min_cut(g::AbstractGraph{T}) where {T<:Integer}
     nvg < 2 && return zeros(Int, nvg)
     nvg == 2 && return [1, 2]
 
-    connected_vs = IntDisjointSets(nvg)
+    connected_vs = IntDisjointSet(nvg)
     num_components = nvg
 
     for e in shuffle(collect(edges(g)))

@@ -1,13 +1,13 @@
 using Graphs.SimpleGraphs
 
 import Graphs.SimpleGraphs: fadj, badj, adj
-import Graphs.edgetype, Graphs.has_edge
+import Graphs: edgetype, has_edge
 using Statistics: mean
 
 struct DummySimpleGraph <: AbstractSimpleGraph{Int} end
 struct DummySimpleEdge <: AbstractSimpleEdge{Int} end
 DummySimpleEdge(x...) = DummySimpleEdge()
-Graphs.edgetype(g::DummySimpleGraph) = DummySimpleEdge
+edgetype(g::DummySimpleGraph) = DummySimpleEdge
 has_edge(::DummySimpleGraph, ::DummySimpleEdge) = true
 
 # function to check if the invariants for SimpleGraph and SimpleDiGraph holds

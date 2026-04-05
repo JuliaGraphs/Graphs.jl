@@ -281,9 +281,10 @@ has_edge(g, e) = has_edge(g, src(e), dst(e))
 Return a list of all neighbors connected to vertex `v` by an incoming edge.
 
 ### Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy.
-Do not modify result. If the graph is modified, the behavior is undefined:
+In some cases might return a reference to the current graph's internal structures,
+not a copy. Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
+If you need to modify the result use `collect` or `copy` to create a copy.
 
 # Examples
 ```jldoctest
@@ -292,7 +293,7 @@ julia> using Graphs
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> inneighbors(g, 4)
-2-element Vector{Int64}:
+2-element Graphs.FrozenVector{Int64}:
  3
  5
 ```
@@ -305,9 +306,10 @@ inneighbors(x, v) = _NI("inneighbors")
 Return a list of all neighbors connected to vertex `v` by an outgoing edge.
 
 # Implementation Notes
-Returns a reference to the current graph's internal structures, not a copy.
-Do not modify result. If the graph is modified, the behavior is undefined:
+In some cases might return a reference to the current graph's internal structures,
+not a copy. Do not modify result. If the graph is modified, the behavior is undefined:
 the array behind this reference may be modified too, but this is not guaranteed.
+If you need to modify the result use `collect` or `copy` to create a copy.
 
 # Examples
 ```jldoctest
@@ -316,7 +318,7 @@ julia> using Graphs
 julia> g = SimpleDiGraph([0 1 0 0 0; 0 0 1 0 0; 1 0 0 1 0; 0 0 0 0 1; 0 0 0 1 0]);
 
 julia> outneighbors(g, 4)
-1-element Vector{Int64}:
+1-element Graphs.FrozenVector{Int64}:
  5
 ```
 """

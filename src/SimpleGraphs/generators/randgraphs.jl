@@ -1164,7 +1164,7 @@ function stochastic_block_model(
         for b in a:K
             ((a == b) && !(c[a, b] <= n[b] - 1)) ||
                 ((a != b) && !(c[a, b] <= n[b])) && error(
-                    "Mean degree cannot be greater than available neighbors in the block.",
+                    "Mean degree cannot be greater than available neighbors in the block."
                 ) # TODO 0.7: turn into some other error?
 
             m = a == b ? div(n[a] * (n[a] - 1), 2) : n[a] * n[b]
