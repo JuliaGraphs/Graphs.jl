@@ -1105,3 +1105,150 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T
 
     return new_vertex_ids
 end
+
+"""
+	line_graph(g::SimpleGraph; loops::Symbol=:none) ::SimpleGraph
+
+Given a graph `g`, return the graph `lg`, whose vertices are integers that enumerate the 
+edges in `g`, and two vertices in `lg` form an edge iff the corresponding edges in `g` 
+share a common endpoint. In other words, edges in `lg` are length-2 paths in `g`. 
+Note that `k ∈ vertices(lg)` corresponds to `collect(edges(g))[k]`. 
+
+The argument `loops` determines how self-loops in `lg` are handled:
+- `loops = :none` means that `lg` will contain no loops `k-k`;
+- `loops = :inherit` means that only a loop `v-v = edges(g)[k]` induces a loop `k-k` in `lg`;
+- `loops = :all` means that every `edges(g)[k]` induces a loop `k-k` in `lg`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_graph(5);  # path with 4 edges
+
+julia> lg = line_graph(g)  # path with 3 edges
+{4, 3} undirected simple Int64 graph
+
+julia> g = cycle_graph(4);  # cycle with 4 edges
+
+julia> lg = line_graph(g)  # cycle with 4 edges
+{4, 4} undirected simple Int64 graph
+
+julia> g = star_graph(6);  # star with 5 edges
+
+julia> lg = line_graph(g)  # complete graph with 10 edges
+{5, 10} undirected simple Int64 graph
+
+julia> g = SimpleGraph(3, [[2],[1,2,3],[2]]);  # vertices 1:3, edges 1-2, 2-2, 2-3
+
+julia> lg = line_graph(g, loops=:none)  # vertices 1:3, edges 1-2, 1-3, 2-3
+{3, 3} undirected simple Int64 graph
+
+julia> lg = line_graph(g, loops=:inherit)  # vertices 1:3, edges 1-2, 1-3, 2-3, 2-2
+{3, 4} undirected simple Int64 graph
+
+julia> lg = line_graph(g, loops=:all)  # vertices 1:3, edges 1-2, 1-3, 2-3, 1-1, 2-2, 3-3
+{3, 6} undirected simple Int64 graph
+```
+"""
+function line_graph(g::SimpleGraph; loops::Symbol=:none)
+    @assert loops in (:none, :inherit, :all)
+    vertex_to_edges = [Int[] for _ in 1:nv(g)]
+    is_loop = BitVector(undef, ne(g))
+    for (k, e) in enumerate(edges(g))
+        s, d = src(e), dst(e)
+        is_loop[k] = (loops == :none ? false : (loops == :all ? true : s == d))
+        push!(vertex_to_edges[s], k)
+        s==d && continue  # do not push self-loops twice
+        push!(vertex_to_edges[d], k)
+    end
+
+    fadjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbor-edges adjacency in lg
+    m = 0  # number of edges in lg
+    for ee in vertex_to_edges  # edges ee in g induce a clique in lg
+        n = length(ee)
+        for i in 1:n, j in i:n  # iterate through pairs of edges with same endpoint
+            ei, ej = ee[i], ee[j]
+            ei==ej && !is_loop[ei] && continue
+            is_loop[ei] = false  # prevent non-loop edge in g to be added twice as a loop in lg
+            m += 1
+            push!(fadjlist[ei], ej)
+            push!(fadjlist[ej], ei)
+        end
+    end
+
+    for list in fadjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
+    return SimpleGraph(m, fadjlist)
+end
+
+"""
+	line_graph(g::SimpleDiGraph; loops::Symbol=:none) ::SimpleDiGraph
+
+Given a digraph `g`, return the digraph `lg`, whose vertices are integers that enumerate 
+the edges in `g`, and there is an edge in `lg` from `Edge(a,b)` to `Edge(c,d)` iff b==c.
+In other words, edges in `lg` are length-2 directed paths in `g`. 
+Note that `k ∈ vertices(lg)` corresponds to `collect(edges(g))[k]`. 
+
+The argument `loops` determines how self-loops in `lg` are handled:
+- `loops = :none` means that `lg` will contain no loops `k-k`;
+- `loops = :inherit` means that every loop `v->v = edges(g)[k]` induces a loop `k-k` in `lg`.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = path_digraph(5);  # path with 4 edges
+
+julia> lg = line_graph(g)  # path with 3 edges
+{4, 3} directed simple Int64 graph
+
+julia> g = cycle_digraph(4);  # cycle with 4 edges
+
+julia> lg = line_graph(g)  # cycle with 4 edges
+{4, 4} directed simple Int64 graph
+
+julia> g = SimpleDiGraphFromIterator(Edge(k≤3 ? k+1 : 1, k≤3 ? 1 : k+1) for k in 1:3+4);  # star, 3 in, 4 out
+
+julia> lg = line_graph(g)  # complete bipartite digraph with 3*4 edges
+{7, 12} directed simple Int64 graph
+
+julia> g = SimpleDiGraph(3, [[2],[2,3],Int[]], [Int[],[1,2],[2]]);  # vertices 1:3, edges 1->2, 2->2, 2->3
+
+julia> lg = line_graph(g, loops=:none)  # vertices 1:3, edges 1->2, 1->3, 2->3
+{3, 3} directed simple Int64 graph
+
+julia> lg = line_graph(g, loops=:inherit)  # vertices 1:3, edges 1->2, 1->3, 2->3, 2->2
+{3, 4} directed simple Int64 graph
+```
+"""
+function line_graph(g::SimpleDiGraph; loops::Symbol=:none)
+    @assert loops in (:none, :inherit)
+    vertex_to_edgesout = [Int[] for _ in 1:nv(g)]
+    vertex_to_edgesin = [Int[] for _ in 1:nv(g)]
+    for (k, e) in enumerate(edges(g))
+        s, d = src(e), dst(e)
+        push!(vertex_to_edgesout[s], k)
+        push!(vertex_to_edgesin[d], k)
+    end
+
+    fadjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbors forward adjacency in lg
+    badjlist = [Int[] for _ in 1:ne(g)]  # edge to neighbors backward adjacency in lg
+    m = 0  # number of edges in the line-graph
+    for (e_i, e_o) in zip(vertex_to_edgesin, vertex_to_edgesout)
+        for ei in e_i, eo in e_o  # iterate through length-2 directed paths
+            ei == eo && loops == :none && continue  # a self-loop in g does not induce a self-loop in lg
+            m += 1
+            push!(fadjlist[ei], eo)
+            push!(badjlist[eo], ei)
+        end
+    end
+
+    for list in fadjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
+    for list in badjlist
+        !issorted(list) && sort!(list)  # O(n) check, O(n*logn) correction
+    end
+    return SimpleDiGraph(m, fadjlist, badjlist)
+end

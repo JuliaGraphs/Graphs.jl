@@ -370,4 +370,102 @@
     @testset "Length: $(typeof(g))" for g in test_generic_graphs(SimpleGraph(100))
         @test length(g) == 10000
     end
+
+    @testset "Undirected line graph" begin
+        @testset "Undirected path graphs" begin
+            for n in 2:9
+                g = path_graph(n)
+                lg = line_graph(g)  # checking if lg is an n-1-path
+                @test nv(lg) == n - 1
+                @test ne(lg) == n - 2
+                @test is_connected(lg)
+                @test all(degree(lg, v) <= 2 for v in vertices(lg))
+                @test any(degree(lg, v) == 1 for v in vertices(lg)) || n == 2 && ne(lg) == 0
+            end
+        end
+
+        @testset "Undirected cycle graphs" begin
+            for n in 3:9
+                g = cycle_graph(n)
+                lg = line_graph(g)  # checking if lg is an n-cycle
+                @test nv(lg) == n
+                @test ne(lg) == n
+                @test is_connected(lg)
+                @test all(degree(lg, v) == 2 for v in vertices(lg))
+            end
+        end
+
+        @testset "Undirected star graphs" begin
+            for n in 3:9
+                g = star_graph(n)
+                lg = line_graph(g)  # checking if lg is a complete graph on n-1 vertices
+                @test nv(lg) == n - 1
+                @test ne(lg) == binomial(n - 1, 2)  # lg must be a complete graph
+            end
+        end
+
+        @testset "Undirected self-loops" begin
+            for T in (Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64)
+                g = SimpleGraph{T}(2, [T[2], T[1, 2], T[]])  # vertices 1:3, edges 1-2, 2-2
+                lg = line_graph(g)
+                @test nv(lg) == 2  # only 2 edges (self-loop counts once)                                                                                                                                                                           
+                @test ne(lg) == 1  # only connection between edge 1-2 and self-loop 2-2 
+            end
+        end
+    end
+
+    @testset "Directed line graph" begin
+        @testset "Directed cycle craphs" begin
+            for n in 3:9
+                g = cycle_digraph(n)
+                lg = line_graph(g)
+                @test nv(lg) == n
+                @test ne(lg) == n
+                @test is_directed(lg)
+                @test is_connected(lg)
+                @test all(outdegree(lg, v) == 1 for v in vertices(lg))
+                @test all(indegree(lg, v) == 1 for v in vertices(lg))
+            end
+        end
+
+        @testset "Directed path graphs" begin
+            for n in 2:9
+                g = path_digraph(n)
+                lg = line_graph(g)
+                @test nv(lg) == n - 1
+                @test ne(lg) == n - 2
+                @test is_directed(lg)
+                @test is_connected(lg)
+                @test all(outdegree(lg, v) == (v < n-1 ? 1 : 0) for v in vertices(lg))
+                @test all(indegree(lg, v) == (v > 1 ? 1 : 0) for v in vertices(lg))
+            end
+        end
+
+        @testset "Directed star graphs" begin
+            for m in 0:4, n in 0:4
+                g = SimpleDiGraph(m + n + 1)
+                foreach(i -> add_edge!(g, i + 1, 1), 1:m)
+                foreach(j -> add_edge!(g, 1, j + 1 + m), 1:n)
+                lg = line_graph(g)  # checking if lg is the complete bipartite digraph
+                @test nv(lg) == m + n
+                @test ne(lg) == m * n
+                @test all(outdegree(lg, v)==0 && indegree(lg, v)==m for v in 1:n)
+                @test all(
+                    outdegree(lg, v)==n && indegree(lg, v)==0 for v in (n + 1):(n + m)
+                )
+            end
+        end
+
+        @testset "Directed self-loops" begin
+            for T in (Int8, Int16, Int32, Int64, UInt8, UInt16, UInt32, UInt64),
+                l in (:none, :inherit)
+
+                g = SimpleDiGraph{T}(3, [T[2], T[2, 3], T[]], [T[], T[1, 2], T[2]])  # vertices 1:3, edges 1->2, 2->2, 2->3
+                lg = line_graph(g, loops=l)
+                @test nv(lg) == 3
+                @test ne(lg) == (l==:none ? 3 : 4)
+                @test l==:none || has_edge(lg, 2, 2)
+            end
+        end
+    end
 end

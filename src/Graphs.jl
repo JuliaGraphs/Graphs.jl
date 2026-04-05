@@ -168,6 +168,7 @@ export
     crosspath,
     induced_subgraph,
     egonet,
+    line_graph,
     merge_vertices!,
     merge_vertices,
 
