@@ -8,7 +8,8 @@ a final Louvain to detect communities.
 ### Optional Arguments
 - `distmx=weights(g)`: distance matrix for weighted graphs
 - `ensemble_size=16`: the number of no merge Louvains in the ensemble
-- `min_edge_weight`: the minimum edge weight passed to the final Louvain (to retain the original topology).
+- `min_edge_weight=0.05`: the minimum edge weight passed to the final Louvain (to retain the original topology).
+- `min_weight_outside_2core=true`: a flag to set the weight of edges outside the 2-core to the minimum value.
 - `γ=1.0`: where `γ > 0` is a resolution parameter. Higher resolutions lead to more
     communities, while lower resolutions lead to fewer communities. Where `γ=1.0` it
     leads to the traditional definition of the modularity.
@@ -55,6 +56,7 @@ function ecg(
     γ=1.0,
     ensemble_size::Integer=16,
     min_edge_weight::Real=0.05,
+    min_weight_outside_2core::Bool=true,
     distmx::AbstractArray{<:Number}=weights(g),
     max_moves::Integer=1000,
     max_merges::Integer=1000,
@@ -76,6 +78,11 @@ function ecg(
         move_tol=move_tol,
         rng=rng,
     )
+    if min_weight_outside_2core
+        mask = core_number(g) < 2
+        indices = findall(i -> mask[i[1]] || mask[i[2]], CartesianIndices(ensemble_weights))
+        ensemble_weights[indices] .= 0.0
+    end
     weights =
         (1-min_edge_weight)*ensemble_weights +
         min_edge_weight * adjacency_matrix(g, Float64)
