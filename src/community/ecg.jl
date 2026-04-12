@@ -79,8 +79,11 @@ function ecg(
         rng=rng,
     )
     if min_weight_outside_2core
-        mask = core_number(g) < 2
-        indices = findall(i -> mask[i[1]] || mask[i[2]], CartesianIndices(ensemble_weights))
+        corenum = core_number(g)
+        indices = findall(
+            i -> (corenum[i[1]] < 2) || (corenum[i[2]] < 2),
+            CartesianIndices(ensemble_weights),
+        )
         ensemble_weights[indices] .= 0.0
     end
     weights =
