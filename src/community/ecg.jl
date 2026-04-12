@@ -1,5 +1,5 @@
 """
-    ecg(g; γ=1, ensemble_size::Integer=16, min_edge_weight=0.05, distmx::AbstractArray{<:Number}=weights(g), max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=10e-10, merge_tol::Real=10e-10, rng=nothing, seed=nothing)
+    ecg(g; γ=1, ensemble_size::Integer=16, min_edge_weight=0.05, distmx::AbstractArray{<:Number}=weights(g), max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=1e-9, merge_tol::Real=1e-9, rng=nothing, seed=nothing)
 
 Community detection using ensemble clustering for graphs (ECG). Weights the edges based on the
 proportion of time the endpoints are in the same cluster of a Louvain without merges before running
@@ -14,8 +14,8 @@ a final Louvain to detect communities.
     leads to the traditional definition of the modularity.
 - `max_moves=1000`: maximum number of rounds moving vertices before merging for each Louvain.
 - `max_merges=1000`: maximum number of merges in the final Louvain.
-- `move_tol=10e-10`: necessary increase of modularity to move a vertex in each Louvain.
-- `merge_tol=10e-10`: necessary increase of modularity in the move stage to merge in the final Louvain.
+- `move_tol=1e-9`: necessary increase of modularity to move a vertex in each Louvain.
+- `merge_tol=1e-9`: necessary increase of modularity in the move stage to merge in the final Louvain.
 - `rng=nothing`: rng to use for reproducibility. May only pass one of rng or seed.
 - `seed=nothing`: seed to use for reproducibility. May only pass one of rng or seed.
 
@@ -58,8 +58,8 @@ function ecg(
     distmx::AbstractArray{<:Number}=weights(g),
     max_moves::Integer=1000,
     max_merges::Integer=1000,
-    move_tol::Real=10e-10,
-    merge_tol::Real=10e-10,
+    move_tol::Real=1e-9,
+    merge_tol::Real=1e-9,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T}
@@ -103,7 +103,7 @@ function ecg_weights(
     ensemble_size::Integer=16,
     distmx::AbstractArray{<:Number}=weights(g),
     max_moves::Integer=1000,
-    move_tol::Real=10e-10,
+    move_tol::Real=1e-9,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T}
