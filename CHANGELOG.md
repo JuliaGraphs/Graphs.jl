@@ -4,8 +4,8 @@ We follow SemVer as most of the Julia ecosystem. Below you might see the "breaki
 
 ## unreleased
 - `is_articulation(g, v)` for checking whether a single vertex is an articulation point
+- The iFUB algorithm is used for faster diameter calculation and now supports weighted graph diameter calculation
 - ECG community detection algorithm
-
 
 ## v1.14.0 - 2026-02-26
 - **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
