@@ -1,5 +1,5 @@
 """
-    ecg(g; γ=1, ensemble_size::Integer=16, min_edge_weight=0.05, distmx::AbstractArray{<:Number}=weights(g), max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=1e-9, merge_tol::Real=1e-9, rng=nothing, seed=nothing)
+    ecg(g; γ=1, ensemble_size::Integer=16, min_edge_weight=0.05, min_weight_outside_2core::Bool=true, distmx::AbstractArray{<:Number}=weights(g), max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=1e-9, merge_tol::Real=1e-9, rng=nothing, seed=nothing)
 
 Community detection using ensemble clustering for graphs (ECG). Weights the edges based on the
 proportion of time the endpoints are in the same cluster of a Louvain without merges before running
@@ -9,7 +9,7 @@ a final Louvain to detect communities.
 - `distmx=weights(g)`: distance matrix for weighted graphs
 - `ensemble_size=16`: the number of no merge Louvains in the ensemble
 - `min_edge_weight=0.05`: the minimum edge weight passed to the final Louvain (to retain the original topology).
-- `min_weight_outside_2core=true`: a flag to set the weight of edges outside the 2-core to the minimum value.
+- `min_weight_outside_2core=true`: a flag to set the weight of edges outside the 2-core to the minimum value. If the graph is directed, the coreness is computed only using out degrees. Must be false is the graph has loops or parallel edges.
 - `γ=1.0`: where `γ > 0` is a resolution parameter. Higher resolutions lead to more
     communities, while lower resolutions lead to fewer communities. Where `γ=1.0` it
     leads to the traditional definition of the modularity.
@@ -65,6 +65,11 @@ function ecg(
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T}
+    min_weight_outside_2core &&
+        has_self_loops(g) &&
+        throw(
+            ArgumentError("min_weight_outside_2core must be false if the graph has loops.")
+        )
     rng = rng_from_rng_or_seed(rng, seed)
     if nv(g) == 0
         return T[]
