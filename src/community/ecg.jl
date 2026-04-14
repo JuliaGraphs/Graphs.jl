@@ -1,5 +1,5 @@
 """
-    ecg(g; γ=1, ensemble_size::Integer=16, min_edge_weight=0.05, min_weight_outside_2core::Bool=true, distmx::AbstractArray{<:Number}=weights(g), max_moves::Integer=1000, max_merges::Integer=1000, move_tol::Real=1e-9, merge_tol::Real=1e-9, rng=nothing, seed=nothing)
+    ecg(g; γ=1, ensemble_size=16, min_edge_weight=0.05, min_weight_outside_2core=true, distmx=weights(g), max_moves=1000, max_merges=1000, move_tol=1e-9, merge_tol=1e-9, rng=nothing, seed=nothing)
 
 Community detection using ensemble clustering for graphs (ECG). Weights the edges based on the
 proportion of time the endpoints are in the same cluster of a Louvain without merges before running
@@ -107,7 +107,7 @@ function ecg(
 end
 
 """
-    ensemble_weights(g; c, distmx, max_moves, move_tol, rng, seed)
+    ecg_weights(g; γ=1.0, ensemble_size=16, distmx=weights(g), max_moves=1000, move_tol=1e-9, rng=nothing, seed=nothing)
 
 Compute edge weights via an ensemble of no merge Louvains. The weight of each edge is
 the proportion of time the endpoints are in the same community. 
