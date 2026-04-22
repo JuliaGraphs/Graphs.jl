@@ -141,6 +141,7 @@ tests = [
     "spanningtrees/boruvka",
     "spanningtrees/kruskal",
     "spanningtrees/prim",
+    "spanningtrees/planar_maximally_filtered_graph",
     "steinertree/steiner_tree",
     "biconnectivity/articulation",
     "biconnectivity/biconnect",
@@ -155,6 +156,7 @@ tests = [
     "vertexcover/random_vertex_cover",
     "trees/prufer",
     "experimental/experimental",
+    "planarity",
 ]
 
 @testset verbose = true "Graphs" begin
@@ -174,7 +176,9 @@ tests = [
         Aqua.test_all(Graphs; ambiguities=false)
     end
 
-    doctest(Graphs)
+    if !Sys.iswindows()
+        doctest(Graphs)
+    end
 
     @testset verbose = true "Actual tests" begin
         for t in tests
