@@ -118,6 +118,7 @@ tests = [
     "traversals/all_simple_paths",
     "community/cliques",
     "community/core-periphery",
+    "community/ecg",
     "community/independent_sets",
     "community/label_propagation",
     "community/louvain",
