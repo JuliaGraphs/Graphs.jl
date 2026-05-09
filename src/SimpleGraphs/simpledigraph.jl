@@ -11,7 +11,7 @@ mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
     badjlist::Vector{Vector{T}} # [dst]: (src, src, src)
 
     function SimpleDiGraph{T}(
-        ne::Int, fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}
+        ne::Integer, fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}
     ) where {T}
         throw_if_invalid_eltype(T)
         return new(ne, fadjlist, badjlist)
@@ -19,7 +19,7 @@ mutable struct SimpleDiGraph{T<:Integer} <: AbstractSimpleGraph{T}
 end
 
 function SimpleDiGraph(
-    ne::Int, fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}
+    ne::Integer, fadjlist::Vector{Vector{T}}, badjlist::Vector{Vector{T}}
 ) where {T}
     return SimpleDiGraph{T}(ne, fadjlist, badjlist)
 end
