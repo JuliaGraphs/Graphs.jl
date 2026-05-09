@@ -77,6 +77,8 @@ export AbstractSimpleGraph,
     static_scale_free,
     kronecker,
     random_orientation_dag,
+    bernoulli_graph,
+    correlated_bernoulli_graphs,
     # generators
     complete_graph,
     star_graph,
