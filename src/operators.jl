@@ -1105,3 +1105,101 @@ function merge_vertices!(g::Graph{T}, vs::Vector{U} where {U<:Integer}) where {T
 
     return new_vertex_ids
 end
+
+"""
+    mycielski!(g; iterations = 1)
+
+Performs the mycielski operation on an input graph, in place, for a given number of iterations. 
+See [`mycielski`](@ref) for the details of the operation.
+
+### Implementation Notes
+Operates in place and expects `g` to not have self loops.
+"""
+function mycielski!(g::SimpleGraph; iterations::Integer=1)
+    has_self_loops(g) && return g
+
+    for _ in Base.OneTo(iterations)
+        N = nv(g)
+
+        add_vertices!(g, N + 1)
+        w = nv(g)
+
+        for u in Base.OneTo(N)
+            for v in neighbors(g, u)
+                if v <= N && u < v
+                    add_edge!(g, u, v + N)
+                    add_edge!(g, v, u + N)
+                end
+            end
+        end
+
+        for v in 1:N
+            add_edge!(g, v + N, w)
+        end
+    end
+    return g
+end
+
+"""
+    mycielski(g; iterations = 1)
+
+Returns a graph after applying the Mycielski operator to the input for a given number of
+iterations. The Mycielski operator returns a new graph with `2n+1` vertices and `3e+n`
+edges and will increase the chromatic number of the graph by 1. This operation assumes
+that there are no self-loops.
+
+The Mycielski operation can be repeated by using the `iterations` kwarg. Each time, it will
+apply the operator to the previous iterations graph.
+
+For each vertex in the original graph, that vertex and a copy of it are added to the new graph.
+Then, for each edge `(u, v)` in the original graph, the edges `(u, v)`, `(u', v)`, and `(u, v')`
+are added to the new graph, where `u'` and `v'` are the "copies" of `u` and `v`, respectively.
+In other words, the original graph is present as a subgraph, and each vertex in the original graph
+is connected to all of its neighbors' copies. Finally, one last vertex `w` is added to the graph
+and an edge connecting each copy vertex `u'` to `w` is added.
+
+See [Mycielskian](https://en.wikipedia.org/wiki/Mycielskian) for more information.
+
+### Implementation Notes
+Supports [`SimpleGraph`](@ref) only. Copies the input before calling [`mycielski!`](@ref).
+
+If there is a self-loop, we just return the original graph unmodified.
+
+# Examples
+```jldoctest
+julia> using Graphs
+
+julia> g = cycle_graph(5)
+{5, 5} undirected simple Int64 graph
+
+julia> gm = mycielski(g)
+{11, 20} undirected simple Int64 graph
+
+julia> collect(edges(gm))
+20-element Vector{Graphs.SimpleGraphs.SimpleEdge{Int64}}:
+ Edge 1 => 2
+ Edge 1 => 5
+ Edge 1 => 7
+ Edge 1 => 10
+ Edge 2 => 3
+ Edge 2 => 6
+ Edge 2 => 8
+ Edge 3 => 4
+ Edge 3 => 7
+ Edge 3 => 9
+ Edge 4 => 5
+ Edge 4 => 8
+ Edge 4 => 10
+ Edge 5 => 6
+ Edge 5 => 9
+ Edge 6 => 11
+ Edge 7 => 11
+ Edge 8 => 11
+ Edge 9 => 11
+ Edge 10 => 11
+```
+"""
+function mycielski(g; iterations=1)
+    has_self_loops(g) && return g
+    mycielski!(copy(g); iterations=iterations)
+end
