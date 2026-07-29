@@ -147,6 +147,7 @@ tests = [
     "trees/prufer",
     "experimental/experimental",
     "planarity",
+    "external_algorithms",
 ]
 
 @testset verbose = true "Graphs" begin
