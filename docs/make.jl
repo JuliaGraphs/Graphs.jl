@@ -70,6 +70,7 @@ pages_files = [
         "algorithms/distance.md",
         "algorithms/dominatingset.md",
         "algorithms/editdist.md",
+        "algorithms/external.md",
         "algorithms/independentset.md",
         "algorithms/iterators.md",
         "algorithms/linalg.md",
