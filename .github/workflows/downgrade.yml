@@ -21,7 +21,7 @@ jobs:
       - uses: julia-actions/setup-julia@v3
         with:
           version: ${{ matrix.version }}
-      - uses: julia-actions/julia-downgrade-compat@v2
+      - uses: julia-actions/julia-downgrade-compat@v2.6.2
         with:
           skip: Pkg,TOML,InteractiveUtils,Random,LinearAlgebra
           julia_version: ${{ matrix.version }}
