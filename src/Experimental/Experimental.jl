@@ -20,14 +20,11 @@ export description,
     has_subgraphisomorph,
     count_subgraphisomorph,
     all_subgraphisomorph,
-    canonical_color_refinement,
-    color_refinement,
     ShortestPaths
 description() = "This module contains experimental graph functions."
 
 include("isomorphism.jl")
 include("vf2.jl") # Julian implementation of VF2 algorithm
-include("color_refinement.jl")
 include("Parallel/Parallel.jl")
 include("Traversals/Traversals.jl")
 include("ShortestPaths/ShortestPaths.jl")

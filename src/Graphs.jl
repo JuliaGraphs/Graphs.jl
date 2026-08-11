@@ -209,6 +209,8 @@ export
 
     # coloring
     greedy_color,
+    canonical_color_refinement,
+    color_refinement,
 
     # connectivity
     connected_components,
@@ -519,6 +521,7 @@ include("cycles/incremental.jl")
 include("traversals/bfs.jl")
 include("traversals/bipartition.jl")
 include("traversals/greedy_color.jl")
+include("color_refinement.jl")
 include("traversals/dfs.jl")
 include("traversals/maxadjvisit.jl")
 include("traversals/randomwalks.jl")

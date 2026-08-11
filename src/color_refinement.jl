@@ -13,6 +13,17 @@ partition: colors are assigned `1, 2, …` in order of first appearance over the
 vertices, independent of the values of `alpha`. Two vertices share a color iff color
 refinement cannot distinguish them.
 
+`S` lists the labels of the initial color classes (from `alpha`) that seed the
+refinement worklist; any classes those seeds later split into are refined as well.
+Seeding `S` with every distinct label of `alpha` always produces the coarsest stable
+coloring — the partition that no further refinement can change. Seeding a strict
+subset may stop the worklist early: classes that are neither seeded nor split are
+never processed, so the result may not be fully stable. To guarantee the coarsest
+stable coloring, pass every distinct label of `alpha` in `S`.
+
+An empty graph (equivalently an empty `alpha`) has no color classes to refine, so it
+is returned unchanged as an empty vector regardless of `S`.
+
 This implementation follows the worklist-based refinement strategy described in
 Berkholz, Bonsma, and Grohe, "Tight Lower and Upper Bounds for the Complexity of
 Canonical Colour Refinement", which defines the algorithm for undirected graphs.
@@ -21,13 +32,19 @@ structure (how many out-edges a vertex has into the class being processed); it
 does not split on in-edge structure, so two vertices with identical
 out-neighbors but different in-neighbors are not distinguished.
 
+# References
+
+- C. Berkholz, P. Bonsma, M. Grohe, *Tight Lower and Upper Bounds for the
+  Complexity of Canonical Colour Refinement*,
+  [arXiv:1509.08251](https://arxiv.org/abs/1509.08251)
+
 # Examples
 ```jldoctest
 julia> using Graphs
 
 julia> g = path_graph(5);
 
-julia> Graphs.Experimental.canonical_color_refinement(g, ones(Int, 5), [1])
+julia> canonical_color_refinement(g, ones(Int, 5), [1])
 5-element Vector{Int64}:
  1
  2
@@ -234,8 +251,8 @@ canonical_color_refinement(g::AbstractGraph, S::Integer) =
 """
     color_refinement(g, alpha, S)
 
-Convenience wrapper around [`canonical_color_refinement`](@ref) that exposes the
-experimental color refinement routine through the public experimental API.
+Convenience alias for [`canonical_color_refinement`](@ref) that returns the same
+stable coloring with a shorter name.
 """
 function color_refinement(
     g::AbstractGraph, alpha::AbstractVector{<:Integer}, S::AbstractVector{<:Integer}
