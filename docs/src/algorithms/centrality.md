@@ -14,6 +14,7 @@ Pages   = ["centrality.md"]
 Modules = [Graphs]
 Pages   = [
     "centrality/betweenness.jl",
+    "centrality/kadabra.jl",
     "centrality/closeness.jl",
     "centrality/degree.jl",
     "centrality/eigenvector.jl",
