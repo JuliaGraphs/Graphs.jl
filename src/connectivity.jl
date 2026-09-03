@@ -342,9 +342,13 @@ julia> strongly_connected_components_tarjan(g)
 function strongly_connected_components_tarjan end
 
 # see https://github.com/mauro3/SimpleTraits.jl/issues/47#issuecomment-327880153 for syntax
-@traitfn function strongly_connected_components_tarjan(g::AG::IsDirected) where {T <: Integer, AG <: AbstractGraph{T}}
-    if iszero(nv(g)) return Vector{Vector{T}}() end
-    _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))    
+@traitfn function strongly_connected_components_tarjan(
+    g::AG::IsDirected
+) where {T<:Integer,AG<:AbstractGraph{T}}
+    if iszero(nv(g))
+        return Vector{Vector{T}}()
+    end
+    return _strongly_connected_components_tarjan(g, infer_nb_iterstate_type(g))
 end
 
 #  In recursive form, Tarjans algorithm has a recursive call inside a for loop.
@@ -368,19 +372,18 @@ function infer_nb_iterstate_type(g::AbstractGraph{T}) where {T}
     )
 end
 
-
 # Vertex size threshold below which it isn't worth keeping the DFS iteration state.
 is_large_vertex(g, v) = length(outneighbors(g, v)) >= 1024
 is_unvisited(data::AbstractVector, v::Integer) = iszero(data[v])
-
-
 
 # The key idea behind any variation on Tarjan's algorithm is to use DFS and pop off found components.
 # Whenever we are forced to backtrack, we are in a bottom cycle of the remaining graph, 
 # which we accumulate in a stack while backtracking, until we reach a local root.
 # A local root is a vertex from which we cannot reach any node that was visited earlier by DFS.
 # As such, when we have backtracked to it, we may pop off the contents the stack as a strongly connected component.
-function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}) where {T <: Integer, AG <: AbstractGraph{T}, S}
+function _strongly_connected_components_tarjan(
+    g::AG, nb_iter_statetype::Type{S}
+) where {T<:Integer,AG<:AbstractGraph{T},S}
     nvg = nv(g)
     one_count = one(T)
     count = nvg  # (Counting downwards) Visitation order for the branch being explored. Backtracks when we pop an scc.
@@ -396,7 +399,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
 
     stack = Vector{T}()     # while backtracking, stores vertices which have been discovered and not yet assigned to any component
     dfs_stack = Vector{T}()
-    largev_iterstate_stack = Vector{Tuple{T, S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
+    largev_iterstate_stack = Vector{Tuple{T,S}}()  # For large vertexes we push the iteration state into a stack so we may resume it.
     # adding this last stack fixes the O(|E|^2) performance bug that could previously be seen in large star graphs.
     # The Tuples come from Julia's iteration protocol, and the code is structured so that we never push a Nothing into this last stack.
 
@@ -410,8 +413,8 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
             push!(dfs_stack, s)
             if is_large_vertex(g, s)
                 push!(largev_iterstate_stack, iterate(outneighbors(g, s)))
-            end 
-            
+            end
+
             @inbounds while !isempty(dfs_stack)
                 v = dfs_stack[end] #end is the most recently added item
                 outn = outneighbors(g, v)
@@ -421,9 +424,9 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                     (v_neighbor, state) = next
                     if is_unvisited(rindex, v_neighbor)
                         break #GOTO A: push v_neighbor onto DFS stack and continue DFS.
-                        # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
-                        # as we save the iteration state in largev_iterstate_stack for large vertices.
-                        # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
+                    # Note: This is no longer quadratic for (very large) tournament graphs or star graphs, 
+                    # as we save the iteration state in largev_iterstate_stack for large vertices.
+                    # The loop is tight so not saving the state still benchmarks well unless the vertex orders are large enough to make quadratic growth kick in.
                     elseif (rindex[v_neighbor] > rindex[v])
                         rindex[v] = rindex[v_neighbor]
                         is_component_root[v] = false
@@ -446,7 +449,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                         end
                         rindex[popped] = component_count
                         component_count += one_count
-                        push!(components, component)                    
+                        push!(components, component)
                     else  # Invariant: the DFS stack can never be empty in this second branch where popped is not a root.
                         if (rindex[popped] > rindex[dfs_stack[end]])
                             rindex[dfs_stack[end]] = rindex[popped]
@@ -455,7 +458,7 @@ function _strongly_connected_components_tarjan(g::AG, nb_iter_statetype::Type{S}
                         # Because we only push to stack when backtracking, it gets filled up less than in Tarjan's original algorithm.
                         push!(stack, popped)  # For DAG inputs, the stack variable never gets touched at all.
                     end
-                    
+
                 else #LABEL A
                     # add unvisited neighbor to dfs
                     (u, state) = next
