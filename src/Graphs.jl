@@ -24,6 +24,8 @@ using Random:
     AbstractRNG,
     GLOBAL_RNG,
     MersenneTwister,
+    Xoshiro,
+    default_rng,
     randperm,
     randsubseq!,
     seed!,
@@ -277,6 +279,8 @@ export
     eigenvector_centrality,
     stress_centrality,
     radiality_centrality,
+    kadabra_centrality,
+    kadabra_top_k,
 
     # spectral
     adjacency_matrix,
@@ -548,6 +552,7 @@ include("centrality/betweenness.jl")
 include("centrality/closeness.jl")
 include("centrality/stress.jl")
 include("centrality/degree.jl")
+include("centrality/kadabra.jl")
 include("centrality/katz.jl")
 include("centrality/pagerank.jl")
 include("centrality/eigenvector.jl")

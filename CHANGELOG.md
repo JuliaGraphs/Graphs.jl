@@ -3,6 +3,7 @@
 We follow SemVer as most of the Julia ecosystem. Below you might see the "breaking" label even for minor version bumps -- we use it a bit more loosely to denote things that are not breaking by SemVer's definition but might cause breakage to people using internal or experimental APIs or undocumented implementation details. 
 
 ## unreleased
+- KADABRA betweenness centrality approximation algorithm
 - `is_articulation(g, v)` for checking whether a single vertex is an articulation point
 - The iFUB algorithm is used for faster diameter calculation and now supports weighted graph diameter calculation
 - ECG community detection algorithm

@@ -130,6 +130,7 @@ tests = [
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
+    "centrality/kadabra",
     "centrality/katz",
     "centrality/pagerank",
     "centrality/eigenvector",
@@ -164,7 +165,7 @@ tests = [
             @assert get_pkg_version("JET") >= v"0.8.4"
             JET.test_package(
                 Graphs;
-                target_defined_modules=true,
+                target_modules=(Graphs,),
                 ignore_missing_comparison=true,
                 mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
             )
