@@ -228,6 +228,60 @@
         @test sort(scc_k[4]) == [7, 8, 9, 10, 11, 12]
     end
 
+    # Soundness: Tarjan's `strongly_connected_components` must agree with the
+    # independent Kosaraju implementation on the partition into components.
+    # Component order is not part of the API, so we compare as sets of sets.
+    scc_partition(sccs) = Set(Set.(sccs))
+    @testset "Tarjan vs Kosaraju agreement (randomized)" begin
+        rng = StableRNG(1234)
+        for n in (1, 2, 5, 10, 25, 50), _ in 1:40
+            g = SimpleDiGraph(n)
+            for _ in 1:rand(rng, 0:(2 * n))    # density from empty to fairly dense
+                u, v = rand(rng, 1:n), rand(rng, 1:n)
+                u != v && add_edge!(g, u, v)
+            end
+            scc = strongly_connected_components_tarjan(g)
+            scc_k = strongly_connected_components_kosaraju(g)
+            # every vertex is assigned to exactly one component
+            @test sort(reduce(vcat, scc; init=Int[])) == 1:n
+            # both algorithms find the same partition
+            @test scc_partition(scc) == scc_partition(scc_k)
+            # components are reported in reverse-topological order (sinks first)
+            comp_of = Dict(v => i for (i, c) in enumerate(scc) for v in c)
+            @test all(comp_of[src(e)] >= comp_of[dst(e)] for e in edges(g))
+        end
+    end
+
+    # Regression test for the O(|E|^2) star-graph performance bug: this
+    # exercises the large-vertex (>= 1024 out-neighbours) DFS-iteration-state
+    # code path that the fast Tarjan implementation special-cases.
+    @testset "Tarjan on large / star graphs" begin
+        n = 3000    # centre degree >= 1024 triggers the `is_large_vertex` branch
+
+        out_star = SimpleDiGraph(n)     # n singleton components
+        for v in 2:n
+            add_edge!(out_star, 1, v)
+        end
+        @test length(strongly_connected_components_tarjan(out_star)) == n
+        @test scc_partition(strongly_connected_components_tarjan(out_star)) ==
+            scc_partition(strongly_connected_components_kosaraju(out_star))
+
+        bi_star = SimpleDiGraph(n)      # single component of size n
+        for v in 2:n
+            add_edge!(bi_star, 1, v)
+            add_edge!(bi_star, v, 1)
+        end
+        scc = strongly_connected_components_tarjan(bi_star)
+        @test length(scc) == 1 && length(only(scc)) == n
+        @test scc_partition(scc) ==
+            scc_partition(strongly_connected_components_kosaraju(bi_star))
+
+        # the large-vertex path must also be correct for a narrow eltype
+        out_star16 = SimpleDiGraph{Int16}(out_star)
+        @test scc_partition(strongly_connected_components_tarjan(out_star16)) ==
+            scc_partition(strongly_connected_components_kosaraju(out_star16))
+    end
+
     # Test examples with self-loops from
     # Graph-Theoretic Analysis of Finite Markov Chains by J.P. Jarvis & D. R. Shier
 
