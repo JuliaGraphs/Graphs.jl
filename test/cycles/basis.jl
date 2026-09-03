@@ -57,4 +57,17 @@
             evaluate(expected_cyclebasis, found_cyclebasis)
         end
     end
+
+    @testset "errors on directed graphs" begin
+        function directed_cycle()
+            g = SimpleDiGraph(3)
+            add_edge!(g, 1, 2)
+            add_edge!(g, 2, 3)
+            add_edge!(g, 3, 1)
+            return g
+        end
+
+        g = directed_cycle()
+        @test_throws ArgumentError cycle_basis(g)
+    end
 end
