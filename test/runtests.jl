@@ -22,15 +22,6 @@ using Unitful
 const testdir = dirname(@__FILE__)
 const KMf = typeof(u"1.0km")
 
-function get_pkg_version(name::AbstractString)
-    for dep in values(Pkg.dependencies())
-        if dep.name == name
-            return dep.version
-        end
-    end
-    return error("Dependency not available")
-end
-
 function testgraphs(g)
     return if is_directed(g)
         [g, DiGraph{UInt8}(g), DiGraph{Int16}(g)]
@@ -161,13 +152,22 @@ tests = [
 @testset verbose = true "Graphs" begin
     if isempty(VERSION.prerelease)
         @testset "Code quality (JET.jl)" begin
-            @assert get_pkg_version("JET") >= v"0.8.4"
-            JET.test_package(
-                Graphs;
-                target_defined_modules=true,
-                ignore_missing_comparison=true,
-                mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
-            )
+            @assert pkgversion(JET) >= v"0.8.4"
+            if pkgversion(JET) < v"0.12"
+                JET.test_package(
+                    Graphs;
+                    target_defined_modules=true,
+                    ignore_missing_comparison=true,
+                    mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+                )
+            else
+                JET.test_package(
+                    Graphs;
+                    target_modules=(Graphs,),
+                    ignore_missing_comparison=true,
+                    mode=:typo,  # TODO: switch back to `:basic` once the union split caused by traits is fixed
+                )
+            end
         end
     end
 
