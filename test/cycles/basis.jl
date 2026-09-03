@@ -68,6 +68,6 @@
         end
 
         g = directed_cycle()
-        @test_throws ArgumentError cycle_basis(g)
+        @test_throws MethodError cycle_basis(g)
     end
 end
