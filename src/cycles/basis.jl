@@ -4,6 +4,7 @@
     cycle_basis(g, root=nothing)
 
 Return a list of cycles which form a basis for cycles of the undirected graph `g`, optionally starting at node `root`.
+This function throws an error if `g` is directed.
 
 A basis for cycles of a network is a minimal collection of
 cycles such that any cycle in the network can be written
@@ -30,6 +31,7 @@ julia> cycle_basis(g)
 * Paton, K. An algorithm for finding a fundamental set of cycles of a graph. Comm. ACM 12, 9 (Sept 1969), 514-518. [https://dl.acm.org/citation.cfm?id=363232]
 """
 function cycle_basis(g::AbstractGraph, root=nothing)
+    is_directed(g) && throw(ArgumentError("cycle_basis is not defined for directed graphs"))
     T = eltype(g)
     cycles = Vector{Vector{T}}()
 
