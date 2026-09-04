@@ -92,4 +92,54 @@
         @test edges(dga) == edges(dgb)
         @test edges(dgb) == edges(dga)
     end
+
+    @testset "hash and isequal" begin
+        ghb = copy(ga)
+        add_vertex!(ghb)
+        dghb = copy(dga)
+        add_vertex!(dghb)
+
+        # `isequal` agrees with `==` between two iterators, including for graphs that differ
+        # only in trailing isolated vertices
+        @test isequal(edges(ga), edges(ghb))
+        @test hash(edges(ga)) == hash(edges(ghb))
+        @test isequal(edges(dga), edges(dghb))
+        @test hash(edges(dga)) == hash(edges(dghb))
+        @test !isequal(edges(ga), edges(dga))
+
+        # graphs of differing eltype compare and hash equal
+        @test isequal(edges(SimpleGraph{UInt8}(ga)), edges(ga))
+        @test hash(edges(SimpleGraph{UInt8}(ga))) == hash(edges(ga))
+        @test isequal(edges(SimpleDiGraph{Int16}(dga)), edges(dga))
+        @test hash(edges(SimpleDiGraph{Int16}(dga))) == hash(edges(dga))
+
+        # edgeless graphs are equal regardless of vertex count or directedness
+        @test isequal(edges(SimpleGraph(0)), edges(SimpleGraph(7)))
+        @test hash(edges(SimpleGraph(0))) == hash(edges(SimpleGraph(7)))
+        @test isequal(edges(SimpleGraph(4)), edges(SimpleDiGraph(9)))
+        @test hash(edges(SimpleGraph(4))) == hash(edges(SimpleDiGraph(9)))
+
+        # `isequal` is structural where `==` is not, so edge containers are distinct keys
+        ea = collect(Edge, edges(ga))
+        sa = Set{Edge}(ea)
+        @test edges(ga) == ea
+        @test !isequal(edges(ga), ea)
+        @test !isequal(ea, edges(ga))
+        @test edges(ga) == sa
+        @test !isequal(edges(ga), sa)
+        @test !isequal(sa, edges(ga))
+
+        # `Dict` and `Set` use `isequal`
+        d = Dict{Any,Int}(edges(ga) => 1)
+        @test d[edges(ghb)] == 1
+        @test !haskey(d, ea)
+        @test !haskey(d, sa)
+        @test length(Set{Any}([edges(ga), edges(ghb), ea, sa])) == 3
+        @test length(unique(Any[edges(ga), edges(ghb)])) == 1
+
+        # distinct edge sets hash apart
+        @test length(
+            Set(hash(edges(SimpleGraph(20, 40; rng=StableRNG(s)))) for s in 1:200)
+        ) == 200
+    end
 end

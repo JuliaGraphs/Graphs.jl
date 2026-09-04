@@ -116,6 +116,31 @@ function ==(e1::SimpleEdgeIter, e2::SimpleEdgeIter)
     return true
 end
 
+Base.isequal(e1::SimpleEdgeIter, e2::SimpleEdgeIter) = e1 == e2
+# set `isequal`s to false to ensure the hash-isequal contract is fulfilled
+Base.isequal(::SimpleEdgeIter, ::AbstractVector{SimpleEdge}) = false
+Base.isequal(::AbstractVector{SimpleEdge}, ::SimpleEdgeIter) = false
+Base.isequal(::SimpleEdgeIter, ::Set{SimpleEdge}) = false
+Base.isequal(::Set{SimpleEdge}, ::SimpleEdgeIter) = false
+
+function Base.hash(eit::SimpleEdgeIter, h::UInt)
+    lists = fadj(eit.g)
+    n = something(findlast(!isempty, lists), 0)
+    h = hash(ne(eit.g), h)
+    h = hash(n, h)
+    # Sample about log(n) adjacency lists, working backwards with Fibonacci skips
+    i = n
+    skip = prevskip = 1
+    while i >= 1
+        list = lists[i]
+        h = hash(length(list), h)
+        isempty(list) || (h = hash(first(list), hash(last(list), h)))
+        i -= skip
+        skip, prevskip = skip + prevskip, skip
+    end
+    return h
+end
+
 in(e, es::SimpleEdgeIter) = has_edge(es.g, e)
 
 show(io::IO, eit::SimpleEdgeIter) = write(io, "SimpleEdgeIter $(ne(eit.g))")
