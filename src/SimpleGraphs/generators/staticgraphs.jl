@@ -862,3 +862,161 @@ function lollipop_graph(n1::T, n2::T) where {T<:Integer}
     add_edge!(g, n1, n1 + 1)
     return g
 end
+
+
+"""
+    havel_hakimi_graph(degree_sequence::AbstractVector{<:Integer})
+
+Returns a simple graph with a given finite degree sequence of non-negative integers generated via the Havel-Hakimi algorithm which works as follows:
+1. successively connect the node of highest degree to other nodes of highest degree;
+2. sort the remaining nodes by degree in decreasing order;
+3. repeat the procedure.
+
+The `eltype` of the returned graph will be `Int64`.
+
+## References
+1. [Hakimi (1962)](https://doi.org/10.1137/0110037);
+2. [Wikipedia](https://en.wikipedia.org/wiki/Havel%E2%80%93Hakimi_algorithm).
+"""
+function havel_hakimi_graph(degree_sequence::AbstractVector{<:Integer})
+    return havel_hakimi_graph(Int, degree_sequence)
+end
+
+"""
+    havel_hakimi_graph(T::Type{<:Integer}, degree_sequence::AbstractVector{<:Integer})
+
+Returns a simple graph with a given finite degree sequence of non-negative integers generated via the Havel-Hakimi algorithm which works as follows:
+1. successively connect the node of highest degree to other nodes of highest degree;
+2. sort the remaining nodes by degree in decreasing order;
+3. repeat the procedure.
+
+The `eltype` of the returned graph will be `T`.
+
+## References
+1. [Hakimi (1962)](https://doi.org/10.1137/0110037);
+2. [Wikipedia](https://en.wikipedia.org/wiki/Havel%E2%80%93Hakimi_algorithm).
+"""
+function havel_hakimi_graph(T::Type{<:Integer}, degree_sequence::AbstractVector{<:Integer})
+    # Check whether the degree sequence has only non-negative values
+    all(degree_sequence .>= 0) ||
+        throw(ArgumentError("The degree sequence must contain non-negative integers only."))
+    # Instantiate an empty simple graph 
+    graph = SimpleGraph{T}(length(degree_sequence))
+    # Create a (vertex, degree) ordered dictionary
+    vertices_degrees_dict = OrderedDict(
+        vertex => degree for (vertex, degree) in enumerate(degree_sequence)
+    )
+    # Havel-Hakimi algorithm  
+    while (any(!=(0), values(vertices_degrees_dict)))
+        # Sort the new sequence in non-increasing order
+        vertices_degrees_dict = OrderedDict(
+            sort(collect(vertices_degrees_dict); by=last, rev=true)
+        )
+        # Remove the first vertex and distribute its stabs
+        max_vertex, max_degree = popfirst!(vertices_degrees_dict)
+        # Connect the node of highest degree to other nodes of highest degree 
+        for vertex in Iterators.take(keys(vertices_degrees_dict),  max_degree)
+            add_edge!(graph, max_vertex, vertex)
+            vertices_degrees_dict[vertex] -= 1
+            # Check whether the remaining degree is nonnegative
+            vertices_degrees_dict[vertex] >= 0 || throw(ErrorException("The degree sequence is not graphical."))
+        end
+    end
+    # Return the simple graph
+    return graph
+end
+
+
+"""
+    kleitman_wang_graph(indegree_sequence::AbstractVector{<:Integer},outdegree_sequence::AbstractVector{<:Integer})
+
+Returns a simple directed graph with given finite in-degree and out-degree sequences of non-negative integers generated via the Kleitman-Wang algorithm, that works like follows:
+1. Sort the indegree-outdegree pairs in lexicographical order;
+2. Select a pair that has strictly positive outdegree, say the i-th pairs that has outdegree = b_i;
+3. Subtract 1 to the first b_i highest indegrees (the i-th being excluded), and set b_i to 0;
+4. Repeat from 1. until all indegree-outdegree pairs are of the form (0.0).
+
+The `eltype` of the returned graph will be `Int64`.
+
+## References
+- [Wikipedia](https://en.wikipedia.org/wiki/Kleitman%E2%80%93Wang_algorithms)
+- [Kleitman and Wang (1973)](https://doi.org/10.1016/0012-365X(73)90037-X)
+"""
+function kleitman_wang_graph( indegree_sequence::AbstractVector{<:Integer}, outdegree_sequence::AbstractVector{<:Integer},)
+    return kleitman_wang_graph(Int, indegree_sequence, outdegree_sequence)
+end
+
+
+
+"""
+    kleitman_wang_graph(T::Type{<:Integer}, indegree_sequence::AbstractVector{<:Integer},outdegree_sequence::AbstractVector{<:Integer})
+
+Returns a simple directed graph with given finite in-degree and out-degree sequences of non-negative integers generated via the Kleitman-Wang algorithm, that works like follows:
+1. Sort the indegree-outdegree pairs in lexicographical order;
+2. Select a pair that has strictly positive outdegree, say the i-th pairs that has outdegree = b_i;
+3. Subtract 1 to the first b_i highest indegrees (the i-th being excluded), and set b_i to 0;
+4. Repeat from 1. until all indegree-outdegree pairs are of the form (0.0).
+
+The `eltype` of the returned graph will be `T`.
+
+## References
+- [Wikipedia](https://en.wikipedia.org/wiki/Kleitman%E2%80%93Wang_algorithms)
+- [Kleitman and Wang (1973)](https://doi.org/10.1016/0012-365X(73)90037-X)
+"""
+function kleitman_wang_graph( T::Type{<:Integer},
+    indegree_sequence::AbstractVector{<:Integer},
+    outdegree_sequence::AbstractVector{<:Integer},
+)
+    length(indegree_sequence) == length(outdegree_sequence) || throw(
+        ArgumentError(
+            "The provided `indegree_sequence` and `outdegree_sequence` must be of the dame length.",
+        ),
+    )
+    # Check whether the indegree_sequence and outdegree_sequence have only non-negative values
+    all(indegree_sequence .>= 0) || throw(
+        ArgumentError(
+            "The `indegree_sequence` sequence must contain non-negative integers only."
+        ),
+    )
+    all(outdegree_sequence .>= 0) || throw(
+        ArgumentError(
+            "The `outdegree_sequence` sequence must contain non-negative integers only."
+        ),
+    )
+
+    # Instantiate an empty simple graph 
+    graph = SimpleDiGraph{T}(length(indegree_sequence))
+    # Create a (vertex, degree) ordered dictionary
+    S = zip(indegree_sequence, outdegree_sequence)
+    vertices_degrees_dict = OrderedDict(i => tup for (i, tup) in enumerate(S))
+    # Kleitman-Wang algorithm  
+    while (any(Iterators.flatten(values(vertices_degrees_dict)) .!= 0))
+        # Sort the new sequence in non-increasing lexicographical order
+        vertices_degrees_dict = OrderedDict(
+            sort(
+                collect(vertices_degrees_dict);
+                by=last,
+                rev=true,
+            ),
+        )
+        # Find a vertex with positive outdegree,and temporarily remove it from `vertices_degrees_dict`
+        i, (a_i, b_i) = 0, (0, 0)
+        for (_i, (_a_i, _b_i)) in collect(deepcopy(vertices_degrees_dict))
+            if _b_i != 0
+                i, a_i, b_i = (_i, _a_i, _b_i)
+                delete!(vertices_degrees_dict, _i)
+                break
+            end
+        end
+        # Connect the vertex found above to other nodes of highest degree 
+        for (v, degs) in collect(vertices_degrees_dict)[1:b_i]
+            add_edge!(graph, i, v)
+            vertices_degrees_dict[v] = (degs[1] - 1, degs[2])
+            # Check whether the remaining indegree is nonnegative
+            vertices_degrees_dict[v][1] >= 0 || throw(ErrorException("The indegree and outdegree sequences are not graphical."))
+        end
+        # Reinsert the vertex, with zero outdegree
+        vertices_degrees_dict[i] = (a_i, 0)
+    end
+    return graph
+end
