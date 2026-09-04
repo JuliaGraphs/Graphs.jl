@@ -1,9 +1,116 @@
-using Random: randperm, shuffle!
+using Random: randperm, shuffle!, randexp
 using Statistics: mean
 using Graphs: sample!
+using Base: OneTo
 
 """
-    SimpleGraph{T}(nv, ne; rng=nothing, seed=nothing)
+	_d_sample!(buffer, N, n)
+
+Sample `n` sorted values from `1:N`.
+It follows Witter's implementation from "An Efficient Algorithm for Sequential Random Sampling"
+"""
+function _d_sample!(rng, buffer, N, n)
+    current_index = 1
+    current_sample = 0
+    nreal = n
+    ninv = 1.0 / nreal
+    Nreal = N
+    Vprime = exp(-randexp(rng) * ninv)
+    qu1 = -n + 1 + N
+    qu1real = -nreal + 1.0 + Nreal
+    negalphainv = -13
+    threshold = -negalphainv * n
+    while (n > 1) && (threshold < N)
+        local negSreal
+        nmin1inv = 1.0 / (-1.0 + nreal)
+        while true
+            local X
+            while true
+                X = Nreal * (-Vprime + 1.0)
+                S = trunc(Int, X)
+                S < qu1 && break
+                Vprime = exp(-randexp(rng) * ninv)
+            end
+            U = rand(rng)
+            negSreal = -S
+            y1 = exp(log(U * Nreal / qu1real) * nmin1inv)
+            Vprime = y1 * (-X / Nreal + 1.0) * (qu1real / (negSreal + qu1real))
+            Vprime <= 1.0 && break
+            y2 = 1.0
+            top = -1.0 + Nreal
+            if -1 + n > S
+                bottom = -nreal + Nreal
+                limit = -S + N
+            else
+                bottom = -1.0 + negSreal + Nreal
+                limit = qu1
+            end
+            for t in (-1 + N):limit
+                y2 = (y2 * top) / bottom
+                top -= 1.0
+                bottom -= 1.0
+            end
+            if Nreal / (-X + Nreal) >= y1 * exp(log(y2) * nmin1inv)
+                Vprime = exp(-randexp(rng) * nmin1inv)
+                break
+            end
+            Vprime = exp(-randexp(rng) * ninv)
+        end
+        # Skip over the next S records and select the following one for the sample
+        current_sample += S + 1
+        buffer[current_index] = current_sample
+        current_index += 1
+        N = -S + (-1 + N)
+        Nreal = negSreal + (-1.0 + Nreal)
+        n -= 1
+        nreal += -1.0
+        ninv = nmin1inv
+        qu1 = -S + qu1
+        qu1real += negSreal
+        threshold += negalphainv
+    end
+    if n > 1
+        # then Use Method A to finish the sampling
+        _a_sample!(rng, buffer, N, n, current_index, current_sample)
+    else # Special case n = 1
+        S = trunc(Int, N * Vprime)
+        # Skip over the next S records and select the following one for the sample
+        current_sample += S + 1
+        buffer[current_index] = current_sample
+        current_index += 1
+    end
+end
+
+function _a_sample!(rng, buffer, N, n, current_index, current_sample)
+    top = N - n
+    Nreal = N
+    while n >= 2
+        V = rand(rng)
+        S = 0
+        quot = top / Nreal
+        while quot > V
+            S += 1
+            top -= 1.0
+            Nreal -= 1.0
+            quot = (quot * top) / Nreal
+        end
+        # Skip over the next S records and select the following one for the sample
+        current_sample += S + 1
+        buffer[current_index] = current_sample
+        current_index += 1
+        Nreal -= 1.0
+        n -= 1
+    end
+    # Special case n = 1
+    S = trunc(Int, round(Int, Nreal) * rand(rng))
+    # Skip over the next S records and select the following one for the sample
+    current_sample += S + 1
+    buffer[current_index] = current_sample
+    return current_index += 1
+end
+
+"""
+	SimpleGraph{T}(nv, ne; self_loops = false, rng=nothing, seed=nothing)
 
 Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled uniformly from all such graphs.
@@ -24,36 +131,80 @@ julia> SimpleGraph(5, 7)
 function SimpleGraph{T}(
     nv::Integer,
     ne::Integer;
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    tnv = T(nv)
-    maxe = div(Int(nv) * (nv - 1), 2)
+    ne == 0 && return Graph{T}(nv)
+
+    maxe = self_loops ? div(Int(nv) * (nv + 1), 2) : div(Int(nv) * (nv - 1), 2)
+
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
-    rng = rng_from_rng_or_seed(rng, seed)
-    ne > div((2 * maxe), 3) && return complement(SimpleGraph(tnv, maxe - ne; rng=rng))
 
-    g = SimpleGraph(tnv)
-
-    while g.ne < ne
-        source = rand(rng, one(T):tnv)
-        dest = rand(rng, one(T):tnv)
-        source != dest && add_edge!(g, source, dest)
+    function remaining_edges(u)
+        return maxe - (
+            if self_loops
+                div(Int(nv - u) * (nv - u + 1), 2)
+            else
+                div(Int(nv - u) * (nv - u - 1), 2)
+            end
+        )
     end
-    return g
+    rng = rng_from_rng_or_seed(rng, seed)
+
+    edge_sample = Array{Int}(undef, max(ne, nv))
+    _d_sample!(rng, edge_sample, maxe, ne)
+    fadjlist = Vector{Vector{T}}(undef, nv)
+
+    first_index = 1
+    current_index = 1
+    indeg = zeros(T, nv)
+
+    @inbounds for u in 1:nv
+        while current_index <= ne && remaining_edges(u) >= edge_sample[current_index]
+            current_index += 1
+        end
+        indeg_u = indeg[u]
+        list_u = Vector{T}(undef, indeg_u + current_index - first_index)
+        for j in first_index:(current_index - 1)
+            v = edge_sample[j] - remaining_edges(u - 1) + u
+            if self_loops
+                v -= 1
+            end
+            list_u[j - first_index + 1 + indeg_u] = v
+            indeg[v] += 1
+        end
+        fadjlist[u] = list_u
+        first_index = current_index
+    end
+
+    insert_at = resize!(edge_sample, nv)
+    fill!(insert_at, one(T))
+
+    @inbounds for u in OneTo(nv)
+        list_u = fadjlist[u]
+        for i in (indeg[u] + 1):length(list_u)
+            v = list_u[i]
+            fadjlist[v][insert_at[v]] = u
+            insert_at[v] += 1
+        end
+    end
+
+    return SimpleGraph{T}(ne, fadjlist)
 end
 
 function SimpleGraph(
     nv::T,
     ne::Integer;
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    return SimpleGraph{T}(nv, ne; rng=rng, seed=seed)
+    return SimpleGraph{T}(nv, ne; self_loops=self_loops, rng=rng, seed=seed)
 end
 
 """
-    SimpleDiGraph{T}(nv, ne; rng=nothing, seed=nothing)
+	SimpleDiGraph{T}(nv, ne; self_loops = false, rng=nothing, seed=nothing)
 
 Construct a random `SimpleDiGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled uniformly from all such graphs.
@@ -74,56 +225,194 @@ julia> SimpleDiGraph(5, 7)
 function SimpleDiGraph{T}(
     nv::Integer,
     ne::Integer;
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    tnv = T(nv)
-    maxe = Int(nv) * (nv - 1)
+    ne == 0 && return DiGraph{T}(nv)
+
+    maxd = self_loops ? Int(nv) : nv - 1
+    maxe = self_loops ? (Int(nv) * nv) : (Int(nv) * (nv - 1))
+
     @assert(ne <= maxe, "Maximum number of edges for this graph is $maxe")
     rng = rng_from_rng_or_seed(rng, seed)
-    ne > div((2 * maxe), 3) && return complement(SimpleDiGraph{T}(tnv, maxe - ne; rng=rng))
-    g = SimpleDiGraph(tnv)
-    while g.ne < ne
-        source = rand(rng, one(T):tnv)
-        dest = rand(rng, one(T):tnv)
-        source != dest && add_edge!(g, source, dest)
+
+    edge_sample = Array{Int}(undef, ne)
+    _d_sample!(rng, edge_sample, maxe, ne)
+    fadjlist = Vector{Vector{T}}(undef, nv)
+    badjlist = Vector{Vector{T}}(undef, nv)
+
+    first_index = 1
+    current_index = 1
+
+    @inbounds for u in 1:nv
+        while current_index <= ne && maxd * u >= edge_sample[current_index]
+            current_index += 1
+        end
+        list_u = Vector{T}(undef, current_index - first_index)
+        for j in first_index:(current_index - 1)
+            v = edge_sample[j] - maxd * (u - 1)
+            if !self_loops && v >= u
+                v += 1
+            end
+            list_u[j - first_index + 1] = v
+        end
+        fadjlist[u] = list_u
+        first_index = current_index
     end
-    return g
+
+    indeg = zeros(T, nv)
+    @inbounds for u in OneTo(nv)
+        for v in fadjlist[u]
+            indeg[v] += 1
+        end
+    end
+
+    @inbounds for v in OneTo(nv)
+        badjlist[v] = Vector{T}(undef, indeg[v])
+    end
+
+    @inbounds for u in OneTo(nv)
+        for v in fadjlist[u]
+            badjlist[v][end - indeg[v] + 1] = u
+            indeg[v] -= 1
+        end
+    end
+    return SimpleDiGraph(ne, fadjlist, badjlist)
 end
 
 function SimpleDiGraph(
     nv::T,
     ne::Integer;
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 ) where {T<:Integer}
-    return SimpleDiGraph{Int}(nv, ne; rng=rng, seed=seed)
+    return SimpleDiGraph{Int}(nv, ne; self_loops=self_loops, rng=rng, seed=seed)
 end
-"""
-    randbn(n, p; rng=nothing, seed=nothing)
 
-Return a binomially-distributed random number with parameters `n` and `p` and optional `seed`.
+# like randsubseq!, but without push! since our buffer is always sufficiently large
+# we might change if randsubseq! gets faster in newer versions of julia
+@inline function _randsubseq!(rng, buffer, sample_from, p)
+    buffer_len = 0
+    if p >= 0.75
+        @inbounds for v in sample_from
+            if rand(rng) < p
+                buffer_len += 1
+                buffer[buffer_len] = v
+            end
+        end
+    else
+        L = -1 / log1p(-p)
+        sample_from_len = length(sample_from)
+        i = 0
+        @inbounds while true
+            s = randexp(rng) * L
+            i + s > sample_from_len && return buffer_len # compare before ceil to avoid overflow
+            i += ceil(Int, s)
+            buffer_len += 1
+            buffer[buffer_len] = sample_from[i]
+        end
+    end
+    return buffer_len
+end
 
-### References
-- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
-- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
-"""
-function randbn(
-    n::Integer,
-    p::Real;
+function _erdos_renyi_directed(
+    nv::T,
+    p::Union{Rational,AbstractFloat,AbstractIrrational};
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
-)
+) where {T<:Integer}
     rng = rng_from_rng_or_seed(rng, seed)
-    log_q = log(1.0 - p)
-    x = 0
-    sum = 0.0
-    for _ in 1:n
-        sum += log(rand(rng)) / (n - x)
-        sum < log_q && break
-        x += 1
+
+    fadjlist = Vector{Vector{T}}(undef, nv)
+
+    ne = 0
+    buffer = Vector{T}(undef, nv)
+    sample_from = self_loops ? collect(one(T):nv) : collect(T(2):nv)
+    @inbounds for u in OneTo(nv)
+        buffer_len = _randsubseq!(rng, buffer, sample_from, p)
+        fadjlist[u] = copy(buffer[1:buffer_len])
+        ne += buffer_len
+
+        if !self_loops && u < nv
+            sample_from[u] = u
+        end
     end
-    return x
+
+    # reuse the memory allocated for buffer
+    # need to resize! because randsubseq! could have shrunken the buffer length
+    # indeg = resize!(buffer, nv)
+    indeg = buffer
+    fill!(indeg, zero(T))
+    @inbounds for u in OneTo(nv)
+        for v in fadjlist[u]
+            indeg[v] += 1
+        end
+    end
+
+    badjlist = Vector{Vector{T}}(undef, nv)
+    @inbounds for v in OneTo(nv)
+        badjlist[v] = Vector{T}(undef, indeg[v])
+    end
+
+    @inbounds for u in OneTo(nv)
+        for v in fadjlist[u]
+            badjlist[v][end - indeg[v] + 1] = u
+            indeg[v] -= 1
+        end
+    end
+    return SimpleDiGraph(ne, fadjlist, badjlist)
+end
+
+function _erdos_renyi_undirected(
+    nv::T,
+    p::Union{Rational,AbstractFloat,AbstractIrrational};
+    self_loops=false,
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+) where {T<:Integer}
+    rng = rng_from_rng_or_seed(rng, seed)
+
+    fadjlist = Vector{Vector{T}}(undef, nv)
+
+    ne = 0
+    buffer = Vector{T}(undef, nv)
+    indeg = zeros(T, nv)
+
+    @inbounds for u in OneTo(nv)
+        sample_from = self_loops ? (u:nv) : ((u + one(T)):nv)
+
+        buffer_len = _randsubseq!(rng, buffer, sample_from, p)
+
+        indeg_u = indeg[u]
+        list_u = Vector{T}(undef, indeg_u + buffer_len)
+
+        for i in OneTo(buffer_len)
+            v = buffer[i]
+            list_u[i + indeg_u] = v
+            indeg[v] += 1
+        end
+
+        fadjlist[u] = list_u
+
+        ne += buffer_len
+    end
+
+    insert_at = resize!(buffer, nv)
+    fill!(insert_at, one(T))
+
+    @inbounds for u in OneTo(nv)
+        list_u = fadjlist[u]
+        for i in (indeg[u] + 1):length(list_u)
+            v = list_u[i]
+            fadjlist[v][insert_at[v]] = u
+            insert_at[v] += 1
+        end
+    end
+
+    return SimpleGraph(ne, fadjlist)
 end
 
 """
@@ -139,6 +428,7 @@ To access this definition, use `erdos_renyi(n, ne::Integer)`
 (specifically: `erdos_renyi(n, 1) != erdos_renyi(n, 1.0)`).
 
 ### Optional Arguments
+- `self_loops=false`: if true, self loops will also be sampled
 - `is_directed=false`: if true, return a directed graph.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
@@ -154,23 +444,25 @@ julia> erdos_renyi(10, 0.5)
 julia> using Graphs
 
 julia> erdos_renyi(10, 0.5, is_directed=true, seed=123)
-{10, 49} directed simple Int64 graph
+{10, 47} directed simple Int64 graph
 ```
 """
 function erdos_renyi(
     n::Integer,
     p::Real;
     is_directed=false,
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
     p >= 1 && return is_directed ? complete_digraph(n) : complete_graph(n)
-    m = is_directed ? n * (n - 1) : div(n * (n - 1), 2)
-    ne = randbn(m, p; rng=rng, seed=seed)
-    return if is_directed
-        SimpleDiGraph(n, ne; rng=rng, seed=seed)
+
+    @assert p >= 0
+
+    if is_directed
+        return _erdos_renyi_directed(n, p; self_loops=self_loops, rng=rng, seed=seed)
     else
-        SimpleGraph(n, ne; rng=rng, seed=seed)
+        return _erdos_renyi_undirected(n, p; self_loops=self_loops, rng=rng, seed=seed)
     end
 end
 
@@ -181,6 +473,7 @@ Create an [Erdős–Rényi](http://en.wikipedia.org/wiki/Erdős–Rényi_model) 
 graph with `n` vertices and `ne` edges.
 
 ### Optional Arguments
+- `self_loops=false`: if true, self loops will also be sampled
 - `is_directed=false`: if true, return a directed graph.
 - `rng=nothing`: set the Random Number Generator.
 - `seed=nothing`: set the RNG seed.
@@ -200,18 +493,19 @@ function erdos_renyi(
     n::Integer,
     ne::Integer;
     is_directed=false,
+    self_loops=false,
     rng::Union{Nothing,AbstractRNG}=nothing,
     seed::Union{Nothing,Integer}=nothing,
 )
     return if is_directed
-        SimpleDiGraph(n, ne; rng=rng, seed=seed)
+        SimpleDiGraph(n, ne; self_loops=self_loops, rng=rng, seed=seed)
     else
-        SimpleGraph(n, ne; rng=rng, seed=seed)
+        SimpleGraph(n, ne; self_loops=self_loops, rng=rng, seed=seed)
     end
 end
 
 """
-    expected_degree_graph(ω)
+	expected_degree_graph(ω)
 
 Given a vector of expected degrees `ω` indexed by vertex, create a random undirected graph in which vertices `i` and `j` are
 connected with probability `ω[i]*ω[j]/sum(ω)`.
@@ -275,7 +569,7 @@ function expected_degree_graph!(
         p = min(ω[π[u]] * ω[π[v]] / S, one(T))
         while v <= n && p > zero(p)
             if p != one(T)
-                v += floor(Int, log(rand(rng)) / log(one(T) - p))
+                v += floor(Int, -randexp(rng) / log(one(T) - p))
             end
             if v <= n
                 q = min(ω[π[u]] * ω[π[v]] / S, one(T))
@@ -291,10 +585,10 @@ function expected_degree_graph!(
 end
 
 """
-    watts_strogatz(n, k, β)
+	watts_strogatz(n, k, β)
 
 Return a [Watts-Strogatz](https://en.wikipedia.org/wiki/Watts_and_Strogatz_model)
-small world random graph with `n` vertices, each with expected degree `k` 
+small world random graph with `n` vertices, each with expected degree `k`
 (or `k - 1` if `k` is odd). Edges are randomized per the model based on probability `β`.
 
 The algorithm proceeds as follows. First, a perfect 1-lattice is constructed,
@@ -394,7 +688,7 @@ function watts_strogatz(
 end
 
 """
-    newman_watts_strogatz(n, k, β)
+	newman_watts_strogatz(n, k, β)
 
 Return a Newman-Watts-Strogatz small world random graph with `n` vertices, each
 with expected degree `k(1 + β)` (or `(k - 1)(1 + β)` if `k` is odd). Edges are
@@ -507,7 +801,7 @@ function _try_creation(n::T, k::Vector{T}, rng::AbstractRNG) where {T<:Integer}
 end
 
 """
-    barabasi_albert(n, k)
+	barabasi_albert(n, k)
 
 Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
@@ -534,7 +828,7 @@ julia> barabasi_albert(100, Int8(10), is_directed=true, complete=true, seed=123)
 barabasi_albert(n::Integer, k::Integer; keyargs...) = barabasi_albert(n, k, k; keyargs...)
 
 """
-    barabasi_albert(n::Integer, n0::Integer, k::Integer)
+	barabasi_albert(n::Integer, n0::Integer, k::Integer)
 
 Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
@@ -579,7 +873,7 @@ function barabasi_albert(
 end
 
 """
-    barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer)
+	barabasi_albert!(g::AbstractGraph, n::Integer, k::Integer)
 
 Create a [Barabási–Albert model](https://en.wikipedia.org/wiki/Barab%C3%A1si%E2%80%93Albert_model)
 random graph with `n` vertices. It is grown by adding new vertices to an initial
@@ -674,7 +968,7 @@ function barabasi_albert!(
 end
 
 """
-    static_fitness_model(m, fitness)
+	static_fitness_model(m, fitness)
 
 Generate a random graph with ``|fitness|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional
@@ -745,7 +1039,7 @@ function static_fitness_model(
 end
 
 """
-    static_fitness_model(m, fitness_out, fitness_in)
+	static_fitness_model(m, fitness_out, fitness_in)
 
 Generate a random directed graph with ``|fitness\\_out + fitness\\_in|`` vertices and `m` edges,
 in which the probability of the existence of ``Edge_{ij}`` is proportional with
@@ -834,7 +1128,7 @@ function _create_static_fitness_graph!(
 end
 
 """
-    static_scale_free(n, m, α)
+	static_scale_free(n, m, α)
 
 Generate a random graph with `n` vertices, `m` edges and expected power-law
 degree distribution with exponent `α`.
@@ -868,7 +1162,7 @@ function static_scale_free(
 end
 
 """
-    static_scale_free(n, m, α_out, α_in)
+	static_scale_free(n, m, α_out, α_in)
 
 Generate a random graph with `n` vertices, `m` edges and expected power-law
 degree distribution with exponent `α_out` for outbound edges and `α_in` for
@@ -925,7 +1219,7 @@ function _construct_fitness(n::Integer, α::Real, finite_size_correction::Bool)
 end
 
 """
-    random_regular_graph(n, k)
+	random_regular_graph(n, k)
 
 Create a random undirected
 [regular graph](https://en.wikipedia.org/wiki/Regular_graph) with `n` vertices,
@@ -1018,7 +1312,7 @@ function random_configuration_model(
     return g
 end
 """
-    uniform_tree(n)
+	uniform_tree(n)
 
 Generates a random labelled tree, drawn uniformly at random over the ``n^{n-2}`` such trees. A uniform word of length `n-2` over the alphabet `1:n` is generated (Prüfer sequence) then decoded. See also the `prufer_decode` function and [this page on Prüfer codes](https://en.wikipedia.org/wiki/Pr%C3%BCfer_sequence). 
 
@@ -1042,7 +1336,7 @@ function uniform_tree(n::Integer; rng::Union{Nothing,AbstractRNG}=nothing)
 end
 
 """
-    random_regular_digraph(n, k)
+	random_regular_digraph(n, k)
 
 Create a random directed [regular graph](https://en.wikipedia.org/wiki/Regular_graph)
 with `n` vertices, each with degree `k`.
@@ -1090,7 +1384,7 @@ function random_regular_digraph(
 end
 
 """
-    random_tournament_digraph(n)
+	random_tournament_digraph(n)
 
 Create a random directed [tournament graph]
 (https://en.wikipedia.org/wiki/Tournament_%28graph_theory%29)
@@ -1127,13 +1421,40 @@ function random_tournament_digraph(
 end
 
 """
-    stochastic_block_model(c, n)
+	randbn(n, p; rng=nothing, seed=nothing)
+
+Return a binomially-distributed random number with parameters `n` and `p` and optional `seed`.
+
+### References
+- "Non-Uniform Random Variate Generation," Luc Devroye, p. 522. Retrieved via http://www.eirene.de/Devroye.pdf.
+- http://stackoverflow.com/questions/23561551/a-efficient-binomial-random-number-generator-code-in-java
+"""
+function randbn(
+    n::Integer,
+    p::Real;
+    rng::Union{Nothing,AbstractRNG}=nothing,
+    seed::Union{Nothing,Integer}=nothing,
+)
+    rng = rng_from_rng_or_seed(rng, seed)
+    log_q = log(1.0 - p)
+    x = 0
+    sum = 0.0
+    for _ in 1:n
+        sum += -randexp(rng) / (n - x)
+        sum < log_q && break
+        x += 1
+    end
+    return x
+end
+
+"""
+	stochastic_block_model(c, n)
 
 Return a Graph generated according to the Stochastic Block Model (SBM).
 
 `c[a,b]` : Mean number of neighbors of a vertex in block `a` belonging to block `b`.
-           Only the upper triangular part is considered, since the lower triangular is
-           determined by ``c[b,a] = c[a,b] * \\frac{n[a]}{n[b]}``.
+		   Only the upper triangular part is considered, since the lower triangular is
+		   determined by ``c[b,a] = c[a,b] * \\frac{n[a]}{n[b]}``.
 `n[a]` : Number of vertices in block `a`
 
 ### Optional Arguments
@@ -1187,7 +1508,7 @@ function stochastic_block_model(
 end
 
 """
-    stochastic_block_model(cint, cext, n)
+	stochastic_block_model(cint, cext, n)
 
 Return a Graph generated according to the Stochastic Block Model (SBM), sampling
 from an SBM with ``c_{a,a}=cint``, and ``c_{a,b}=cext``.
@@ -1205,7 +1526,7 @@ function stochastic_block_model(
 end
 
 """
-    StochasticBlockModel{T,P}
+	StochasticBlockModel{T,P}
 
 A type capturing the parameters of the SBM.
 Each vertex is assigned to a block and the probability of edge `(i,j)`
@@ -1251,7 +1572,7 @@ end
 
 ### TODO: This documentation needs work. sbromberger 20170326
 """
-    sbmaffinity(internalp, externalp, sizes)
+	sbmaffinity(internalp, externalp, sizes)
 
 Produce the sbm affinity matrix with internal probabilities `internalp`
 and external probabilities `externalp`.
@@ -1285,7 +1606,7 @@ const biclique = ones(2, 2) - Matrix{Float64}(I, 2, 2)
 
 # TODO: this documentation needs work. sbromberger 20170326
 """
-    nearbipartiteaffinity(sizes, between, intra)
+	nearbipartiteaffinity(sizes, between, intra)
 
 Construct the affinity matrix for a near bipartite SBM.
 `between` is the affinity between the two parts of each bipartite community.
@@ -1315,7 +1636,7 @@ function nearbipartiteSBM(sizes, between, inter, noise)
 end
 
 """
-    random_pair(rng, n)
+	random_pair(rng, n)
 
 Generate a stream of random pairs in `1:n` using random number generator `RNG`.
 """
@@ -1329,7 +1650,7 @@ function random_pair(rng::AbstractRNG, n::Integer)
 end
 
 """
-    make_edgestream(sbm; rng=nothing, seed=nothing)
+	make_edgestream(sbm; rng=nothing, seed=nothing)
 
 Take an infinite sample from the Stochastic Block Model `sbm`.
 Pass to `Graph(nvg, neg, edgestream)` to get a Graph object based on `sbm`.
@@ -1355,7 +1676,7 @@ function make_edgestream(
 end
 
 """
-    SimpleGraph{T}(nv, ne, edgestream::Channel)
+	SimpleGraph{T}(nv, ne, edgestream::Channel)
 
 Construct a `SimpleGraph{T}` with `nv` vertices and `ne` edges from `edgestream`.
 Can result in less than `ne` edges if the channel `edgestream` is closed prematurely.
@@ -1364,7 +1685,6 @@ The element type is the type of `nv`.
 """
 function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
     g = SimpleGraph(nvg)
-    # println(g)
     for e in edgestream
         add_edge!(g, e)
         ne(g) >= neg && break
@@ -1373,7 +1693,7 @@ function SimpleGraph(nvg::Integer, neg::Integer, edgestream::Channel)
 end
 
 """
-    SimpleGraph{T}(nv, ne, smb::StochasticBlockModel)
+	SimpleGraph{T}(nv, ne, smb::StochasticBlockModel)
 
 Construct a random `SimpleGraph{T}` with `nv` vertices and `ne` edges.
 The graph is sampled according to the stochastic block model `smb`.
@@ -1391,7 +1711,7 @@ end
 
 # TODO: this documentation needs work. sbromberger 20170326
 """
-    blockcounts(sbm, A)
+	blockcounts(sbm, A)
 
 Count the number of edges that go between each block.
 """
@@ -1414,7 +1734,7 @@ function blockfractions(sbm::StochasticBlockModel, g::Union{AbstractGraph,Abstra
 end
 
 """
-    kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; rng=nothing, seed=nothing)
+	kronecker(SCALE, edgefactor, A=0.57, B=0.19, C=0.19; rng=nothing, seed=nothing)
 
 Generate a directed [Kronecker graph](https://en.wikipedia.org/wiki/Kronecker_graph)
 with the default Graph500 parameters.
@@ -1460,7 +1780,7 @@ function kronecker(
 end
 
 """
-    dorogovtsev_mendes(n)
+	dorogovtsev_mendes(n)
 
 Generate a random `n` vertex graph by the Dorogovtsev-Mendes method (with `n \\ge 3`).
 
@@ -1521,7 +1841,7 @@ function dorogovtsev_mendes(
 end
 
 """
-    random_orientation_dag(g)
+	random_orientation_dag(g)
 
 Generate a random oriented acyclical digraph. The function takes in a simple
 graph and a random number generator as an argument. The probability of each
