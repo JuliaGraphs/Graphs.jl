@@ -99,6 +99,7 @@ tests = [
     "traversals/bfs",
     "traversals/bipartition",
     "traversals/greedy_color",
+    "color_refinement",
     "traversals/dfs",
     "traversals/maxadjvisit",
     "traversals/randomwalks",
