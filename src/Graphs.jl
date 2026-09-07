@@ -456,7 +456,10 @@ export
 
     # planarity
     is_planar,
-    planar_maximally_filtered_graph
+    planar_maximally_filtered_graph,
+
+    # declared here, implemented by external packages
+    max_weight_perfect_matching
 """
     Graphs
 
@@ -480,6 +483,7 @@ and tutorials are available at the
 """
 Graphs
 include("interface.jl")
+include("external_algorithms.jl")
 include("utils.jl")
 include("frozenvector.jl")
 include("deprecations.jl")
@@ -585,4 +589,12 @@ include("planarity.jl")
 include("spanningtrees/planar_maximally_filtered_graph.jl")
 
 using .LinAlg
+
+function __init__()
+    Base.Experimental.register_error_hint(MethodError) do io, exc, _argtypes, _kwargs
+        external_algorithm_hint(io, exc)
+    end
+    return nothing
+end
+
 end # module

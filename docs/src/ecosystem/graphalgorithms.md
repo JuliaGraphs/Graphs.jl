@@ -18,6 +18,7 @@ Several other packages implement additional graph algorithms:
 Several packages make established graph libraries written in other languages accessible from within Julia and the _Graphs.jl_ ecosystem:
 
 - [IGraphs.jl](https://github.com/JuliaGraphs/IGraphs.jl) is a thin Julia wrapper around the C graphs library [igraph](https://igraph.org).
+- [LEMONGraphs.jl](https://github.com/JuliaGraphs/LEMONGraphs.jl) wraps the C++ library [LEMON](https://lemon.cs.elte.hu), providing graph types that implement the _Graphs.jl_ interface along with LEMON backends for matching, shortest paths and minimum cost flow.
 - [NautyGraphs.jl](https://github.com/JuliaGraphs/NautyGraphs.jl) provides graph structures compatible with the graph isomorphism library [_nauty_](https://pallini.di.uniroma1.it), allowing for efficient isomorphism checking and canonization, as well as computing the properties of graph automorphism groups.
 
 ## Dispatching to algorithm implementations in external packages
@@ -37,6 +38,8 @@ true
 ```
 
 Here, dispatching via `NautyAlg()` implicitly converts `g` to a _nauty_-compatible format and uses _nauty_ for the isomorphism computation.
+
+The same convention applies to algorithms that _Graphs.jl_ does not implement at all. Those are declared here, as a function with a docstring and no methods, and the implementation package supplies the methods; see [Externally implemented algorithms](@ref). Calling one without the implementation package loaded reports which package to install.
 
 ### Functions extended by IGraphs.jl
 

@@ -7,6 +7,7 @@ We follow SemVer as most of the Julia ecosystem. Below you might see the "breaki
 - The iFUB algorithm is used for faster diameter calculation and now supports weighted graph diameter calculation
 - ECG community detection algorithm
 - `cycle_basis` now throws an error when it is called on a directed graph
+- Support for algorithms that Graphs.jl declares but leaves to an implementation package: `Graphs.EXTERNAL_ALGORITHMS`, `Graphs.@declare_external`, and a `MethodError` hint naming the package to install. `max_weight_perfect_matching`, to be implemented by LEMONGraphs.jl, is declared this way
 
 ## v1.14.0 - 2026-02-26
 - **(breaking)** `neighbors`, `inneighbors`, and `outneighbors` now return an immutable `FrozenVector` instead of `Vector`
