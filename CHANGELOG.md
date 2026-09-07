@@ -2,6 +2,9 @@
 
 We follow SemVer as most of the Julia ecosystem. Below you might see the "breaking" label even for minor version bumps -- we use it a bit more loosely to denote things that are not breaking by SemVer's definition but might cause breakage to people using internal or experimental APIs or undocumented implementation details. 
 
+## unreleased
+- `chromatic_number` and `edge_chromatic_number` are declared as private functions without any methods, so that packages computing them can share a name instead of each defining its own; the `very_nauty` wrapper VNGraphs.jl is the first intended to provide them
+
 ## v1.15.0 - 2026-09-07
 - `is_articulation(g, v)` for checking whether a single vertex is an articulation point
 - The iFUB algorithm is used for faster diameter calculation and now supports weighted graph diameter calculation
