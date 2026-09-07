@@ -4,6 +4,7 @@ using SparseArrays
 using LinearAlgebra
 using Graphs
 using SimpleTraits
+using DataStructures: OrderedDict
 
 import Random: AbstractRNG
 
@@ -62,6 +63,8 @@ export AbstractSimpleGraph,
     random_regular_graph,
     random_regular_digraph,
     random_configuration_model,
+    havel_hakimi_graph,
+    kleitman_wang_graph,
     uniform_tree,
     random_tournament_digraph,
     StochasticBlockModel,
