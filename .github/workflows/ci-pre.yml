@@ -24,10 +24,13 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: julia-actions/setup-julia@v3
+        id: julia
         with:
           version: pre
       - uses: julia-actions/cache@v3
       - run: sed -i '/JET/d' test/Project.toml
+        # The pre selector can resolve to a stable release, which runs the JET tests.
+        if: ${{ contains(steps.julia.outputs.julia-version, '-') }}
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
