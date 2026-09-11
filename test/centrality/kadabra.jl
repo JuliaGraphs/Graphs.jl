@@ -114,4 +114,28 @@ using Random
     add_edge!(g5, 4, 3) # SCC 2
     add_edge!(g5, 2, 3) # Edge between SCCs
     @test length(kadabra_centrality(g5, 0, 0.1, 0.1).centralities) == 4
+
+    # 11. Accuracy against the exact values. The burn-in samples are discarded, so the
+    # scores must be normalised by the Phase 2 pair count alone. start_factor=2 makes the
+    # burn-in half of omega: dividing by Phase 2 + burn-in instead (as the C++ reference
+    # does) shrinks every score to roughly half and fails both checks, whereas at the
+    # default start_factor=100 the same mistake costs ~1% here and passes unnoticed.
+    # graph-50-500 is directed; Brandes' c[v] is normalised by (n-1)(n-2), KADABRA's own
+    # scale (normalize=:kadabra) by n(n-1).
+    n = nv(gint)
+    exact = c .* (n - 2) ./ n
+    for sf in (100, 2), par in (false, true)
+        r = kadabra_centrality(
+            gint,
+            0,
+            0.01,
+            0.1;
+            normalize=:kadabra,
+            parallel=par,
+            rng=Xoshiro(1),
+            start_factor=sf,
+        )
+        @test maximum(abs.(r.centralities .- exact)) <= 0.01
+        @test all(r.lower_bounds .<= exact .<= r.upper_bounds)
+    end
 end

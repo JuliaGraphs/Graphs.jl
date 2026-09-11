@@ -195,6 +195,7 @@ function kadabra_centrality(
 
     base_rng = rng === nothing ? default_rng() : rng
     final_n_pairs = 0
+    phase2_n = 0
 
     if parallel
         nthreads = Threads.nthreads()
@@ -343,7 +344,8 @@ function kadabra_centrality(
         for t_approx in approx_local
             global_approx .+= t_approx
         end
-        final_n_pairs = n_pairs2[] + tau
+        phase2_n = n_pairs2[]
+        final_n_pairs = phase2_n + tau
     else
         ws = KadabraWorkspace(g)
         s_rng = rng === nothing ? default_rng() : rng
@@ -415,17 +417,21 @@ function kadabra_centrality(
                 stop_flag_seq = true
             end
         end
-        final_n_pairs = phase2_pairs + tau
+        phase2_n = phase2_pairs
+        final_n_pairs = phase2_n + tau
     end
 
-    res = [global_approx[v] / final_n_pairs for v in 1:n]
+    # The counts cover Phase 2 only (Phase 1's were zeroed above), so they are divided by
+    # the Phase 2 pair count. The C++ reference instead divides by Phase 2 + tau
+    # (`n_pairs += tau` before `get_centrality`), which scales every score by
+    # 1 - tau/N and leaves the largest ones several eps too low; NetworKit divides first.
+    # `n_samples` still reports all pairs drawn, burn-in included.
+    res = [global_approx[v] / phase2_n for v in 1:n]
     lower_bounds = Float64[
-        max(0.0, res[v] - compute_f(res[v], final_n_pairs, delta_l_guess[v], omega)) for
-        v in 1:n
+        max(0.0, res[v] - compute_f(res[v], phase2_n, delta_l_guess[v], omega)) for v in 1:n
     ]
     upper_bounds = Float64[
-        min(1.0, res[v] + compute_g(res[v], final_n_pairs, delta_u_guess[v], omega)) for
-        v in 1:n
+        min(1.0, res[v] + compute_g(res[v], phase2_n, delta_u_guess[v], omega)) for v in 1:n
     ]
 
     scale = 1.0
