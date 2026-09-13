@@ -121,6 +121,7 @@ tests = [
     "centrality/betweenness",
     "centrality/closeness",
     "centrality/degree",
+    "centrality/kadabra",
     "centrality/katz",
     "centrality/pagerank",
     "centrality/eigenvector",
