@@ -1559,3 +1559,104 @@ function random_orientation_dag(
     end
     return g2
 end
+
+"""
+    random_hierarchical_configuration_model(in_degrees::Vector{Int},
+                                             ext_degrees::Vector{Int},
+                                             community_sizes::Vector{Int};
+                                             seed::Union{Nothing, Int}=nothing)
+
+Generates a random graph using the Hierarchical Configuration Model.
+This is a modified configuration model that incorporates community structure.
+Self-loops and multiple edges are allowed, but multiple edges are not supported
+by the 'SimpleGraph' structure and end up as a simple edge.
+Some external degree sequences cannot be realized, even if they add up to an
+even number. In those cases, the algorithm returns the closest possible realization.
+
+- `in_degrees`: vector of intra-community degrees for each vertex
+- `ext_degrees`: vector of inter-community degrees for each vertex
+- `community_sizes`: vector of community sizes (must sum to `length(in_degrees)`)
+- `seed`: optional random seed
+
+Returns a `SimpleGraph`.
+
+### References:
+- Remco van der Hofstad, Johan van Leeuwaarden, Clara Stegehuis, Internet Mathematics, 2017. https://doi.org/10.24166/im.01.2017
+"""
+function random_hierarchical_configuration_model(in_degrees::Vector{Int},
+                                                  ext_degrees::Vector{Int},
+                                                  community_sizes::Vector{Int};
+                                                  seed::Union{Nothing, Int}=nothing)
+    if seed !== nothing
+        Random.seed!(seed)
+    end
+
+    n = length(in_degrees)
+    if length(ext_degrees) != n || sum(community_sizes) != n
+        throw(ArgumentError("Length of degree sequences must match and total size must equal sum of community sizes"))
+    end
+
+    if isodd(sum(ext_degrees))
+        throw(ArgumentError("Sum of external degrees must be even"))
+    end
+
+    G = SimpleGraph(n)
+    offset = 0
+    outer_half_edges = Vector{Vector{Int}}()
+
+    for (h, size_h) in enumerate(community_sizes)
+        local_indices = offset .+ (1:size_h)
+
+        # External half-edges
+        ext_degrees_h = ext_degrees[local_indices]
+        community_half_edges = Int[]
+        for i in local_indices
+            append!(community_half_edges, fill(i, ext_degrees_h[i - offset]))
+        end
+        push!(outer_half_edges, community_half_edges)
+
+        # Internal half-edges
+        in_degrees_h = in_degrees[local_indices]
+        if isodd(sum(in_degrees_h))
+            throw(ArgumentError("Sum of internal degrees in community $h must be even"))
+        end
+
+        #Internal Edges
+        half_edges = Int[]
+        for i in local_indices
+            append!(half_edges, fill(i, in_degrees_h[i - offset]))
+        end
+        shuffle!(half_edges)
+        for i in 1:2:length(half_edges)-1
+            u, v = half_edges[i], half_edges[i+1]
+            add_edge!(G, u, v)
+        end
+
+        offset += size_h
+    end
+
+    # Inter-community edges
+    while !isempty(outer_half_edges)
+        main_community = argmax(length.(outer_half_edges))
+        from_list = outer_half_edges[main_community]
+        if isempty(from_list)
+            break
+        end
+        u = rand(from_list)
+        deleteat!(from_list, findfirst(==(u), from_list))
+
+        remaining_communities = filter(i -> i != main_community && !isempty(outer_half_edges[i]), 1:length(outer_half_edges))
+        if isempty(remaining_communities)
+            @warn "Incomplete matching for external edges. Resulting graph may not match the full degree sequence."
+            break
+        end
+
+        target_comm = rand(remaining_communities)
+        to_list = outer_half_edges[target_comm]
+        v = rand(to_list)
+        deleteat!(to_list, findfirst(==(v), to_list))
+
+        add_edge!(G, u, v)
+    end
+
+    return G
