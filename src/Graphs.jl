@@ -1,5 +1,8 @@
 module Graphs
 
+include("igraphs.jl")
+export IGraphAlgorithm, community_detection_igraph, isomorphism_igraph, to_igraph
+
 using SimpleTraits
 
 ### Remove the following line once #915 is closed
