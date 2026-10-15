@@ -197,6 +197,16 @@
     end
 
     @testset "Negative Cycle" begin
+        @testset "Negative cycle unreachable from vertex 1" begin
+            gx = SimpleDiGraph(3)
+            add_edge!(gx, 2, 3)
+            add_edge!(gx, 3, 2)
+            d = [0 0 0; 0 0 -2; 0 1 0]
+            for g in test_generic_graphs(gx)
+                @test has_negative_edge_cycle_spfa(g, d)
+            end
+        end
+
         # Negative Cycle 1
         gx = complete_graph(3)
         for g in test_generic_graphs(gx)
