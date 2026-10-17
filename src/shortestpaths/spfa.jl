@@ -51,15 +51,21 @@ function spfa_shortest_paths(
 
     (source in 1:nvg) ||
         throw(DomainError(source, "source should be in between 1 and $nvg"))
+    return _spfa_shortest_paths(graph, [source], distmx)
+end
+
+function _spfa_shortest_paths(
+    graph::AbstractGraph{U}, sources::AbstractVector{<:Integer}, distmx::AbstractMatrix{T}
+) where {T<:Number} where {U<:Integer}
+    nvg = nv(graph)
     dists = fill(typemax(T), nvg)
-    dists[source] = 0
+    dists[sources] .= zero(T)
 
     count = zeros(U, nvg)           # Vector to store the count of number of times a vertex goes in the queue.
 
-    queue = Vector{U}()             # Vector used to implement queue
+    queue = Vector{U}(sources)      # Vector used to implement queue
     inqueue = falses(nvg, 1)         # BitArray to mark which vertices are in queue
-    push!(queue, source)
-    inqueue[source] = true
+    inqueue[sources] .= true
 
     @inbounds while !isempty(queue)
         v = popfirst!(queue)
@@ -117,7 +123,7 @@ function has_negative_edge_cycle_spfa(
     g::AbstractGraph{U}, distmx::AbstractMatrix{T}
 ) where {T<:Number} where {U<:Integer}
     try
-        spfa_shortest_paths(g, 1, distmx)
+        _spfa_shortest_paths(g, collect_if_not_vector(vertices(g)), distmx)
     catch e
         isa(e, NegativeCycleError) && return true
     end
